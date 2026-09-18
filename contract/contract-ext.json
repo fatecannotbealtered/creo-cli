@@ -1,0 +1,29 @@
+{
+  "error_codes": {
+    "E_BACKEND_UNAVAILABLE": {
+      "exit": 4,
+      "retryable": false
+    },
+    "E_UNSUPPORTED": {
+      "exit": 2,
+      "retryable": false
+    },
+    "E_PROTOCOL": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_NATIVE_FAILURE": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_OUTCOME_UNKNOWN": {
+      "exit": 6,
+      "retryable": false
+    },
+    "E_VERIFY_FAILED": {
+      "exit": 1,
+      "retryable": false
+    }
+  },
+  "note": "Project extensions, integration with upstream generator pending."
+}

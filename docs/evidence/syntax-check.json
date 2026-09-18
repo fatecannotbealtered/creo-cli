@@ -1,0 +1,23 @@
+{
+  "python_compileall": "passed",
+  "node_available": true,
+  "node_syntax_checks": [
+    {
+      "file": "scripts/run.js",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "file": "scripts/check-version.js",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "file": "scripts/sync-version.js",
+      "exit_code": 0,
+      "stderr": ""
+    }
+  ],
+  "ruff_run": false,
+  "dependency_audit_run": false
+}

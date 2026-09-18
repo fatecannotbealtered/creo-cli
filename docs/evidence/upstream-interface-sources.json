@@ -1,0 +1,104 @@
+{
+  "interface_target": "CREOSON 3.0.2",
+  "real_creo_verified": false,
+  "sources": {
+    "file": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/file.py",
+      "git_blob_sha": "228f71eb3fcb3a34764c4dc145686b79fffdf9b8"
+    },
+    "parameter": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/parameter.py",
+      "git_blob_sha": "cba1c8decb1c851bcea14f224b601baef4f93023"
+    },
+    "dimension": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/dimension.py",
+      "git_blob_sha": "91e4c616f23edeab574bb270510be245137c9009"
+    },
+    "feature": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/feature.py",
+      "git_blob_sha": "fb2d7892d0c192bf68b700512e48ec886e3ca6e3"
+    },
+    "interface": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/interface.py",
+      "git_blob_sha": "997640a896b69c0482dc0a3a1ef285a747d353c1"
+    },
+    "view": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/view.py",
+      "git_blob_sha": "ebdae69b795ef042f67da9f601781fa9b2b33e20"
+    },
+    "drawing": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/drawing.py",
+      "git_blob_sha": "e0ad14a5f1c5da6b261efc16efb8181432c4bf68"
+    },
+    "bom": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/bom.py",
+      "git_blob_sha": "611209b7f6695bdce8f3d08bdaa4096d3bbdef54"
+    },
+    "creo": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/creo.py",
+      "git_blob_sha": "678c83bdcafd67c5a838959c9080a20989c29d80"
+    },
+    "connection": {
+      "repository": "Zepmanbc/creopyson",
+      "path": "creopyson/connection.py",
+      "git_blob_sha": "cc1bd8ebf59f3139d1906fda9e159e16bd78c109"
+    }
+  },
+  "assembly_spec": {
+    "repository": "SimplifiedLogic/creoson",
+    "ref": "v3.0.2",
+    "path": "creoson-server/web/assets/creoson_stuff/jsonSpecs/file-assemble.json",
+    "git_blob_sha": "cbfcdd4510e2fe0640e07790791bb288e028f39e"
+  },
+  "released_spec_cross_checks": [
+    {
+      "repository": "SimplifiedLogic/creoson",
+      "ref": "v3.0.2",
+      "path": "creoson-server/web/assets/creoson_stuff/jsonSpecs/feature-list.json",
+      "git_blob_sha": "fef9d84171d2365985f9ca75c8f221b1a09becb5"
+    },
+    {
+      "repository": "SimplifiedLogic/creoson",
+      "ref": "v3.0.2",
+      "path": "creoson-server/web/assets/creoson_stuff/jsonSpecs/file-get_transform.json",
+      "git_blob_sha": "ec16f0d56b14b07d3252902139117e4fc514a063"
+    },
+    {
+      "repository": "SimplifiedLogic/creoson",
+      "ref": "v3.0.2",
+      "path": "creoson-server/web/assets/creoson_stuff/jsonSpecs/drawing-list_view_details.json",
+      "git_blob_sha": "7b11881d261ff1903a3158962f79a2df2e1c10bc"
+    },
+    {
+      "repository": "SimplifiedLogic/creoson",
+      "ref": "v3.0.2",
+      "path": "creoson-server/web/assets/creoson_stuff/jsonSpecs/dimension-list_detail.json",
+      "git_blob_sha": "0c2481bb4cd711d7871e57cf7b31c160baf9deb3"
+    },
+    {
+      "repository": "SimplifiedLogic/creoson",
+      "ref": "v3.0.2",
+      "path": "creoson-server/web/assets/creoson_stuff/jsonSpecs/drawing-create.json",
+      "git_blob_sha": "a541975f7d018a513246ca4a9fee9c247f63a833"
+    },
+    {
+      "repository": "SimplifiedLogic/creoson",
+      "ref": "v3.0.2",
+      "path": "creoson-core/src/com/simplifiedlogic/nitro/jlink/impl/JLDrawing.java",
+      "git_blob_sha": "d4f77df8ed1520299e4ab19b9bd34012a267ae07",
+      "reviewed_source_lines": [
+        90,
+        285
+      ]
+    }
+  ]
+}

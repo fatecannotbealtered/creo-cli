@@ -1,0 +1,72 @@
+{
+  "canonical": false,
+  "target_spec": "v1.6.2",
+  "note": "Development bootstrap projection; NOT a substitute for the vendored canonical contract or generated runtime.",
+  "schema_version": "1.0",
+  "error_codes": {
+    "E_USAGE": {
+      "exit": 2,
+      "retryable": false
+    },
+    "E_VALIDATION": {
+      "exit": 2,
+      "retryable": false
+    },
+    "E_NOT_FOUND": {
+      "exit": 3,
+      "retryable": false
+    },
+    "E_AUTH": {
+      "exit": 4,
+      "retryable": false
+    },
+    "E_FORBIDDEN": {
+      "exit": 4,
+      "retryable": false
+    },
+    "E_CONFIG": {
+      "exit": 4,
+      "retryable": false
+    },
+    "E_CONFIRMATION_REQUIRED": {
+      "exit": 5,
+      "retryable": false
+    },
+    "E_CONFLICT": {
+      "exit": 6,
+      "retryable": false
+    },
+    "E_NETWORK": {
+      "exit": 7,
+      "retryable": true
+    },
+    "E_RATE_LIMITED": {
+      "exit": 7,
+      "retryable": true
+    },
+    "E_SERVER": {
+      "exit": 7,
+      "retryable": true
+    },
+    "E_TIMEOUT": {
+      "exit": 8,
+      "retryable": true
+    },
+    "E_INTEGRITY": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_IO": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_INTERRUPTED": {
+      "exit": 130,
+      "retryable": true
+    },
+    "E_UNKNOWN": {
+      "exit": 1,
+      "retryable": false
+    }
+  }
+}

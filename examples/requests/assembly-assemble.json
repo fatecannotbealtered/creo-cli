@@ -1,0 +1,12 @@
+{
+  "file": "bracket.prt",
+  "into_asm": "device.asm",
+  "constraints": [
+    {
+      "type": "csys",
+      "asmref": "ASM_DEF_CSYS",
+      "compref": "PRT_CSYS_DEF"
+    }
+  ],
+  "expected_length_units": "mm"
+}

@@ -1,0 +1,19 @@
+{
+  "workflow_schema": "1.0",
+  "steps": [
+    {
+      "id": "inspect",
+      "command": "dimension list",
+      "request": {
+        "file": "bracket.prt"
+      }
+    },
+    {
+      "id": "roundtrip",
+      "command": "file roundtrip",
+      "request": {
+        "file": "bracket.prt"
+      }
+    }
+  ]
+}

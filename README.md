@@ -1,0 +1,205 @@
+<h1 align="center">creo-cli</h1>
+<p align="center"><strong>Agent-native Creo Parametric operations · JSON-first · guarded workflows · explicit verification</strong></p>
+<p align="center"><a href="README.md">English</a> · <a href="README_zh.md">中文</a></p>
+<p align="center">Explicit backends · HMAC-confirmed writes · Offline protocol tests · MIT</p>
+
+**Source development build — unpublishable; no real Creo run yet.** Version 0.2.0
+adds a CREOSON backend built against published interfaces, not a replacement CAD
+kernel. It complements the experimental PTC VB API adapter and the explicitly
+simulated `.creo.json` backend. Implemented requests and passing offline tests
+are not a claim of compatibility with your installation or of engineering validity.
+
+## Agent Install
+
+From this checkout, Python 3.11+ runs the CLI without runtime third-party dependencies:
+
+```bash
+python -m creo_cli context --compact
+python -m creo_cli doctor --compact
+python -m creo_cli reference --command "dimension set" --compact
+# Optional local executable:
+python -m pip install -e .
+```
+
+Read [the bundled Skill](skills/creo-cli/SKILL.md). No npm package or binary is
+claimed published; `@fateforge/creo-cli` remains private. The Node source launcher
+is a development convenience. For the new backend, install/configure an external
+[CREOSON](https://github.com/SimplifiedLogic/creoson) service and licensed Creo on
+the same computer; neither is bundled or auto-started. See [setup](docs/CREOSON.md).
+The independent Windows VB API route still uses `pip install -e ".[native]"`.
+
+## What It Does
+
+Controls named models, typed parameters and length dimensions; handles feature
+states, material assignment, coordinate-system/fixed assembly, named orientations,
+drawing templates/views, and export artifacts. Workflows combine operations under
+one preview/confirmation with persisted results and honest partial-failure states.
+Risk tier **T1**: confirmed operations may alter a disposable live model, assembly,
+drawing, or local output. Read-only policy is the default. Independent of PTC.
+
+## Capabilities
+
+| Area | Command groups | Scope |
+|---|---|---|
+| Discovery and observations | `reference`, `context`, `doctor`, `changelog`, `system capabilities`; `workspace`, `snapshot` | Local preflight never connects to Creo; native filenames are not parsed as geometry |
+| Existing adapter | `session`, `model`, `change` | Original VB API or explicit JSON mock; no fallback |
+| CREOSON connection | `creoson connect`, `creoson status` | Existing loopback service; protected session cache; version is declared, not detected |
+| Model lifecycle | `file list|active|info|units|relations|instances|massprops|open|display|regenerate|close-window|save|backup|roundtrip` | Explicit working-copy models; roundtrip restricted to one isolated part |
+| Design state | `parameter list|set`, `dimension list|set`, `feature list|suppress|resume|rename`, `material list|current|assign` | Typed values, explicit units, exact feature names, no wildcard writes |
+| Assemblies and orientations | `assembly tree|transform|assemble`, `view list|activate|save` | One explicit csys/fixed component; no arbitrary constraint solver |
+| Drawings | `drawing create|add-model|add-sheet|create-view|project-view|regenerate|models|sheets|views` | Real external template required; explicit sheets, orientation and drawing units |
+| Delivery | `export step|iges|dxf|pdf|image` | CREOSON writes to isolated staging; validate nonempty bytes/header, then atomic no-clobber publication |
+| Repeatable tasks | `workflow validate|run|status|history|result|reconcile` | Up to 32 allowlisted steps and eight model targets; no eval, mapkeys, or arbitrary RPC |
+
+There are **75 leaf commands**, including **45 CREOSON domain operations**. New
+`file`/`parameter`/`dimension`/`feature`/`assembly`/`drawing`/`export` commands always
+use CREOSON; legacy `model`/`change` commands retain their explicit backend option.
+The registry gives each operation its request schema, example, safe wire defaults,
+source snapshot and nested output schema. An operation is implemented but **not
+live-verified**. No from-scratch part/sketch/extrude/hole/fillet engine, arbitrary
+assembly constraints, interference analysis, sheet-metal unfolding, GD&T authoring,
+FEA, Windchill integration or self-update is implemented.
+
+## Agent Workflow
+
+Have a human configure a **disposable local workspace**, write policy and native
+opt-in. The agent may not set permissions itself. In PowerShell:
+
+```powershell
+$env:CREO_CLI_WORKSPACE = "C:\CreoCliWork"
+$env:CREO_CLI_PERMISSION = "write"
+$env:CREO_CLI_EXPERIMENTAL_NATIVE_WRITES = "1"
+# Default endpoint is http://127.0.0.1:9056/creoson.
+python -m creo_cli creoson connect --creo-major 10 --dry-run --compact
+# Inspect preview, confirm once with its data.confirm_token:
+python -m creo_cli creoson connect --creo-major 10 --confirm <confirm_token> --compact
+```
+
+The connection does not launch Creo and `10` is an example **human declaration**,
+not an automatically detected version. Use the actual installed version.
+
+New operations accept strict JSON request files; exact fields come from `reference`:
+
+```bash
+python -m creo_cli dimension list --request examples/requests/dimension-list.json --compact
+python -m creo_cli dimension set --request examples/requests/dimension-set.json --dry-run --compact
+python -m creo_cli dimension set --request examples/requests/dimension-set.json --confirm <confirm_token> --compact
+
+python -m creo_cli workflow validate --input examples/workflow-bracket.json --compact
+python -m creo_cli workflow run --input examples/workflow-bracket.json --dry-run --compact
+python -m creo_cli workflow run --input examples/workflow-bracket.json --confirm <confirm_token> --compact
+python -m creo_cli workflow status --operation-id <operation_id> --compact
+python -m creo_cli workflow result --operation-id <operation_id> --step-id inspect --compact
+```
+
+Adapt example names to real disposable files. **Examples do not include real CAD
+models, templates or a fake geometry engine.** A preview binds the entire request
+plan, session identity, workspace, selected model observations and input hashes;
+it does not simulate geometry. Preconditions depending on an earlier workflow
+step are labeled deferred and checked immediately before execution. Native writes
+are never automatically retried, even after a lost reply.
+
+`file roundtrip` saves, closes the window, erases only the named part from memory,
+reopens and compares parameters, dimensions, feature data, relations, units,
+materials and view names. It refuses a session containing any other model. This
+can test observed persistence but cannot prove identical BREP, fit or strength.
+`file close-window` alone does not erase or save a model. Legacy VB API scalar
+writes remain unsaved; CREOSON save/export/roundtrip are separate explicit writes.
+
+## Machine Contract
+
+JSON by default, exactly one stdout envelope (`ok`, `schema_version`, `data` or
+`error`, `meta.duration_ms`); diagnostics use stderr. `--help` is explicit human
+text. `text`/`raw` unwrap the payload. `--json` is a compatibility alias.
+
+Dry-run succeeds with `data.preview`, `data.confirm_token`, `data.expires_at`.
+No token means `E_CONFIRMATION_REQUIRED` (exit 5); stale/replayed tokens return
+`E_CONFLICT` (6). **`E_OUTCOME_UNKNOWN` (6, not retryable)** means the server may
+still be running or a write result cannot be established. `E_VERIFY_FAILED` (1,
+not retryable) means a selected postcondition failed. Neither implies rollback.
+Receipts in unresolved states block further native writes, including after a
+process crash. `workflow reconcile` records **a human assertion**, not proof of
+server idleness, rollback, geometry correctness or permission to replay the old token.
+
+`--fields` projects read results while retaining security/provenance/limitation
+metadata. CREOSON list paging is in `data.result`; source results are collected
+before sorting and paging, not server-side pagination. Separate calls are not
+snapshot isolated. Large step results live in separate hash-verified local files
+and are retrieved using `workflow result`, not inlined into history.
+
+Result verification distinguishes **observation**, **upstream acknowledgement
+only**, and **selected postconditions verified**. None means the real integration
+has been tested. Exports check signatures, not renderability or geometric fidelity.
+Native observation hashes cover selected metadata, not every geometry/kernel
+state or GUI change. Concurrent GUI/third-party edits are not prevented by CLI locks.
+
+## Configuration
+
+| Variable | Purpose |
+|---|---|
+| `CREO_CLI_CONFIG_DIR` | Private state directory; default `~/.creo-cli` |
+| `CREO_CLI_PERMISSION` | Human policy: `read` (default) or `write` |
+| `CREO_CLI_EXPERIMENTAL_NATIVE_WRITES` | Separate human opt-in, exactly `1` |
+| `CREO_CLI_WORKSPACE` | Existing disposable workspace, required for CREOSON writes |
+| `CREO_CLI_CREOSON_URL` | Loopback HTTP `/creoson` endpoint; no remote hosts, credentials, redirects or proxy use |
+| `CREO_CLI_CREOSON_SESSION` | Optional private session via environment; reads only for operations requiring version configuration |
+| `CREO_CLI_CREO_MAJOR` | Optional environment session version annotation; does not configure the server |
+| `PRO_COMM_MSG_EXE` | Installed communication executable for the separate VB API route |
+| `CREO_CLI_PYTHON` | Interpreter used by the optional Node source launcher |
+
+Session IDs are kept out of ordinary output, receipts and errors. A session token
+is not a license. No new account login is introduced. Timeouts share one command
+budget (0.1–300 seconds), and do not prove the external application stopped.
+Workspace symlinks/junctions, traversal, network paths and export overwrites are
+refused. Cross-process locks are cooperative, never a whole-application lock.
+
+## Project Structure
+
+```text
+creo_cli/          registry, safety, observations, VB API and CREOSON boundaries
+  creoson_*.py    typed allowlist, HTTP transport, workflow engine, state, schemas
+examples/         request files and workflows; no real native CAD templates
+skills/           operating guidance, uncertainty handling, safety checkpoints
+tests/            mock/VB API substitutes + stateful loopback HTTP substitute
+scripts/          tests, evidence, source-version tooling, guarded repository publication
+docs/             setup, protocol sources, compatibility, workflows and local evidence
+contract/.agent/  bootstrap mapping and fixed spec target; exact vendoring pending
+```
+
+## Development
+
+```bash
+python scripts/test.py --evidence docs/evidence/offline-tests-0.2.0.json
+python scripts/record_creoson_demo.py --output docs/evidence/creoson-offline-demo.json
+python scripts/version.py --check
+python -m compileall -q creo_cli scripts tests
+python scripts/bootstrap_spec.py --check
+python scripts/release_gate.py
+```
+
+The last two commands intentionally fail while exact spec assets, complete FCC
+certification and real Creo evidence are missing. Passing simulated contract tests
+and dispatch coverage never waive those gates. No GitHub CI run, Windows/Creo test,
+release signing, binary build, dependency audit or package publication is claimed.
+`package.json` is the version authority; update the root changelog, run
+`python scripts/version.py --sync`, then `--check`. Do not edit runtime changelog
+or Skill version copies independently.
+
+## Links
+
+[Agent entry](AGENTS.md) · [Skill](skills/creo-cli/SKILL.md) · [Security](SECURITY.md) ·
+[CREOSON setup](docs/CREOSON.md) · [Workflows](docs/WORKFLOWS.md) ·
+[Sources](docs/UPSTREAM_SOURCES.md) · [Compatibility](docs/COMPATIBILITY.md) ·
+[VB API](docs/NATIVE_ADAPTER.md) · [Architecture](docs/ARCHITECTURE.md) ·
+[E2E](docs/E2E.md) · [Spec status](docs/SPEC_STATUS.md) · [Changelog](CHANGELOG.md) ·
+[Notice](NOTICE.md) · [License](LICENSE) · [中文交接](docs/HANDOFF_zh.md)
+
+Timeout scope: the shared deadline bounds upstream HTTP waits and prevents starting a further request after expiry. Local hashing, filesystem calls and SQLite lock waits are not hard-preemptible by this timer; their separate size/lock bounds still apply.
+
+### Upstream interaction caveat
+
+`drawing create` can encounter an upstream modal error dialog; its `reference`
+and preview expose `interaction_risks`. The CLI deadline does not cancel the
+native operation or establish that the session is idle. After a timeout, inspect
+Creo before the explicit reconciliation flow. Source details are recorded in
+[UPSTREAM_SOURCES.md](docs/UPSTREAM_SOURCES.md).

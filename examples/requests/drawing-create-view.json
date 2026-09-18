@@ -1,0 +1,13 @@
+{
+  "drawing": "bracket.drw",
+  "model": "bracket.prt",
+  "model_view": "FRONT",
+  "view": "FRONT_MAIN",
+  "sheet": 1,
+  "point": {
+    "x": 100,
+    "y": 100
+  },
+  "scale": 1,
+  "coordinate_units": "drawing_units"
+}

@@ -1,0 +1,492 @@
+{
+  "ok": true,
+  "backend": "mock",
+  "simulation": true,
+  "native_live_verified": false,
+  "before_hole_pitch": 40,
+  "after_hole_pitch": 45,
+  "subprocess_calls": 8,
+  "note": "Actual source CLI processes against JSON fixtures, not CAD geometry. Replay also encounters a changed expected value; atomic-ledger replay is independently tested in the suite.",
+  "records": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "model",
+        "snapshot",
+        "--backend",
+        "mock",
+        "--model",
+        "$WORK/bracket.creo.json",
+        "--compact"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "_untrusted": [
+            "model",
+            "parameters",
+            "dimensions",
+            "features",
+            "relations"
+          ],
+          "dimensions": [
+            {
+              "id": "1",
+              "kind": "linear",
+              "relation_driven": false,
+              "symbol": "width",
+              "value": 80.0
+            },
+            {
+              "id": "2",
+              "kind": "linear",
+              "relation_driven": false,
+              "symbol": "hole_pitch",
+              "value": 40.0
+            }
+          ],
+          "features": [
+            {
+              "id": "1",
+              "name": "SIMULATED_BASE",
+              "status": "not_evaluated",
+              "type": "simulation"
+            }
+          ],
+          "model": {
+            "dirty": false,
+            "id": "bracket.prt",
+            "kind": "part",
+            "name": "bracket",
+            "revision": "0",
+            "units": "mm"
+          },
+          "not_checked": [
+            "all_cad_geometry",
+            "regeneration",
+            "interference",
+            "manufacturability",
+            "native_persistence"
+          ],
+          "parameters": [
+            {
+              "kind": "string",
+              "name": "DESCRIPTION",
+              "relation_driven": false,
+              "value": "Simulation fixture, not a Creo model"
+            }
+          ],
+          "provenance": {
+            "backend": "mock",
+            "simulation": true
+          },
+          "relations": [],
+          "snapshot_schema": "1.0"
+        },
+        "meta": {
+          "duration_ms": 8
+        }
+      }
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "change",
+        "validate",
+        "--changeset",
+        "$WORK/change.json",
+        "--compact"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "valid": true,
+          "kind": "changeset",
+          "summary": {
+            "model": "bracket.prt",
+            "operation_count": 1
+          },
+          "_untrusted": [
+            "summary"
+          ]
+        },
+        "meta": {
+          "duration_ms": 7
+        }
+      }
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "change",
+        "preview",
+        "--backend",
+        "mock",
+        "--model",
+        "$WORK/bracket.creo.json",
+        "--changeset",
+        "$WORK/change.json",
+        "--compact"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "preview": {
+            "model": "bracket.prt",
+            "changes": [
+              {
+                "operation": "dimension.set",
+                "target": "2",
+                "before": 40.0,
+                "after": 45.0,
+                "_untrusted": [
+                  "target",
+                  "before",
+                  "after"
+                ]
+              }
+            ],
+            "operation_count": 1,
+            "risk_tier": "T1",
+            "simulation": true,
+            "saves_to_disk": true,
+            "geometry_evaluated": false,
+            "warning": "A parameter plan is not a geometry preview; native edits remain unsaved."
+          },
+          "provenance": {
+            "backend": "mock",
+            "simulation": true
+          },
+          "not_checked": [
+            "all_cad_geometry",
+            "regeneration",
+            "interference",
+            "manufacturability",
+            "native_persistence"
+          ],
+          "_untrusted": [
+            "preview"
+          ],
+          "revision": "e575aaa393a896e1b69089ba16c9d0a448645bd3b756329168392e40f5c3a705"
+        },
+        "meta": {
+          "duration_ms": 8
+        }
+      }
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "change",
+        "apply",
+        "--backend",
+        "mock",
+        "--model",
+        "$WORK/bracket.creo.json",
+        "--changeset",
+        "$WORK/change.json",
+        "--dry-run",
+        "--compact"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "preview": {
+            "model": "bracket.prt",
+            "changes": [
+              {
+                "operation": "dimension.set",
+                "target": "2",
+                "before": 40.0,
+                "after": 45.0,
+                "_untrusted": [
+                  "target",
+                  "before",
+                  "after"
+                ]
+              }
+            ],
+            "operation_count": 1,
+            "risk_tier": "T1",
+            "simulation": true,
+            "saves_to_disk": true,
+            "geometry_evaluated": false,
+            "warning": "A parameter plan is not a geometry preview; native edits remain unsaved."
+          },
+          "provenance": {
+            "backend": "mock",
+            "simulation": true
+          },
+          "not_checked": [
+            "all_cad_geometry",
+            "regeneration",
+            "interference",
+            "manufacturability",
+            "native_persistence"
+          ],
+          "_untrusted": [
+            "preview"
+          ],
+          "confirm_token": "[one-time token omitted]",
+          "expires_at": "2026-09-17T15:46:10Z"
+        },
+        "meta": {
+          "duration_ms": 8
+        }
+      }
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "change",
+        "apply",
+        "--backend",
+        "mock",
+        "--model",
+        "$WORK/bracket.creo.json",
+        "--changeset",
+        "$WORK/change.json",
+        "--confirm",
+        "[one-time token omitted]",
+        "--compact"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "model": {
+            "dirty": false,
+            "id": "bracket.prt",
+            "kind": "part",
+            "name": "bracket",
+            "revision": "1",
+            "units": "mm"
+          },
+          "changes": [
+            {
+              "operation": "dimension.set",
+              "target": "2",
+              "before": 40.0,
+              "after": 45.0,
+              "_untrusted": [
+                "target",
+                "before",
+                "after"
+              ]
+            }
+          ],
+          "backup": "$WORK/bracket.creo.json.e575aaa393a896e1b69089ba16c9d0a448645bd3b756329168392e40f5c3a705.bak",
+          "persisted": true,
+          "verification": {
+            "requested_values": true,
+            "read_back": true,
+            "regenerated": false,
+            "geometry_verified": false
+          },
+          "provenance": {
+            "backend": "mock",
+            "simulation": true
+          },
+          "not_checked": [
+            "all_cad_geometry",
+            "regeneration",
+            "interference",
+            "manufacturability",
+            "native_persistence"
+          ],
+          "_untrusted": [
+            "model",
+            "changes",
+            "backup"
+          ],
+          "audit_status": "recorded"
+        },
+        "meta": {
+          "duration_ms": 11
+        }
+      }
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "model",
+        "snapshot",
+        "--backend",
+        "mock",
+        "--model",
+        "$WORK/bracket.creo.json",
+        "--compact"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "_untrusted": [
+            "model",
+            "parameters",
+            "dimensions",
+            "features",
+            "relations"
+          ],
+          "dimensions": [
+            {
+              "id": "1",
+              "kind": "linear",
+              "relation_driven": false,
+              "symbol": "width",
+              "value": 80.0
+            },
+            {
+              "id": "2",
+              "kind": "linear",
+              "relation_driven": false,
+              "symbol": "hole_pitch",
+              "value": 45.0
+            }
+          ],
+          "features": [
+            {
+              "id": "1",
+              "name": "SIMULATED_BASE",
+              "status": "not_evaluated",
+              "type": "simulation"
+            }
+          ],
+          "model": {
+            "dirty": false,
+            "id": "bracket.prt",
+            "kind": "part",
+            "name": "bracket",
+            "revision": "1",
+            "units": "mm"
+          },
+          "not_checked": [
+            "all_cad_geometry",
+            "regeneration",
+            "interference",
+            "manufacturability",
+            "native_persistence"
+          ],
+          "parameters": [
+            {
+              "kind": "string",
+              "name": "DESCRIPTION",
+              "relation_driven": false,
+              "value": "Simulation fixture, not a Creo model"
+            }
+          ],
+          "provenance": {
+            "backend": "mock",
+            "simulation": true
+          },
+          "relations": [],
+          "snapshot_schema": "1.0"
+        },
+        "meta": {
+          "duration_ms": 8
+        }
+      }
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "change",
+        "history",
+        "--compact"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "items": [
+            {
+              "id": "2",
+              "attempt_id": "5e7c9f3c57e1475f8205e576bd4609e3",
+              "at": "2026-09-17T15:31:11.616133Z",
+              "command": "change apply",
+              "target_sha256": "2f5a83ac7a5c3e64611babc8d9f21ac5ebe8b6b284bdae8aa86c9374520cf77c",
+              "phase": "verified",
+              "error_code": null
+            },
+            {
+              "id": "1",
+              "attempt_id": "5e7c9f3c57e1475f8205e576bd4609e3",
+              "at": "2026-09-17T15:31:11.614914Z",
+              "command": "change apply",
+              "target_sha256": "2f5a83ac7a5c3e64611babc8d9f21ac5ebe8b6b284bdae8aa86c9374520cf77c",
+              "phase": "started",
+              "error_code": null
+            }
+          ],
+          "count": 2,
+          "total": 2,
+          "offset": 0,
+          "has_more": false,
+          "_untrusted": [
+            "items"
+          ]
+        },
+        "meta": {
+          "duration_ms": 8
+        }
+      }
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "creo_cli",
+        "change",
+        "apply",
+        "--backend",
+        "mock",
+        "--model",
+        "$WORK/bracket.creo.json",
+        "--changeset",
+        "$WORK/change.json",
+        "--confirm",
+        "[one-time token omitted]",
+        "--compact"
+      ],
+      "exit_code": 6,
+      "stdout": {
+        "ok": false,
+        "schema_version": "1.0",
+        "error": {
+          "code": "E_CONFLICT",
+          "message": "expected value has changed",
+          "details": {},
+          "retryable": false
+        },
+        "meta": {
+          "duration_ms": 8
+        }
+      }
+    }
+  ]
+}

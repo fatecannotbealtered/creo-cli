@@ -1,0 +1,12 @@
+{
+  "ok": false,
+  "blocked_by": [
+    ".agent/SPEC_LOCK.json (exact upstream files are not vendored yet)",
+    "package is intentionally private/development-only",
+    "Development snapshot: full FCC certification, pinned spec vendoring, and live Creo evidence are incomplete.",
+    "missing reviewed evidence: full-conformance.json",
+    "missing reviewed evidence: live-creo.json",
+    "upstream-generated runtime contract is not integrated"
+  ],
+  "note": "Evidence review remains a human responsibility; this guard does not attest arbitrary JSON claims."
+}

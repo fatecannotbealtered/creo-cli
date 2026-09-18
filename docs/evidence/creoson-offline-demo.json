@@ -1,0 +1,2004 @@
+{
+  "ok": true,
+  "at": "2026-09-17T18:25:09.663433Z",
+  "upstream_kind": "stateful_loopback_http_substitute",
+  "real_creo_verified": false,
+  "native_cad_files_generated": false,
+  "cli_subprocess_count": 15,
+  "http_request_count": 183,
+  "checks": {
+    "dimension_40_to_45": true,
+    "selected_data_survived_fixture_reopen": true,
+    "two_drawing_views_created_in_substitute": true,
+    "step_and_pdf_fixture_headers_published": true,
+    "earlier_step_result_retrieved": true,
+    "all_receipts_completed": true
+  },
+  "source_fingerprint_sha256": "10e90d20788f241494119bb285691e3cce17bd6494f0131965aa57565fe4b406",
+  "calls": [
+    {
+      "argv": [
+        "context"
+      ],
+      "exit_code": 0,
+      "duration_ms": 637,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "version": "0.2.0",
+          "credentials": {
+            "configured": false,
+            "kind": "none_required"
+          },
+          "config": {
+            "permission": "write",
+            "state_directory": "<temporary_workspace>/state",
+            "default_backend": "native",
+            "native_write_opt_in": true
+          },
+          "native": {
+            "platform_supported": false,
+            "architecture_supported": true,
+            "python_binding_present": false,
+            "communication_executable_present": false,
+            "com_registered": false,
+            "configured": false,
+            "live_verified": false,
+            "license_status": "unknown"
+          },
+          "creoson": {
+            "endpoint": "http://127.0.0.1:38427/creoson",
+            "session_cached": false,
+            "workspace_configured": true,
+            "live_verified": false,
+            "transport": "loopback_http",
+            "automatic_retries": false
+          },
+          "_untrusted": [
+            "config.state_directory"
+          ]
+        },
+        "meta": {
+          "duration_ms": 17
+        }
+      }
+    },
+    {
+      "argv": [
+        "creoson",
+        "status"
+      ],
+      "exit_code": 0,
+      "duration_ms": 613,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "running": true,
+          "session_cached": false,
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          }
+        },
+        "meta": {
+          "duration_ms": 18
+        }
+      }
+    },
+    {
+      "argv": [
+        "creoson",
+        "connect",
+        "--creo-major",
+        "10",
+        "--dry-run"
+      ],
+      "exit_code": 0,
+      "duration_ms": 640,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "preview": {
+            "endpoint": "http://127.0.0.1:38427/creoson",
+            "creo_major_declared": 10,
+            "starts_creo": false,
+            "replaces_cached_session": false
+          },
+          "confirm_token": "[confirmation token omitted]",
+          "expires_at": "2026-09-17T18:40:01Z",
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "not_checked": [
+            "server_reachability",
+            "actual_creo_version"
+          ]
+        },
+        "meta": {
+          "duration_ms": 20
+        }
+      }
+    },
+    {
+      "argv": [
+        "creoson",
+        "connect",
+        "--creo-major",
+        "10",
+        "--confirm",
+        "<confirm_token>"
+      ],
+      "exit_code": 0,
+      "duration_ms": 665,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "connected": true,
+          "creo_major_declared": 10,
+          "creo_major_detected": null,
+          "session_stored": true,
+          "live_verified": false,
+          "operation_id": "8b489c4a62d6488fb15323d3f2331b48",
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          }
+        },
+        "meta": {
+          "duration_ms": 21
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "validate",
+        "--input",
+        "<temporary_workspace>/bracket-workflow.json"
+      ],
+      "exit_code": 0,
+      "duration_ms": 625,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "valid": true,
+          "kind": "creoson_workflow",
+          "summary": {
+            "steps": 5,
+            "writes": 4,
+            "live_verified": false
+          }
+        },
+        "meta": {
+          "duration_ms": 18
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "run",
+        "--input",
+        "<temporary_workspace>/bracket-workflow.json",
+        "--dry-run"
+      ],
+      "exit_code": 0,
+      "duration_ms": 654,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "preview": {
+            "steps": [
+              {
+                "id": "inspect",
+                "command": "dimension list",
+                "request": {
+                  "file": "bracket.prt"
+                },
+                "upstream": {
+                  "command": "dimension",
+                  "function": "list_detail",
+                  "data": {
+                    "encoded": false,
+                    "select": false,
+                    "file": "bracket.prt"
+                  }
+                },
+                "effect": "read",
+                "state_check": "observed",
+                "verification_policy": "observation",
+                "interaction_risks": []
+              },
+              {
+                "id": "pitch",
+                "command": "dimension set",
+                "request": {
+                  "file": "bracket.prt",
+                  "name": "d1",
+                  "value": 45,
+                  "expected_length_units": "mm"
+                },
+                "upstream": {
+                  "command": "dimension",
+                  "function": "set",
+                  "data": {
+                    "encoded": false,
+                    "file": "bracket.prt",
+                    "name": "d1",
+                    "value": 45
+                  }
+                },
+                "effect": "memory",
+                "state_check": "observed",
+                "verification_policy": "dimension",
+                "interaction_risks": []
+              },
+              {
+                "id": "regen",
+                "command": "file regenerate",
+                "request": {
+                  "file": "bracket.prt"
+                },
+                "upstream": {
+                  "command": "file",
+                  "function": "regenerate",
+                  "data": {
+                    "display": false,
+                    "file": "bracket.prt"
+                  }
+                },
+                "effect": "memory",
+                "state_check": "deferred_until_execution",
+                "verification_policy": "regenerate",
+                "interaction_risks": []
+              },
+              {
+                "id": "persist",
+                "command": "file roundtrip",
+                "request": {
+                  "file": "bracket.prt"
+                },
+                "upstream": {
+                  "command": "file",
+                  "function": "save",
+                  "data": {
+                    "file": "bracket.prt"
+                  }
+                },
+                "effect": "disk_and_memory",
+                "state_check": "deferred_until_execution",
+                "verification_policy": "roundtrip",
+                "interaction_risks": []
+              },
+              {
+                "id": "step",
+                "command": "export step",
+                "request": {
+                  "file": "bracket.prt",
+                  "filename": "bracket.step",
+                  "dirname": "exports"
+                },
+                "upstream": {
+                  "command": "interface",
+                  "function": "export_file",
+                  "data": {
+                    "type": "STEP",
+                    "geom_flags": "solids",
+                    "file": "bracket.prt",
+                    "filename": "bracket.step",
+                    "dirname": "<temporary_workspace>/exports"
+                  }
+                },
+                "effect": "disk",
+                "state_check": "deferred_until_execution",
+                "verification_policy": "export",
+                "interaction_risks": []
+              }
+            ],
+            "state_sha256": "0526743c11d4db46477c909053484055b142ffa1a85add49c467e9c6d0c7e66e",
+            "target_models": [
+              "bracket.prt"
+            ],
+            "preview_kind": "request_plan_not_predicted_geometry",
+            "atomic": false,
+            "rollback_available": false,
+            "exclusive_disposable_session_required": true,
+            "export_policy": "private_staging_then_atomic_no_clobber_publish",
+            "observed_model_count": 1
+          },
+          "confirm_token": "[confirmation token omitted]",
+          "expires_at": "2026-09-17T18:40:03Z",
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "not_checked": [
+            "real_creo_execution_not_verified",
+            "no_full_geometry_or_design_intent_verification",
+            "no_transaction_or_automatic_rollback",
+            "external_gui_and_other_clients_not_locked",
+            "upstream_feature_listing_is_visible_features_only"
+          ],
+          "_untrusted": [
+            "preview"
+          ]
+        },
+        "meta": {
+          "duration_ms": 25
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "run",
+        "--input",
+        "<temporary_workspace>/bracket-workflow.json",
+        "--confirm",
+        "<confirm_token>"
+      ],
+      "exit_code": 0,
+      "duration_ms": 685,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "operation_id": "a8fc10ea1d84401f896e7e6044aa1381",
+          "status": "completed",
+          "completed_steps": 5,
+          "steps": [
+            {
+              "id": "inspect",
+              "command": "dimension list",
+              "ok": true,
+              "verification": {
+                "level": "observation",
+                "checks": []
+              },
+              "result_sha256": "d95770f457f5ca0ee5843d922aaebc4c6a16b305d1e0126f12e2db9d1f9dfdc8",
+              "result_artifact": {
+                "sha256": "fb7fd3049fbb42833b6def54b03d1437c9731c0b1e0979917fabfe22add309c2",
+                "size_bytes": 764
+              }
+            },
+            {
+              "id": "pitch",
+              "command": "dimension set",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "value_readback",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing",
+                  "reopen_persistence"
+                ]
+              },
+              "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "result_artifact": {
+                "sha256": "2ed66835a3f64dad19f1395a3bcb614935217b703456aef79758c8933415138c",
+                "size_bytes": 752
+              }
+            },
+            {
+              "id": "regen",
+              "command": "file regenerate",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "no_failed_or_unregenerated_features_in_upstream_listing",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing",
+                  "reopen_persistence"
+                ]
+              },
+              "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "result_artifact": {
+                "sha256": "ea45b4d099844966b3ae0ee62ec40b4250aa70b74c0262c57f4de464161e7441",
+                "size_bytes": 795
+              }
+            },
+            {
+              "id": "persist",
+              "command": "file roundtrip",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "new_or_changed_saved_artifact",
+                    "passed": true
+                  },
+                  {
+                    "check": "erased_from_memory",
+                    "passed": true
+                  },
+                  {
+                    "check": "reopened",
+                    "passed": true
+                  },
+                  {
+                    "check": "no_open_errors",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_units",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_parameters",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_dimensions",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_features",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_relations",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_postregen_relations",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_views",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_materials",
+                    "passed": true
+                  },
+                  {
+                    "check": "persisted_material",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing"
+                ]
+              },
+              "result_sha256": "ef8982a7555851291ee3af312fb5f1cc31f4de60c6a91dd393aceaa90139384a",
+              "result_artifact": {
+                "sha256": "51a40bb87cb227e5aae087a65a3c828ea4f8e29599ced14b3a7cc7fc31406a2b",
+                "size_bytes": 1912
+              }
+            },
+            {
+              "id": "step",
+              "command": "export step",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "export_exists",
+                    "passed": true
+                  },
+                  {
+                    "check": "export_nonempty",
+                    "passed": true
+                  },
+                  {
+                    "check": "export_header",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing",
+                  "reopen_persistence"
+                ]
+              },
+              "result_sha256": "06fee0447fd56c9d3bb553495f8175d558a8e4bcf6aad80c062d5ce081bfcaa4",
+              "result_artifact": {
+                "sha256": "0cd92225f1035ddf2e21195085c173e017fe1a9ec236239c7083e7286228ca1b",
+                "size_bytes": 1082
+              }
+            }
+          ],
+          "last_result": {
+            "operation": "export step",
+            "result": {
+              "dirname": "<temporary_workspace>/exports",
+              "filename": "bracket.step",
+              "artifact": {
+                "path": "<temporary_workspace>/exports/bracket.step",
+                "size_bytes": 40,
+                "sha256": "2092441e04d8ce4ce9ce55787b2502d745497038d803ba4ab5c95950c6422fc4"
+              },
+              "publish_policy": "atomic_no_clobber"
+            },
+            "verification": {
+              "level": "selected_postconditions_verified",
+              "checks": [
+                {
+                  "check": "export_exists",
+                  "passed": true
+                },
+                {
+                  "check": "export_nonempty",
+                  "passed": true
+                },
+                {
+                  "check": "export_header",
+                  "passed": true
+                }
+              ],
+              "not_checked": [
+                "full_geometry",
+                "engineering_correctness",
+                "constraint_degrees_of_freedom",
+                "hidden_features_outside_upstream_listing",
+                "reopen_persistence"
+              ]
+            },
+            "provenance": {
+              "backend": "creoson",
+              "simulation": false,
+              "live_verified": false,
+              "evidence_level": "published_interface_and_offline_tests"
+            },
+            "not_checked": [
+              "real_creo_execution_not_verified",
+              "no_full_geometry_or_design_intent_verification",
+              "no_transaction_or_automatic_rollback",
+              "external_gui_and_other_clients_not_locked",
+              "upstream_feature_listing_is_visible_features_only"
+            ],
+            "disk_backups": [],
+            "request_count": 86,
+            "_untrusted": [
+              "result",
+              "disk_backups"
+            ]
+          },
+          "request_count": 86,
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "not_checked": [
+            "real_creo_execution_not_verified",
+            "no_full_geometry_or_design_intent_verification",
+            "no_transaction_or_automatic_rollback",
+            "external_gui_and_other_clients_not_locked",
+            "upstream_feature_listing_is_visible_features_only"
+          ],
+          "_untrusted": [
+            "last_result"
+          ]
+        },
+        "meta": {
+          "duration_ms": 52
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "status",
+        "--operation-id",
+        "a8fc10ea1d84401f896e7e6044aa1381"
+      ],
+      "exit_code": 0,
+      "duration_ms": 638,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "receipt": {
+            "at": "2026-09-17T18:25:04.100186Z",
+            "command": "workflow run",
+            "completed_steps": 5,
+            "endpoint_sha256": "0a95e22768e4a59cb128eed36c223e029c63d71c1b0377e99a20140689394961",
+            "live_verified": false,
+            "manifest_sha256": "ca66566cf5b900ba13d44113e9539d53bcd0866f928819ba681a9d6e04ace28a",
+            "operation_id": "a8fc10ea1d84401f896e7e6044aa1381",
+            "request_count": 86,
+            "rollback_performed": false,
+            "status": "completed",
+            "steps": [
+              {
+                "command": "dimension list",
+                "id": "inspect",
+                "ok": true,
+                "result_artifact": {
+                  "sha256": "fb7fd3049fbb42833b6def54b03d1437c9731c0b1e0979917fabfe22add309c2",
+                  "size_bytes": 764
+                },
+                "result_sha256": "d95770f457f5ca0ee5843d922aaebc4c6a16b305d1e0126f12e2db9d1f9dfdc8",
+                "verification": {
+                  "checks": [],
+                  "level": "observation"
+                }
+              },
+              {
+                "command": "dimension set",
+                "id": "pitch",
+                "ok": true,
+                "result_artifact": {
+                  "sha256": "2ed66835a3f64dad19f1395a3bcb614935217b703456aef79758c8933415138c",
+                  "size_bytes": 752
+                },
+                "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                "verification": {
+                  "checks": [
+                    {
+                      "check": "value_readback",
+                      "passed": true
+                    }
+                  ],
+                  "level": "selected_postconditions_verified",
+                  "not_checked": [
+                    "full_geometry",
+                    "engineering_correctness",
+                    "constraint_degrees_of_freedom",
+                    "hidden_features_outside_upstream_listing",
+                    "reopen_persistence"
+                  ]
+                }
+              },
+              {
+                "command": "file regenerate",
+                "id": "regen",
+                "ok": true,
+                "result_artifact": {
+                  "sha256": "ea45b4d099844966b3ae0ee62ec40b4250aa70b74c0262c57f4de464161e7441",
+                  "size_bytes": 795
+                },
+                "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                "verification": {
+                  "checks": [
+                    {
+                      "check": "no_failed_or_unregenerated_features_in_upstream_listing",
+                      "passed": true
+                    }
+                  ],
+                  "level": "selected_postconditions_verified",
+                  "not_checked": [
+                    "full_geometry",
+                    "engineering_correctness",
+                    "constraint_degrees_of_freedom",
+                    "hidden_features_outside_upstream_listing",
+                    "reopen_persistence"
+                  ]
+                }
+              },
+              {
+                "command": "file roundtrip",
+                "id": "persist",
+                "ok": true,
+                "result_artifact": {
+                  "sha256": "51a40bb87cb227e5aae087a65a3c828ea4f8e29599ced14b3a7cc7fc31406a2b",
+                  "size_bytes": 1912
+                },
+                "result_sha256": "ef8982a7555851291ee3af312fb5f1cc31f4de60c6a91dd393aceaa90139384a",
+                "verification": {
+                  "checks": [
+                    {
+                      "check": "new_or_changed_saved_artifact",
+                      "passed": true
+                    },
+                    {
+                      "check": "erased_from_memory",
+                      "passed": true
+                    },
+                    {
+                      "check": "reopened",
+                      "passed": true
+                    },
+                    {
+                      "check": "no_open_errors",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_units",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_parameters",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_dimensions",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_features",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_relations",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_postregen_relations",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_views",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_materials",
+                      "passed": true
+                    },
+                    {
+                      "check": "persisted_material",
+                      "passed": true
+                    }
+                  ],
+                  "level": "selected_postconditions_verified",
+                  "not_checked": [
+                    "full_geometry",
+                    "engineering_correctness",
+                    "constraint_degrees_of_freedom",
+                    "hidden_features_outside_upstream_listing"
+                  ]
+                }
+              },
+              {
+                "command": "export step",
+                "id": "step",
+                "ok": true,
+                "result_artifact": {
+                  "sha256": "0cd92225f1035ddf2e21195085c173e017fe1a9ec236239c7083e7286228ca1b",
+                  "size_bytes": 1082
+                },
+                "result_sha256": "06fee0447fd56c9d3bb553495f8175d558a8e4bcf6aad80c062d5ce081bfcaa4",
+                "verification": {
+                  "checks": [
+                    {
+                      "check": "export_exists",
+                      "passed": true
+                    },
+                    {
+                      "check": "export_nonempty",
+                      "passed": true
+                    },
+                    {
+                      "check": "export_header",
+                      "passed": true
+                    }
+                  ],
+                  "level": "selected_postconditions_verified",
+                  "not_checked": [
+                    "full_geometry",
+                    "engineering_correctness",
+                    "constraint_degrees_of_freedom",
+                    "hidden_features_outside_upstream_listing",
+                    "reopen_persistence"
+                  ]
+                }
+              }
+            ],
+            "verification_scope": "selected_postconditions_only"
+          },
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "not_checked": [
+            "current_creo_state"
+          ],
+          "_untrusted": [
+            "receipt"
+          ]
+        },
+        "meta": {
+          "duration_ms": 17
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "result",
+        "--operation-id",
+        "a8fc10ea1d84401f896e7e6044aa1381",
+        "--step-id",
+        "inspect"
+      ],
+      "exit_code": 0,
+      "duration_ms": 683,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "operation_id": "a8fc10ea1d84401f896e7e6044aa1381",
+          "step_id": "inspect",
+          "result": {
+            "_untrusted": [
+              "result"
+            ],
+            "not_checked": [
+              "real_creo_execution_not_verified",
+              "no_full_geometry_or_design_intent_verification",
+              "no_transaction_or_automatic_rollback",
+              "external_gui_and_other_clients_not_locked",
+              "upstream_feature_listing_is_visible_features_only"
+            ],
+            "operation": "dimension list",
+            "provenance": {
+              "backend": "creoson",
+              "evidence_level": "published_interface_and_offline_tests",
+              "live_verified": false,
+              "simulation": false
+            },
+            "request_count": 15,
+            "result": {
+              "_untrusted": [
+                "items"
+              ],
+              "count": 2,
+              "has_more": false,
+              "items": [
+                {
+                  "dim_type": "linear",
+                  "dwg_dim": false,
+                  "encoded": false,
+                  "name": "d1",
+                  "text": [
+                    "{0:@D}\n"
+                  ],
+                  "value": 40.0
+                },
+                {
+                  "dim_type": "diameter",
+                  "dwg_dim": false,
+                  "encoded": false,
+                  "name": "d2",
+                  "value": 5.0
+                }
+              ],
+              "offset": 0,
+              "total": 2
+            },
+            "verification": {
+              "checks": [],
+              "level": "observation"
+            }
+          },
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "_untrusted": [
+            "result"
+          ]
+        },
+        "meta": {
+          "duration_ms": 18
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "result",
+        "--operation-id",
+        "a8fc10ea1d84401f896e7e6044aa1381",
+        "--step-id",
+        "persist"
+      ],
+      "exit_code": 0,
+      "duration_ms": 671,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "operation_id": "a8fc10ea1d84401f896e7e6044aa1381",
+          "step_id": "persist",
+          "result": {
+            "_untrusted": [
+              "result",
+              "disk_backups"
+            ],
+            "disk_backups": [
+              {
+                "path": "<temporary_workspace>/.creo-cli-backups/a8fc10ea1d84401f896e7e6044aa1381-persist/bracket.prt",
+                "sha256": "560215f108795b6901c3a819948fccdf4b7f981541f1ef610a3f8e1d5f69eacd",
+                "size_bytes": 34
+              }
+            ],
+            "not_checked": [
+              "real_creo_execution_not_verified",
+              "no_full_geometry_or_design_intent_verification",
+              "no_transaction_or_automatic_rollback",
+              "external_gui_and_other_clients_not_locked",
+              "upstream_feature_listing_is_visible_features_only"
+            ],
+            "operation": "file roundtrip",
+            "provenance": {
+              "backend": "creoson",
+              "evidence_level": "published_interface_and_offline_tests",
+              "live_verified": false,
+              "simulation": false
+            },
+            "request_count": 73,
+            "result": {
+              "artifacts": [
+                {
+                  "path": "<temporary_workspace>/bracket.prt",
+                  "sha256": "560215f108795b6901c3a819948fccdf4b7f981541f1ef610a3f8e1d5f69eacd",
+                  "size_bytes": 34
+                },
+                {
+                  "path": "<temporary_workspace>/bracket.prt.2",
+                  "sha256": "a4cb84da73cd64c4bf7ff033e04613d6626ae735d466913a659978bc7aa15978",
+                  "size_bytes": 981
+                }
+              ],
+              "compared_sections": [
+                "units",
+                "parameters",
+                "dimensions",
+                "features",
+                "relations",
+                "postregen_relations",
+                "views",
+                "materials",
+                "material"
+              ],
+              "roundtrip_verified": true
+            },
+            "verification": {
+              "checks": [
+                {
+                  "check": "new_or_changed_saved_artifact",
+                  "passed": true
+                },
+                {
+                  "check": "erased_from_memory",
+                  "passed": true
+                },
+                {
+                  "check": "reopened",
+                  "passed": true
+                },
+                {
+                  "check": "no_open_errors",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_units",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_parameters",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_dimensions",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_features",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_relations",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_postregen_relations",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_views",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_materials",
+                  "passed": true
+                },
+                {
+                  "check": "persisted_material",
+                  "passed": true
+                }
+              ],
+              "level": "selected_postconditions_verified",
+              "not_checked": [
+                "full_geometry",
+                "engineering_correctness",
+                "constraint_degrees_of_freedom",
+                "hidden_features_outside_upstream_listing"
+              ]
+            }
+          },
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "_untrusted": [
+            "result"
+          ]
+        },
+        "meta": {
+          "duration_ms": 20
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "validate",
+        "--input",
+        "<temporary_workspace>/drawing-workflow.json"
+      ],
+      "exit_code": 0,
+      "duration_ms": 684,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "valid": true,
+          "kind": "creoson_workflow",
+          "summary": {
+            "steps": 5,
+            "writes": 5,
+            "live_verified": false
+          }
+        },
+        "meta": {
+          "duration_ms": 17
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "run",
+        "--input",
+        "<temporary_workspace>/drawing-workflow.json",
+        "--dry-run"
+      ],
+      "exit_code": 0,
+      "duration_ms": 726,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "preview": {
+            "steps": [
+              {
+                "id": "drawing",
+                "command": "drawing create",
+                "request": {
+                  "template": "templates/a4.drw",
+                  "model": "bracket.prt",
+                  "drawing": "bracket.drw",
+                  "scale": 1
+                },
+                "upstream": {
+                  "command": "drawing",
+                  "function": "create",
+                  "data": {
+                    "display": true,
+                    "activate": true,
+                    "new_window": false,
+                    "template": "<temporary_workspace>/templates/a4.drw",
+                    "model": "bracket.prt",
+                    "drawing": "bracket.drw",
+                    "scale": 1
+                  }
+                },
+                "effect": "memory",
+                "state_check": "observed",
+                "verification_policy": "drawing_create",
+                "interaction_risks": [
+                  "upstream_may_open_modal_error_dialog",
+                  "client_timeout_does_not_cancel_creo"
+                ]
+              },
+              {
+                "id": "front",
+                "command": "drawing create-view",
+                "request": {
+                  "drawing": "bracket.drw",
+                  "model": "bracket.prt",
+                  "model_view": "FRONT",
+                  "view": "FRONT_MAIN",
+                  "sheet": 1,
+                  "point": {
+                    "x": 100,
+                    "y": 100
+                  },
+                  "scale": 1,
+                  "coordinate_units": "drawing_units"
+                },
+                "upstream": {
+                  "command": "drawing",
+                  "function": "create_gen_view",
+                  "data": {
+                    "exploded": false,
+                    "drawing": "bracket.drw",
+                    "model": "bracket.prt",
+                    "model_view": "FRONT",
+                    "view": "FRONT_MAIN",
+                    "sheet": 1,
+                    "point": {
+                      "x": 100,
+                      "y": 100
+                    },
+                    "scale": 1
+                  }
+                },
+                "effect": "memory",
+                "state_check": "deferred_until_execution",
+                "verification_policy": "drawing_views",
+                "interaction_risks": []
+              },
+              {
+                "id": "right",
+                "command": "drawing project-view",
+                "request": {
+                  "drawing": "bracket.drw",
+                  "parent_view": "FRONT_MAIN",
+                  "view": "RIGHT_PROJECTED",
+                  "sheet": 1,
+                  "point": {
+                    "x": 100,
+                    "y": 0
+                  },
+                  "coordinate_units": "drawing_units"
+                },
+                "upstream": {
+                  "command": "drawing",
+                  "function": "create_proj_view",
+                  "data": {
+                    "exploded": false,
+                    "drawing": "bracket.drw",
+                    "parent_view": "FRONT_MAIN",
+                    "view": "RIGHT_PROJECTED",
+                    "sheet": 1,
+                    "point": {
+                      "x": 100,
+                      "y": 0
+                    }
+                  }
+                },
+                "effect": "memory",
+                "state_check": "deferred_until_execution",
+                "verification_policy": "drawing_views",
+                "interaction_risks": []
+              },
+              {
+                "id": "regen",
+                "command": "drawing regenerate",
+                "request": {
+                  "drawing": "bracket.drw"
+                },
+                "upstream": {
+                  "command": "drawing",
+                  "function": "regenerate",
+                  "data": {
+                    "drawing": "bracket.drw"
+                  }
+                },
+                "effect": "memory",
+                "state_check": "deferred_until_execution",
+                "verification_policy": "acknowledgement",
+                "interaction_risks": []
+              },
+              {
+                "id": "pdf",
+                "command": "export pdf",
+                "request": {
+                  "file": "bracket.drw",
+                  "filename": "bracket.pdf",
+                  "dirname": "exports"
+                },
+                "upstream": {
+                  "command": "interface",
+                  "function": "export_pdf",
+                  "data": {
+                    "sheet_range": "all",
+                    "use_drawing_settings": true,
+                    "file": "bracket.drw",
+                    "filename": "bracket.pdf",
+                    "dirname": "<temporary_workspace>/exports"
+                  }
+                },
+                "effect": "disk",
+                "state_check": "deferred_until_execution",
+                "verification_policy": "export",
+                "interaction_risks": []
+              }
+            ],
+            "state_sha256": "6bee45942bd4aacaf5defa4f52d981cdf1e33b7db47e04fd5f8cb27af9982768",
+            "target_models": [
+              "bracket.drw",
+              "bracket.prt"
+            ],
+            "preview_kind": "request_plan_not_predicted_geometry",
+            "atomic": false,
+            "rollback_available": false,
+            "exclusive_disposable_session_required": true,
+            "export_policy": "private_staging_then_atomic_no_clobber_publish",
+            "observed_model_count": 1
+          },
+          "confirm_token": "[confirmation token omitted]",
+          "expires_at": "2026-09-17T18:40:07Z",
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "not_checked": [
+            "real_creo_execution_not_verified",
+            "no_full_geometry_or_design_intent_verification",
+            "no_transaction_or_automatic_rollback",
+            "external_gui_and_other_clients_not_locked",
+            "upstream_feature_listing_is_visible_features_only"
+          ],
+          "_untrusted": [
+            "preview"
+          ]
+        },
+        "meta": {
+          "duration_ms": 26
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "run",
+        "--input",
+        "<temporary_workspace>/drawing-workflow.json",
+        "--confirm",
+        "<confirm_token>"
+      ],
+      "exit_code": 0,
+      "duration_ms": 681,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "operation_id": "7df7627e34784ebf8c6b4caa434a5fdd",
+          "status": "completed",
+          "completed_steps": 5,
+          "steps": [
+            {
+              "id": "drawing",
+              "command": "drawing create",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "model_loaded",
+                    "passed": true
+                  },
+                  {
+                    "check": "model_linked",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing",
+                  "reopen_persistence"
+                ]
+              },
+              "result_sha256": "986eff83a40d150ec225fd6544cd71e202bcdfb8184bb735914dcbb934abddb2",
+              "result_artifact": {
+                "sha256": "6b2d1934725dab41a625d77e4fd39b4e9eab568cafcceee0f92dbeeafc5fdd9b",
+                "size_bytes": 813
+              }
+            },
+            {
+              "id": "front",
+              "command": "drawing create-view",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "view_on_requested_sheet",
+                    "passed": true
+                  },
+                  {
+                    "check": "view_references_model",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing",
+                  "reopen_persistence"
+                ]
+              },
+              "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "result_artifact": {
+                "sha256": "4aeb1f10d0afcb2a4d06f97e682998dfddb6578017a0f8fdeb594f19b7375798",
+                "size_bytes": 815
+              }
+            },
+            {
+              "id": "right",
+              "command": "drawing project-view",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "view_on_requested_sheet",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing",
+                  "reopen_persistence"
+                ]
+              },
+              "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "result_artifact": {
+                "sha256": "aae7701d10ff72691d477eb8380bb07783219989a244cb243883962782fd1d54",
+                "size_bytes": 768
+              }
+            },
+            {
+              "id": "regen",
+              "command": "drawing regenerate",
+              "ok": true,
+              "verification": {
+                "level": "upstream_acknowledged_only",
+                "checks": [],
+                "not_checked": [
+                  "visual_result",
+                  "geometric_result"
+                ]
+              },
+              "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "result_artifact": {
+                "sha256": "2a5f889041abf4f024f82448f769ebe70d8f1a4a727e4aebb89e176918f406a3",
+                "size_bytes": 608
+              }
+            },
+            {
+              "id": "pdf",
+              "command": "export pdf",
+              "ok": true,
+              "verification": {
+                "level": "selected_postconditions_verified",
+                "checks": [
+                  {
+                    "check": "export_exists",
+                    "passed": true
+                  },
+                  {
+                    "check": "export_nonempty",
+                    "passed": true
+                  },
+                  {
+                    "check": "export_header",
+                    "passed": true
+                  }
+                ],
+                "not_checked": [
+                  "full_geometry",
+                  "engineering_correctness",
+                  "constraint_degrees_of_freedom",
+                  "hidden_features_outside_upstream_listing",
+                  "reopen_persistence"
+                ]
+              },
+              "result_sha256": "9912ff295ad1e52f209fafefb81aa7b932a9bc015b321faa897ec56a972a4caf",
+              "result_artifact": {
+                "sha256": "ae94e6e35487e0d4542600590a739aeeb0d0f308a9cbeb899fc15ec5fc295bc9",
+                "size_bytes": 1079
+              }
+            }
+          ],
+          "last_result": {
+            "operation": "export pdf",
+            "result": {
+              "dirname": "<temporary_workspace>/exports",
+              "filename": "bracket.pdf",
+              "artifact": {
+                "path": "<temporary_workspace>/exports/bracket.pdf",
+                "size_bytes": 23,
+                "sha256": "584e9fe469e6feccf1cf0d6add7563460be50614fbfbac291e38ee1e39621cd9"
+              },
+              "publish_policy": "atomic_no_clobber"
+            },
+            "verification": {
+              "level": "selected_postconditions_verified",
+              "checks": [
+                {
+                  "check": "export_exists",
+                  "passed": true
+                },
+                {
+                  "check": "export_nonempty",
+                  "passed": true
+                },
+                {
+                  "check": "export_header",
+                  "passed": true
+                }
+              ],
+              "not_checked": [
+                "full_geometry",
+                "engineering_correctness",
+                "constraint_degrees_of_freedom",
+                "hidden_features_outside_upstream_listing",
+                "reopen_persistence"
+              ]
+            },
+            "provenance": {
+              "backend": "creoson",
+              "simulation": false,
+              "live_verified": false,
+              "evidence_level": "published_interface_and_offline_tests"
+            },
+            "not_checked": [
+              "real_creo_execution_not_verified",
+              "no_full_geometry_or_design_intent_verification",
+              "no_transaction_or_automatic_rollback",
+              "external_gui_and_other_clients_not_locked",
+              "upstream_feature_listing_is_visible_features_only"
+            ],
+            "disk_backups": [],
+            "request_count": 67,
+            "_untrusted": [
+              "result",
+              "disk_backups"
+            ]
+          },
+          "request_count": 67,
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "not_checked": [
+            "real_creo_execution_not_verified",
+            "no_full_geometry_or_design_intent_verification",
+            "no_transaction_or_automatic_rollback",
+            "external_gui_and_other_clients_not_locked",
+            "upstream_feature_listing_is_visible_features_only"
+          ],
+          "_untrusted": [
+            "last_result"
+          ]
+        },
+        "meta": {
+          "duration_ms": 55
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "result",
+        "--operation-id",
+        "7df7627e34784ebf8c6b4caa434a5fdd",
+        "--step-id",
+        "pdf"
+      ],
+      "exit_code": 0,
+      "duration_ms": 634,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "operation_id": "7df7627e34784ebf8c6b4caa434a5fdd",
+          "step_id": "pdf",
+          "result": {
+            "_untrusted": [
+              "result",
+              "disk_backups"
+            ],
+            "disk_backups": [],
+            "not_checked": [
+              "real_creo_execution_not_verified",
+              "no_full_geometry_or_design_intent_verification",
+              "no_transaction_or_automatic_rollback",
+              "external_gui_and_other_clients_not_locked",
+              "upstream_feature_listing_is_visible_features_only"
+            ],
+            "operation": "export pdf",
+            "provenance": {
+              "backend": "creoson",
+              "evidence_level": "published_interface_and_offline_tests",
+              "live_verified": false,
+              "simulation": false
+            },
+            "request_count": 67,
+            "result": {
+              "artifact": {
+                "path": "<temporary_workspace>/exports/bracket.pdf",
+                "sha256": "584e9fe469e6feccf1cf0d6add7563460be50614fbfbac291e38ee1e39621cd9",
+                "size_bytes": 23
+              },
+              "dirname": "<temporary_workspace>/exports",
+              "filename": "bracket.pdf",
+              "publish_policy": "atomic_no_clobber"
+            },
+            "verification": {
+              "checks": [
+                {
+                  "check": "export_exists",
+                  "passed": true
+                },
+                {
+                  "check": "export_nonempty",
+                  "passed": true
+                },
+                {
+                  "check": "export_header",
+                  "passed": true
+                }
+              ],
+              "level": "selected_postconditions_verified",
+              "not_checked": [
+                "full_geometry",
+                "engineering_correctness",
+                "constraint_degrees_of_freedom",
+                "hidden_features_outside_upstream_listing",
+                "reopen_persistence"
+              ]
+            }
+          },
+          "provenance": {
+            "backend": "creoson",
+            "simulation": false,
+            "live_verified": false,
+            "evidence_level": "published_interface_and_offline_tests"
+          },
+          "_untrusted": [
+            "result"
+          ]
+        },
+        "meta": {
+          "duration_ms": 18
+        }
+      }
+    },
+    {
+      "argv": [
+        "workflow",
+        "history"
+      ],
+      "exit_code": 0,
+      "duration_ms": 638,
+      "stdout": {
+        "ok": true,
+        "schema_version": "1.0",
+        "data": {
+          "items": [
+            {
+              "at": "2026-09-17T18:25:08.203151Z",
+              "command": "workflow run",
+              "completed_steps": 5,
+              "endpoint_sha256": "0a95e22768e4a59cb128eed36c223e029c63d71c1b0377e99a20140689394961",
+              "live_verified": false,
+              "manifest_sha256": "f0c4b9845d13f92058e28a90e494114b999464abf8f356c1ef7bcf456778f9f2",
+              "operation_id": "7df7627e34784ebf8c6b4caa434a5fdd",
+              "request_count": 67,
+              "rollback_performed": false,
+              "status": "completed",
+              "steps": [
+                {
+                  "command": "drawing create",
+                  "id": "drawing",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "6b2d1934725dab41a625d77e4fd39b4e9eab568cafcceee0f92dbeeafc5fdd9b",
+                    "size_bytes": 813
+                  },
+                  "result_sha256": "986eff83a40d150ec225fd6544cd71e202bcdfb8184bb735914dcbb934abddb2",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "model_loaded",
+                        "passed": true
+                      },
+                      {
+                        "check": "model_linked",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing",
+                      "reopen_persistence"
+                    ]
+                  }
+                },
+                {
+                  "command": "drawing create-view",
+                  "id": "front",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "4aeb1f10d0afcb2a4d06f97e682998dfddb6578017a0f8fdeb594f19b7375798",
+                    "size_bytes": 815
+                  },
+                  "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "view_on_requested_sheet",
+                        "passed": true
+                      },
+                      {
+                        "check": "view_references_model",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing",
+                      "reopen_persistence"
+                    ]
+                  }
+                },
+                {
+                  "command": "drawing project-view",
+                  "id": "right",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "aae7701d10ff72691d477eb8380bb07783219989a244cb243883962782fd1d54",
+                    "size_bytes": 768
+                  },
+                  "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "view_on_requested_sheet",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing",
+                      "reopen_persistence"
+                    ]
+                  }
+                },
+                {
+                  "command": "drawing regenerate",
+                  "id": "regen",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "2a5f889041abf4f024f82448f769ebe70d8f1a4a727e4aebb89e176918f406a3",
+                    "size_bytes": 608
+                  },
+                  "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                  "verification": {
+                    "checks": [],
+                    "level": "upstream_acknowledged_only",
+                    "not_checked": [
+                      "visual_result",
+                      "geometric_result"
+                    ]
+                  }
+                },
+                {
+                  "command": "export pdf",
+                  "id": "pdf",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "ae94e6e35487e0d4542600590a739aeeb0d0f308a9cbeb899fc15ec5fc295bc9",
+                    "size_bytes": 1079
+                  },
+                  "result_sha256": "9912ff295ad1e52f209fafefb81aa7b932a9bc015b321faa897ec56a972a4caf",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "export_exists",
+                        "passed": true
+                      },
+                      {
+                        "check": "export_nonempty",
+                        "passed": true
+                      },
+                      {
+                        "check": "export_header",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing",
+                      "reopen_persistence"
+                    ]
+                  }
+                }
+              ],
+              "verification_scope": "selected_postconditions_only"
+            },
+            {
+              "at": "2026-09-17T18:25:04.100186Z",
+              "command": "workflow run",
+              "completed_steps": 5,
+              "endpoint_sha256": "0a95e22768e4a59cb128eed36c223e029c63d71c1b0377e99a20140689394961",
+              "live_verified": false,
+              "manifest_sha256": "ca66566cf5b900ba13d44113e9539d53bcd0866f928819ba681a9d6e04ace28a",
+              "operation_id": "a8fc10ea1d84401f896e7e6044aa1381",
+              "request_count": 86,
+              "rollback_performed": false,
+              "status": "completed",
+              "steps": [
+                {
+                  "command": "dimension list",
+                  "id": "inspect",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "fb7fd3049fbb42833b6def54b03d1437c9731c0b1e0979917fabfe22add309c2",
+                    "size_bytes": 764
+                  },
+                  "result_sha256": "d95770f457f5ca0ee5843d922aaebc4c6a16b305d1e0126f12e2db9d1f9dfdc8",
+                  "verification": {
+                    "checks": [],
+                    "level": "observation"
+                  }
+                },
+                {
+                  "command": "dimension set",
+                  "id": "pitch",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "2ed66835a3f64dad19f1395a3bcb614935217b703456aef79758c8933415138c",
+                    "size_bytes": 752
+                  },
+                  "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "value_readback",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing",
+                      "reopen_persistence"
+                    ]
+                  }
+                },
+                {
+                  "command": "file regenerate",
+                  "id": "regen",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "ea45b4d099844966b3ae0ee62ec40b4250aa70b74c0262c57f4de464161e7441",
+                    "size_bytes": 795
+                  },
+                  "result_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "no_failed_or_unregenerated_features_in_upstream_listing",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing",
+                      "reopen_persistence"
+                    ]
+                  }
+                },
+                {
+                  "command": "file roundtrip",
+                  "id": "persist",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "51a40bb87cb227e5aae087a65a3c828ea4f8e29599ced14b3a7cc7fc31406a2b",
+                    "size_bytes": 1912
+                  },
+                  "result_sha256": "ef8982a7555851291ee3af312fb5f1cc31f4de60c6a91dd393aceaa90139384a",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "new_or_changed_saved_artifact",
+                        "passed": true
+                      },
+                      {
+                        "check": "erased_from_memory",
+                        "passed": true
+                      },
+                      {
+                        "check": "reopened",
+                        "passed": true
+                      },
+                      {
+                        "check": "no_open_errors",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_units",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_parameters",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_dimensions",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_features",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_relations",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_postregen_relations",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_views",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_materials",
+                        "passed": true
+                      },
+                      {
+                        "check": "persisted_material",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing"
+                    ]
+                  }
+                },
+                {
+                  "command": "export step",
+                  "id": "step",
+                  "ok": true,
+                  "result_artifact": {
+                    "sha256": "0cd92225f1035ddf2e21195085c173e017fe1a9ec236239c7083e7286228ca1b",
+                    "size_bytes": 1082
+                  },
+                  "result_sha256": "06fee0447fd56c9d3bb553495f8175d558a8e4bcf6aad80c062d5ce081bfcaa4",
+                  "verification": {
+                    "checks": [
+                      {
+                        "check": "export_exists",
+                        "passed": true
+                      },
+                      {
+                        "check": "export_nonempty",
+                        "passed": true
+                      },
+                      {
+                        "check": "export_header",
+                        "passed": true
+                      }
+                    ],
+                    "level": "selected_postconditions_verified",
+                    "not_checked": [
+                      "full_geometry",
+                      "engineering_correctness",
+                      "constraint_degrees_of_freedom",
+                      "hidden_features_outside_upstream_listing",
+                      "reopen_persistence"
+                    ]
+                  }
+                }
+              ],
+              "verification_scope": "selected_postconditions_only"
+            },
+            {
+              "at": "2026-09-17T18:25:02.169650Z",
+              "command": "creoson connect",
+              "completed_steps": 0,
+              "endpoint_sha256": "5ce909aa8ef3accf77508374227600b6e6f71f0e811c230f9cbbbf9caf07d65c",
+              "live_verified": false,
+              "manifest_sha256": "93e907218496a09b5311758317debeeeac6c786fa98b81b32f5344427c8b8afc",
+              "operation_id": "8b489c4a62d6488fb15323d3f2331b48",
+              "rollback_performed": false,
+              "status": "completed",
+              "steps": []
+            }
+          ],
+          "count": 3,
+          "total": 3,
+          "offset": 0,
+          "has_more": false,
+          "_untrusted": [
+            "items"
+          ]
+        },
+        "meta": {
+          "duration_ms": 17
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "No PTC SDK, Creo, CREOSON server or license was used.",
+    "Fixture STEP/PDF/native-model bytes are intentionally not valid CAD artifacts.",
+    "Timings measure this local substitute, not Creo performance.",
+    "CLI provenance identifies the configured backend, while this harness explicitly identifies the substituted server."
+  ]
+}

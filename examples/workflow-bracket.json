@@ -1,0 +1,45 @@
+{
+  "workflow_schema": "1.0",
+  "steps": [
+    {
+      "id": "inspect",
+      "command": "dimension list",
+      "request": {
+        "file": "bracket.prt"
+      }
+    },
+    {
+      "id": "pitch",
+      "command": "dimension set",
+      "request": {
+        "file": "bracket.prt",
+        "name": "d1",
+        "value": 45,
+        "expected_length_units": "mm"
+      }
+    },
+    {
+      "id": "regen",
+      "command": "file regenerate",
+      "request": {
+        "file": "bracket.prt"
+      }
+    },
+    {
+      "id": "save",
+      "command": "file save",
+      "request": {
+        "file": "bracket.prt"
+      }
+    },
+    {
+      "id": "step",
+      "command": "export step",
+      "request": {
+        "file": "bracket.prt",
+        "filename": "bracket.step",
+        "dirname": "exports"
+      }
+    }
+  ]
+}

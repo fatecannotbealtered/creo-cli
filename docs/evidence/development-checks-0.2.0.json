@@ -1,0 +1,144 @@
+{
+  "source_fingerprint_sha256": "10e90d20788f241494119bb285691e3cce17bd6494f0131965aa57565fe4b406",
+  "ok": true,
+  "at": "2026-09-17T18:25:40.937922+00:00",
+  "checks": [
+    {
+      "name": "python_compileall",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "compileall",
+        "-q",
+        "creo_cli",
+        "scripts",
+        "tests"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "python_version_sync",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "scripts/version.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stdout": "{\"ok\": true, \"mode\": \"check\", \"drift\": []}",
+      "stderr": ""
+    },
+    {
+      "name": "node_version_sync",
+      "argv": [
+        "node",
+        "scripts/check-version.js"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stdout": "{\"ok\": true, \"mode\": \"check\", \"drift\": []}",
+      "stderr": ""
+    },
+    {
+      "name": "node_syntax_check-version.js",
+      "argv": [
+        "node",
+        "--check",
+        "/mnt/data/creo-cli-work/scripts/check-version.js"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "node_syntax_run.js",
+      "argv": [
+        "node",
+        "--check",
+        "/mnt/data/creo-cli-work/scripts/run.js"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "node_syntax_sync-version.js",
+      "argv": [
+        "node",
+        "--check",
+        "/mnt/data/creo-cli-work/scripts/sync-version.js"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "git_whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "passed": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "exact_spec_gate_expected_block",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "scripts/bootstrap_spec.py",
+        "--check"
+      ],
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stdout": "{\"ok\": false, \"missing_or_drifted\": [\".agent/SPEC_LOCK.json (exact upstream files are not vendored yet)\"]}",
+      "stderr": ""
+    },
+    {
+      "name": "release_gate_expected_block",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "scripts/release_gate.py"
+      ],
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stdout": "{\n  \"ok\": false,\n  \"blocked_by\": [\n    \".agent/SPEC_LOCK.json (exact upstream files are not vendored yet)\",\n    \"package is intentionally private/development-only\",\n    \"Development snapshot: full FCC certification, pinned spec vendoring, and live Creo evidence are incomplete.\",\n    \"missing reviewed evidence: full-conformance.json\",\n    \"missing reviewed evidence: live-creo.json\",\n    \"upstream-generated runtime contract is not integrated\"\n  ],\n  \"note\": \"Evidence review remains a human responsibility; this guard does not attest arbitrary JSON claims.\"\n}",
+      "stderr": ""
+    },
+    {
+      "name": "remote_publish_preflight_no_action",
+      "argv": [
+        "/opt/pyvenv/bin/python",
+        "scripts/publish_repository.py",
+        "--check"
+      ],
+      "exit_code": 1,
+      "expected_exit": 1,
+      "passed": true,
+      "stdout": "{\"ok\": false, \"repository\": \"fatecannotbealtered/creo-cli\", \"created\": false, \"error\": \"GitHub CLI (gh) is not installed in this environment; no remote action was attempted\"}",
+      "stderr": ""
+    }
+  ],
+  "ruff_run": false,
+  "dependency_audit_run": false,
+  "github_ci_run": false,
+  "real_creo_verified": false,
+  "note": "Passing an expected-block assertion means publication was refused, not that release readiness passed."
+}

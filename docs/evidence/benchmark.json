@@ -1,0 +1,36 @@
+{
+  "python": "3.13.5",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "native_measured": false,
+  "measurements": [
+    {
+      "command": "context --compact",
+      "runs": 5,
+      "median_ms": 664.397,
+      "max_ms": 752.336,
+      "stdout_bytes": 540
+    },
+    {
+      "command": "reference --compact",
+      "runs": 5,
+      "median_ms": 696.69,
+      "max_ms": 724.663,
+      "stdout_bytes": 28822
+    },
+    {
+      "command": "reference --command model dimensions --compact",
+      "runs": 5,
+      "median_ms": 659.27,
+      "max_ms": 740.664,
+      "stdout_bytes": 3900
+    },
+    {
+      "command": "snapshot validate --input examples/bracket.creo.json --compact",
+      "runs": 5,
+      "median_ms": 665.294,
+      "max_ms": 691.208,
+      "stdout_bytes": 268
+    }
+  ],
+  "note": "Repeated fresh Python processes, warm filesystem caches; not a cold-machine or native CAD benchmark."
+}

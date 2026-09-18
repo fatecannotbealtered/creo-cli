@@ -1,0 +1,63 @@
+{
+  "workflow_schema": "1.0",
+  "steps": [
+    {
+      "id": "drawing",
+      "command": "drawing create",
+      "request": {
+        "template": "templates/a4.drw",
+        "model": "bracket.prt",
+        "drawing": "bracket.drw",
+        "scale": 1
+      }
+    },
+    {
+      "id": "front",
+      "command": "drawing create-view",
+      "request": {
+        "drawing": "bracket.drw",
+        "model": "bracket.prt",
+        "model_view": "FRONT",
+        "view": "FRONT_MAIN",
+        "sheet": 1,
+        "point": {
+          "x": 100,
+          "y": 100
+        },
+        "scale": 1,
+        "coordinate_units": "drawing_units"
+      }
+    },
+    {
+      "id": "right",
+      "command": "drawing project-view",
+      "request": {
+        "drawing": "bracket.drw",
+        "parent_view": "FRONT_MAIN",
+        "view": "RIGHT_PROJECTED",
+        "sheet": 1,
+        "point": {
+          "x": 100,
+          "y": 0
+        },
+        "coordinate_units": "drawing_units"
+      }
+    },
+    {
+      "id": "regen",
+      "command": "drawing regenerate",
+      "request": {
+        "drawing": "bracket.drw"
+      }
+    },
+    {
+      "id": "pdf",
+      "command": "export pdf",
+      "request": {
+        "file": "bracket.drw",
+        "filename": "bracket.pdf",
+        "dirname": "exports"
+      }
+    }
+  ]
+}

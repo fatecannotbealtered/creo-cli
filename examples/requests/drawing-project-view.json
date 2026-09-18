@@ -1,0 +1,11 @@
+{
+  "drawing": "bracket.drw",
+  "parent_view": "FRONT_MAIN",
+  "view": "RIGHT_PROJECTED",
+  "sheet": 1,
+  "point": {
+    "x": 100,
+    "y": 0
+  },
+  "coordinate_units": "drawing_units"
+}

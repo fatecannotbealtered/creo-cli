@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "at": "2026-09-17T15:32:21.490992Z",
+  "python": "3.13.5",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "tests_run": 144,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "declared_commands": 22,
+  "invoked_commands": 22,
+  "missing": [],
+  "stale": [],
+  "duration_seconds": 7.661,
+  "source_fingerprint_sha256": "26bd2af425efe406ce0c6b367850e11ae83340ce0eec75db202674d1b90c95e7",
+  "full_fcc_certified": false,
+  "native_live_verified": false,
+  "reference_ok": true,
+  "reference_error": null,
+  "limitations": [
+    "Command dispatch coverage is not branch/flag/error-contract completeness.",
+    "Native tests use interface-shaped substitutes, not the installed PTC SDK.",
+    "GitHub CI has not run in this environment."
+  ]
+}
