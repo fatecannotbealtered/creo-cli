@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "at": "2026-09-18T03:51:15.050521Z",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "tests_run": 305,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 5,
+  "declared_commands": 75,
+  "invoked_commands": 75,
+  "missing": [],
+  "stale": [],
+  "duration_seconds": 39.235,
+  "source_fingerprint_sha256": "56e674e52bc3329b4282cd11836e117c6442efec02b721af41da943840a56554",
+  "full_fcc_certified": false,
+  "native_live_verified": false,
+  "reference_ok": true,
+  "reference_error": null,
+  "limitations": [
+    "Command dispatch coverage is not branch/flag/error-contract completeness.",
+    "Native tests use interface-shaped substitutes, not the installed PTC SDK.",
+    "GitHub CI has not run in this environment.",
+    "CREOSON tests use real loopback HTTP with a stateful substitute, not the actual CREOSON server or Creo."
+  ]
+}

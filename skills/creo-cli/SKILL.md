@@ -1,9 +1,9 @@
 ---
 name: creo-cli
-version: "0.2.0"
+version: "1.0.0"
 description: "Orchestrates Creo model inspection, typed changes, feature states, material assignment, csys/fixed assembly, drawing templates/views and exports using guarded CLI workflows. Use for Creo structure-engineering tasks, existing parameterized parts, drawings or delivery packages. Native integrations are experimental and not live-verified. Not for arbitrary script execution, from-scratch feature modeling, FEA or Windchill."
 license: MIT
-metadata: {"requires": {"bins": ["creo-cli"], "min_version": "0.2.0"}}
+metadata: {"requires": {"bins": ["creo-cli"], "min_version": "1.0.0"}}
 ---
 
 # creo-cli

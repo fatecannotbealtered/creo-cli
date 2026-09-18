@@ -4,6 +4,16 @@ Evidence is version- and source-fingerprint-specific. A green historical run is
 not validation of later code. Times in JSON are the execution environment's UTC
 clock, not a manually asserted product-release date.
 
+## 1.0.0
+
+- `offline-tests-1.0.0.json`: full command-level suite and actual dispatch guard,
+  recorded on Windows after the version line moved to 1.0.0. The 1.0.0 number is a
+  fleet-baseline alignment, not a stability claim: no real Creo, no full
+  functional-contract certification, and the release gates still fail closed.
+
+The 0.2.0 records below keep their original scope and are not relabelled as 1.0.0
+evidence, in line with how 0.1.0 was handled.
+
 ## 0.2.0
 
 - `offline-tests-0.2.0.json`: full command-level suite and actual dispatch guard;

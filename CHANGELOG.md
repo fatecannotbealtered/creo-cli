@@ -4,6 +4,12 @@ This file is the only human-maintained change source. Runtime copies are generat
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-18
+
+### Changed
+- Version line moves to 1.0.0 to match the baseline the other CAD tools in this fleet start from. No command, flag, output schema or error code changed, so nothing downstream breaks.
+- Release readiness is deliberately unaffected: `reference.release_readiness` stays `unpublishable`, `doctor` still fails its `release_readiness` check, `package.json` stays private and the release workflow still has no publishing job. A 1.0.0 version line is not a stability claim; the gates in `docs/SPEC_STATUS.md` are unchanged.
+
 ### Fixed
 - Test fixture and demo recorder resolve their temporary workspace root, matching what the CLI itself stores. The unresolved spelling failed every path comparison on macOS (`/var` symlink) and on Windows hosts whose temp path is an 8.3 short name.
 - The write-timeout test holds its response open until the call returns instead of racing a fixed sleep against the preliminary reads, and asserts `receipt_status` so a timeout that lands before the write can no longer pass for the wrong reason.

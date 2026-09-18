@@ -3,9 +3,11 @@
 <p align="center"><a href="README.md">English</a> · <a href="README_zh.md">中文</a></p>
 <p align="center">Explicit backends · HMAC-confirmed writes · Offline protocol tests · MIT</p>
 
-**Source development build — unpublishable; no real Creo run yet.** Version 0.2.0
-adds a CREOSON backend built against published interfaces, not a replacement CAD
-kernel. It complements the experimental PTC VB API adapter and the explicitly
+**Source development build — unpublishable; no real Creo run yet.** The 1.0.0
+version line matches the baseline the other CAD tools in this fleet start from; it
+is not a stability claim, and the gates in `docs/SPEC_STATUS.md` still apply. This
+build ships a CREOSON backend written against published interfaces, not a
+replacement CAD kernel. It complements the experimental PTC VB API adapter and the explicitly
 simulated `.creo.json` backend. Implemented requests and passing offline tests
 are not a claim of compatibility with your installation or of engineering validity.
 
@@ -169,7 +171,7 @@ contract/.agent/  bootstrap mapping and fixed spec target; exact vendoring pendi
 ## Development
 
 ```bash
-python scripts/test.py --evidence docs/evidence/offline-tests-0.2.0.json
+python scripts/test.py --evidence docs/evidence/offline-tests-1.0.0.json
 python scripts/record_creoson_demo.py --output docs/evidence/creoson-offline-demo.json
 python scripts/version.py --check
 python -m compileall -q creo_cli scripts tests

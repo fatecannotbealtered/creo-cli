@@ -4,7 +4,8 @@
 <p align="center">显式后端 · HMAC 确认 · 离线协议测试 · MIT</p>
 
 **源码开发版，发布状态仍为 `unpublishable`；尚未在真实 Creo 上运行。**
-0.2.0 新增参考已发布接口实现的 CREOSON 后端，保留原来的实验性 PTC VB API 后端和显式模拟的 `.creo.json` 后端。
+1.0.0 这个版本号对齐本舰队其他 CAD 工具的起始基线，**不代表稳定性承诺**，`docs/SPEC_STATUS.md` 里的门禁依然有效。
+本版提供参考已发布接口实现的 CREOSON 后端，保留原来的实验性 PTC VB API 后端和显式模拟的 `.creo.json` 后端。
 它不是 CAD 内核，也不把“接口代码已实现、离线测试通过”当成实际安装兼容性或工程正确性证明。
 
 ## Agent Install
@@ -137,7 +138,7 @@ contract/.agent/  临时契约和固定规范目标，精确上游同步待完�
 ## Development
 
 ```bash
-python scripts/test.py --evidence docs/evidence/offline-tests-0.2.0.json
+python scripts/test.py --evidence docs/evidence/offline-tests-1.0.0.json
 python scripts/record_creoson_demo.py --output docs/evidence/creoson-offline-demo.json
 python scripts/version.py --check
 python -m compileall -q creo_cli scripts tests

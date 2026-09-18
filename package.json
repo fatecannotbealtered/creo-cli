@@ -1,6 +1,6 @@
 {
   "name": "@fateforge/creo-cli",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "private": true,
   "description": "A CLI for AI agents to operate PTC Creo Parametric — model lifecycle, typed parameters and dimensions, feature states, material assignment, assembly trees, drawings and views, and STEP/IGES/DXF/PDF exports. Guarded writes with read-back verification and structured output, built for LLM tool use.",
   "license": "MIT",
