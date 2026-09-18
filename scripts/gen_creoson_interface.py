@@ -26,6 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "contract" / "creoson-interface.json"
+SPEC_IDS = ROOT / "creo_cli" / "creoson_spec_ids.py"
 RELEASE = "v3.0.2"
 REPOSITORY = "SimplifiedLogic/creoson"
 SPEC_SUBDIR = "web/assets/creoson_stuff/jsonSpecs"
@@ -123,9 +124,35 @@ def main() -> int:
     with io.open(INDEX, "w", encoding="utf-8", newline="\n") as handle:
         json.dump(index, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
-    print(json.dumps({"ok": True, "written": str(INDEX.relative_to(ROOT)),
+    write_spec_ids(index)
+    print(json.dumps({"ok": True, "written": [str(INDEX.relative_to(ROOT)), str(SPEC_IDS.relative_to(ROOT))],
                       "functions": index["function_count"], "data_types": index["data_type_count"]}))
     return 0
+
+
+def write_spec_ids(index: dict) -> None:
+    """Emit the per-function blob identities the runtime cites in `reference`.
+
+    A generated module rather than a data file: the catalog needs these at import
+    time, and it keeps provenance exact per function instead of pinning a whole
+    command group to one arbitrary file's hash.
+    """
+    lines = ['"""Blob identity of each published CREOSON specification. GENERATED, DO NOT EDIT.',
+             "",
+             f"Source: {REPOSITORY}@{RELEASE}, {SPEC_SUBDIR}/<command>-<function>.json",
+             "Regenerate with scripts/gen_creoson_interface.py --from <unzipped release>.",
+             '"""',
+             "from __future__ import annotations",
+             "",
+             f'RELEASE = "{RELEASE}"',
+             f'REPOSITORY = "{REPOSITORY}"',
+             f'SPEC_SUBDIR = "{SPEC_SUBDIR}"',
+             "",
+             "SPEC_BLOB_SHA = {"]
+    lines += [f'    "{key}": "{entry["git_blob_sha"]}",' for key, entry in index["functions"].items()]
+    lines += ["}", ""]
+    with io.open(SPEC_IDS, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write("\n".join(lines))
 
 
 if __name__ == "__main__":

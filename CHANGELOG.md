@@ -9,8 +9,12 @@ This file is the only human-maintained change source. Runtime copies are generat
 - Session and environment commands, the things a person settles before touching a model: `creo pwd`, `creo list-files`, `creo list-dirs`, `creo get-config`, `server pwd`, `file exists`, `file is-active` and `file open-errors` read; `creo cd`, `creo mkdir`, `creo rmdir` (dangerous), `creo set-config`, `file refresh` and `file repaint` write under the usual preview/confirm with readback. `creo cd` makes pointing Creo at the disposable workspace an explicit confirmed step instead of something the CLI refuses to do and the user does by hand.
 - `effect: "session"` for operations that change Creo session state rather than model memory, disk or display.
 
+- Model-reading commands, so an agent can see what a person sees on screen rather than only names and numbers: `geometry bound-box`, `geometry surfaces` and `geometry edges`; `layer list`/`layer exists`; `note list`/`note get`/`note exists`; `file accuracy`, `file unit-system`, `file has-instances`, `file simp-reps`; `parameter exists`; `feature params` and `feature param-exists`; `view list-exploded`. All observations.
+- `creo_cli/creoson_spec_ids.py`, generated alongside the interface index, so command groups taken straight from the release specification cite provenance per function instead of pinning a whole group to one file's hash.
+
 ### Changed
-- Published CREOSON coverage rises from 42 of 175 functions to 56; the CLI now exposes 89 leaf commands.
+- Published CREOSON coverage rises from 42 of 175 functions to 72; the CLI now exposes 105 leaf commands.
+- `surface_id` and `edge_id` join the ids normalized to strings on output, and `geometry edges` accepts `surface_ids` as strings and converts them to the published integers on the wire, matching how `assembly transform` already handles component paths.
 
 ## [1.0.0] - 2026-09-18
 

@@ -23,7 +23,7 @@ PROVENANCE = {"backend": "creoson", "simulation": False, "live_verified": False,
 LIMITS = ["real_creo_execution_not_verified", "no_full_geometry_or_design_intent_verification",
           "no_transaction_or_automatic_rollback", "external_gui_and_other_clients_not_locked", "upstream_feature_listing_is_visible_features_only"]
 LOCK = "creoson-shared-native-session"
-ID_KEYS = {"id", "feat_id", "feat_number", "featureid", "owner_id", "relation_id"}
+ID_KEYS = {"id", "feat_id", "feat_number", "featureid", "owner_id", "relation_id", "surface_id", "edge_id"}
 
 
 def normalize(value: Any, key: str = "") -> Any:
@@ -130,6 +130,10 @@ class Engine:
         wire = op.wire(q)
         if op.path == "assembly transform":
             wire["path"] = [int(n) for n in q["path"]]
+        if op.path == "geometry edges":
+            # Ids cross the CLI boundary as strings (CLI-SPEC) and go upstream as the
+            # integers geometry.get_edges publishes, like assembly transform's path.
+            wire["surface_ids"] = [int(n) for n in q["surface_ids"]]
         if op.path == "parameter set":
             wire["no_create"] = not q["create"]
         if op.write:

@@ -24,13 +24,20 @@ PARAMETER = obj({"name": S, "type": S, "value": {"type": ["string", "number", "b
 DIMENSION = obj({"name": S, "value": {"type": ["number", "string"]}, "dim_type": S, "encoded": B, "dwg_dim": B, "text": array(S), "location": VECTOR, "sheet": I, "view_name": S, "tolerance_type": S, "tol_plus": N, "tol_minus": N}, ("name", "value"))
 FEATURE = obj({"name": S, "type": S, "status": S, "feat_id": S, "feat_number": S, "path": array(S)}, ("type", "status"))
 DRAWING_VIEW = obj({"name": S, "sheet": I, "location": VECTOR, "text_height": N, "view_model": S, "simp_rep": S}, ("name", "sheet"))
+LAYER = obj({"name": S, "status": S, "id": S}, ("name", "status"))
+NOTE = obj({"name": S, "value": S, "value_expanded": S, "encoded": B, "url": S, "location": VECTOR}, ("name",))
+SURFACE = obj({"surface_id": S, "area": N, "min_extent": VECTOR, "max_extent": VECTOR}, ("surface_id",))
+EDGE = obj({"edge_id": S, "start": VECTOR, "end": VECTOR, "length": N, "edge_type": S}, ())
+CONTOUR = obj({"surface_id": S, "traversal": S, "edgelist": array(EDGE)}, ("surface_id",))
 BASE_FIELDS = {"file": S, "dirname": S, "revision": I, "files": array(S), "generic": S, "has_simprep": B,
                "material": {"type": ["string", "null"]}, "num_sheets": I, "featureid": S,
                "origin": VECTOR, "x_axis": VECTOR, "y_axis": VECTOR, "z_axis": VECTOR, "x_rot": N, "y_rot": N, "z_rot": N,
                "mass": N, "volume": N, "density": N, "surface_area": N, "ctr_grav": VECTOR,
                "length_units": S, "mass_units": S, "filename": S, "drawing": S,
                "roundtrip_verified": B, "compared_sections": array(S), "artifacts": array(ARTIFACT),
-               "exists": B, "active": B, "errors": B}
+               "exists": B, "active": B, "errors": B,
+               "xmin": N, "xmax": N, "ymin": N, "ymax": N, "zmin": N, "zmax": N,
+               "accuracy": N, "relative": B, "name": S, "value": S, "encoded": B, "url": S, "location": VECTOR}
 
 
 def result_schema(op):
@@ -45,7 +52,9 @@ def result_schema(op):
         props["children"] = {"type": ["array", "object"]}
     if op.list_key:
         props.pop(op.list_key, None)
-        item = {"parameter list": PARAMETER, "dimension list": DIMENSION, "feature list": FEATURE, "drawing views": DRAWING_VIEW}.get(op.path, S)
+        item = {"parameter list": PARAMETER, "dimension list": DIMENSION, "feature list": FEATURE,
+                "drawing views": DRAWING_VIEW, "feature params": PARAMETER, "layer list": LAYER,
+                "note list": NOTE, "geometry surfaces": SURFACE, "geometry edges": CONTOUR}.get(op.path, S)
         props |= {"items": array(item), "count": I, "total": I, "offset": I, "has_more": B, "next_offset": I, "_untrusted": array(S)}
         required = ["items", "count", "total", "offset", "has_more", "_untrusted"]
     if op.verifier == "export":

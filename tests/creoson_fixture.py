@@ -56,7 +56,11 @@ class World:
                              {"name": "ASM_DEF_CSYS", "feat_id": 12, "feat_number": 3, "type": "COORDINATE SYSTEM", "status": "ACTIVE"}],
                 "relations": [], "postregen_relations": [], "length_units": "mm", "mass_units": "kg",
                 "materials": ["ALUMINUM", "STEEL"], "material": "STEEL", "views": ["FRONT", "TOP", "RIGHT"],
-                "models": ["bracket.prt"], "drawing_views": [{"name": "FRONT_MAIN", "sheet": 1, "location": {"x": 10, "y": 10, "z": 0}, "view_model": "bracket.prt"}], "sheets": 1}
+                "models": ["bracket.prt"], "drawing_views": [{"name": "FRONT_MAIN", "sheet": 1, "location": {"x": 10, "y": 10, "z": 0}, "view_model": "bracket.prt"}], "sheets": 1,
+                "layers": {"DATUMS": "HIDDEN", "PART_GEOM": "SHOWN"},
+                "notes": {"NOTE_1": "BREAK SHARP EDGES"},
+                "feature_params": {"HOLE_1": {"DEPTH": "THRU"}},
+                "exploded_views": ["EXPLODE_1"], "simp_reps": ["MASTER"], "instances": ["bracket_s.prt"]}
 
     def handle(self, body):
         cmd, fn, q = body["command"], body["function"], body.get("data") or {}
@@ -86,6 +90,33 @@ class World:
         m = self.models.get(name, {})
         if cmd == "server":
             if fn == "pwd": return {"dirname": str(self.server_dir)}
+        if cmd == "geometry":
+            if fn == "bound_box": return {"xmin": -10.0, "xmax": 90.0, "ymin": -5.0, "ymax": 45.0, "zmin": 0.0, "zmax": 12.0}
+            if fn == "get_surfaces":
+                return {"surflist": [{"surface_id": 1, "area": 4050.0,
+                                      "min_extent": {"x": -10.0, "y": -5.0, "z": 0.0},
+                                      "max_extent": {"x": 90.0, "y": 45.0, "z": 0.0}}]}
+            if fn == "get_edges":
+                return {"contourlist": [{"surface_id": sid, "traversal": "external",
+                                         "edgelist": [{"edge_id": 11, "length": 100.0, "edge_type": "LINE",
+                                                       "start": {"x": -10.0, "y": -5.0, "z": 0.0},
+                                                       "end": {"x": 90.0, "y": -5.0, "z": 0.0}}]}
+                                        for sid in q["surface_ids"]]}
+        if cmd == "layer":
+            if fn == "list":
+                rows = [{"name": n, "status": s, "id": i} for i, (n, s) in enumerate(m.get("layers", {}).items(), start=1)]
+                return {"layers": [r for r in rows if r["name"] == q["name"]] if q.get("name") else rows}
+            if fn == "exists": return {"exists": q.get("name") in m.get("layers", {})}
+        if cmd == "note":
+            notes = m.get("notes", {})
+            if fn == "list":
+                rows = [{"name": n, "value": v, "value_expanded": v, "encoded": False} for n, v in notes.items()]
+                return {"itemlist": [r for r in rows if r["name"] == q["name"]] if q.get("name") else rows}
+            if fn == "exists": return {"exists": q.get("name") in notes}
+            if fn == "get":
+                if q["name"] not in notes: return {"status": {"error": True, "message": "no such note"}}
+                return {"name": q["name"], "value": notes[q["name"]], "encoded": False,
+                        "url": "", "location": {"x": 0.0, "y": 0.0, "z": 0.0}}
         if cmd == "creo":
             if fn == "pwd": return {"dirname": str(self.cwd)}
             if fn == "set_creo_version": self.major = q["version"]; return None
@@ -126,6 +157,10 @@ class World:
             if fn == "open_errors": return {"errors": False}
             if fn == "exists": return {"exists": name in self.loaded}
             if fn == "is_active": return {"active": name == self.active}
+            if fn == "get_accuracy": return {"accuracy": 0.0012, "relative": True}
+            if fn == "get_unit_system": return {"name": "mmNs"}
+            if fn == "has_instances": return {"exists": bool(m.get("instances"))}
+            if fn == "list_simp_reps": return {"reps": list(m.get("simp_reps", []))}
             if self.skip_mutation: return {}
             if fn in ("refresh", "repaint"): return None
             if fn == "open":
@@ -148,6 +183,7 @@ class World:
                 return {"files": [name], "dirname": str(self.root), "revision": 1, "featureid": fid}
         if cmd == "parameter":
             if fn == "list": return {"paramlist": [x for x in m["parameters"] if "name" not in q or x["name"].lower() == q["name"].lower()]}
+            if fn == "exists": return {"exists": any(x["name"] == q.get("name") for x in m["parameters"])}
             if fn == "set":
                 if not self.skip_mutation:
                     old = next((x for x in m["parameters"] if x["name"] == q["name"]), None)
@@ -163,6 +199,13 @@ class World:
                 return None
         if cmd == "feature":
             if fn == "list": return {"featlist": m["features"]}
+            if fn == "list_params":
+                owned = m.get("feature_params", {})
+                rows = [{"name": k, "value": v, "type": "STRING", "encoded": False, "owner_name": q.get("name", ""), "owner_type": "FEATURE"}
+                        for k, v in owned.get(q.get("name"), {}).items()]
+                return {"paramlist": [r for r in rows if r["name"] == q["param"]] if q.get("param") else rows}
+            if fn == "param_exists":
+                return {"exists": q.get("param") in m.get("feature_params", {}).get(q["name"], {})}
             row = next(x for x in m["features"] if x["name"] == q["name"])
             if not self.skip_mutation:
                 if fn == "rename": row["name"] = q["new_name"]
@@ -172,6 +215,7 @@ class World:
             return None
         if cmd == "view":
             if fn == "list": return {"viewlist": m["views"]}
+            if fn == "list_exploded": return {"viewlist": list(m.get("exploded_views", []))}
             if fn == "activate": return None
             if fn == "save":
                 if not self.skip_mutation: m["views"].append(q["name"])
