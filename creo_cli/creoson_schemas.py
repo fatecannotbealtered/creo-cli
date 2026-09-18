@@ -56,7 +56,12 @@ def published_type(op, name):
     the upstream rather than a hand-maintained table that has to be extended for
     every new command and is only wrong at runtime.
     """
+    from .creoson_engine import ID_KEYS
     from .creoson_spec_ids import RESPONSE_TYPES
+    if name in ID_KEYS:
+        # CLI-SPEC: ids leave as strings however the upstream numbers them, and
+        # creoson_engine.ID_KEYS performs that conversion on the way out.
+        return dict(S)
     kind = RESPONSE_TYPES.get(f"{op.command}.{op.function}", {}).get(name)
     scalar = {"string": S, "boolean": B, "integer": I, "double": N}
     if kind in scalar:

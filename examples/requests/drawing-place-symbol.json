@@ -1,0 +1,10 @@
+{
+  "drawing": "bracket.drw",
+  "symbol_file": "note.sym",
+  "point": {
+    "x": 50,
+    "y": 20
+  },
+  "sheet": 1,
+  "coordinate_units": "drawing_units"
+}

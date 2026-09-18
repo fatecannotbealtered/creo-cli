@@ -14,8 +14,11 @@ This file is the only human-maintained change source. Runtime copies are generat
 
 - Family tables, the way variants of a part are actually shipped: `familytable list`, `exists`, `header`, `row`, `cell`, `parents` and `tree` read; `create-instance`, `add-instance`, `set-cell` and `replace` write; `delete-instance` and `delete` are gated dangerous on top of preview/confirm. `familytable tree` pins the upstream `erase` flag false, so reading a nested table can never unload the session as a side effect, and `set-cell` requires an `expected_datatype` that is checked against the column on readback rather than letting a string land in a numeric column.
 
+- The drawing domain, read and write: sheets (`current-sheet`, `sheet-size`, `sheet-scale`, `sheet-format`, `select-sheet`, `regenerate-sheet`, `scale-sheet`, `set-sheet-format`, `delete-sheet`), views (`list-views`, `view-location`, `view-scale`, `view-sheet`, `view-bound-box`, `rename-view`, `move-view`, `scale-view`, `delete-view`), models (`current-model`, `set-current-model`, `delete-models`) and symbols (`list-symbols`, `symbol-loaded`, `load-symbol`, `place-symbol`, `delete-symbol-definition`, `delete-symbol-instance`). Where the upstream lets a target be omitted to mean every one of them -- `delete_models` without a model, `scale_view` without a view -- the name is required here, and view coordinates are declared in drawing units rather than assumed.
+- Result schemas fall back to the response type CREOSON publishes, generated into `creo_cli/creoson_spec_ids.py` with the blob identities, so a new command no longer needs hand-written entries that are only wrong at runtime. The hand-maintained table keeps the deliberate differences: ids as strings, enriched keys, composed reads and real nested shapes.
+
 ### Changed
-- Published CREOSON coverage rises from 42 of 175 functions to 85; the CLI now exposes 118 leaf commands.
+- Published CREOSON coverage rises from 42 of 175 functions to 112; the CLI now exposes 145 leaf commands.
 - `surface_id` and `edge_id` join the ids normalized to strings on output, and `geometry edges` accepts `surface_ids` as strings and converts them to the published integers on the wire, matching how `assembly transform` already handles component paths.
 
 ## [1.0.0] - 2026-09-18

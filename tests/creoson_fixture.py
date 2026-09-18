@@ -278,6 +278,43 @@ class World:
                 return {"symbols": [{"id": i, "symbol_name": n, "sheet": 1}
                                     for i, n in enumerate(m.get("symbols", []), start=1)]}
             if fn == "is_symbol_def_loaded": return {"loaded": q.get("symbol_file") in m.get("symbol_defs", [])}
+            if self.skip_mutation: return {}
+            if fn == "select_sheet": m["cur_sheet"] = q["sheet"]; return None
+            if fn == "regenerate_sheet": return None
+            if fn == "scale_sheet": m["sheet_scale"] = q["scale"]; return None
+            if fn == "set_sheet_format": m["sheet_format"] = q["file"]; return None
+            if fn == "delete_sheet": m["sheets"] = max(1, m.get("sheets", 1) - 1); return None
+            if fn == "set_cur_model": m["cur_model"] = q["model"]; return None
+            if fn == "delete_models":
+                m["models"] = [x for x in m.get("models", []) if x != q["model"]]
+                return None
+            if fn == "rename_view":
+                for v in views:
+                    if v["name"] == q["view"]: v["name"] = q["new_view"]
+                return None
+            if fn == "set_view_loc":
+                for v in views:
+                    if v["name"] == q["view"]: v["location"] = dict(q["point"])
+                return None
+            if fn == "scale_view":
+                hit = [v for v in views if v["name"] == q["view"]]
+                for v in hit: v["scale"] = q["scale"]
+                return {"success_views": [v["name"] for v in hit], "failed_views": []}
+            if fn == "delete_view":
+                m["drawing_views"] = [v for v in views if v["name"] != q["view"]]
+                return None
+            if fn == "load_symbol_def":
+                m.setdefault("symbol_defs", []).append(q["symbol_file"])
+                return {"id": 7, "name": q["symbol_file"]}
+            if fn == "create_symbol": m.setdefault("symbols", []).append(q["symbol_file"]); return None
+            if fn == "delete_symbol_def":
+                m["symbol_defs"] = [x for x in m.get("symbol_defs", []) if x != q["symbol_file"]]
+                return None
+            if fn == "delete_symbol_inst":
+                placed = m.get("symbols", [])
+                index = int(q["symbol_id"]) - 1
+                if 0 <= index < len(placed): placed.pop(index)
+                return None
         if cmd == "drawing":
             if fn == "list_models": return {"files": m["models"]}
             if fn == "list_view_details": return {"views": m["drawing_views"]}

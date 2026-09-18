@@ -107,6 +107,7 @@ class Engine:
             state["models"] = required(self.call("drawing", "list_models", {"drawing": name}), "files", list)
             state["views"] = required(self.call("drawing", "list_view_details", {"drawing": name}), "views", list)
             state["sheets"] = required(self.call("drawing", "get_num_sheets", {"drawing": name}), "num_sheets", int)
+            state["symbols"] = required(self.call("drawing", "list_symbols", {"drawing": name}), "symbols", list)
         else:
             state["units"] = self.units(name)
             state["parameters"] = required(self.call("parameter", "list", {"file": name, "encoded": False}), "paramlist", list)
@@ -130,6 +131,8 @@ class Engine:
         wire = op.wire(q)
         if op.path == "assembly transform":
             wire["path"] = [int(n) for n in q["path"]]
+        if op.path == "drawing delete-symbol-instance":
+            wire["symbol_id"] = int(q["symbol_id"])
         if op.path == "familytable replace" and "path" in wire:
             wire["path"] = [int(n) for n in q["path"]]
         if op.path == "geometry edges":
@@ -314,6 +317,47 @@ class Engine:
             old_ids = {r.get("feat_id") for r in before[q["into_asm"]]["features"]}
             check("new_component_feature", type(feature_id) is int and feature_id not in old_ids and any(r.get("feat_id") == feature_id and r.get("status") == "ACTIVE" for r in rows))
             # Numeric solve accuracy and all degrees of freedom are not exposed here.
+        elif mode.startswith("drawing_sheet_") or mode.startswith("drawing_model_") or mode.startswith("drawing_view_") or mode.startswith("drawing_symbol_"):
+            drawing = q["drawing"]
+            if mode == "drawing_sheet_current":
+                check("current_sheet", required(self.call("drawing", "get_cur_sheet", {"drawing": drawing}), "sheet", int) == q["sheet"])
+            elif mode == "drawing_sheet_scale":
+                got = self.call("drawing", "get_sheet_scale", {"drawing": drawing, "sheet": q["sheet"]}).get("scale")
+                check("sheet_scale", close_number(got, q["scale"]))
+            elif mode == "drawing_sheet_format":
+                check("sheet_format", str(self.call("drawing", "get_sheet_format", {"drawing": drawing, "sheet": q["sheet"]}).get("file", "")).casefold() == q["file"].casefold())
+            elif mode == "drawing_sheet_count":
+                check("sheet_count_decremented", self.call("drawing", "get_num_sheets", {"drawing": drawing}).get("num_sheets") == state["sheets"] - 1)
+            elif mode == "drawing_model_current":
+                check("current_model", str(self.call("drawing", "get_cur_model", {"drawing": drawing}).get("file", "")).casefold() == q["model"].casefold())
+            elif mode == "drawing_model_absent":
+                models = required(self.call("drawing", "list_models", {"drawing": drawing}), "files", list)
+                check("model_removed", q["model"].casefold() not in {str(f).casefold() for f in models})
+            else:
+                names = lambda: {str(v).casefold() for v in required(self.call("drawing", "list_views", {"drawing": drawing}), "views", list)}
+                if mode == "drawing_view_renamed":
+                    current = names()
+                    check("new_view_name_present", q["new_view"].casefold() in current)
+                    check("old_view_name_gone", q["view"].casefold() not in current)
+                elif mode == "drawing_view_absent":
+                    check("view_removed", q["view"].casefold() not in names())
+                elif mode == "drawing_view_moved":
+                    loc = self.call("drawing", "get_view_loc", {"drawing": drawing, "view": q["view"]})
+                    check("view_location", all(close_number(loc.get(axis), value) for axis, value in q["point"].items()))
+                elif mode == "drawing_view_scaled":
+                    # A per-view failure list is the upstream's way of half-succeeding.
+                    check("no_failed_views", not (result.get("failed_views") or []))
+                    check("view_scale", close_number(self.call("drawing", "get_view_scale", {"drawing": drawing, "view": q["view"]}).get("scale"), q["scale"]))
+                elif mode == "drawing_symbol_loaded":
+                    check("symbol_definition_loaded", required(self.call("drawing", "is_symbol_def_loaded", {"drawing": drawing, "symbol_file": q["symbol_file"]}), "loaded", bool))
+                elif mode == "drawing_symbol_definition_absent":
+                    check("symbol_definition_unloaded", required(self.call("drawing", "is_symbol_def_loaded", {"drawing": drawing, "symbol_file": q["symbol_file"]}), "loaded", bool) is False)
+                elif mode == "drawing_symbol_placed":
+                    placed = required(self.call("drawing", "list_symbols", {"drawing": drawing}), "symbols", list)
+                    check("symbol_instance_added", len(placed) == len(state.get("symbols", [])) + 1)
+                elif mode == "drawing_symbol_instance_absent":
+                    placed = required(self.call("drawing", "list_symbols", {"drawing": drawing}), "symbols", list)
+                    check("symbol_instance_removed", q["symbol_id"] not in {str(s.get("id")) for s in placed if isinstance(s, dict)})
         elif mode in ("familytable_present", "familytable_absent"):
             wanted = mode == "familytable_present"
             found = required(self.call("familytable", "exists", {"file": q["file"], "instance": q["instance"]}), "exists", bool)

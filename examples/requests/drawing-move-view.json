@@ -1,0 +1,9 @@
+{
+  "drawing": "bracket.drw",
+  "view": "FRONT_MAIN",
+  "point": {
+    "x": 120,
+    "y": 90
+  },
+  "coordinate_units": "drawing_units"
+}

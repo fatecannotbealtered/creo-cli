@@ -74,6 +74,7 @@ class NativeProtocol(unittest.TestCase):
         if op.path == "creo mkdir": (self.root / "exports").rmdir()
         if op.path == "creo rmdir":
             for leftover in (self.root / "exports").iterdir(): leftover.unlink()
+        if op.path == "drawing delete-sheet": self.world.models["bracket.drw"]["sheets"] = 2
         if op.path == "drawing add-model": self.world.models["bracket.drw"]["models"] = []
         if op.path == "drawing create-view": self.world.models["bracket.drw"]["drawing_views"] = []
 
