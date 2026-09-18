@@ -126,12 +126,17 @@ class Operation:
             p = q["point"]
             if (p.get("x", 0) == 0) == (p.get("y", 0) == 0):
                 raise Error("E_VALIDATION", "projection offset must have exactly one nonzero x or y coordinate")
-        if self.path.startswith("export "):
+        if "filename" in q and self.path.startswith("export "):
             import re
+            # Not every export names its own output -- plot and program let Creo choose
+            # the file name -- so the extension rule applies only where one is declared.
             suffix = {"export step": r"\.(?:stp|step)$", "export iges": r"\.(?:igs|iges)$",
-                      "export dxf": r"\.dxf$", "export pdf": r"\.pdf$", "export image": r"\.(?:jpg|jpeg)$"}[self.path]
-            if not re.search(suffix, q["filename"], re.I) or any(x in q["filename"] for x in ("/", "\\", ":", "..", "*", "?")):
-                raise Error("E_VALIDATION", "export filename must be a basename with the matching extension")
+                      "export dxf": r"\.dxf$", "export pdf": r"\.pdf$", "export image": r"\.(?:jpg|jpeg)$",
+                      "export 3dpdf": r"\.pdf$"}.get(self.path)
+            if suffix and not re.search(suffix, q["filename"], re.I):
+                raise Error("E_VALIDATION", "export filename must carry the matching extension")
+            if any(x in q["filename"] for x in ("/", "\\", ":", "..", "*", "?")):
+                raise Error("E_VALIDATION", "export filename must be a basename")
         return q
 
     def wire(self, request: dict) -> dict:
@@ -397,5 +402,21 @@ add("note delete", "note", "delete", "Delete one named note", F | {"name": NAME}
 
 add("layer show", "layer", "show", "Show or hide one named layer", F | {"name": NAME, "show": BOOL}, (), {"file": "bracket.prt", "name": "DATUMS", "show": True}, required=("file", "name", "show"), verifier="layer_status", effect="ui", write=True)
 add("layer delete", "layer", "delete", "Delete one named layer", F | {"name": NAME}, (), {"file": "bracket.prt", "name": "DATUMS"}, required=("file", "name"), verifier="layer_absent", dangerous=True, **W)
+
+# Data exchange and the last of the session settings. `export plot` and
+# `export program` are the two exports that do not name their own output -- Creo
+# chooses the file name -- so they cannot use the staged no-clobber path the others
+# take, and are verified instead against the location the upstream reports back.
+COLOR_TYPE = text(enum=("letter", "highlight", "drawing", "background", "half_tone", "edge_highlight",
+                        "dimmed", "error", "warning", "sheetmetal", "curve", "presel_highlight",
+                        "selected", "secondary_selected", "preview", "secondary_preview", "datum", "quilt"))
+CHANNEL = {"type": "integer", "minimum": 0, "maximum": 255}
+add("creo std-color", "creo", "get_std_color", "Read one of Creo's standard display colors", {"color_type": COLOR_TYPE}, ("red", "green", "blue"), {"color_type": "background"}, target_keys=())
+add("creo set-std-color", "creo", "set_std_color", "Set one of Creo's standard display colors", {"color_type": COLOR_TYPE, "red": CHANNEL, "green": CHANNEL, "blue": CHANNEL}, (), {"color_type": "background", "red": 255, "green": 255, "blue": 255}, target_keys=(), verifier="std_color", effect="session", write=True)
+add("export 3dpdf", "interface", "export_3dpdf", "Export a 3D PDF into a new explicit file, then verify bytes and header", F | {"filename": text(maximum=128), "dirname": PATH, "dpi": {"type": "integer", "enum": [100, 200, 300, 400, 500, 600]}}, ("filename", "dirname"), {"file": "bracket.prt", "filename": "bracket-3d.pdf", "dirname": "exports"}, required=("file", "filename", "dirname"), defaults={"sheet_range": "all", "use_drawing_settings": False}, verifier="export", effect="disk", write=True)
+add("export plot", "interface", "plot", "Export a plot with an explicit driver; Creo names the output file", F | {"dirname": PATH, "driver": text(enum=("POSTSCRIPT", "JPEG", "TIFF"))}, ("dirname", "filename"), {"file": "bracket.drw", "dirname": "exports", "driver": "POSTSCRIPT"}, required=("file", "dirname", "driver"), verifier="export_reported", effect="disk", write=True)
+add("export program", "interface", "export_program", "Export a model's Pro/Program text; Creo names the output file", F, ("dirname",), {"file": "bracket.prt"}, verifier="export_reported", effect="disk", write=True)
+add("import file", "interface", "import_file", "Import a neutral geometry file from the workspace as a new model", {"type": text(enum=("IGES", "NEUTRAL", "PV", "STEP")), "filename": text(maximum=128), "dirname": PATH, "new_name": MODEL, "new_model_type": text(enum=("asm", "prt"))}, ("file",), {"type": "STEP", "filename": "incoming.stp", "dirname": ".", "new_name": "incoming.prt", "new_model_type": "prt"}, required=("type", "filename", "dirname", "new_name", "new_model_type"), target_keys=(), verifier="imported", **W)
+add("import program", "interface", "import_program", "Import a Pro/Program file from the workspace into a model", F | {"filename": text(maximum=128), "dirname": PATH}, ("file",), {"file": "bracket.prt", "filename": "bracket.pls", "dirname": "."}, required=("file", "filename", "dirname"), verifier="acknowledgement", **W)
 
 BY_PATH = {op.path: op for op in OPS}

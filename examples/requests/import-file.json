@@ -1,0 +1,7 @@
+{
+  "type": "STEP",
+  "filename": "incoming.stp",
+  "dirname": ".",
+  "new_name": "incoming.prt",
+  "new_model_type": "prt"
+}

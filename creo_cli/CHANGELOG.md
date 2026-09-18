@@ -20,8 +20,11 @@ This file is the only human-maintained change source. Runtime copies are generat
 - Model editing: renaming and erasing models, unit systems (`set-length-units`, `set-mass-units`, `set-unit-system`, `create-unit-system`), materials (`load-material`, `delete-material`, and the wildcard material reads), relations (`set-relations`, `set-postregen-relations`, `postregen-relations`), parameters (`copy`, `delete`, `set-designated`), dimensions (`list-basic`, `copy`, `set-text`, `show`), features (`delete`, `set-param`, `delete-param`, `group-features`, `pattern-features`), notes (`set`, `copy`, `delete`) and layers (`show`, `delete`).
 - The unit setters require an explicit `convert`, with no default. That flag decides whether 40 mm becomes 40 in or 1.575 in, and silently reinterpreting every dimension in a model is not a decision to inherit from a wire default. The units are read back afterwards rather than trusting the setter.
 
+- Data exchange and the last session settings: `import file` brings STEP/IGES/NEUTRAL/PV geometry in as a new model, `import program` loads a Pro/Program file, `export 3dpdf` joins the staged no-clobber exports, and `export plot`/`export program` are verified against the location Creo reports because they name their own output. `creo std-color`/`set-std-color` complete the session settings.
+
 ### Changed
-- Published CREOSON coverage rises from 42 of 175 functions to 143; the CLI now exposes 176 leaf commands.
+- Published CREOSON coverage rises from 42 of 175 functions to 150; the CLI now exposes 183 leaf commands. That is every function the release publishes except twenty-five deliberate omissions, each named with its reason in `tests/test_creoson_interface.py` and enforced by a test, so the uncovered surface cannot grow silently.
+- Both READMEs describe the full command surface and state plainly what is left out and why.
 - `file.erase_not_displayed` is deliberately not exposed: it takes no target at all and erases whatever is not on screen, which is the wildcard mutation this adapter refuses everywhere else.
 - `surface_id` and `edge_id` join the ids normalized to strings on output, and `geometry edges` accepts `surface_ids` as strings and converts them to the published integers on the wire, matching how `assembly transform` already handles component paths.
 

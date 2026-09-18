@@ -42,6 +42,7 @@ class World:
         self.server_dir = root / "server-home"
         self.server_dir.mkdir(exist_ok=True)
         self.config = {"pro_unit_length": ["unit_mm"], "regen_failure_handling": ["resolve_mode"]}
+        self.colors = {"background": {"red": 0, "green": 0, "blue": 0}}
         self.bad_json = False
         self.http_status = None
         self.skip_mutation = False
@@ -171,6 +172,8 @@ class World:
             if fn == "pwd": return {"dirname": str(self.cwd)}
             if fn == "set_creo_version": self.major = q["version"]; return None
             if fn == "get_config": return {"values": list(self.config.get(q["name"], []))}
+            if fn == "get_std_color":
+                return dict(self.colors.get(q["color_type"], {"red": 0, "green": 0, "blue": 0}))
             if fn == "list_files":
                 return {"filelist": sorted(p.name for p in self.cwd.glob(q.get("filename") or "*") if p.is_file())}
             if fn == "list_dirs":
@@ -190,6 +193,9 @@ class World:
                 return None
             if fn == "set_config":
                 self.config[q["name"]] = [q["value"]]
+                return None
+            if fn == "set_std_color":
+                self.colors[q["color_type"]] = {c: q[c] for c in ("red", "green", "blue")}
                 return None
         if cmd == "file":
             if fn == "list": return {"files": list(self.loaded)}
@@ -402,9 +408,24 @@ class World:
                 m["drawing_views"].append({"name": q["view"], "sheet": q["sheet"], "location": q["point"], "view_model": q.get("model", m["models"][0])}); return None
             if fn == "regenerate": return None
         if cmd == "interface":
+            if fn == "import_file":
+                made = q["new_name"]
+                if not self.skip_mutation:
+                    if made not in self.loaded: self.loaded.append(made)
+                    self.models.setdefault(made, copy.deepcopy(self.models[self.active]))
+                return {"file": made}
+            if fn == "import_program":
+                return {"file": name}
+            if fn in ("plot", "export_program"):
+                # Creo names these itself; the fixture does the same and reports back.
+                directory = Path(q.get("dirname") or self.cwd)
+                suffix = {"POSTSCRIPT": ".ps", "JPEG": ".jpg", "TIFF": ".tif"}.get(q.get("driver"), ".pls")
+                out = directory / (Path(name).stem + suffix)
+                if not self.skip_mutation: out.write_bytes(b"SIMULATED NOT A REAL " + suffix.encode())
+                return {"dirname": str(directory), "filename": out.name}
             out = Path(q["filename"]) if fn == "export_image" else Path(q["dirname"]) / q["filename"]
             headers = {"STEP": b"ISO-10303-21;\nSIMULATED NOT A REAL STEP;", "IGES": b" " * 72 + b"S      1\n", "DXF": b"  0\nSECTION\n  2\nHEADER\n", "JPEG": b"\xff\xd8\xffFAKE JPEG"}
-            content = b"%PDF-1.7\nNOT A REAL PDF" if fn == "export_pdf" else headers[q["type"]]
+            content = b"%PDF-1.7\nNOT A REAL PDF" if fn in ("export_pdf", "export_3dpdf") else headers[q["type"]]
             if not self.skip_mutation: out.write_bytes(content)
             return {"dirname": str(out.parent), "filename": out.name}
         raise ValueError("Fixture has no implementation for " + repr((cmd, fn, q)))

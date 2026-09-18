@@ -46,21 +46,36 @@ drawing, or local output. Read-only policy is the default. Independent of PTC.
 | Discovery and observations | `reference`, `context`, `doctor`, `changelog`, `system capabilities`; `workspace`, `snapshot` | Local preflight never connects to Creo; native filenames are not parsed as geometry |
 | Existing adapter | `session`, `model`, `change` | Original VB API or explicit JSON mock; no fallback |
 | CREOSON connection | `creoson connect`, `creoson status` | Existing loopback service; protected session cache; version is declared, not detected |
-| Model lifecycle | `file list|active|info|units|relations|instances|massprops|open|display|regenerate|close-window|save|backup|roundtrip` | Explicit working-copy models; roundtrip restricted to one isolated part |
-| Design state | `parameter list|set`, `dimension list|set`, `feature list|suppress|resume|rename`, `material list|current|assign` | Typed values, explicit units, exact feature names, no wildcard writes |
-| Assemblies and orientations | `assembly tree|transform|assemble`, `view list|activate|save` | One explicit csys/fixed component; no arbitrary constraint solver |
-| Drawings | `drawing create|add-model|add-sheet|create-view|project-view|regenerate|models|sheets|views` | Real external template required; explicit sheets, orientation and drawing units |
-| Delivery | `export step|iges|dxf|pdf|image` | CREOSON writes to isolated staging; validate nonempty bytes/header, then atomic no-clobber publication |
+| Session and environment | `creo pwd|cd|list-files|list-dirs|mkdir|rmdir|get-config|set-config|std-color|set-std-color`, `server pwd` | Directories stay workspace-contained; `creo cd` is how Creo is pointed at the disposable workspace |
+| Model lifecycle | `file list|active|info|exists|is-active|open-errors|open|display|refresh|repaint|regenerate|close-window|save|backup|rename|erase|roundtrip` | Explicit working-copy models; status reads do not require the model to be loaded |
+| Units, materials and relations | `file units|mass-units-only|unit-system|accuracy|set-length-units|set-mass-units|set-unit-system|create-unit-system`, `material list|current|assign`, `file load-material|delete-material|materials-wildcard|current-material-wildcard`, `file relations|postregen-relations|set-relations|set-postregen-relations` | Unit setters require an explicit `convert` and are read back; relations are never evaluated by the CLI |
+| Design state | `parameter list|exists|set|copy|delete|set-designated`, `dimension list|list-basic|set|copy|set-text|show`, `feature list|params|param-exists|group-features|pattern-features|suppress|resume|rename|delete|set-param|delete-param`, `note list|get|exists|set|copy|delete`, `layer list|exists|show|delete` | Typed values, explicit units, exact names, no wildcard writes |
+| Geometry reads | `geometry bound-box|surfaces|edges`, `file simp-reps|has-instances` | Identities, areas and extents; not a tessellation or a BREP export |
+| Family tables | `familytable list|exists|header|row|cell|parents|tree|create-instance|add-instance|set-cell|replace|delete-instance|delete` | One exact instance per call; `tree` never erases; `set-cell` checks the column's declared type |
+| Assemblies and orientations | `assembly tree|transform|assemble`, `view list|list-exploded|activate|save` | One explicit csys/fixed component; no arbitrary constraint solver |
+| Drawings | `drawing create|add-model|add-sheet|create-view|project-view|regenerate|models|sheets|views|current-sheet|current-model|sheet-size|sheet-scale|sheet-format|list-views|view-location|view-scale|view-sheet|view-bound-box|list-symbols|symbol-loaded|select-sheet|regenerate-sheet|scale-sheet|set-sheet-format|delete-sheet|set-current-model|delete-models|rename-view|move-view|scale-view|delete-view|load-symbol|place-symbol|delete-symbol-definition|delete-symbol-instance` | Real external template required; explicit sheets, orientation and drawing units; a named target is required where the upstream would accept "all" |
+| Delivery and exchange | `export step|iges|dxf|pdf|3dpdf|image|plot|program`, `import file|program` | Named exports stage in isolation, validate bytes/header, then publish atomically without clobbering; `plot`/`program` let Creo name the file and are verified against the location it reports |
 | Repeatable tasks | `workflow validate|run|status|history|result|reconcile` | Up to 32 allowlisted steps and eight model targets; no eval, mapkeys, or arbitrary RPC |
 
-There are **75 leaf commands**, including **45 CREOSON domain operations**. New
-`file`/`parameter`/`dimension`/`feature`/`assembly`/`drawing`/`export` commands always
-use CREOSON; legacy `model`/`change` commands retain their explicit backend option.
+There are **183 leaf commands**, including **150 CREOSON domain operations** -- every
+function the CREOSON 3.0.2 release publishes except the twenty-five left out on
+purpose. `contract/creoson-interface.json` is derived from the release's own
+specifications, and a test holds the catalog to it: no invented field, no missed
+required field, no promised response key that does not exist, and no published
+function that is neither exposed nor named with a reason.
+
+What is left out, and why: Windchill (PLM is not this tool's job); the connection
+lifecycle beyond `creoson connect`/`creoson status`, so nothing here starts, stops or
+kills Creo; `mapkey` and the `user_select` family, which are the recorded-UI and
+GUI-pick escape hatches this catalog exists to avoid; `creo delete_files`, which
+deletes by pattern outside the workspace guarantees; and `file erase_not_displayed`,
+which takes no target at all.
+
 The registry gives each operation its request schema, example, safe wire defaults,
-source snapshot and nested output schema. An operation is implemented but **not
+source provenance and nested output schema. An operation is implemented but **not
 live-verified**. No from-scratch part/sketch/extrude/hole/fillet engine, arbitrary
 assembly constraints, interference analysis, sheet-metal unfolding, GD&T authoring,
-FEA, Windchill integration or self-update is implemented.
+FEA or self-update is implemented.
 
 ## Agent Workflow
 

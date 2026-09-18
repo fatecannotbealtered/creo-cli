@@ -38,18 +38,30 @@ CREOSON 后端需要在同一台电脑上配置外部 [CREOSON 服务](https://g
 | 发现与观察 | `reference/context/doctor/changelog/system capabilities`、`workspace`、`snapshot` | 本地预检不连接 Creo；文件名和散列不代表几何解析 |
 | 原有适配器 | `session`、`model`、`change` | VB API 或显式 JSON 模拟，禁止自动回退 |
 | CREOSON 连接 | `creoson connect/status` | 使用已启动的本地服务；版本由人声明，不伪装成自动检测 |
-| 模型生命周期 | `file list/active/info/units/relations/instances/massprops/open/display/regenerate/close-window/save/backup/roundtrip` | 指定工作副本；保存重开验证限制为独立零件 |
-| 设计状态 | `parameter list/set`、`dimension list/set`、`feature list/suppress/resume/rename`、`material list/current/assign` | 类型与单位明确；精确特征名称；禁止通配符写入 |
-| 装配与视图 | `assembly tree/transform/assemble`、`view list/activate/save` | 单个坐标系约束或固定放置，不是任意装配求解器 |
-| 工程图 | `drawing create/add-model/add-sheet/create-view/project-view/regenerate/models/sheets/views` | 需要真实模板；明确图纸、模型视图和图纸坐标单位 |
-| 交付 | `export step/iges/dxf/pdf/image` | 隔离暂存、文件头与非空检查，再原子发布且不覆盖已有文件 |
+| 会话与环境 | `creo pwd/cd/list-files/list-dirs/mkdir/rmdir/get-config/set-config/std-color/set-std-color`、`server pwd` | 目录一律限定在工作区内；`creo cd` 是把 Creo 指向可丢弃工作区的正式途径 |
+| 模型生命周期 | `file list/active/info/exists/is-active/open-errors/open/display/refresh/repaint/regenerate/close-window/save/backup/rename/erase/roundtrip` | 指定工作副本；状态类读取不要求模型已加载 |
+| 单位、材料与关系式 | `file units/mass-units-only/unit-system/accuracy/set-length-units/set-mass-units/set-unit-system/create-unit-system`、`material list/current/assign`、`file load-material/delete-material/materials-wildcard/current-material-wildcard`、`file relations/postregen-relations/set-relations/set-postregen-relations` | 单位设置必须显式声明 `convert` 并回读；CLI 从不求值关系式文本 |
+| 设计状态 | `parameter list/exists/set/copy/delete/set-designated`、`dimension list/list-basic/set/copy/set-text/show`、`feature list/params/param-exists/group-features/pattern-features/suppress/resume/rename/delete/set-param/delete-param`、`note list/get/exists/set/copy/delete`、`layer list/exists/show/delete` | 类型与单位明确；精确名称；禁止通配符写入 |
+| 几何读取 | `geometry bound-box/surfaces/edges`、`file simp-reps/has-instances` | 标识、面积与包络；不是网格化，也不是 BREP 导出 |
+| 族表 | `familytable list/exists/header/row/cell/parents/tree/create-instance/add-instance/set-cell/replace/delete-instance/delete` | 每次只针对一个精确实例；`tree` 绝不擦除模型；`set-cell` 校验列的声明类型 |
+| 装配与视图 | `assembly tree/transform/assemble`、`view list/list-exploded/activate/save` | 单个坐标系约束或固定放置，不是任意装配求解器 |
+| 工程图 | `drawing create/add-model/add-sheet/create-view/project-view/regenerate/models/sheets/views/current-sheet/current-model/sheet-size/sheet-scale/sheet-format/list-views/view-location/view-scale/view-sheet/view-bound-box/list-symbols/symbol-loaded/select-sheet/regenerate-sheet/scale-sheet/set-sheet-format/delete-sheet/set-current-model/delete-models/rename-view/move-view/scale-view/delete-view/load-symbol/place-symbol/delete-symbol-definition/delete-symbol-instance` | 需要真实模板；明确图纸、方位和图纸单位；上游允许省略目标表示"全部"的地方，这里一律要求具名 |
+| 交付与数据交换 | `export step/iges/dxf/pdf/3dpdf/image/plot/program`、`import file/program` | 具名导出先隔离暂存、校验字节与文件头，再原子发布且不覆盖；`plot`/`program` 由 Creo 决定文件名，按它回报的位置校验 |
 | 重复任务 | `workflow validate/run/status/history/result/reconcile` | 最多 32 步、8 个模型目标；无任意 RPC、脚本或 mapkey 执行入口 |
 
-当前 **75 个叶子命令，其中 45 个 CREOSON 领域操作**。新增 `file/parameter/dimension/feature/assembly/drawing/export` 固定使用 CREOSON；
-原来的 `model/change` 保留后端参数。每项操作都有请求 schema、示例、明确默认值、源码依据和嵌套输出 schema。
-创建工程图的上游代码可能弹出错误对话框，相关风险已在 `reference` 和预览中声明；CLI 超时不能代表 Creo 已停止。
+当前 **183 个叶子命令，其中 150 个 CREOSON 领域操作**——CREOSON 3.0.2 发布的全部函数，
+仅排除 25 个有意不实现的。`contract/creoson-interface.json` 由该发布自带的规格派生而来，
+并有测试把操作目录钉在上面：不会发明字段、不会漏掉必填项、不会承诺上游不返回的响应键，
+也不允许任何发布函数既未实现又没有具名理由。
 
-**实现不等于实测。** 尚未实现原生零件从零创建、草绘/拉伸/孔/倒角建模、任意装配约束、干涉分析、钣金展开、完整尺寸公差标注、有限元、Windchill 或自更新。
+**排除了什么、为什么**：Windchill（PLM 不是本工具的职责）；`creoson connect`/`status` 之外的
+连接生命周期，所以这里不会启动、停止或杀掉 Creo；`mapkey` 和 `user_select` 系列，
+它们正是本目录要避免的"录制 UI"和"GUI 选取"逃生口；`creo delete_files`，它按模式删除文件、
+越出工作区保证；以及 `file erase_not_displayed`，它根本不接受任何目标。
+
+每项操作都有请求 schema、示例、明确默认值、来源溯源和嵌套输出 schema。
+**实现不等于实测。** 尚未实现原生零件从零创建、草绘/拉伸/孔/倒角建模、任意装配约束、
+干涉分析、钣金展开、完整尺寸公差标注、有限元或自更新。
 
 ## Agent Workflow
 

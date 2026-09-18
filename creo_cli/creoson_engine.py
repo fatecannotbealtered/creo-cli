@@ -358,6 +358,23 @@ class Engine:
                 elif mode == "drawing_symbol_instance_absent":
                     placed = required(self.call("drawing", "list_symbols", {"drawing": drawing}), "symbols", list)
                     check("symbol_instance_removed", q["symbol_id"] not in {str(s.get("id")) for s in placed if isinstance(s, dict)})
+        elif mode == "std_color":
+            got = self.call("creo", "get_std_color", {"color_type": q["color_type"]})
+            check("color_readback", all(got.get(c) == q[c] for c in ("red", "green", "blue")))
+        elif mode == "imported":
+            made = result.get("file")
+            check("imported_model_named", type(made) is str and bool(made))
+            check("imported_model_loaded", str(made).casefold() in {n.casefold() for n in self.loaded()})
+        elif mode == "export_reported":
+            # These exports do not name their own output, so the only honest check is
+            # that what the upstream says it wrote exists, is non-empty, and landed
+            # inside the workspace. Format validity is not asserted.
+            reported = result.get("dirname")
+            check("reported_directory", type(reported) is str and bool(reported))
+            directory = store.contained(str(reported), directory=True)
+            written = [p for p in directory.iterdir() if p.is_file()]
+            check("export_directory_not_empty", bool(written))
+            check("export_nonempty", all(p.stat().st_size > 0 for p in written))
         elif mode == "renamed":
             check("renamed_model_loaded", q["new_name"].casefold() in {n.casefold() for n in self.loaded()})
         elif mode == "erased":
@@ -496,7 +513,7 @@ class Engine:
                 with out.open("rb") as handle:
                     header = handle.read(512)
                 check("export_header", (b"ISO-10303-21" in header if op.path == "export step" else
-                      header.startswith(b"%PDF-") if op.path == "export pdf" else
+                      header.startswith(b"%PDF-") if op.path in ("export pdf", "export 3dpdf") else
                       header.startswith(b"\xff\xd8\xff") if op.path == "export image" else
                       b"SECTION" in header or header.startswith(b"AutoCAD Binary DXF") if op.path == "export dxf" else
                       len(header) >= 73 and b"S" in header[72:73]))

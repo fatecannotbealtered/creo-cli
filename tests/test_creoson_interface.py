@@ -44,6 +44,23 @@ SYNTHESIZED_RESPONSE = {
 }
 
 
+# Published functions this adapter deliberately does not expose, each with the reason.
+# The point is that the uncovered set is a decision rather than a backlog: a function
+# nobody has argued about cannot sit quietly outside the catalog.
+NOT_EXPOSED = {
+    "interface.mapkey": "arbitrary recorded UI actions -- the script escape hatch the catalog exists to avoid",
+    "dimension.user_select": "requires a person to pick in the GUI; no non-interactive contract",
+    "feature.list_selected": "reads the GUI selection; same reason",
+    "feature.user_select_csys": "requires a person to pick in the GUI; same reason",
+    "creo.delete_files": "deletes by pattern in Creo's working directory, outside the workspace guarantees",
+    "creo.set_creo_version": "performed as part of `creoson connect`, never as a standalone declaration",
+    "file.erase_not_displayed": "takes no target at all and erases whatever is not on screen",
+    **{f"connection.{f}": "connection lifecycle is `creoson connect`/`creoson status`; "
+                          "start/stop/kill Creo are intentionally absent"
+       for f in ("connect", "disconnect", "is_creo_running", "kill_creo", "start_creo", "stop_creo")},
+}
+
+
 def wire_fields(op) -> set:
     """Field names the operation forwards upstream, per its own wire() contract."""
     return set(op.request_schema["properties"]) - set(op.local_keys) | set(op.defaults)
@@ -128,6 +145,25 @@ class PublishedInterface(unittest.TestCase):
                     self.assertTrue(declared & expected,
                                     f"{path} types {name!r} as {sorted(declared)}, "
                                     f"but {op.command}.{op.function} publishes {kind}")
+
+    def test_every_published_function_is_exposed_or_explained(self):
+        # Windchill is a documented non-goal for this tool, so it is excluded wholesale
+        # rather than function by function; everything else has to be named above.
+        exposed = {f"{op.command}.{op.function}" for op in BY_PATH.values()}
+        unexplained = sorted(name for name in FUNCTIONS
+                             if name not in exposed
+                             and not name.startswith("windchill.")
+                             and name not in NOT_EXPOSED)
+        self.assertFalse(unexplained,
+                         "published functions neither exposed nor explained in NOT_EXPOSED: "
+                         f"{unexplained}")
+
+    def test_the_not_exposed_list_is_not_stale(self):
+        exposed = {f"{op.command}.{op.function}" for op in BY_PATH.values()}
+        for name in sorted(NOT_EXPOSED):
+            with self.subTest(function=name):
+                self.assertIn(name, FUNCTIONS, "names a function the release does not publish")
+                self.assertNotIn(name, exposed, "is listed as not exposed but the catalog exposes it")
 
     def test_exemptions_are_not_stale(self):
         # An exemption that no longer applies is a documentation lie; drop it.
