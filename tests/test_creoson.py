@@ -7,6 +7,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from contextlib import redirect_stdout, redirect_stderr
 from pathlib import Path
@@ -27,7 +28,11 @@ ROOT = Path(__file__).resolve().parents[1]
 class NativeProtocol(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        # Resolve like workspace() does: the temporary root reaches the CLI as
+        # CREO_CLI_WORKSPACE, and every path it reports back is resolved. Comparing
+        # against an unresolved root fails wherever the two spellings differ --
+        # macOS (/var -> /private/var) and Windows 8.3 names (RUNNER~1 -> runneradmin).
+        self.root = Path(self.temp.name).resolve()
         self.world = World(self.root)
         self.server = Server(self.world); self.addCleanup(self.server.close)
         self.env = dict(os.environ, CREO_CLI_CONFIG_DIR=str(self.root / "state"), CREO_CLI_WORKSPACE=str(self.root),
@@ -473,9 +478,17 @@ class NativeProtocol(unittest.TestCase):
 
     def test_http_timeout_after_write_keeps_unknown_receipt(self):
         d = self.command("dimension set", None, "--dry-run")
-        self.world.delay = ("dimension", "set", .25)
-        r = self.command("dimension set", None, "--timeout", ".15", "--confirm", d["data"]["confirm_token"], status=6)
+        # Hold the write open until this call has returned. A fixed sleep would have to
+        # outlast the preliminary reads as well, and those alone can exhaust a short
+        # deadline on a loaded machine -- then the command times out before the write is
+        # sent and reports a plain E_TIMEOUT, which is not what this test is about.
+        release = threading.Event(); self.addCleanup(release.set)
+        self.world.block = ("dimension", "set", release)
+        r = self.command("dimension set", None, "--timeout", "1", "--confirm", d["data"]["confirm_token"], status=6)
         self.assertEqual(r["error"]["code"], "E_OUTCOME_UNKNOWN")
+        # Timing out before the write instead reports receipt_status failed_before_write,
+        # which would pass the status check above for the wrong reason.
+        self.assertEqual(r["error"]["details"]["receipt_status"], "unknown")
 
     def test_reference_reports_composed_roundtrip(self):
         r = self.cli("reference", "--command", "file roundtrip")["data"]

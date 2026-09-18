@@ -14,6 +14,12 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+# Upper bound for World.block. A test releases its event as soon as the CLI call
+# returns, so this ceiling is never reached in a passing run; it exists so a broken
+# test fails instead of hanging the suite. Chosen well above the largest client
+# deadline any test sets (seconds), not tuned to a machine's speed.
+BLOCK_CEILING_SECONDS = 30.0
+
 
 class World:
     def __init__(self, root: Path):
@@ -29,6 +35,7 @@ class World:
         self.fail = None
         self.drop = None
         self.delay = None
+        self.block = None
         self.bad_json = False
         self.http_status = None
         self.skip_mutation = False
@@ -50,6 +57,11 @@ class World:
         self.events.append((cmd, fn, copy.deepcopy(q)))
         if self.delay and self.delay[:2] == (cmd, fn):
             time.sleep(self.delay[2])
+        if self.block and self.block[:2] == (cmd, fn):
+            # Withhold this one response until the test releases it. A client deadline
+            # then always expires with the request already sent, instead of depending on
+            # a fixed sleep outlasting however long the preliminary reads took.
+            self.block[2].wait(BLOCK_CEILING_SECONDS)
         if self.fail == (cmd, fn):
             return {"status": {"error": True, "message": "fixture error with " + self.sid}}
         if cmd == "connection" and fn == "connect":
@@ -168,8 +180,11 @@ class Server:
                 self.connection.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             def log_message(self, *_): pass
             def handle(self):
+                # A client that abandons a slow response leaves the write to fail here.
+                # ConnectionError covers reset, aborted (WinError 10053) and broken pipe;
+                # naming only two of the three let Windows print a handler traceback.
                 try: super().handle()
-                except (ConnectionResetError, BrokenPipeError): pass
+                except ConnectionError: pass
             def do_POST(self):
                 if self.path != "/creoson": self.send_error(404); return
                 req = json.loads(self.rfile.read(int(self.headers["Content-Length"])))

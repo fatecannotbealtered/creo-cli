@@ -25,7 +25,9 @@ from creo_cli.creoson_catalog import BY_PATH
 def record() -> dict:
     calls = []
     with tempfile.TemporaryDirectory() as temporary:
-        root = Path(temporary)
+        # Resolved for the same reason as the test fixture: this root becomes
+        # CREO_CLI_WORKSPACE, and the CLI rejects symlinked workspace paths.
+        root = Path(temporary).resolve()
         world = World(root)
         world.loaded = ["bracket.prt"]
         (root / "bracket.drw").unlink()

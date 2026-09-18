@@ -4,6 +4,11 @@ This file is the only human-maintained change source. Runtime copies are generat
 
 ## [Unreleased]
 
+### Fixed
+- Test fixture and demo recorder resolve their temporary workspace root, matching what the CLI itself stores. The unresolved spelling failed every path comparison on macOS (`/var` symlink) and on Windows hosts whose temp path is an 8.3 short name.
+- The write-timeout test holds its response open until the call returns instead of racing a fixed sleep against the preliminary reads, and asserts `receipt_status` so a timeout that lands before the write can no longer pass for the wrong reason.
+- The HTTP substitute catches `ConnectionError` rather than two of its three subclasses, so an abandoned response no longer prints a handler traceback on Windows.
+
 ## [0.2.0] - 2026-09-18
 
 ### Added
