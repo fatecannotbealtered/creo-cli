@@ -130,6 +130,8 @@ class Engine:
         wire = op.wire(q)
         if op.path == "assembly transform":
             wire["path"] = [int(n) for n in q["path"]]
+        if op.path == "familytable replace" and "path" in wire:
+            wire["path"] = [int(n) for n in q["path"]]
         if op.path == "geometry edges":
             # Ids cross the CLI boundary as strings (CLI-SPEC) and go upstream as the
             # integers geometry.get_edges publishes, like assembly transform's path.
@@ -312,6 +314,29 @@ class Engine:
             old_ids = {r.get("feat_id") for r in before[q["into_asm"]]["features"]}
             check("new_component_feature", type(feature_id) is int and feature_id not in old_ids and any(r.get("feat_id") == feature_id and r.get("status") == "ACTIVE" for r in rows))
             # Numeric solve accuracy and all degrees of freedom are not exposed here.
+        elif mode in ("familytable_present", "familytable_absent"):
+            wanted = mode == "familytable_present"
+            found = required(self.call("familytable", "exists", {"file": q["file"], "instance": q["instance"]}), "exists", bool)
+            check("instance_" + ("added" if wanted else "removed"), found is wanted)
+        elif mode == "familytable_table_absent":
+            # Deleting the whole table is judged by the model no longer owning one,
+            # not by the upstream having accepted the request.
+            check("family_table_removed",
+                  required(self.call("file", "has_instances", {"file": q["file"]}), "exists", bool) is False)
+        elif mode == "familytable_created":
+            created = result.get("name")
+            check("instance_model_named", type(created) is str and bool(created))
+            check("instance_model_loaded", str(created).casefold() in {n.casefold() for n in self.loaded()})
+        elif mode == "familytable_cell":
+            cell = self.call("familytable", "get_cell", {"file": q["file"], "instance": q["instance"], "colid": q["colid"]})
+            value = cell.get("value")
+            check("cell_value_readback", close_number(value, q["value"]) if type(q["value"]) in (int, float)
+                  else type(value) is type(q["value"]) and value == q["value"])
+            # A value that lands in a column of another type is a silent data error.
+            check("cell_declared_datatype", str(cell.get("datatype", "")).upper() == q["expected_datatype"])
+        elif mode == "familytable_replaced":
+            check("replacement_instance_present",
+                  required(self.call("familytable", "exists", {"file": q["cur_model"], "instance": q["new_inst"]}), "exists", bool))
         elif mode == "working_directory":
             # Read Creo's own answer back rather than trusting the echoed request:
             # a cd that silently did not move is exactly the failure worth catching.

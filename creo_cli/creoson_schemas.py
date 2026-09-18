@@ -29,6 +29,10 @@ NOTE = obj({"name": S, "value": S, "value_expanded": S, "encoded": B, "url": S, 
 SURFACE = obj({"surface_id": S, "area": N, "min_extent": VECTOR, "max_extent": VECTOR}, ("surface_id",))
 EDGE = obj({"edge_id": S, "start": VECTOR, "end": VECTOR, "length": N, "edge_type": S}, ())
 CONTOUR = obj({"surface_id": S, "traversal": S, "edgelist": array(EDGE)}, ("surface_id",))
+CELL = obj({"colid": S, "value": {"type": ["string", "number", "boolean", "null"]}, "datatype": S, "coltype": S}, ("colid",))
+# Nested family tables recurse; the depth is the upstream's, so children stays generic
+# rather than pretending to a fixed shape this adapter has not seen on a real table.
+FAMILY_NODE = obj({"name": S, "total": I, "children": {"type": "array"}}, ("name",))
 BASE_FIELDS = {"file": S, "dirname": S, "revision": I, "files": array(S), "generic": S, "has_simprep": B,
                "material": {"type": ["string", "null"]}, "num_sheets": I, "featureid": S,
                "origin": VECTOR, "x_axis": VECTOR, "y_axis": VECTOR, "z_axis": VECTOR, "x_rot": N, "y_rot": N, "z_rot": N,
@@ -37,7 +41,10 @@ BASE_FIELDS = {"file": S, "dirname": S, "revision": I, "files": array(S), "gener
                "roundtrip_verified": B, "compared_sections": array(S), "artifacts": array(ARTIFACT),
                "exists": B, "active": B, "errors": B,
                "xmin": N, "xmax": N, "ymin": N, "ymax": N, "zmin": N, "zmax": N,
-               "accuracy": N, "relative": B, "name": S, "value": S, "encoded": B, "url": S, "location": VECTOR}
+               "accuracy": N, "relative": B, "name": S, "encoded": B, "url": S, "location": VECTOR,
+               "value": {"type": ["string", "number", "boolean", "null"]},
+               "instance": S, "colid": S, "datatype": S, "coltype": S, "total": I,
+               "columns": array(CELL), "children": array(FAMILY_NODE)}
 
 
 def result_schema(op):
@@ -54,7 +61,8 @@ def result_schema(op):
         props.pop(op.list_key, None)
         item = {"parameter list": PARAMETER, "dimension list": DIMENSION, "feature list": FEATURE,
                 "drawing views": DRAWING_VIEW, "feature params": PARAMETER, "layer list": LAYER,
-                "note list": NOTE, "geometry surfaces": SURFACE, "geometry edges": CONTOUR}.get(op.path, S)
+                "note list": NOTE, "geometry surfaces": SURFACE, "geometry edges": CONTOUR,
+                "familytable header": CELL}.get(op.path, S)
         props |= {"items": array(item), "count": I, "total": I, "offset": I, "has_more": B, "next_offset": I, "_untrusted": array(S)}
         required = ["items", "count", "total", "offset", "has_more", "_untrusted"]
     if op.verifier == "export":

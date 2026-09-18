@@ -97,17 +97,21 @@ class PublishedInterface(unittest.TestCase):
         # as E_INTEGRITY at runtime when a real reply arrives. Hold each declared type
         # against the type CREOSON publishes for that field.
         from creo_cli.creoson_engine import ID_KEYS
-        from creo_cli.creoson_schemas import BASE_FIELDS
+        from creo_cli.creoson_schemas import result_schema
         allowed = {"string": {"string"}, "boolean": {"boolean"}, "integer": {"integer"},
                    "double": {"number"}, "array:string": {"array"}, "array:integer": {"array"},
                    "object": {"object"}}
         for path, op in sorted(BY_PATH.items()):
             published = {f["name"]: f["type"] for f in FUNCTIONS[f"{op.command}.{op.function}"]["response"]}
+            # Check what the command actually emits, not the shared field table: the same
+            # field name carries different types across functions (bom's `children` is one
+            # object, a family table's is an array), so per-operation overrides are real.
+            emitted = result_schema(op)["properties"]
             for name in op.response_fields:
                 kind = published.get(name)
-                if (path, name) in SYNTHESIZED_RESPONSE or name not in BASE_FIELDS or kind is None:
+                if (path, name) in SYNTHESIZED_RESPONSE or name not in emitted or kind is None:
                     continue
-                declared = BASE_FIELDS[name].get("type")
+                declared = emitted[name].get("type")
                 declared = {declared} if isinstance(declared, str) else set(declared or ())
                 if name in ID_KEYS:
                     # CLI-SPEC: every ID leaves as a string even when the upstream numbers

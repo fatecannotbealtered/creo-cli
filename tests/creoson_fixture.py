@@ -60,7 +60,9 @@ class World:
                 "layers": {"DATUMS": "HIDDEN", "PART_GEOM": "SHOWN"},
                 "notes": {"NOTE_1": "BREAK SHARP EDGES"},
                 "feature_params": {"HOLE_1": {"DEPTH": "THRU"}},
-                "exploded_views": ["EXPLODE_1"], "simp_reps": ["MASTER"], "instances": ["bracket_s.prt"]}
+                "exploded_views": ["EXPLODE_1"], "simp_reps": ["MASTER"], "instances": ["bracket_s.prt"],
+                "family": {"bracket_s": {"d1": 30.0}, "bracket_l": {"d1": 60.0}},
+                "family_columns": {"d1": "DOUBLE"}, "family_parents": []}
 
     def handle(self, body):
         cmd, fn, q = body["command"], body["function"], body.get("data") or {}
@@ -102,6 +104,38 @@ class World:
                                                        "start": {"x": -10.0, "y": -5.0, "z": 0.0},
                                                        "end": {"x": 90.0, "y": -5.0, "z": 0.0}}]}
                                         for sid in q["surface_ids"]]}
+        if cmd == "familytable":
+            table = m.setdefault("family", {})
+            if fn == "list":
+                rows = sorted(table)
+                return {"instances": [r for r in rows if r == q["instance"]] if q.get("instance") else rows}
+            if fn == "exists": return {"exists": q["instance"] in table}
+            if fn == "get_header":
+                return {"columns": [{"colid": c, "datatype": d, "coltype": "DIMENSION"}
+                                    for c, d in m.get("family_columns", {}).items()]}
+            if fn == "get_row":
+                row = table.get(q["instance"], {})
+                return {"instance": q["instance"],
+                        "columns": [{"colid": c, "value": v, "datatype": m.get("family_columns", {}).get(c, "STRING"),
+                                     "coltype": "DIMENSION"} for c, v in row.items()]}
+            if fn == "get_cell":
+                row = table.get(q["instance"], {})
+                return {"instance": q["instance"], "colid": q["colid"], "value": row.get(q["colid"]),
+                        "datatype": m.get("family_columns", {}).get(q["colid"], "STRING"), "coltype": "DIMENSION"}
+            if fn == "get_parents": return {"parents": list(m.get("family_parents", []))}
+            if fn == "list_tree":
+                return {"total": len(table), "children": [{"name": n, "total": 0, "children": []} for n in sorted(table)]}
+            if self.skip_mutation: return {}
+            if fn == "create_inst":
+                made = q["instance"] + ".prt"
+                if made not in self.loaded: self.loaded.append(made)
+                self.models.setdefault(made, copy.deepcopy(m))
+                return {"name": made}
+            if fn == "add_inst": table.setdefault(q["instance"], {}); return None
+            if fn == "delete_inst": table.pop(q["instance"], None); return None
+            if fn == "delete": m["family"] = {}; m["instances"] = []; return None
+            if fn == "set_cell": table.setdefault(q["instance"], {})[q["colid"]] = q["value"]; return None
+            if fn == "replace": return None
         if cmd == "layer":
             if fn == "list":
                 rows = [{"name": n, "status": s, "id": i} for i, (n, s) in enumerate(m.get("layers", {}).items(), start=1)]

@@ -1,0 +1,7 @@
+{
+  "file": "bracket.prt",
+  "instance": "bracket_s",
+  "colid": "d1",
+  "value": 42,
+  "expected_datatype": "DOUBLE"
+}

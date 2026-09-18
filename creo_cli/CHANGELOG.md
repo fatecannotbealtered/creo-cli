@@ -12,8 +12,10 @@ This file is the only human-maintained change source. Runtime copies are generat
 - Model-reading commands, so an agent can see what a person sees on screen rather than only names and numbers: `geometry bound-box`, `geometry surfaces` and `geometry edges`; `layer list`/`layer exists`; `note list`/`note get`/`note exists`; `file accuracy`, `file unit-system`, `file has-instances`, `file simp-reps`; `parameter exists`; `feature params` and `feature param-exists`; `view list-exploded`. All observations.
 - `creo_cli/creoson_spec_ids.py`, generated alongside the interface index, so command groups taken straight from the release specification cite provenance per function instead of pinning a whole group to one file's hash.
 
+- Family tables, the way variants of a part are actually shipped: `familytable list`, `exists`, `header`, `row`, `cell`, `parents` and `tree` read; `create-instance`, `add-instance`, `set-cell` and `replace` write; `delete-instance` and `delete` are gated dangerous on top of preview/confirm. `familytable tree` pins the upstream `erase` flag false, so reading a nested table can never unload the session as a side effect, and `set-cell` requires an `expected_datatype` that is checked against the column on readback rather than letting a string land in a numeric column.
+
 ### Changed
-- Published CREOSON coverage rises from 42 of 175 functions to 72; the CLI now exposes 105 leaf commands.
+- Published CREOSON coverage rises from 42 of 175 functions to 85; the CLI now exposes 118 leaf commands.
 - `surface_id` and `edge_id` join the ids normalized to strings on output, and `geometry edges` accepts `surface_ids` as strings and converts them to the published integers on the wire, matching how `assembly transform` already handles component paths.
 
 ## [1.0.0] - 2026-09-18
