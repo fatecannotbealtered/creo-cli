@@ -1,0 +1,5644 @@
+{
+  "$comment": "DERIVED, DO NOT HAND-EDIT. Regenerate with scripts/gen_creoson_interface.py --from <unzipped CreosonServer release>. This is an interface index used to check creo_cli/creoson_catalog.py against the published contract; it is not CREOSON source and does not bundle CREOSON.",
+  "release": "v3.0.2",
+  "repository": "SimplifiedLogic/creoson",
+  "spec_subdirectory": "web/assets/creoson_stuff/jsonSpecs",
+  "blob_identity": "git blob sha1 over LF-normalized spec bytes",
+  "function_count": 175,
+  "data_type_count": 23,
+  "functions": {
+    "bom.get_paths": {
+      "command": "bom",
+      "function": "get_paths",
+      "description": "Get a hierarchy of components within an assembly",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Current active model"
+        },
+        {
+          "name": "paths",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "skeletons",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "top_level",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "get_transforms",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "exclude_inactive",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "get_simpreps",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "file",
+          "type": "string"
+        },
+        {
+          "name": "generic",
+          "type": "string"
+        },
+        {
+          "name": "children",
+          "type": "object:BomChild"
+        },
+        {
+          "name": "has_simprep",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "bom-get_paths.json",
+      "git_blob_sha": "abf79d2b669a5bf1c31b7ccc85c36d8e42a759f9"
+    },
+    "connection.connect": {
+      "command": "connection",
+      "function": "connect",
+      "description": "Connect to CREOSON",
+      "request": [],
+      "response": [],
+      "spec_file": "connection-connect.json",
+      "git_blob_sha": "8fe8fa10101a81cea587a2f44e3861209bfc308d"
+    },
+    "connection.disconnect": {
+      "command": "connection",
+      "function": "disconnect",
+      "description": "Disconnect from CREOSON",
+      "request": [],
+      "response": [],
+      "spec_file": "connection-disconnect.json",
+      "git_blob_sha": "53f857b2687255c2f2756041da20a83291f84a09"
+    },
+    "connection.is_creo_running": {
+      "command": "connection",
+      "function": "is_creo_running",
+      "description": "Check whether Creo is running.",
+      "request": [],
+      "response": [],
+      "spec_file": "connection-is_creo_running.json",
+      "git_blob_sha": "a341e88aad26a77f33b7ca2a934b69c50631ba48"
+    },
+    "connection.kill_creo": {
+      "command": "connection",
+      "function": "kill_creo",
+      "description": "Kill primary Creo processes.",
+      "request": [],
+      "response": [],
+      "spec_file": "connection-kill_creo.json",
+      "git_blob_sha": "c0a1fdb7c5d0425df18460868adbb3b907df4e65"
+    },
+    "connection.start_creo": {
+      "command": "connection",
+      "function": "start_creo",
+      "description": "Execute an external .bat file to start Creo, then attempts to connect to Creo.",
+      "request": [
+        {
+          "name": "start_dir",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "start_command",
+          "type": "string",
+          "required": true,
+          "valid_values": "nitro_proe_remote.bat"
+        },
+        {
+          "name": "retries",
+          "type": "integer",
+          "default": "20"
+        },
+        {
+          "name": "use_desktop",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "connection-start_creo.json",
+      "git_blob_sha": "44fa561790b5e14da6790260cb35221f6890c5d1"
+    },
+    "connection.stop_creo": {
+      "command": "connection",
+      "function": "stop_creo",
+      "description": "Disconnect current session from Creo and cause Creo to exit.",
+      "request": [],
+      "response": [],
+      "spec_file": "connection-stop_creo.json",
+      "git_blob_sha": "f14656da3337b92a3359b4b9bc5fe81ce1df3671"
+    },
+    "creo.cd": {
+      "command": "creo",
+      "function": "cd",
+      "description": "Change Creo's working directory",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        }
+      ],
+      "spec_file": "creo-cd.json",
+      "git_blob_sha": "6cc4db3c49cdc8b8940d06f5306c4ae2ad148e19"
+    },
+    "creo.delete_files": {
+      "command": "creo",
+      "function": "delete_files",
+      "description": "Delete files from a directory working directory",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "filenames",
+          "type": "array:string",
+          "default": "The filename parameter is used; if both are blank, all files will be deleted"
+        }
+      ],
+      "response": [
+        {
+          "name": "filelist",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "creo-delete_files.json",
+      "git_blob_sha": "752e88a30a824cd5a9000b6c8f5603164ae765fd"
+    },
+    "creo.get_config": {
+      "command": "creo",
+      "function": "get_config",
+      "description": "Get the value of a Creo config option",
+      "request": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "values",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "creo-get_config.json",
+      "git_blob_sha": "d88694d1a8ac9712d1dbfd0869b6a1f50c483666"
+    },
+    "creo.get_std_color": {
+      "command": "creo",
+      "function": "get_std_color",
+      "description": "Get one of Creo's standard colors",
+      "request": [
+        {
+          "name": "color_type",
+          "type": "string",
+          "required": true,
+          "valid_values": "letter, highlight, drawing, background, half_tone, edge_highlight, dimmed, error, warning, sheetmetal, curve, presel_highlight, selected, secondary_selected, preview, secondary_preview, datum, quilt"
+        }
+      ],
+      "response": [
+        {
+          "name": "red",
+          "type": "integer"
+        },
+        {
+          "name": "green",
+          "type": "integer"
+        },
+        {
+          "name": "blue",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "creo-get_std_color.json",
+      "git_blob_sha": "e0188ddd4163d2e29cc9516aeae53ecaf3414c9f"
+    },
+    "creo.list_dirs": {
+      "command": "creo",
+      "function": "list_dirs",
+      "description": "List subdirectories of Creo's current working directory",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "All subdirectories are listed",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "dirlist",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "creo-list_dirs.json",
+      "git_blob_sha": "b2c7ae246eecfe6c61253e15ad86fe1d24e934ab"
+    },
+    "creo.list_files": {
+      "command": "creo",
+      "function": "list_files",
+      "description": "List files in Creo's current working directory",
+      "request": [
+        {
+          "name": "filename",
+          "type": "string",
+          "default": "All files are listed",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "filelist",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "creo-list_files.json",
+      "git_blob_sha": "ba01eb334cbbcf9e2499e051b9404e141e003f87"
+    },
+    "creo.mkdir": {
+      "command": "creo",
+      "function": "mkdir",
+      "description": "Create a new directory",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        }
+      ],
+      "spec_file": "creo-mkdir.json",
+      "git_blob_sha": "e69ced6928480015362cac4349229695031d885f"
+    },
+    "creo.pwd": {
+      "command": "creo",
+      "function": "pwd",
+      "description": "Return Creo's current working directory",
+      "request": [],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        }
+      ],
+      "spec_file": "creo-pwd.json",
+      "git_blob_sha": "12ba5b4fd91590264da228b565c8a09af776c889"
+    },
+    "creo.rmdir": {
+      "command": "creo",
+      "function": "rmdir",
+      "description": "Delete a new directory",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "creo-rmdir.json",
+      "git_blob_sha": "2dd44af7f09cc710713391f810f926d026b95850"
+    },
+    "creo.set_config": {
+      "command": "creo",
+      "function": "set_config",
+      "description": "Set a Creo config option",
+      "request": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default": "Clear the option"
+        },
+        {
+          "name": "ignore_errors",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "creo-set_config.json",
+      "git_blob_sha": "8986c6f1ab0871f0eb609f99f54fbaa1aef5fd14"
+    },
+    "creo.set_creo_version": {
+      "command": "creo",
+      "function": "set_creo_version",
+      "description": "Set the version of Creo you are running",
+      "request": [
+        {
+          "name": "version",
+          "type": "integer",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "creo-set_creo_version.json",
+      "git_blob_sha": "618f4f472184cd93d91bacb6bf0bad817874f85a"
+    },
+    "creo.set_std_color": {
+      "command": "creo",
+      "function": "set_std_color",
+      "description": "Set one of Creo's standard colors",
+      "request": [
+        {
+          "name": "color_type",
+          "type": "string",
+          "required": true,
+          "valid_values": "letter, highlight, drawing, background, half_tone, edge_highlight, dimmed, error, warning, sheetmetal, curve, presel_highlight, selected, secondary_selected, preview, secondary_preview, datum, quilt"
+        },
+        {
+          "name": "red",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "green",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "blue",
+          "type": "integer",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "creo-set_std_color.json",
+      "git_blob_sha": "9fca54622a647b997f366ff2201f4db3536ed50a"
+    },
+    "dimension.copy": {
+      "command": "dimension",
+      "function": "copy",
+      "description": "Copy dimension to another in the same model or another model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "to_name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "to_file",
+          "type": "string",
+          "default": "The source model"
+        }
+      ],
+      "response": [],
+      "spec_file": "dimension-copy.json",
+      "git_blob_sha": "9f92c55c100b0588c3437cb282543cbb733a8fd5"
+    },
+    "dimension.list": {
+      "command": "dimension",
+      "function": "list",
+      "description": "Get a list of dimensions from a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty, then all dimensions are listed"
+        },
+        {
+          "name": "dim_type",
+          "type": "string",
+          "default": "no filter",
+          "valid_values": "linear, radial, diameter, angular"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "select",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "dimlist",
+          "type": "object_array:DimData"
+        }
+      ],
+      "spec_file": "dimension-list.json",
+      "git_blob_sha": "9c8e14ef92b34618c0eca87a38211294ff5e175d"
+    },
+    "dimension.list_detail": {
+      "command": "dimension",
+      "function": "list_detail",
+      "description": "Get a list of dimension details from a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty, then all dimensions are listed"
+        },
+        {
+          "name": "dim_type",
+          "type": "string",
+          "default": "no filter",
+          "valid_values": "linear, radial, diameter, angular"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "select",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "dimlist",
+          "type": "object_array:DimDetailData"
+        }
+      ],
+      "spec_file": "dimension-list_detail.json",
+      "git_blob_sha": "0c2481bb4cd711d7871e57cf7b31c160baf9deb3"
+    },
+    "dimension.set": {
+      "command": "dimension",
+      "function": "set",
+      "description": "Set a dimension value",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "depends on data type",
+          "default": "Clears the dimension value if missing"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "dimension-set.json",
+      "git_blob_sha": "14826301440488624223c07270134c891bd665a0"
+    },
+    "dimension.set_text": {
+      "command": "dimension",
+      "function": "set_text",
+      "description": "Set dimension text",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "text",
+          "type": "depends on data type",
+          "default": "Sets the dimension's text to @D if missing"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "dimension-set_text.json",
+      "git_blob_sha": "4335c6ea95b5c5f1ae408195549dbb48eb02a9cf"
+    },
+    "dimension.show": {
+      "command": "dimension",
+      "function": "show",
+      "description": "Display or hide a dimension in Creo",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "assembly",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "path",
+          "type": "array:integer",
+          "default": "All occurrences of the component are affected"
+        },
+        {
+          "name": "show",
+          "type": "boolean",
+          "default": "true (show)"
+        }
+      ],
+      "response": [],
+      "spec_file": "dimension-show.json",
+      "git_blob_sha": "da03fa1783625e0bf1d917669e0d2a9f861ec562"
+    },
+    "dimension.user_select": {
+      "command": "dimension",
+      "function": "user_select",
+      "description": "Prompt the user to select one or more dimensions, and return their selections",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "max",
+          "type": "integer",
+          "default": "1"
+        }
+      ],
+      "response": [
+        {
+          "name": "dimlist",
+          "type": "object_array:DimSelectData"
+        }
+      ],
+      "spec_file": "dimension-user_select.json",
+      "git_blob_sha": "63d0b29b287735ed865e57ce537473d1de17013f"
+    },
+    "drawing.add_model": {
+      "command": "drawing",
+      "function": "add_model",
+      "description": "Add a model to a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-add_model.json",
+      "git_blob_sha": "fbfb3003e913c324bb47a207b3c254fb6a900716"
+    },
+    "drawing.add_sheet": {
+      "command": "drawing",
+      "function": "add_sheet",
+      "description": "Add a drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "position",
+          "type": "integer",
+          "default": "Sheet will be added to the end"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-add_sheet.json",
+      "git_blob_sha": "43ee327a9ea3e9a808e180fe30bb00df762c9458"
+    },
+    "drawing.create": {
+      "command": "drawing",
+      "function": "create",
+      "description": "Create a new drawing from a template",
+      "request": [
+        {
+          "name": "model",
+          "type": "string",
+          "default": "Current active model"
+        },
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "A name derived from the model's instance name"
+        },
+        {
+          "name": "template",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "scale",
+          "type": "double",
+          "default": "1.0"
+        },
+        {
+          "name": "display",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "activate",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "new_window",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "drawing",
+          "type": "string"
+        }
+      ],
+      "spec_file": "drawing-create.json",
+      "git_blob_sha": "a541975f7d018a513246ca4a9fee9c247f63a833"
+    },
+    "drawing.create_gen_view": {
+      "command": "drawing",
+      "function": "create_gen_view",
+      "description": "Create general view on a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "default": "The model_view parameter"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "default": "Current active sheet on the drawing"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "default": "Current active model on the drawing"
+        },
+        {
+          "name": "model_view",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "point",
+          "type": "object:JLPoint",
+          "required": true
+        },
+        {
+          "name": "scale",
+          "type": "double",
+          "default": "The sheet's scale"
+        },
+        {
+          "name": "display_data",
+          "type": "object:ViewDisplayData",
+          "default": "Creo defaults"
+        },
+        {
+          "name": "exploded",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-create_gen_view.json",
+      "git_blob_sha": "a8fee4e24c57d657dec46f3c5093b6eb4da3cf9f"
+    },
+    "drawing.create_proj_view": {
+      "command": "drawing",
+      "function": "create_proj_view",
+      "description": "Create projection view on a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "default": "Creo's default name for a new view"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "default": "Current active sheet on the drawing"
+        },
+        {
+          "name": "parent_view",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "point",
+          "type": "object:JLPoint",
+          "required": true
+        },
+        {
+          "name": "display_data",
+          "type": "object:ViewDisplayData",
+          "default": "The display parameters of the parent view"
+        },
+        {
+          "name": "exploded",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-create_proj_view.json",
+      "git_blob_sha": "818b0793a897f8f1bb5bddc0447e05f763e382ba"
+    },
+    "drawing.create_symbol": {
+      "command": "drawing",
+      "function": "create_symbol",
+      "description": "Add a symbol instance to a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "symbol_file",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "point",
+          "type": "object:JLPoint",
+          "required": true
+        },
+        {
+          "name": "replace_values",
+          "type": "object"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "default": "The symbol will be added to all sheets"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-create_symbol.json",
+      "git_blob_sha": "d0b5578034e48e33cd9ca9398d0cfb13ecf24151"
+    },
+    "drawing.delete_models": {
+      "command": "drawing",
+      "function": "delete_models",
+      "description": "Delete one or more models from a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "default": "All models will be deleted from the drawing",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "delete_views",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-delete_models.json",
+      "git_blob_sha": "964ab70e369ef16b1feded594c1096ab21821f4a"
+    },
+    "drawing.delete_sheet": {
+      "command": "drawing",
+      "function": "delete_sheet",
+      "description": "Delete a drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-delete_sheet.json",
+      "git_blob_sha": "7dcef9b994733df4ce4102c2a939de21e115538b"
+    },
+    "drawing.delete_symbol_def": {
+      "command": "drawing",
+      "function": "delete_symbol_def",
+      "description": "Delete a symbol definition and its instances from a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "symbol_file",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-delete_symbol_def.json",
+      "git_blob_sha": "7780c79e6b235203258da8e5032019b566a26fc2"
+    },
+    "drawing.delete_symbol_inst": {
+      "command": "drawing",
+      "function": "delete_symbol_inst",
+      "description": "Delete a specific symbol instance from a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "symbol_id",
+          "type": "integer",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-delete_symbol_inst.json",
+      "git_blob_sha": "1ec6552f355e786971596ed084ecdff1e39d0328"
+    },
+    "drawing.delete_view": {
+      "command": "drawing",
+      "function": "delete_view",
+      "description": "Delete a drawing view",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "default": "Delete the view from any sheet"
+        },
+        {
+          "name": "del_children",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-delete_view.json",
+      "git_blob_sha": "51fefa6edbbd6e3e29d34a9c0fd4ec5d7427b9e1"
+    },
+    "drawing.get_cur_model": {
+      "command": "drawing",
+      "function": "get_cur_model",
+      "description": "Get the active model on a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        }
+      ],
+      "response": [
+        {
+          "name": "file",
+          "type": "string"
+        }
+      ],
+      "spec_file": "drawing-get_cur_model.json",
+      "git_blob_sha": "8eff7e054e8056c90c70183a300d3d47a8874e6b"
+    },
+    "drawing.get_cur_sheet": {
+      "command": "drawing",
+      "function": "get_cur_sheet",
+      "description": "Get the current drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        }
+      ],
+      "response": [
+        {
+          "name": "sheet",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "drawing-get_cur_sheet.json",
+      "git_blob_sha": "ddbbba78bca8f6e93628f9804375b7fc514ca965"
+    },
+    "drawing.get_num_sheets": {
+      "command": "drawing",
+      "function": "get_num_sheets",
+      "description": "Get the number of sheets on a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        }
+      ],
+      "response": [
+        {
+          "name": "num_sheets",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "drawing-get_num_sheets.json",
+      "git_blob_sha": "dd53c617e73a2a16e06aa96b9517018a2f07ce5a"
+    },
+    "drawing.get_sheet_format": {
+      "command": "drawing",
+      "function": "get_sheet_format",
+      "description": "Get the drawing format file of a drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "file",
+          "type": "string"
+        },
+        {
+          "name": "full_name",
+          "type": "string"
+        },
+        {
+          "name": "common_name",
+          "type": "string"
+        }
+      ],
+      "spec_file": "drawing-get_sheet_format.json",
+      "git_blob_sha": "66fb644e22d5744facd68fce6e32d99577f5c121"
+    },
+    "drawing.get_sheet_scale": {
+      "command": "drawing",
+      "function": "get_sheet_scale",
+      "description": "Get the scale of a drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "default": "The active model on the drawing"
+        }
+      ],
+      "response": [
+        {
+          "name": "scale",
+          "type": "double"
+        }
+      ],
+      "spec_file": "drawing-get_sheet_scale.json",
+      "git_blob_sha": "d8e83bb3e9b03556b9131d1fdf061e565f81351e"
+    },
+    "drawing.get_sheet_size": {
+      "command": "drawing",
+      "function": "get_sheet_size",
+      "description": "Get the size of a drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "size",
+          "type": "string"
+        }
+      ],
+      "spec_file": "drawing-get_sheet_size.json",
+      "git_blob_sha": "f47ca5d5caba151a424b097a9f0fc164f4ba9f5c"
+    },
+    "drawing.get_view_loc": {
+      "command": "drawing",
+      "function": "get_view_loc",
+      "description": "Get the location of a drawing view",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        },
+        {
+          "name": "z",
+          "type": "double"
+        }
+      ],
+      "spec_file": "drawing-get_view_loc.json",
+      "git_blob_sha": "156bb99c9ebbf9b381f4f0bfc7cbbc8d75595c8a"
+    },
+    "drawing.get_view_scale": {
+      "command": "drawing",
+      "function": "get_view_scale",
+      "description": "Get the scale of a drawing view",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "scale",
+          "type": "double"
+        }
+      ],
+      "spec_file": "drawing-get_view_scale.json",
+      "git_blob_sha": "f858e78b2b8dec379bef1b3f640a168d3ded881a"
+    },
+    "drawing.get_view_sheet": {
+      "command": "drawing",
+      "function": "get_view_sheet",
+      "description": "Get the sheet number that contains a drawing view",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "sheet",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "drawing-get_view_sheet.json",
+      "git_blob_sha": "03e0efa312d5cc17b4bd88ccf0125ce4244334e0"
+    },
+    "drawing.is_symbol_def_loaded": {
+      "command": "drawing",
+      "function": "is_symbol_def_loaded",
+      "description": "Check whether a symbol definition file is loaded into Creo",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "symbol_file",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "loaded",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "drawing-is_symbol_def_loaded.json",
+      "git_blob_sha": "fb8e56c93a1f85f3ab72a15f188ff60d3b3658a4"
+    },
+    "drawing.list_models": {
+      "command": "drawing",
+      "function": "list_models",
+      "description": "List the models contained in a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "default": "no filter",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "files",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "drawing-list_models.json",
+      "git_blob_sha": "06a26245d51b1717d79fc45bcbea0cba185f1c4f"
+    },
+    "drawing.list_symbols": {
+      "command": "drawing",
+      "function": "list_symbols",
+      "description": "List symbols contained on a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "symbol_file",
+          "type": "string",
+          "default": "no filter"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "default": "The symbol will be added to all sheets"
+        }
+      ],
+      "response": [
+        {
+          "name": "symbols",
+          "type": "object_array:SymbolInstData"
+        }
+      ],
+      "spec_file": "drawing-list_symbols.json",
+      "git_blob_sha": "802aa2960a5251bccce671bc41d9a662dc19d652"
+    },
+    "drawing.list_view_details": {
+      "command": "drawing",
+      "function": "list_view_details",
+      "description": "List the views contained in a drawing, with more details",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "default": "no filter",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "views",
+          "type": "object_array:ViewDetailData"
+        }
+      ],
+      "spec_file": "drawing-list_view_details.json",
+      "git_blob_sha": "7b11881d261ff1903a3158962f79a2df2e1c10bc"
+    },
+    "drawing.list_views": {
+      "command": "drawing",
+      "function": "list_views",
+      "description": "List the views contained in a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "default": "no filter",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "views",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "drawing-list_views.json",
+      "git_blob_sha": "1972752d095280fbf7c48cb598725e91dd25061e"
+    },
+    "drawing.load_symbol_def": {
+      "command": "drawing",
+      "function": "load_symbol_def",
+      "description": "Load a Creo symbol definition file into Creo from disk",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "symbol_dir",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "symbol_file",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "id",
+          "type": "integer"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "spec_file": "drawing-load_symbol_def.json",
+      "git_blob_sha": "cb4b996370f98b3bc47a8c7b314269dc37e99abb"
+    },
+    "drawing.regenerate": {
+      "command": "drawing",
+      "function": "regenerate",
+      "description": "Regenerate a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-regenerate.json",
+      "git_blob_sha": "916155db9ea1e6aea5b587e733f1b543133d7e4a"
+    },
+    "drawing.regenerate_sheet": {
+      "command": "drawing",
+      "function": "regenerate_sheet",
+      "description": "Regenerate a sheet on a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "default": "All sheets will be regenerated"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-regenerate_sheet.json",
+      "git_blob_sha": "1ce7a9155c1377e28fbb821d69949f2d84b5244d"
+    },
+    "drawing.rename_view": {
+      "command": "drawing",
+      "function": "rename_view",
+      "description": "Rename a drawing view",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "new_view",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-rename_view.json",
+      "git_blob_sha": "7e9bddb5a9d4178d2b88f796070e7690be3b6ba4"
+    },
+    "drawing.scale_sheet": {
+      "command": "drawing",
+      "function": "scale_sheet",
+      "description": "Set the scale of a drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "scale",
+          "type": "double",
+          "required": true
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "default": "The active model on the drawing"
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-scale_sheet.json",
+      "git_blob_sha": "56830f77a1011758e08b52dae6ff37063808281f"
+    },
+    "drawing.scale_view": {
+      "command": "drawing",
+      "function": "scale_view",
+      "description": "Set the scale of one or more drawing views",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "default": "All views will be scaled",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "scale",
+          "type": "double",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "success_views",
+          "type": "array:string"
+        },
+        {
+          "name": "failed_views",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "drawing-scale_view.json",
+      "git_blob_sha": "8283e932fb3ab22315100bbdb0636166939a0d9c"
+    },
+    "drawing.select_sheet": {
+      "command": "drawing",
+      "function": "select_sheet",
+      "description": "Make a drawing sheet the current sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-select_sheet.json",
+      "git_blob_sha": "ef5b8a20899529dd716148f48e5d8d6a42664ef0"
+    },
+    "drawing.set_cur_model": {
+      "command": "drawing",
+      "function": "set_cur_model",
+      "description": "Set the active model on a drawing",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-set_cur_model.json",
+      "git_blob_sha": "1228121f7ee2cc833614d1d7a6e8103d2200e06d"
+    },
+    "drawing.set_sheet_format": {
+      "command": "drawing",
+      "function": "set_sheet_format",
+      "description": "Set the drawing format file of a drawing sheet",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "sheet",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "file",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-set_sheet_format.json",
+      "git_blob_sha": "935846c44341eef4096d58bc678339a4584e23f1"
+    },
+    "drawing.set_view_loc": {
+      "command": "drawing",
+      "function": "set_view_loc",
+      "description": "Set the location of a drawing view",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "point",
+          "type": "object:JLPoint",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "drawing-set_view_loc.json",
+      "git_blob_sha": "acecda3aef074979c8c4357b32f2e8144c0c3ca3"
+    },
+    "drawing.view_bound_box": {
+      "command": "drawing",
+      "function": "view_bound_box",
+      "description": "Get the 2D bounding box for a drawing view",
+      "request": [
+        {
+          "name": "drawing",
+          "type": "string",
+          "default": "Current active drawing"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "xmin",
+          "type": "double"
+        },
+        {
+          "name": "xmax",
+          "type": "double"
+        },
+        {
+          "name": "ymin",
+          "type": "double"
+        },
+        {
+          "name": "ymax",
+          "type": "double"
+        }
+      ],
+      "spec_file": "drawing-view_bound_box.json",
+      "git_blob_sha": "b3c1bbfc5b9a7d5e113d5880917f4d1dd29e1b3e"
+    },
+    "familytable.add_inst": {
+      "command": "familytable",
+      "function": "add_inst",
+      "description": "Add a new instance to a family table; creates a family table if one does not exist",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "familytable-add_inst.json",
+      "git_blob_sha": "a1c0370e43e3d0853d5a345189d06fe5d6516302"
+    },
+    "familytable.create_inst": {
+      "command": "familytable",
+      "function": "create_inst",
+      "description": "Create a new model from a family table row",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "spec_file": "familytable-create_inst.json",
+      "git_blob_sha": "644aa02b5f9d66b19f4c88ed517301b529abcb63"
+    },
+    "familytable.delete": {
+      "command": "familytable",
+      "function": "delete",
+      "description": "Delete an entire family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [],
+      "spec_file": "familytable-delete.json",
+      "git_blob_sha": "1617427992d721d60772b04c152cdb10e433d160"
+    },
+    "familytable.delete_inst": {
+      "command": "familytable",
+      "function": "delete_inst",
+      "description": "Delete an instance from a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "familytable-delete_inst.json",
+      "git_blob_sha": "a2d4b5893cbafc03cf1c6ee28ad96844b73889bf"
+    },
+    "familytable.exists": {
+      "command": "familytable",
+      "function": "exists",
+      "description": "Check whether an instance exists in a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "familytable-exists.json",
+      "git_blob_sha": "97563cf351cc51844061e07bed26ff6e035ac8c2"
+    },
+    "familytable.get_cell": {
+      "command": "familytable",
+      "function": "get_cell",
+      "description": "Get one cell of a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "colid",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "instance",
+          "type": "string"
+        },
+        {
+          "name": "colid",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type"
+        },
+        {
+          "name": "datatype",
+          "type": "string"
+        },
+        {
+          "name": "coltype",
+          "type": "string"
+        }
+      ],
+      "spec_file": "familytable-get_cell.json",
+      "git_blob_sha": "443d9a10079159493449020c9882146d3ebc5fab"
+    },
+    "familytable.get_header": {
+      "command": "familytable",
+      "function": "get_header",
+      "description": "Get the header of a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "columns",
+          "type": "object_array:FamTableRowColumn"
+        }
+      ],
+      "spec_file": "familytable-get_header.json",
+      "git_blob_sha": "78f066ed7640d1c5d0ddb9b7ff7cc36044ce051b"
+    },
+    "familytable.get_parents": {
+      "command": "familytable",
+      "function": "get_parents",
+      "description": "Get the parent instances of a model in a nested family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "parents",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "familytable-get_parents.json",
+      "git_blob_sha": "9df82fd34f7517daf9e2b77cd3b0626f0fd73ed7"
+    },
+    "familytable.get_row": {
+      "command": "familytable",
+      "function": "get_row",
+      "description": "Get one row of a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "instance",
+          "type": "string"
+        },
+        {
+          "name": "columns",
+          "type": "object_array:FamTableRowColumn"
+        }
+      ],
+      "spec_file": "familytable-get_row.json",
+      "git_blob_sha": "62f2edcad0f2911070545395ea5b0b2ee8d547f7"
+    },
+    "familytable.list": {
+      "command": "familytable",
+      "function": "list",
+      "description": "List the instance names in a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "instances",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "familytable-list.json",
+      "git_blob_sha": "2c3ad05273c2687db8255f86a480bce55b79ff5f"
+    },
+    "familytable.list_tree": {
+      "command": "familytable",
+      "function": "list_tree",
+      "description": "Get a hierarchical structure of a nested family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "erase",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "total",
+          "type": "integer"
+        },
+        {
+          "name": "children",
+          "type": "object_array:FamTableInstance"
+        }
+      ],
+      "spec_file": "familytable-list_tree.json",
+      "git_blob_sha": "c4bac05c324049854f4d2dd35c41cf2a6a9f6f24"
+    },
+    "familytable.replace": {
+      "command": "familytable",
+      "function": "replace",
+      "description": "Replace a model in an assembly with another instance in the same family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "cur_model",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "cur_inst",
+          "type": "string"
+        },
+        {
+          "name": "path",
+          "type": "array:integer"
+        },
+        {
+          "name": "new_inst",
+          "type": "string"
+        }
+      ],
+      "response": [],
+      "spec_file": "familytable-replace.json",
+      "git_blob_sha": "b261ca304126f0c26df1fbca85173905b45745bf"
+    },
+    "familytable.set_cell": {
+      "command": "familytable",
+      "function": "set_cell",
+      "description": "Set the value of one cell of a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "instance",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "colid",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "depends on data type"
+        }
+      ],
+      "response": [],
+      "spec_file": "familytable-set_cell.json",
+      "git_blob_sha": "b0407e76f88f7f311fd322a6e78fc15ac282002f"
+    },
+    "feature.delete": {
+      "command": "feature",
+      "function": "delete",
+      "description": "Delete one or more features that match criteria",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty, then all features may be deleted"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "default": "All feature statuses",
+          "valid_values": "ACTIVE, INACTIVE, FAMILY_TABLE_SUPPRESSED, SIMP_REP_SUPPRESSED, PROGRAM_SUPPRESSED, SUPPRESSED, UNREGENERATED",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "All feature types",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "clip",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "feature-delete.json",
+      "git_blob_sha": "a8241fdd4765bdc550695d18e343a24c0c13d9c9"
+    },
+    "feature.delete_param": {
+      "command": "feature",
+      "function": "delete_param",
+      "description": "Delete a feature parameter",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All feature names",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "param",
+          "type": "string",
+          "default": "All parameter names",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [],
+      "spec_file": "feature-delete_param.json",
+      "git_blob_sha": "2abbb2bdd9e2af156e174eb439ce44a1ba15cea4"
+    },
+    "feature.list": {
+      "command": "feature",
+      "function": "list",
+      "description": "List features that match criteria",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All features are listed",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "default": "All feature statuses",
+          "valid_values": "ACTIVE, INACTIVE, FAMILY_TABLE_SUPPRESSED, SIMP_REP_SUPPRESSED, PROGRAM_SUPPRESSED, SUPPRESSED, UNREGENERATED",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "All feature types",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "paths",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "no_datum",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "inc_unnamed",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "no_comp",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "featlist",
+          "type": "object_array:FeatureData"
+        }
+      ],
+      "spec_file": "feature-list.json",
+      "git_blob_sha": "fef9d84171d2365985f9ca75c8f221b1a09becb5"
+    },
+    "feature.list_group_features": {
+      "command": "feature",
+      "function": "list_group_features",
+      "description": "List features in a Creo Group",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "group_name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "All feature types",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "featlist",
+          "type": "object_array:FeatureData"
+        }
+      ],
+      "spec_file": "feature-list_group_features.json",
+      "git_blob_sha": "0436bc4de50903d52e013f53e4d70ec66740cb7e"
+    },
+    "feature.list_params": {
+      "command": "feature",
+      "function": "list_params",
+      "description": "List feature parameters that match criteria",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "feat_id",
+          "type": "integer",
+          "default": "The name parameter is used"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All features are listed",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "All feature types",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "no_datum",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "inc_unnamed",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "no_comp",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "param",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "params",
+          "type": "array:string",
+          "default": "The param parameter is used; if both are empty, then all parameters are listed"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default": "no filter",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "paramlist",
+          "type": "object_array:ParameterData"
+        }
+      ],
+      "spec_file": "feature-list_params.json",
+      "git_blob_sha": "423affee8580a813296e7c77c5920dd9d7d3b01d"
+    },
+    "feature.list_pattern_features": {
+      "command": "feature",
+      "function": "list_pattern_features",
+      "description": "List features in a Creo Pattern",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "pattern_name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "All feature types",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "featlist",
+          "type": "object_array:FeatureData"
+        }
+      ],
+      "spec_file": "feature-list_pattern_features.json",
+      "git_blob_sha": "bcc1e5c44358746dee32adbe900875e58f330d14"
+    },
+    "feature.list_selected": {
+      "command": "feature",
+      "function": "list_selected",
+      "description": "List features that have been selected",
+      "request": [
+        {
+          "name": "paths",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "featlist",
+          "type": "object_array:FeatSelectData"
+        }
+      ],
+      "spec_file": "feature-list_selected.json",
+      "git_blob_sha": "2d53ef5cfb21cb3e789152e6f171a14a01b7b23d"
+    },
+    "feature.param_exists": {
+      "command": "feature",
+      "function": "param_exists",
+      "description": "Check whether parameter(s) exists on a feature",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "param",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "params",
+          "type": "array:string",
+          "default": "The param parameter is used; if both are empty, then it checks for any parameter's existence"
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "feature-param_exists.json",
+      "git_blob_sha": "b6fd54f5a946f966da73921a0f6d4318780f78a6"
+    },
+    "feature.rename": {
+      "command": "feature",
+      "function": "rename",
+      "description": "Rename a feature",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "feat_id",
+          "type": "integer",
+          "default": "The name parameter is used"
+        },
+        {
+          "name": "name",
+          "type": "array:string"
+        },
+        {
+          "name": "new_name",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "feature-rename.json",
+      "git_blob_sha": "f93f463b195288786ab3a6510e7c007e6eecb716"
+    },
+    "feature.resume": {
+      "command": "feature",
+      "function": "resume",
+      "description": "Resume one or more features that match criteria",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "feat_id",
+          "type": "integer",
+          "default": "The name or names parameters are used"
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty and feat_id is not given, then all features may be resumed"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "default": "All feature statuses",
+          "valid_values": "ACTIVE, INACTIVE, FAMILY_TABLE_SUPPRESSED, SIMP_REP_SUPPRESSED, PROGRAM_SUPPRESSED, SUPPRESSED, UNREGENERATED",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "All feature types",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "with_children",
+          "type": "boolean",
+          "default": "true"
+        }
+      ],
+      "response": [],
+      "spec_file": "feature-resume.json",
+      "git_blob_sha": "94680f512fc89e17a3bb9d5b47c940b6ba40de75"
+    },
+    "feature.set_param": {
+      "command": "feature",
+      "function": "set_param",
+      "description": "Set the value of a feature parameter",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All features are updated"
+        },
+        {
+          "name": "param",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "STRING",
+          "valid_values": "STRING, DOUBLE, INTEGER, BOOL, NOTE"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type",
+          "default": "Clears the parameter value if missing"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "designate",
+          "type": "boolean",
+          "default": "blank"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "default": "If missing, leaves the current description in place"
+        },
+        {
+          "name": "no_create",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "feature-set_param.json",
+      "git_blob_sha": "d5c5e0156fdea65a026e77d5cafb2891b545cf60"
+    },
+    "feature.suppress": {
+      "command": "feature",
+      "function": "suppress",
+      "description": "Suppress one or more features that match criteria",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "feat_id",
+          "type": "integer",
+          "default": "The name or names parameters are used"
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty and feat_id is not given, then all features may be suppressed"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "default": "All feature statuses",
+          "valid_values": "ACTIVE, INACTIVE, FAMILY_TABLE_SUPPRESSED, SIMP_REP_SUPPRESSED, PROGRAM_SUPPRESSED, SUPPRESSED, UNREGENERATED",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "All feature types",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "clip",
+          "type": "boolean",
+          "default": "true"
+        },
+        {
+          "name": "with_children",
+          "type": "boolean",
+          "default": "true"
+        }
+      ],
+      "response": [],
+      "spec_file": "feature-suppress.json",
+      "git_blob_sha": "3d3ce8e055310c69ebb8c4a3a39633e88a5fabe3"
+    },
+    "feature.user_select_csys": {
+      "command": "feature",
+      "function": "user_select_csys",
+      "description": "Prompt the user to select one or more coordinate systems, and return their selections",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "max",
+          "type": "integer",
+          "default": "1"
+        }
+      ],
+      "response": [
+        {
+          "name": "featlist",
+          "type": "object_array:FeatSelectData"
+        }
+      ],
+      "spec_file": "feature-user_select_csys.json",
+      "git_blob_sha": "e15611c8f9a490b48d8ea2ff8cedb15b155d9e4c"
+    },
+    "file.assemble": {
+      "command": "file",
+      "function": "assemble",
+      "description": "Assemble a component into an assembly",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "file",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "generic",
+          "type": "string"
+        },
+        {
+          "name": "into_asm",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "path",
+          "type": "array:integer"
+        },
+        {
+          "name": "ref_model",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object:JLTransform"
+        },
+        {
+          "name": "constraints",
+          "type": "object_array:JLConstraint"
+        },
+        {
+          "name": "package_assembly",
+          "type": "boolean",
+          "default": "If there are no constraints, then the user will be prompted to constrain the component through the Creo user interface"
+        },
+        {
+          "name": "walk_children",
+          "type": "boolean"
+        },
+        {
+          "name": "assemble_to_root",
+          "type": "boolean"
+        },
+        {
+          "name": "suppress",
+          "type": "boolean"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "files",
+          "type": "array:string"
+        },
+        {
+          "name": "revision",
+          "type": "integer"
+        },
+        {
+          "name": "featureid",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "file-assemble.json",
+      "git_blob_sha": "cbfcdd4510e2fe0640e07790791bb288e028f39e"
+    },
+    "file.backup": {
+      "command": "file",
+      "function": "backup",
+      "description": "Back up a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "required": true,
+          "default": "Currently active model"
+        },
+        {
+          "name": "target_dir",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "file-backup.json",
+      "git_blob_sha": "26531459a85781c11892fbef22d4bd3e44e2ed0c"
+    },
+    "file.close_window": {
+      "command": "file",
+      "function": "close_window",
+      "description": "Close the window containing a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-close_window.json",
+      "git_blob_sha": "08561a8356695c840a4245db2084ba7ca9e1ae1a"
+    },
+    "file.create_unit_system": {
+      "command": "file",
+      "function": "create_unit_system",
+      "description": "Creates a new unit system in the model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "unit_length",
+          "type": "string"
+        },
+        {
+          "name": "unit_mass",
+          "type": "string"
+        },
+        {
+          "name": "unit_time",
+          "type": "string"
+        },
+        {
+          "name": "unit_temp",
+          "type": "string"
+        },
+        {
+          "name": "mass",
+          "type": "boolean",
+          "default": "true"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-create_unit_system.json",
+      "git_blob_sha": "b497feb5df0765323639f10821e65bea396d402b"
+    },
+    "file.delete_material": {
+      "command": "file",
+      "function": "delete_material",
+      "description": "Delete a material from a part or parts",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Current active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "material",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "files",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-delete_material.json",
+      "git_blob_sha": "cce8195fb56425402574c77e418a09d0f0bce5b0"
+    },
+    "file.display": {
+      "command": "file",
+      "function": "display",
+      "description": "Display a model in a window",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "activate",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-display.json",
+      "git_blob_sha": "b60157ea11e420141d0a140c0de0dee7a06d9ed3"
+    },
+    "file.erase": {
+      "command": "file",
+      "function": "erase",
+      "description": "Erase one or more models from memory",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "files",
+          "type": "array:string",
+          "default": "The file parameter is used; if both are empty, then all models in memory are erased"
+        },
+        {
+          "name": "erase_children",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-erase.json",
+      "git_blob_sha": "f5d1d2bbd0b482cda9ff71f8bb66d3366be590e0"
+    },
+    "file.erase_not_displayed": {
+      "command": "file",
+      "function": "erase_not_displayed",
+      "description": "Erase all non-displayed models from memory",
+      "request": [],
+      "response": [],
+      "spec_file": "file-erase_not_displayed.json",
+      "git_blob_sha": "1646008d3ba10208169059fd60a2666e542ad7d1"
+    },
+    "file.exists": {
+      "command": "file",
+      "function": "exists",
+      "description": "Check whether a model exists in memory",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "file-exists.json",
+      "git_blob_sha": "f87c33fa32fd861050aa513555c8d81a91cd6662"
+    },
+    "file.get_accuracy": {
+      "command": "file",
+      "function": "get_accuracy",
+      "description": "Get a solid's accuracy",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "accuracy",
+          "type": "double"
+        },
+        {
+          "name": "relative",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "file-get_accuracy.json",
+      "git_blob_sha": "391afd74721bff0f2b25b955004ea603b095f02c"
+    },
+    "file.get_active": {
+      "command": "file",
+      "function": "get_active",
+      "description": "Get the active model from Creo",
+      "request": [],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "file",
+          "type": "string"
+        }
+      ],
+      "spec_file": "file-get_active.json",
+      "git_blob_sha": "8316aae77ea52dc0e95fbc4f9dbe1d5f28481c5d"
+    },
+    "file.get_cur_material": {
+      "command": "file",
+      "function": "get_cur_material",
+      "description": "Get the current material for a part",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "material",
+          "type": "string"
+        }
+      ],
+      "spec_file": "file-get_cur_material.json",
+      "git_blob_sha": "649ce0a54a12ad475c5090b1af7385407215059e"
+    },
+    "file.get_cur_material_wildcard": {
+      "command": "file",
+      "function": "get_cur_material_wildcard",
+      "description": "Get the current material for a part or parts",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "include_non_matching_parts",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "materials",
+          "type": "object_array:FileMaterial"
+        }
+      ],
+      "spec_file": "file-get_cur_material_wildcard.json",
+      "git_blob_sha": "f3cbbb70a6a9e111cb5f99c9b22ce684c647c9c2"
+    },
+    "file.get_fileinfo": {
+      "command": "file",
+      "function": "get_fileinfo",
+      "description": "Open one or more files in memory or from the drive",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "file",
+          "type": "string"
+        },
+        {
+          "name": "revision",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "file-get_fileinfo.json",
+      "git_blob_sha": "8c610cf240585599cc7c9e49662a314beb2f91be"
+    },
+    "file.get_length_units": {
+      "command": "file",
+      "function": "get_length_units",
+      "description": "Get the current length units for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "units",
+          "type": "string"
+        }
+      ],
+      "spec_file": "file-get_length_units.json",
+      "git_blob_sha": "b898f4c41375c21ed75e07c57eadc5a45da050ad"
+    },
+    "file.get_mass_units": {
+      "command": "file",
+      "function": "get_mass_units",
+      "description": "Get the current mass units for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "units",
+          "type": "string"
+        }
+      ],
+      "spec_file": "file-get_mass_units.json",
+      "git_blob_sha": "2fd39a79fb02dfc50776a30de77cc829f788afe3"
+    },
+    "file.get_transform": {
+      "command": "file",
+      "function": "get_transform",
+      "description": "Get the 3D transform for a component in an assembly",
+      "request": [
+        {
+          "name": "asm",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "path",
+          "type": "array:integer",
+          "default": "The transform is calculated for the assembly itself"
+        },
+        {
+          "name": "csys",
+          "type": "string",
+          "default": "The component's default coordinate system"
+        }
+      ],
+      "response": [
+        {
+          "name": "origin",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "x_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "y_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "z_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "x_rot",
+          "type": "double"
+        },
+        {
+          "name": "y_rot",
+          "type": "double"
+        },
+        {
+          "name": "z_rot",
+          "type": "double"
+        }
+      ],
+      "spec_file": "file-get_transform.json",
+      "git_blob_sha": "ec16f0d56b14b07d3252902139117e4fc514a063"
+    },
+    "file.get_unit_system": {
+      "command": "file",
+      "function": "get_unit_system",
+      "description": "Get the name of the current unit system for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "spec_file": "file-get_unit_system.json",
+      "git_blob_sha": "36d612fbbe6a1379bd968b69d26a158da6be58a2"
+    },
+    "file.has_instances": {
+      "command": "file",
+      "function": "has_instances",
+      "description": "Check whether a model has a family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "file-has_instances.json",
+      "git_blob_sha": "46df7318f758a773e5d765b1c3804bfc1cafeb93"
+    },
+    "file.is_active": {
+      "command": "file",
+      "function": "is_active",
+      "description": "Check whether a model is the active model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "active",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "file-is_active.json",
+      "git_blob_sha": "6da37e71b3570951b439772d9bc2cefcb1192e28"
+    },
+    "file.list": {
+      "command": "file",
+      "function": "list",
+      "description": "Get a list of files in the current Creo session that match patterns",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "files",
+          "type": "array:string",
+          "default": "The file parameter is used; if both are empty, then all files are listed"
+        }
+      ],
+      "response": [
+        {
+          "name": "files",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-list.json",
+      "git_blob_sha": "cd7f21ff3f6045d3e1d297f2a496a0eb5f0181dd"
+    },
+    "file.list_instances": {
+      "command": "file",
+      "function": "list_instances",
+      "description": "List instances in a model's family table",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "generic",
+          "type": "string"
+        },
+        {
+          "name": "files",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-list_instances.json",
+      "git_blob_sha": "554f3bbd0837177f4dc2e3e203f4d7347d6a89fc"
+    },
+    "file.list_materials": {
+      "command": "file",
+      "function": "list_materials",
+      "description": "List materials on a part",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "material",
+          "type": "string",
+          "default": "All materials",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "materials",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-list_materials.json",
+      "git_blob_sha": "c209c69aaef88805779ac0037f2539dde90eea1c"
+    },
+    "file.list_materials_wildcard": {
+      "command": "file",
+      "function": "list_materials_wildcard",
+      "description": "List materials on a part or parts",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "material",
+          "type": "string",
+          "default": "All materials",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "include_non_matching_parts",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "materials",
+          "type": "object_array:FileMaterial"
+        }
+      ],
+      "spec_file": "file-list_materials_wildcard.json",
+      "git_blob_sha": "49cb858fa64b5c0dd2c0cb1a71a0ae5a26aec3c8"
+    },
+    "file.list_simp_reps": {
+      "command": "file",
+      "function": "list_simp_reps",
+      "description": "List simplified reps in a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "rep",
+          "type": "string",
+          "default": "All simplified reps",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "reps",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-list_simp_reps.json",
+      "git_blob_sha": "6c6c0a119d9cf36fb1f130892bfc85a0da0e5d2e"
+    },
+    "file.load_material_file": {
+      "command": "file",
+      "function": "load_material_file",
+      "description": "Load a new material file into a part or parts",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's 'pro_material_dir' config setting, or search path, or current working directory"
+        },
+        {
+          "name": "material",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "files",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-load_material_file.json",
+      "git_blob_sha": "70e6dd38154962edaee91747e879518931628293"
+    },
+    "file.massprops": {
+      "command": "file",
+      "function": "massprops",
+      "description": "Get mass property information about a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "volume",
+          "type": "double"
+        },
+        {
+          "name": "mass",
+          "type": "double"
+        },
+        {
+          "name": "density",
+          "type": "double"
+        },
+        {
+          "name": "surface_area",
+          "type": "double"
+        },
+        {
+          "name": "ctr_grav_inertia_tensor",
+          "type": "object:JLInertia"
+        },
+        {
+          "name": "coord_sys_inertia",
+          "type": "object:JLInertia"
+        },
+        {
+          "name": "coord_sys_inertia_tensor",
+          "type": "object:JLInertia"
+        },
+        {
+          "name": "ctr_grav",
+          "type": "object:JLPoint"
+        }
+      ],
+      "spec_file": "file-massprops.json",
+      "git_blob_sha": "560456b01198524925fe977989fcfb4ba4f4f64a"
+    },
+    "file.open": {
+      "command": "file",
+      "function": "open",
+      "description": "Open one or more files in memory or from the drive",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "file",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "files",
+          "type": "array:string",
+          "default": "The file parameter is used"
+        },
+        {
+          "name": "generic",
+          "type": "string"
+        },
+        {
+          "name": "display",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "activate",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "new_window",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "regen_force",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "files",
+          "type": "array:string"
+        },
+        {
+          "name": "revision",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "file-open.json",
+      "git_blob_sha": "ee0684e9678bb63a8ab3ec2d2eb532ca4edb3e46"
+    },
+    "file.open_errors": {
+      "command": "file",
+      "function": "open_errors",
+      "description": "Check whether Creo errors have occurred opening a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Current active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "errors",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "file-open_errors.json",
+      "git_blob_sha": "5581bf899e82ab92a1094279b94369f88da9d2af"
+    },
+    "file.postregen_relations_get": {
+      "command": "file",
+      "function": "postregen_relations_get",
+      "description": "Get post-regeneration relations for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "relations",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-postregen_relations_get.json",
+      "git_blob_sha": "be770ffdd4de9a91cbfafd171f7c36994f0f57ab"
+    },
+    "file.postregen_relations_set": {
+      "command": "file",
+      "function": "postregen_relations_set",
+      "description": "Set post-regeneration relations for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "relations",
+          "type": "array:string",
+          "default": "Clear the relations if missing"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-postregen_relations_set.json",
+      "git_blob_sha": "212d3aac330680486b6bd11e154623e8d399b1a2"
+    },
+    "file.refresh": {
+      "command": "file",
+      "function": "refresh",
+      "description": "Refresh the window containing a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-refresh.json",
+      "git_blob_sha": "00bb3fc6f1684b41a8b6977381d1ce0995dff883"
+    },
+    "file.regenerate": {
+      "command": "file",
+      "function": "regenerate",
+      "description": "Regenerate one or more models",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "files",
+          "type": "array:string",
+          "default": "The file parameter is used"
+        },
+        {
+          "name": "display",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-regenerate.json",
+      "git_blob_sha": "5737554c7e2597cce49577e6f90660302de24b88"
+    },
+    "file.relations_get": {
+      "command": "file",
+      "function": "relations_get",
+      "description": "Get relations for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "relations",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-relations_get.json",
+      "git_blob_sha": "e97053c444a50b32c016de2950d9f844012822cd"
+    },
+    "file.relations_set": {
+      "command": "file",
+      "function": "relations_set",
+      "description": "Set relations for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "relations",
+          "type": "array:string",
+          "default": "Clear the relations if missing"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-relations_set.json",
+      "git_blob_sha": "e68775ac7cc95e8bfd5877a4ed304dcb0c70b9ae"
+    },
+    "file.rename": {
+      "command": "file",
+      "function": "rename",
+      "description": "Rename a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "new_name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "onlysession",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "file",
+          "type": "string"
+        }
+      ],
+      "spec_file": "file-rename.json",
+      "git_blob_sha": "9f4b85834215353c228a137f9d76b6519bebd698"
+    },
+    "file.repaint": {
+      "command": "file",
+      "function": "repaint",
+      "description": "Repaint the window containing a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-repaint.json",
+      "git_blob_sha": "7f1221804c316cafda7db2bdbb20f5a634de62f4"
+    },
+    "file.save": {
+      "command": "file",
+      "function": "save",
+      "description": "Save one or more models",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "files",
+          "type": "array:string",
+          "default": "The file parameter is used"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-save.json",
+      "git_blob_sha": "9600b05765a42cecf571a44553824ea6d7e0bc6d"
+    },
+    "file.set_cur_material": {
+      "command": "file",
+      "function": "set_cur_material",
+      "description": "Set the current material for a part or parts",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "material",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "files",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "file-set_cur_material.json",
+      "git_blob_sha": "907745532c2be762c21c982859e5605596171423"
+    },
+    "file.set_length_units": {
+      "command": "file",
+      "function": "set_length_units",
+      "description": "Set the current length units for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "units",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "convert",
+          "type": "boolean",
+          "default": "true"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-set_length_units.json",
+      "git_blob_sha": "7ef1724e9816795713965448e0ec4d5f96b2c681"
+    },
+    "file.set_mass_units": {
+      "command": "file",
+      "function": "set_mass_units",
+      "description": "Set the current mass units for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "units",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "convert",
+          "type": "boolean",
+          "default": "true"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-set_mass_units.json",
+      "git_blob_sha": "5ce537de44be47f285e6d7f40400853ad954b7ac"
+    },
+    "file.set_unit_system": {
+      "command": "file",
+      "function": "set_unit_system",
+      "description": "Set the current unit system for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "convert",
+          "type": "boolean",
+          "default": "true"
+        }
+      ],
+      "response": [],
+      "spec_file": "file-set_unit_system.json",
+      "git_blob_sha": "12a27a8d1ff198304526069a1968093a74d70f09"
+    },
+    "geometry.bound_box": {
+      "command": "geometry",
+      "function": "bound_box",
+      "description": "Get the bounding box for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "xmin",
+          "type": "double"
+        },
+        {
+          "name": "xmax",
+          "type": "double"
+        },
+        {
+          "name": "ymin",
+          "type": "double"
+        },
+        {
+          "name": "ymax",
+          "type": "double"
+        },
+        {
+          "name": "zmin",
+          "type": "double"
+        },
+        {
+          "name": "zmax",
+          "type": "double"
+        }
+      ],
+      "spec_file": "geometry-bound_box.json",
+      "git_blob_sha": "84154ca5f423ca6e7af6ec5e048c720df45ac617"
+    },
+    "geometry.get_edges": {
+      "command": "geometry",
+      "function": "get_edges",
+      "description": "Get the list of edges for a model for given surfaces",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "surface_ids",
+          "type": "array:integer",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "contourlist",
+          "type": "object_array:ContourData"
+        }
+      ],
+      "spec_file": "geometry-get_edges.json",
+      "git_blob_sha": "baeccc784bc0caab90f7ff36db40d9b54ddc1a9d"
+    },
+    "geometry.get_surfaces": {
+      "command": "geometry",
+      "function": "get_surfaces",
+      "description": "Get the list of surfaces for a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "surflist",
+          "type": "object_array:SurfaceData"
+        }
+      ],
+      "spec_file": "geometry-get_surfaces.json",
+      "git_blob_sha": "41ef0b9fea595298b9823b5b819fd6f1efd1dd88"
+    },
+    "interface.export_3dpdf": {
+      "command": "interface",
+      "function": "export_3dpdf",
+      "description": "Export a model to a 3D PDF file",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "default": "The model name with the appropriate file extension, in Creo's working directory"
+        },
+        {
+          "name": "height",
+          "type": "double",
+          "default": "Creo default export height"
+        },
+        {
+          "name": "width",
+          "type": "double",
+          "default": "Creo default export width"
+        },
+        {
+          "name": "dpi",
+          "type": "integer",
+          "default": "Creo default export DPI"
+        },
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "use_drawing_settings",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "sheet_range",
+          "type": "string",
+          "default": "all",
+          "valid_values": "all, current, range of sheet numbers"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "filename",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-export_3dpdf.json",
+      "git_blob_sha": "6d9a0d9cf2a822f93e5733dff6cdb138b37f765e"
+    },
+    "interface.export_file": {
+      "command": "interface",
+      "function": "export_file",
+      "description": "Export a model to a file",
+      "request": [
+        {
+          "name": "type",
+          "type": "string",
+          "required": true,
+          "valid_values": "DXF, IGES, NEUTRAL, PV, STEP, VRML"
+        },
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "default": "The model name with the appropriate file extension, in Creo's working directory"
+        },
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "geom_flags",
+          "type": "string",
+          "default": "solids",
+          "valid_values": "solids, surfaces, wireframe, wireframe_surfaces, quilts, default"
+        },
+        {
+          "name": "advanced",
+          "type": "boolean"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "filename",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-export_file.json",
+      "git_blob_sha": "43f0913aeb58e52d77a290a4f15716c430d2805b"
+    },
+    "interface.export_image": {
+      "command": "interface",
+      "function": "export_image",
+      "description": "Export a model to an image file",
+      "request": [
+        {
+          "name": "type",
+          "type": "string",
+          "required": true,
+          "valid_values": "BMP, EPS, JPEG, TIFF"
+        },
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "default": "The model name with the appropriate file extension, in Creo's working directory"
+        },
+        {
+          "name": "height",
+          "type": "double",
+          "default": "10.0",
+          "valid_values": "100, 200, 300, 400, 500, 600"
+        },
+        {
+          "name": "width",
+          "type": "double",
+          "default": "7.5"
+        },
+        {
+          "name": "dpi",
+          "type": "integer",
+          "default": "100"
+        },
+        {
+          "name": "depth",
+          "type": "integer",
+          "default": "24"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "filename",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-export_image.json",
+      "git_blob_sha": "da310326a3c946b5044fcb8d51247f5774045424"
+    },
+    "interface.export_pdf": {
+      "command": "interface",
+      "function": "export_pdf",
+      "description": "Export a model to a PDF file",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "default": "The model name with the appropriate file extension, in Creo's working directory"
+        },
+        {
+          "name": "height",
+          "type": "double",
+          "default": "Creo default export height"
+        },
+        {
+          "name": "width",
+          "type": "double",
+          "default": "Creo default export width"
+        },
+        {
+          "name": "dpi",
+          "type": "integer",
+          "default": "Creo default export DPI"
+        },
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "use_drawing_settings",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "sheet_range",
+          "type": "string",
+          "default": "all",
+          "valid_values": "all, current, range of sheet numbers"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "filename",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-export_pdf.json",
+      "git_blob_sha": "6d317aca38cf3e2715e8df772135ba6c439690bd"
+    },
+    "interface.export_program": {
+      "command": "interface",
+      "function": "export_program",
+      "description": "Export a model's program to a file",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "dirname",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-export_program.json",
+      "git_blob_sha": "c01ba5587b5835b250bc4bc9fee22961ec9f9b17"
+    },
+    "interface.import_file": {
+      "command": "interface",
+      "function": "import_file",
+      "description": "Import a file as a model",
+      "request": [
+        {
+          "name": "type",
+          "type": "string",
+          "required": true,
+          "valid_values": "IGES, NEUTRAL, PV, STEP"
+        },
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "new_name",
+          "type": "string",
+          "default": "The name of the file with an extension based on new_model_type."
+        },
+        {
+          "name": "new_model_type",
+          "type": "string",
+          "default": "asm",
+          "valid_values": "asm, prt"
+        }
+      ],
+      "response": [
+        {
+          "name": "file",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-import_file.json",
+      "git_blob_sha": "eb472449fb6f4eec913861bd4e5aad04e31115ea"
+    },
+    "interface.import_program": {
+      "command": "interface",
+      "function": "import_program",
+      "description": "Import a program file for a model",
+      "request": [
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "default": "The model name with the appropriate file extension"
+        },
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model, or the model for the filename parameter if given"
+        }
+      ],
+      "response": [
+        {
+          "name": "file",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-import_program.json",
+      "git_blob_sha": "e5b2dcaebf905c584cb73745499f9f96df60415a"
+    },
+    "interface.mapkey": {
+      "command": "interface",
+      "function": "mapkey",
+      "description": "Run a Mapkey script in Creo",
+      "request": [
+        {
+          "name": "script",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "delay",
+          "type": "integer",
+          "default": "0"
+        }
+      ],
+      "response": [],
+      "spec_file": "interface-mapkey.json",
+      "git_blob_sha": "37af46fd13cc4ad894a4010a46fe538b02572df2"
+    },
+    "interface.plot": {
+      "command": "interface",
+      "function": "plot",
+      "description": "Export a model plot",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "Currently active model"
+        },
+        {
+          "name": "dirname",
+          "type": "string",
+          "default": "Creo's current working directory"
+        },
+        {
+          "name": "driver",
+          "type": "string",
+          "default": "POSTSCRIPT",
+          "valid_values": "POSTSCRIPT, JPEG, TIFF"
+        }
+      ],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        },
+        {
+          "name": "filename",
+          "type": "string"
+        }
+      ],
+      "spec_file": "interface-plot.json",
+      "git_blob_sha": "7f2ed006d23b5cf68e0dc963aaa2984ae87a60b8"
+    },
+    "layer.delete": {
+      "command": "layer",
+      "function": "delete",
+      "description": "Delete one or more layers",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All layers will be deleted",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [],
+      "spec_file": "layer-delete.json",
+      "git_blob_sha": "b1cc857d170c043325febfb7a9071064bb3edaa4"
+    },
+    "layer.exists": {
+      "command": "layer",
+      "function": "exists",
+      "description": "Check whether layer(s) exists on a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All layers are listed",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "layer-exists.json",
+      "git_blob_sha": "0ae25ae1102ef55abd8a59044228155b669c987e"
+    },
+    "layer.list": {
+      "command": "layer",
+      "function": "list",
+      "description": "List layers that match criteria",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All layers are listed",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "layers",
+          "type": "object_array:LayerData"
+        }
+      ],
+      "spec_file": "layer-list.json",
+      "git_blob_sha": "ad85ae54878cb602a3c947ad8a03fd4ebc6647a8"
+    },
+    "layer.show": {
+      "command": "layer",
+      "function": "show",
+      "description": "Show/Hide one or more layers",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All layers will be deleted",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "show",
+          "type": "boolean",
+          "default": "true (show)"
+        }
+      ],
+      "response": [],
+      "spec_file": "layer-show.json",
+      "git_blob_sha": "cded15a82a0cdef3072fd25483db84e534344e08"
+    },
+    "note.copy": {
+      "command": "note",
+      "function": "copy",
+      "description": "Copy note to another in the same model or another model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "to_name",
+          "type": "string",
+          "default": "The source note name"
+        },
+        {
+          "name": "to_file",
+          "type": "string",
+          "default": "The source model"
+        }
+      ],
+      "response": [],
+      "spec_file": "note-copy.json",
+      "git_blob_sha": "4f0002faaddfbec21b2d790d36b5452fd50db238"
+    },
+    "note.delete": {
+      "command": "note",
+      "function": "delete",
+      "description": "Delete a model or drawing note",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model or drawing",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [],
+      "spec_file": "note-delete.json",
+      "git_blob_sha": "448187638bc4c8f1af027b725e6f61a856484e1e"
+    },
+    "note.exists": {
+      "command": "note",
+      "function": "exists",
+      "description": "Check whether note(s) exists on a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty, then it checks for any note's existence"
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "note-exists.json",
+      "git_blob_sha": "a32ef710cb75eb21ec33f4a2937b0c246e5dcb56"
+    },
+    "note.get": {
+      "command": "note",
+      "function": "get",
+      "description": "Get the text of a model or drawing note",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model or drawign"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "string"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean"
+        },
+        {
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "object:JLPoint"
+        }
+      ],
+      "spec_file": "note-get.json",
+      "git_blob_sha": "c5c9aecce23e98fe9629e8ab7db214d3d52dc6c8"
+    },
+    "note.list": {
+      "command": "note",
+      "function": "list",
+      "description": "Get a list of notes from one or more models",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty, then all notes are listed"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default": "no filter",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "get_expanded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "select",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [
+        {
+          "name": "itemlist",
+          "type": "object_array:NoteData"
+        }
+      ],
+      "spec_file": "note-list.json",
+      "git_blob_sha": "2435b03b3fa05eefa21c9964c02c355a9b91f99c"
+    },
+    "note.set": {
+      "command": "note",
+      "function": "set",
+      "description": "Set the text of a model or drawing note",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model or drawing",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default": "Clears the note if missing"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "location",
+          "type": "object:JLPoint",
+          "default": "If missing and this is a new note, note will be placed at 0, 0"
+        }
+      ],
+      "response": [],
+      "spec_file": "note-set.json",
+      "git_blob_sha": "81d6c838458cca4e659b0c8b491c39ebc082931a"
+    },
+    "parameter.copy": {
+      "command": "parameter",
+      "function": "copy",
+      "description": "Copy parameter to another in the same model or another model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "wildcards_allowed": true
+        },
+        {
+          "name": "to_name",
+          "type": "string"
+        },
+        {
+          "name": "to_file",
+          "type": "string",
+          "default": "The source model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "designate",
+          "type": "boolean",
+          "default": "blank"
+        }
+      ],
+      "response": [],
+      "spec_file": "parameter-copy.json",
+      "git_blob_sha": "4bb193acb01d6a91e731e08843675a91e9ab944c"
+    },
+    "parameter.delete": {
+      "command": "parameter",
+      "function": "delete",
+      "description": "Delete a parameter",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [],
+      "spec_file": "parameter-delete.json",
+      "git_blob_sha": "8c19eadaeab16bcdf9a596a9e6cb8f186c0b5352"
+    },
+    "parameter.exists": {
+      "command": "parameter",
+      "function": "exists",
+      "description": "Check whether parameter(s) exists on a model",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty, then it checks for any parameter's existence"
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "parameter-exists.json",
+      "git_blob_sha": "65abd17706c6736aa5d9935bb55646c048d4da75"
+    },
+    "parameter.list": {
+      "command": "parameter",
+      "function": "list",
+      "description": "Get a list of parameters from one or more models",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "names",
+          "type": "array:string",
+          "default": "The name parameter is used; if both are empty, then all parameters are listed"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default": "no filter",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "paramlist",
+          "type": "object_array:ParameterData"
+        }
+      ],
+      "spec_file": "parameter-list.json",
+      "git_blob_sha": "7359c480171cb7f345344fafd62b66449c121662"
+    },
+    "parameter.set": {
+      "command": "parameter",
+      "function": "set",
+      "description": "Set the value of a parameter",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "wildcards_allowed": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "STRING",
+          "valid_values": "STRING, DOUBLE, INTEGER, BOOL, NOTE"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type",
+          "default": "Clears the parameter value if missing"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "default": "If missing, leaves the current description in place"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "designate",
+          "type": "boolean",
+          "default": "blank"
+        },
+        {
+          "name": "no_create",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "response": [],
+      "spec_file": "parameter-set.json",
+      "git_blob_sha": "f48eea1e2d03b8d24eb66e9d30bacd1abbf11d62"
+    },
+    "parameter.set_designated": {
+      "command": "parameter",
+      "function": "set_designated",
+      "description": "Set the designated state of a parameter",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model",
+          "wildcards_allowed": true
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "wildcards_allowed": true
+        },
+        {
+          "name": "designate",
+          "type": "boolean",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "parameter-set_designated.json",
+      "git_blob_sha": "79cfc1060ab13de63e0e22cd682f01cda575ac54"
+    },
+    "server.pwd": {
+      "command": "server",
+      "function": "pwd",
+      "description": "Return the server's execution directory",
+      "request": [],
+      "response": [
+        {
+          "name": "dirname",
+          "type": "string"
+        }
+      ],
+      "spec_file": "server-pwd.json",
+      "git_blob_sha": "0ef227d6994592ae9f4616dbf8b79e48de1476c2"
+    },
+    "view.activate": {
+      "command": "view",
+      "function": "activate",
+      "description": "Activate a model view",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "view-activate.json",
+      "git_blob_sha": "ee87d664f4c303f496588cf5e1938506384c37c1"
+    },
+    "view.list": {
+      "command": "view",
+      "function": "list",
+      "description": "List views that match criteria",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All views are listed",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "viewlist",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "view-list.json",
+      "git_blob_sha": "c715a059debebde6676b4b6984aff3fb1882e69b"
+    },
+    "view.list_exploded": {
+      "command": "view",
+      "function": "list_exploded",
+      "description": "List views that match criteria and are exploded",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "default": "All views are listed",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "viewlist",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "view-list_exploded.json",
+      "git_blob_sha": "0a1171b1e4a4c47b9d76cef546f7b60727962826"
+    },
+    "view.save": {
+      "command": "view",
+      "function": "save",
+      "description": "Save a model's current orientation as a new view",
+      "request": [
+        {
+          "name": "file",
+          "type": "string",
+          "default": "The currently active model"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "view-save.json",
+      "git_blob_sha": "2617c8d3ae412b05d287b44cc92e23858f35092d"
+    },
+    "windchill.authorize": {
+      "command": "windchill",
+      "function": "authorize",
+      "description": "Set user's Windchill login/password",
+      "request": [
+        {
+          "name": "user",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "password",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "windchill-authorize.json",
+      "git_blob_sha": "2ecdd8809a53eed12d2a8217cb1bd4d2e8905a32"
+    },
+    "windchill.clear_workspace": {
+      "command": "windchill",
+      "function": "clear_workspace",
+      "description": "Clear a workspace on the active server",
+      "request": [
+        {
+          "name": "workspace",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "filenames",
+          "type": "array:string",
+          "default": "All files are deleted."
+        }
+      ],
+      "response": [],
+      "spec_file": "windchill-clear_workspace.json",
+      "git_blob_sha": "bd832ceef26fbd21a6f688a097198e376cd07269"
+    },
+    "windchill.create_workspace": {
+      "command": "windchill",
+      "function": "create_workspace",
+      "description": "Create a workspace on the active server",
+      "request": [
+        {
+          "name": "workspace",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "context",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "windchill-create_workspace.json",
+      "git_blob_sha": "b8b2a1f0067ae7a2cfaa24759c5b4f4cac6483ee"
+    },
+    "windchill.delete_workspace": {
+      "command": "windchill",
+      "function": "delete_workspace",
+      "description": "Delete a workspace on the active server",
+      "request": [
+        {
+          "name": "workspace",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "windchill-delete_workspace.json",
+      "git_blob_sha": "ff3737bfbaa0f3586055c10656f6cbbc215ff948"
+    },
+    "windchill.file_checked_out": {
+      "command": "windchill",
+      "function": "file_checked_out",
+      "description": "Check whether a file is checked out in a workspace on the active server",
+      "request": [
+        {
+          "name": "workspace",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "filename",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "checked_out",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "windchill-file_checked_out.json",
+      "git_blob_sha": "d76e04e04d01b77449fa5f01ed20475130e2fac7"
+    },
+    "windchill.get_workspace": {
+      "command": "windchill",
+      "function": "get_workspace",
+      "description": "Retrieve the name of the active workspace on the active server",
+      "request": [],
+      "response": [
+        {
+          "name": "workspace",
+          "type": "string"
+        }
+      ],
+      "spec_file": "windchill-get_workspace.json",
+      "git_blob_sha": "5a21991355452af598e68055777f134f654dbd83"
+    },
+    "windchill.list_workspace_files": {
+      "command": "windchill",
+      "function": "list_workspace_files",
+      "description": "Get a list of files in a workspace on the active server",
+      "request": [
+        {
+          "name": "filename",
+          "type": "string",
+          "default": "All files",
+          "wildcards_allowed": true
+        }
+      ],
+      "response": [
+        {
+          "name": "filelist",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "windchill-list_workspace_files.json",
+      "git_blob_sha": "31468af6223703ffdc406568e4c7f63340a58c13"
+    },
+    "windchill.list_workspaces": {
+      "command": "windchill",
+      "function": "list_workspaces",
+      "description": "Get a list of workspaces the user can access on the active server",
+      "request": [],
+      "response": [
+        {
+          "name": "workspaces",
+          "type": "array:string"
+        }
+      ],
+      "spec_file": "windchill-list_workspaces.json",
+      "git_blob_sha": "dc12f39df4289b7287c4235e466719f8b3059cba"
+    },
+    "windchill.server_exists": {
+      "command": "windchill",
+      "function": "server_exists",
+      "description": "Check whether a server exists",
+      "request": [
+        {
+          "name": "server_url",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "windchill-server_exists.json",
+      "git_blob_sha": "85d43dc40242677728dbb93ec32ca9f84ad0e60a"
+    },
+    "windchill.set_server": {
+      "command": "windchill",
+      "function": "set_server",
+      "description": "Select a Windchill server",
+      "request": [
+        {
+          "name": "server_url",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "windchill-set_server.json",
+      "git_blob_sha": "b2418a2d038f20f40d0f387d81efd966f918727b"
+    },
+    "windchill.set_workspace": {
+      "command": "windchill",
+      "function": "set_workspace",
+      "description": "Select a workspace on the active server",
+      "request": [
+        {
+          "name": "workspace",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [],
+      "spec_file": "windchill-set_workspace.json",
+      "git_blob_sha": "dcc89639fb0d28549258d8f3fd93dd6d1da94200"
+    },
+    "windchill.workspace_exists": {
+      "command": "windchill",
+      "function": "workspace_exists",
+      "description": "Check whether a workspace exists on the active server",
+      "request": [
+        {
+          "name": "workspace",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": [
+        {
+          "name": "exists",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "windchill-workspace_exists.json",
+      "git_blob_sha": "0d70eeeca46af3dd7235a0932abdf6b1fd4c67d9"
+    }
+  },
+  "data_types": {
+    "BomChild": {
+      "description": "Data for a component in a BOM hierarchy",
+      "notes": [],
+      "data": [
+        {
+          "name": "file",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "seq_path",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "path",
+          "type": "array:integer"
+        },
+        {
+          "name": "transform",
+          "type": "object:JLTransform"
+        },
+        {
+          "name": "children",
+          "type": "object_array:BomChild"
+        }
+      ],
+      "spec_file": "object-BomChild.json",
+      "git_blob_sha": "17d2ec6ca4566f552e9a1256e60c26a0a1add38b"
+    },
+    "ContourData": {
+      "description": "Information about a contour, which is a collection of connected edges",
+      "notes": [],
+      "data": [
+        {
+          "name": "surface_id",
+          "type": "integer"
+        },
+        {
+          "name": "traversal",
+          "type": "string",
+          "valid_values": "internal, external"
+        },
+        {
+          "name": "edgelist",
+          "type": "object_array:EdgeData"
+        }
+      ],
+      "spec_file": "object-ContourData.json",
+      "git_blob_sha": "25272a569904f29df071bafb9409d84cb8119ab1"
+    },
+    "DimData": {
+      "description": "Information about a Creo dimension",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "dwg_dim",
+          "type": "boolean",
+          "default": "false"
+        }
+      ],
+      "spec_file": "object-DimData.json",
+      "git_blob_sha": "9a3bcfb097ae2edb9160a8a273be6a78580e4377"
+    },
+    "DimDetailData": {
+      "description": "More detailed information about a Creo dimension",
+      "notes": [
+        "If dimension is not a drawing dimension, then only name, value, encoded, dim_type, and text will be returned.",
+        "tol_lower_limit and tol_upper_limit are only set when tolerance_type=limits",
+        "tol_plus and tol_minus are only set when tolerance_type=plus_minus",
+        "tol_symmetric_value is only set when tolerance_type=symmetric or sym_superscript",
+        "tol_table_name, tol_table_column and tol_table_type are only set when tolerance_type=isodin"
+      ],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "dwg_dim",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "dim_type",
+          "type": "string",
+          "valid_values": "linear, radial, diameter, angular"
+        },
+        {
+          "name": "text",
+          "type": "array:string"
+        },
+        {
+          "name": "sheet",
+          "type": "integer"
+        },
+        {
+          "name": "view_name",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "tolerance_type",
+          "type": "string",
+          "valid_values": "limits, plus_minus, symmetric, sym_superscript, isodin"
+        },
+        {
+          "name": "tol_lower_limit",
+          "type": "double"
+        },
+        {
+          "name": "tol_upper_limit",
+          "type": "double"
+        },
+        {
+          "name": "tol_plus",
+          "type": "double"
+        },
+        {
+          "name": "tol_minus",
+          "type": "double"
+        },
+        {
+          "name": "tol_symmetric_value",
+          "type": "double"
+        },
+        {
+          "name": "tol_table_name",
+          "type": "string"
+        },
+        {
+          "name": "tol_table_column",
+          "type": "integer"
+        },
+        {
+          "name": "tol_table_type",
+          "type": "string",
+          "valid_values": "general, broken_edge, shafts, holes"
+        }
+      ],
+      "spec_file": "object-DimDetailData.json",
+      "git_blob_sha": "4a3dae4c1fee30e05cde62a48654d58199f57c8d"
+    },
+    "DimSelectData": {
+      "description": "Information about a dimension that the user has selected",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "dwg_dim",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "file",
+          "type": "string"
+        },
+        {
+          "name": "relation_id",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "object-DimSelectData.json",
+      "git_blob_sha": "ddbbc5ad788e1604ed06ce2b275d51c5f0688c2d"
+    },
+    "EdgeData": {
+      "description": "Information about an edge",
+      "notes": [],
+      "data": [
+        {
+          "name": "edge_id",
+          "type": "integer"
+        },
+        {
+          "name": "length",
+          "type": "double"
+        },
+        {
+          "name": "start",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "end",
+          "type": "object:JLPoint"
+        }
+      ],
+      "spec_file": "object-EdgeData.json",
+      "git_blob_sha": "9b8afb3332a9d04b9848e95a48b0de05edce5198"
+    },
+    "FamTableInstance": {
+      "description": "Information about an instance in a nested family table",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "total",
+          "type": "integer"
+        },
+        {
+          "name": "children",
+          "type": "object_array:FamTableInstance"
+        }
+      ],
+      "spec_file": "object-FamTableInstance.json",
+      "git_blob_sha": "ba3f7f8823a30540a54282c2d93de575fe07ffc3"
+    },
+    "FamTableRowColumn": {
+      "description": "Information about one cell in a family table",
+      "notes": [],
+      "data": [
+        {
+          "name": "colid",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type"
+        },
+        {
+          "name": "datatype",
+          "type": "string",
+          "default": "STRING",
+          "valid_values": "STRING, DOUBLE, INTEGER, BOOL, NOTE"
+        },
+        {
+          "name": "coltype",
+          "type": "string"
+        }
+      ],
+      "spec_file": "object-FamTableRowColumn.json",
+      "git_blob_sha": "8742d657e92dabc92e6838b78d4827c39150fbbb"
+    },
+    "FeatSelectData": {
+      "description": "Information about a feature that has been selected",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "valid_values": "ACTIVE, INACTIVE, FAMILY_TABLE_SUPPRESSED, SIMP_REP_SUPPRESSED, PROGRAM_SUPPRESSED, SUPPRESSED, UNREGENERATED"
+        },
+        {
+          "name": "feat_id",
+          "type": "integer"
+        },
+        {
+          "name": "feat_number",
+          "type": "integer"
+        },
+        {
+          "name": "file",
+          "type": "string"
+        },
+        {
+          "name": "path",
+          "type": "array:integer"
+        }
+      ],
+      "spec_file": "object-FeatSelectData.json",
+      "git_blob_sha": "ace03513edaaacf9e43dabc9d988436e2498ac14"
+    },
+    "FeatureData": {
+      "description": "Information about a feature",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "valid_values": "ACTIVE, INACTIVE, FAMILY_TABLE_SUPPRESSED, SIMP_REP_SUPPRESSED, PROGRAM_SUPPRESSED, SUPPRESSED, UNREGENERATED"
+        },
+        {
+          "name": "feat_id",
+          "type": "integer"
+        },
+        {
+          "name": "feat_number",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "object-FeatureData.json",
+      "git_blob_sha": "d1a47d1f4f748b7c1691783ee629547543f2e63e"
+    },
+    "FileMaterial": {
+      "description": "An object representing a part and material pair",
+      "notes": [],
+      "data": [
+        {
+          "name": "file",
+          "type": "string"
+        },
+        {
+          "name": "material",
+          "type": "string"
+        }
+      ],
+      "spec_file": "object-FileMaterial.json",
+      "git_blob_sha": "9f5cf3306478ae8a0401d920e81a54461b9fe5a8"
+    },
+    "JLConstraint": {
+      "description": "An assembly constraint",
+      "notes": [
+        "At this time, only constraint type \"csys\" is fully supported."
+      ],
+      "data": [
+        {
+          "name": "type",
+          "type": "string",
+          "required": true,
+          "valid_values": "align, auto, csys, def_placement, edge_on_srf, fix, insert, mate, orient, pnt_on_line, pnt_on_srf, substitute, tangent"
+        },
+        {
+          "name": "asmref",
+          "type": "string"
+        },
+        {
+          "name": "compref",
+          "type": "string"
+        },
+        {
+          "name": "asmdatum",
+          "type": "string",
+          "valid_values": "red, yellow"
+        },
+        {
+          "name": "compdatum",
+          "type": "string",
+          "valid_values": "red, yellow"
+        },
+        {
+          "name": "offset",
+          "type": "double"
+        }
+      ],
+      "spec_file": "object-JLConstraint.json",
+      "git_blob_sha": "c5d1b78900956b67056f111f8b0a8e64179b1949"
+    },
+    "JLInertia": {
+      "description": "A matrix representing an inertia or inertia tensor",
+      "notes": [],
+      "data": [
+        {
+          "name": "x_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "y_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "z_axis",
+          "type": "object:JLPoint"
+        }
+      ],
+      "spec_file": "object-JLInertia.json",
+      "git_blob_sha": "bfbc486c058b3f2865efc143a045be1edff8105a"
+    },
+    "JLPoint": {
+      "description": "A 3D coordinate",
+      "notes": [],
+      "data": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        },
+        {
+          "name": "z",
+          "type": "double"
+        }
+      ],
+      "spec_file": "object-JLPoint.json",
+      "git_blob_sha": "2916499e6e976a6fd193bf7c295009f171080690"
+    },
+    "JLTransform": {
+      "description": "A 3D Transform matrix for a component",
+      "notes": [
+        "On input, you may set either the axes or the rotations but you may not set both"
+      ],
+      "data": [
+        {
+          "name": "origin",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "x_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "y_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "z_axis",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "x_rot",
+          "type": "double"
+        },
+        {
+          "name": "y_rot",
+          "type": "double"
+        },
+        {
+          "name": "z_rot",
+          "type": "double"
+        }
+      ],
+      "spec_file": "object-JLTransform.json",
+      "git_blob_sha": "b28d4a094fe0ad2f70dd2377426f24917f4015b2"
+    },
+    "LayerData": {
+      "description": "Information about a layer",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "valid_values": "BLANK, DISPLAY, HIDDEN, NORMAL"
+        },
+        {
+          "name": "id",
+          "type": "integer"
+        }
+      ],
+      "spec_file": "object-LayerData.json",
+      "git_blob_sha": "fbe728dddd28294927722af3c1cf773bc4913e82"
+    },
+    "NoteData": {
+      "description": "Information about a model/drawing note",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "string"
+        },
+        {
+          "name": "value_expanded",
+          "type": "string"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean"
+        },
+        {
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "object:JLPoint"
+        }
+      ],
+      "spec_file": "object-NoteData.json",
+      "git_blob_sha": "fdffd704a7df82f34569dbe091c139c4d1f26a34"
+    },
+    "ParameterData": {
+      "description": "Information about a Creo parameter",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "depends on data type"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "default": "STRING",
+          "valid_values": "STRING, DOUBLE, INTEGER, BOOL, NOTE"
+        },
+        {
+          "name": "designate",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "encoded",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "owner_name",
+          "type": "string"
+        },
+        {
+          "name": "owner_id",
+          "type": "integer"
+        },
+        {
+          "name": "owner_type",
+          "type": "string"
+        }
+      ],
+      "spec_file": "object-ParameterData.json",
+      "git_blob_sha": "21880c22f35ce72770c524515671af67d5b0e7e4"
+    },
+    "ServiceStatus": {
+      "description": "Status of service call, returned in each function response",
+      "notes": [],
+      "data": [
+        {
+          "name": "error",
+          "type": "boolean"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "expired",
+          "type": "boolean"
+        }
+      ],
+      "spec_file": "object-ServiceStatus.json",
+      "git_blob_sha": "af9f6956eb087423ee5cbfff412ea90a2462ff82"
+    },
+    "SurfaceData": {
+      "description": "Information about a surface",
+      "notes": [],
+      "data": [
+        {
+          "name": "surface_id",
+          "type": "integer"
+        },
+        {
+          "name": "area",
+          "type": "double"
+        },
+        {
+          "name": "min_extent",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "max_extent",
+          "type": "object:JLPoint"
+        }
+      ],
+      "spec_file": "object-SurfaceData.json",
+      "git_blob_sha": "278eb2e53116930d47cb18666e0ebf9883ef39f9"
+    },
+    "SymbolInstData": {
+      "description": "Information about a drawing symbol instance",
+      "notes": [],
+      "data": [
+        {
+          "name": "id",
+          "type": "integer"
+        },
+        {
+          "name": "symbol_name",
+          "type": "string"
+        },
+        {
+          "name": "sheet",
+          "type": "integer"
+        },
+        {
+          "name": "location",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "attach_type",
+          "type": "string"
+        }
+      ],
+      "spec_file": "object-SymbolInstData.json",
+      "git_blob_sha": "0c03c0d3b55b493580504f156ed45265aabc0e9e"
+    },
+    "ViewDetailData": {
+      "description": "Information about a drawing view",
+      "notes": [],
+      "data": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "sheet",
+          "type": "integer"
+        },
+        {
+          "name": "location",
+          "type": "object:JLPoint"
+        },
+        {
+          "name": "text_height",
+          "type": "double"
+        },
+        {
+          "name": "view_model",
+          "type": "string"
+        },
+        {
+          "name": "simp_rep",
+          "type": "string"
+        }
+      ],
+      "spec_file": "object-ViewDetailData.json",
+      "git_blob_sha": "1a0af44fb95deaefe5dd725a1aa1792d38a4c3b2"
+    },
+    "ViewDisplayData": {
+      "description": "Creo display parameters used to create drawing views",
+      "notes": [],
+      "data": [
+        {
+          "name": "cable_style",
+          "type": "string",
+          "valid_values": "default, centerline, thick"
+        },
+        {
+          "name": "remove_quilt_hidden_lines",
+          "type": "boolean"
+        },
+        {
+          "name": "show_concept_model",
+          "type": "boolean"
+        },
+        {
+          "name": "show_weld_xsection",
+          "type": "boolean"
+        },
+        {
+          "name": "style",
+          "type": "string",
+          "valid_values": "default, follow_environment, hidden_line, no_hidden, shaded, wireframe"
+        },
+        {
+          "name": "tangent_style",
+          "type": "string",
+          "valid_values": "default, centerline, dimmed, none, phantom, solid"
+        }
+      ],
+      "spec_file": "object-ViewDisplayData.json",
+      "git_blob_sha": "9964b9d3dbd07ad67f7c1a33c0d3d6c7b0cdecc3"
+    }
+  }
+}
