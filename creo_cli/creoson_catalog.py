@@ -21,6 +21,11 @@ SOURCES = {
     "bom": ("Zepmanbc/creopyson", "creopyson/bom.py", "611209b7f6695bdce8f3d08bdaa4096d3bbdef54"),
     "creo": ("Zepmanbc/creopyson", "creopyson/creo.py", "678c83bdcafd67c5a838959c9080a20989c29d80"),
     "connection": ("Zepmanbc/creopyson", "creopyson/connection.py", "cc1bd8ebf59f3139d1906fda9e159e16bd78c109"),
+    # Cited against CREOSON's own released specification rather than a client
+    # re-implementation of it. Per-function blob identities for every published
+    # function are in contract/creoson-interface.json.
+    "server": ("SimplifiedLogic/creoson", "creoson-server/web/assets/creoson_stuff/jsonSpecs/server-pwd.json",
+               "0ef227d6994592ae9f4616dbf8b79e48de1476c2"),
 }
 
 
@@ -223,4 +228,31 @@ add("drawing sheets", "drawing", "get_num_sheets", "Read the sheet count", D, ("
 add("drawing views", "drawing", "list_view_details", "Read view names, sheets, positions and referenced models", D, ("views",), {"drawing": "bracket.drw"}, target_keys=("drawing",), list_key="views")
 add("file roundtrip", "file", "save", "Save, close, erase only one isolated part, reopen and compare observed design data", {"file": PART},
     ("roundtrip_verified", "artifacts", "compared_sections"), {"file": "bracket.prt"}, verifier="roundtrip", effect="disk_and_memory", write=True)
+
+# Session and environment: what a person settles before touching a model -- where Creo
+# is pointed, which files are there, which config options are in force, and whether a
+# model actually opened cleanly. Reads here deliberately do not require the target to be
+# loaded; `file exists` that refused unloaded models would answer its own question.
+# GLOB is narrower than the upstream wildcard field: listing accepts a bounded pattern,
+# while every mutating command still names one exact model.
+GLOB = text(pattern=r"^[A-Za-z0-9_*?][A-Za-z0-9_.*?-]{0,79}$")
+add("creo pwd", "creo", "pwd", "Read Creo's current working directory", {}, ("dirname",), {}, target_keys=())
+add("creo list-files", "creo", "list_files", "List files in Creo's working directory, optionally by a bounded pattern", {"filename": GLOB}, ("filelist",), {"filename": "*.prt"}, required=(), target_keys=(), list_key="filelist")
+add("creo list-dirs", "creo", "list_dirs", "List subdirectories of Creo's working directory", {"dirname": GLOB}, ("dirlist",), {"dirname": "*"}, required=(), target_keys=(), list_key="dirlist")
+add("creo get-config", "creo", "get_config", "Read the values in force for one named Creo config option", {"name": NAME}, ("values",), {"name": "pro_unit_length"}, target_keys=(), list_key="values")
+add("server pwd", "server", "pwd", "Read the CREOSON service's own execution directory; not Creo's", {}, ("dirname",), {}, target_keys=())
+add("file exists", "file", "exists", "Check whether a named model is in session memory", F, ("exists",), {"file": "bracket.prt"}, target_keys=())
+add("file is-active", "file", "is_active", "Check whether a named model is the active one", F, ("active",), {"file": "bracket.prt"}, target_keys=())
+add("file open-errors", "file", "open_errors", "Report whether Creo recorded errors opening a model", F, ("errors",), {"file": "bracket.prt"})
+
+# Session writes. `creo cd` is the supported way to point Creo at the disposable
+# workspace: the CLI has always refused to move it silently, and this makes the move an
+# explicit, confirmed, read-back step instead. Directory paths stay workspace-contained.
+add("creo cd", "creo", "cd", "Point Creo's working directory at an existing directory inside the workspace", {"dirname": PATH}, ("dirname",), {"dirname": "."}, target_keys=(), verifier="working_directory", effect="session", write=True)
+add("creo mkdir", "creo", "mkdir", "Create one new directory inside the workspace", {"dirname": PATH}, ("dirname",), {"dirname": "exports"}, target_keys=(), verifier="directory_present", effect="disk", write=True)
+add("creo rmdir", "creo", "rmdir", "Remove one existing directory inside the workspace", {"dirname": PATH}, (), {"dirname": "exports"}, target_keys=(), verifier="directory_absent", effect="disk", write=True, dangerous=True)
+add("creo set-config", "creo", "set_config", "Set one named Creo config option and read the value back", {"name": NAME, "value": text(maximum=512), "ignore_errors": BOOL}, (), {"name": "regen_failure_handling", "value": "resolve_mode", "ignore_errors": False}, required=("name", "value"), target_keys=(), verifier="config_option", effect="session", write=True)
+add("file refresh", "file", "refresh", "Refresh a model's window; changes display only", F, (), {"file": "bracket.prt"}, verifier="acknowledgement", effect="ui", write=True)
+add("file repaint", "file", "repaint", "Repaint a model's window; changes display only", F, (), {"file": "bracket.prt"}, verifier="acknowledgement", effect="ui", write=True)
+
 BY_PATH = {op.path: op for op in OPS}

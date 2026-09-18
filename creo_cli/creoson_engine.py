@@ -133,8 +133,12 @@ class Engine:
         if op.path == "parameter set":
             wire["no_create"] = not q["create"]
         if op.write:
+            if op.path == "creo mkdir":
+                # Contained like any other write target, but this is the one case where
+                # the directory must not exist yet; the shared branch requires existence.
+                wire["dirname"] = str(store.contained(wire["dirname"], exists=False))
             for field in ("dirname", "template"):
-                if field in wire:
+                if field in wire and op.path != "creo mkdir":
                     wire[field] = str(store.contained(wire[field], directory=(field == "dirname")))
             if "target_dir" in wire:
                 wire["target_dir"] = str(store.contained(wire["target_dir"], exists=False))
@@ -304,6 +308,18 @@ class Engine:
             old_ids = {r.get("feat_id") for r in before[q["into_asm"]]["features"]}
             check("new_component_feature", type(feature_id) is int and feature_id not in old_ids and any(r.get("feat_id") == feature_id and r.get("status") == "ACTIVE" for r in rows))
             # Numeric solve accuracy and all degrees of freedom are not exposed here.
+        elif mode == "working_directory":
+            # Read Creo's own answer back rather than trusting the echoed request:
+            # a cd that silently did not move is exactly the failure worth catching.
+            moved = required(self.call("creo", "pwd"), "dirname", str)
+            check("creo_working_directory", Path(moved) == store.contained(q["dirname"], directory=True))
+        elif mode in ("directory_present", "directory_absent"):
+            wanted = mode == "directory_present"
+            check("directory_" + ("created" if wanted else "removed"),
+                  Path(prep["wire"]["dirname"]).is_dir() is wanted)
+        elif mode == "config_option":
+            values = required(self.call("creo", "get_config", {"name": q["name"]}), "values", list)
+            check("config_value_readback", q["value"] in values)
         elif mode == "drawing_models":
             check("drawing_model_link", q["model"] in required(self.call("drawing", "list_models", {"drawing": q["drawing"]}), "files", list))
         elif mode == "drawing_sheets":

@@ -71,6 +71,9 @@ class NativeProtocol(unittest.TestCase):
         if op.path == "feature resume": self.world.models["bracket.prt"]["features"][0]["status"] = "SUPPRESSED"
         if op.path == "drawing create":
             self.world.loaded.remove("bracket.drw"); (self.root / "bracket.drw").unlink()
+        if op.path == "creo mkdir": (self.root / "exports").rmdir()
+        if op.path == "creo rmdir":
+            for leftover in (self.root / "exports").iterdir(): leftover.unlink()
         if op.path == "drawing add-model": self.world.models["bracket.drw"]["models"] = []
         if op.path == "drawing create-view": self.world.models["bracket.drw"]["drawing_views"] = []
 

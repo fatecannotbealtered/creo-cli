@@ -36,6 +36,12 @@ class World:
         self.drop = None
         self.delay = None
         self.block = None
+        # Creo's working directory is session state that `creo cd` moves; the server's
+        # own directory is deliberately a different value so tests can tell them apart.
+        self.cwd = root
+        self.server_dir = root / "server-home"
+        self.server_dir.mkdir(exist_ok=True)
+        self.config = {"pro_unit_length": ["unit_mm"], "regen_failure_handling": ["resolve_mode"]}
         self.bad_json = False
         self.http_status = None
         self.skip_mutation = False
@@ -78,9 +84,32 @@ class World:
     def operation(self, cmd, fn, q):
         name = q.get("file") or q.get("drawing") or q.get("asm") or self.active
         m = self.models.get(name, {})
+        if cmd == "server":
+            if fn == "pwd": return {"dirname": str(self.server_dir)}
         if cmd == "creo":
-            if fn == "pwd": return {"dirname": str(self.root)}
+            if fn == "pwd": return {"dirname": str(self.cwd)}
             if fn == "set_creo_version": self.major = q["version"]; return None
+            if fn == "get_config": return {"values": list(self.config.get(q["name"], []))}
+            if fn == "list_files":
+                return {"filelist": sorted(p.name for p in self.cwd.glob(q.get("filename") or "*") if p.is_file())}
+            if fn == "list_dirs":
+                return {"dirlist": sorted(p.name for p in self.cwd.glob(q.get("dirname") or "*") if p.is_dir())}
+            if self.skip_mutation: return {}
+            if fn == "cd":
+                target = Path(q["dirname"])
+                if not target.is_dir(): return None
+                self.cwd = target
+                return {"dirname": str(self.cwd)}
+            if fn == "mkdir":
+                Path(q["dirname"]).mkdir(parents=True, exist_ok=True)
+                return {"dirname": q["dirname"]}
+            if fn == "rmdir":
+                target = Path(q["dirname"])
+                if target.is_dir(): target.rmdir()
+                return None
+            if fn == "set_config":
+                self.config[q["name"]] = [q["value"]]
+                return None
         if cmd == "file":
             if fn == "list": return {"files": list(self.loaded)}
             if fn == "get_active": return {"file": self.active, "dirname": str(self.root)}
@@ -95,7 +124,10 @@ class World:
             if fn == "massprops": return {"mass": 0.27, "volume": 100000.0, "density": 0.0000027, "surface_area": 2200, "ctr_grav": {"x": 1, "y": 2, "z": 3}}
             if fn == "get_transform": return {"origin": {"x": 0, "y": 0, "z": 0}, "x_axis": {"x": 1, "y": 0, "z": 0}, "y_axis": {"x": 0, "y": 1, "z": 0}, "z_axis": {"x": 0, "y": 0, "z": 1}, "x_rot": 0.0, "y_rot": 0.0, "z_rot": 0.0}
             if fn == "open_errors": return {"errors": False}
+            if fn == "exists": return {"exists": name in self.loaded}
+            if fn == "is_active": return {"active": name == self.active}
             if self.skip_mutation: return {}
+            if fn in ("refresh", "repaint"): return None
             if fn == "open":
                 saved = self.root / (name + ".2")
                 if saved.exists() and saved.read_bytes().startswith(b"SIMULATED SAVE "):

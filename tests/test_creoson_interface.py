@@ -92,6 +92,39 @@ class PublishedInterface(unittest.TestCase):
                                   f"{path} declares response key {name!r} that "
                                   f"{op.command}.{op.function} does not publish")
 
+    def test_response_field_types_match_the_published_types(self):
+        # creoson_schemas.BASE_FIELDS is hand-written, and a wrong entry only shows up
+        # as E_INTEGRITY at runtime when a real reply arrives. Hold each declared type
+        # against the type CREOSON publishes for that field.
+        from creo_cli.creoson_engine import ID_KEYS
+        from creo_cli.creoson_schemas import BASE_FIELDS
+        allowed = {"string": {"string"}, "boolean": {"boolean"}, "integer": {"integer"},
+                   "double": {"number"}, "array:string": {"array"}, "array:integer": {"array"},
+                   "object": {"object"}}
+        for path, op in sorted(BY_PATH.items()):
+            published = {f["name"]: f["type"] for f in FUNCTIONS[f"{op.command}.{op.function}"]["response"]}
+            for name in op.response_fields:
+                kind = published.get(name)
+                if (path, name) in SYNTHESIZED_RESPONSE or name not in BASE_FIELDS or kind is None:
+                    continue
+                declared = BASE_FIELDS[name].get("type")
+                declared = {declared} if isinstance(declared, str) else set(declared or ())
+                if name in ID_KEYS:
+                    # CLI-SPEC: every ID leaves as a string even when the upstream numbers
+                    # it. That conversion is ID_KEYS in creoson_engine, so assert the
+                    # rule here instead of exempting the field from the check.
+                    with self.subTest(path=path, field=name, rule="ids_are_strings"):
+                        self.assertEqual(declared, {"string"},
+                                         f"{path} must publish id {name!r} as a string")
+                    continue
+                expected = allowed.get(kind.split(":")[0] if kind.startswith("object") else kind)
+                if expected is None:  # "depends on data type" and nested object payloads
+                    continue
+                with self.subTest(path=path, field=name, published=kind):
+                    self.assertTrue(declared & expected,
+                                    f"{path} types {name!r} as {sorted(declared)}, "
+                                    f"but {op.command}.{op.function} publishes {kind}")
+
     def test_exemptions_are_not_stale(self):
         # An exemption that no longer applies is a documentation lie; drop it.
         for (path, name), reason in LOCAL_TRANSFORMS.items():

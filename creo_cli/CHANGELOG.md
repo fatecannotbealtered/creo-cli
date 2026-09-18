@@ -4,6 +4,14 @@ This file is the only human-maintained change source. Runtime copies are generat
 
 ## [Unreleased]
 
+### Added
+- `contract/creoson-interface.json`, derived by `scripts/gen_creoson_interface.py` from the specifications shipped in the CREOSON 3.0.2 release: 175 published functions and 23 nested return types, each carrying a Git blob identity. `tests/test_creoson_interface.py` holds the operation catalog to it, so an operation cannot forward an unpublished field, skip a required one, promise a response key that does not exist, or type one differently from the upstream. Deliberate deviations are enumerated with reasons rather than left implicit.
+- Session and environment commands, the things a person settles before touching a model: `creo pwd`, `creo list-files`, `creo list-dirs`, `creo get-config`, `server pwd`, `file exists`, `file is-active` and `file open-errors` read; `creo cd`, `creo mkdir`, `creo rmdir` (dangerous), `creo set-config`, `file refresh` and `file repaint` write under the usual preview/confirm with readback. `creo cd` makes pointing Creo at the disposable workspace an explicit confirmed step instead of something the CLI refuses to do and the user does by hand.
+- `effect: "session"` for operations that change Creo session state rather than model memory, disk or display.
+
+### Changed
+- Published CREOSON coverage rises from 42 of 175 functions to 56; the CLI now exposes 89 leaf commands.
+
 ## [1.0.0] - 2026-09-18
 
 ### Changed

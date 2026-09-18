@@ -29,7 +29,8 @@ BASE_FIELDS = {"file": S, "dirname": S, "revision": I, "files": array(S), "gener
                "origin": VECTOR, "x_axis": VECTOR, "y_axis": VECTOR, "z_axis": VECTOR, "x_rot": N, "y_rot": N, "z_rot": N,
                "mass": N, "volume": N, "density": N, "surface_area": N, "ctr_grav": VECTOR,
                "length_units": S, "mass_units": S, "filename": S, "drawing": S,
-               "roundtrip_verified": B, "compared_sections": array(S), "artifacts": array(ARTIFACT)}
+               "roundtrip_verified": B, "compared_sections": array(S), "artifacts": array(ARTIFACT),
+               "exists": B, "active": B, "errors": B}
 
 
 def result_schema(op):
