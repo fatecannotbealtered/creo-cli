@@ -358,6 +358,70 @@ class Engine:
                 elif mode == "drawing_symbol_instance_absent":
                     placed = required(self.call("drawing", "list_symbols", {"drawing": drawing}), "symbols", list)
                     check("symbol_instance_removed", q["symbol_id"] not in {str(s.get("id")) for s in placed if isinstance(s, dict)})
+        elif mode == "renamed":
+            check("renamed_model_loaded", q["new_name"].casefold() in {n.casefold() for n in self.loaded()})
+        elif mode == "erased":
+            check("erased_from_memory", q["file"].casefold() not in {n.casefold() for n in self.loaded()})
+        elif mode in ("length_units", "mass_units"):
+            # Read the units back rather than trusting the setter: the convert flag
+            # decides whether numbers were rescaled or merely relabelled, and getting
+            # that wrong silently reinterprets every dimension in the model.
+            got = self.units(q["file"])[mode]
+            check(mode, units_equal(got, q["units"]) if mode == "length_units" else got.strip().lower() == q["units"].lower())
+        elif mode == "unit_system":
+            check("unit_system", str(required(self.call("file", "get_unit_system", {"file": q["file"]}), "name", str)).casefold() == q["name"].casefold())
+        elif mode in ("material_present", "material_absent"):
+            wanted = mode == "material_present"
+            rows = {str(x).casefold() for x in required(self.call("file", "list_materials", {"file": q["file"]}), "materials", list)}
+            check("material_" + ("loaded" if wanted else "removed"), (q["material"].casefold() in rows) is wanted)
+        elif mode in ("relations", "postregen_relations"):
+            function = "relations_get" if mode == "relations" else "postregen_relations_get"
+            check("relations_readback", required(self.call("file", function, {"file": q["file"]}), "relations", list) == q["relations"])
+        elif mode in ("parameter_copied", "parameter_absent", "parameter_designated"):
+            target = q.get("to_file", q["file"])
+            name = q.get("to_name", q["name"])
+            rows = required(self.call("parameter", "list", {"file": target, "encoded": False}), "paramlist", list)
+            present = {str(r.get("name", "")).casefold() for r in rows if isinstance(r, dict)}
+            if mode == "parameter_copied":
+                check("copy_present", name.casefold() in present)
+            elif mode == "parameter_absent":
+                check("parameter_removed", q["name"].casefold() not in present)
+            else:
+                check("designation", bool(one(rows, q["name"]).get("designate")) is q["designate"])
+        elif mode in ("dimension_copied", "dimension_text"):
+            target = q.get("to_file", q["file"])
+            name = q.get("to_name", q["name"])
+            rows = required(self.call("dimension", "list_detail", {"file": target, "encoded": False, "select": False}), "dimlist", list)
+            if mode == "dimension_copied":
+                check("copy_present", name.casefold() in {str(r.get("name", "")).casefold() for r in rows if isinstance(r, dict)})
+            else:
+                shown = one(rows, q["name"]).get("text")
+                check("text_readback", q["text"] in (shown if isinstance(shown, list) else [shown]))
+        elif mode == "feature_absent":
+            rows = required(self.call("feature", "list", {"file": q["file"], "paths": True, "inc_unnamed": True}), "featlist", list)
+            check("feature_removed", q["name"].casefold() not in {str(r.get("name", "")).casefold() for r in rows if isinstance(r, dict)})
+        elif mode in ("feature_param", "feature_param_absent"):
+            wanted = mode == "feature_param"
+            found = required(self.call("feature", "param_exists", {"file": q["file"], "name": q["name"], "param": q["param"]}), "exists", bool)
+            check("feature_parameter_" + ("set" if wanted else "removed"), found is wanted)
+            if wanted:
+                rows = required(self.call("feature", "list_params", {"file": q["file"], "name": q["name"], "param": q["param"], "encoded": False}), "paramlist", list)
+                value = one(rows, q["param"]).get("value")
+                check("feature_parameter_value", close_number(value, q["value"]) if type(q["value"]) in (int, float) else value == q["value"])
+        elif mode in ("note_present", "note_copied", "note_absent"):
+            target = q.get("to_file", q["file"])
+            name = q.get("to_name", q["name"])
+            found = required(self.call("note", "exists", {"file": target, "name": name}), "exists", bool)
+            check("note_" + ("removed" if mode == "note_absent" else "present"), found is (mode != "note_absent"))
+            if mode == "note_present":
+                check("note_text", self.call("note", "get", {"file": q["file"], "name": q["name"]}).get("value") == q["value"])
+        elif mode in ("layer_status", "layer_absent"):
+            rows = required(self.call("layer", "list", {"file": q["file"]}), "layers", list)
+            named = {str(r.get("name", "")).casefold(): r for r in rows if isinstance(r, dict)}
+            if mode == "layer_absent":
+                check("layer_removed", q["name"].casefold() not in named)
+            else:
+                check("layer_display", str(named.get(q["name"].casefold(), {}).get("status", "")).upper() == ("SHOWN" if q["show"] else "HIDDEN"))
         elif mode in ("familytable_present", "familytable_absent"):
             wanted = mode == "familytable_present"
             found = required(self.call("familytable", "exists", {"file": q["file"], "instance": q["instance"]}), "exists", bool)

@@ -1,0 +1,8 @@
+{
+  "file": "bracket.prt",
+  "name": "custom_mmks",
+  "unit_length": "mm",
+  "unit_mass": "kg",
+  "unit_time": "sec",
+  "unit_temp": "C"
+}

@@ -17,8 +17,12 @@ This file is the only human-maintained change source. Runtime copies are generat
 - The drawing domain, read and write: sheets (`current-sheet`, `sheet-size`, `sheet-scale`, `sheet-format`, `select-sheet`, `regenerate-sheet`, `scale-sheet`, `set-sheet-format`, `delete-sheet`), views (`list-views`, `view-location`, `view-scale`, `view-sheet`, `view-bound-box`, `rename-view`, `move-view`, `scale-view`, `delete-view`), models (`current-model`, `set-current-model`, `delete-models`) and symbols (`list-symbols`, `symbol-loaded`, `load-symbol`, `place-symbol`, `delete-symbol-definition`, `delete-symbol-instance`). Where the upstream lets a target be omitted to mean every one of them -- `delete_models` without a model, `scale_view` without a view -- the name is required here, and view coordinates are declared in drawing units rather than assumed.
 - Result schemas fall back to the response type CREOSON publishes, generated into `creo_cli/creoson_spec_ids.py` with the blob identities, so a new command no longer needs hand-written entries that are only wrong at runtime. The hand-maintained table keeps the deliberate differences: ids as strings, enriched keys, composed reads and real nested shapes.
 
+- Model editing: renaming and erasing models, unit systems (`set-length-units`, `set-mass-units`, `set-unit-system`, `create-unit-system`), materials (`load-material`, `delete-material`, and the wildcard material reads), relations (`set-relations`, `set-postregen-relations`, `postregen-relations`), parameters (`copy`, `delete`, `set-designated`), dimensions (`list-basic`, `copy`, `set-text`, `show`), features (`delete`, `set-param`, `delete-param`, `group-features`, `pattern-features`), notes (`set`, `copy`, `delete`) and layers (`show`, `delete`).
+- The unit setters require an explicit `convert`, with no default. That flag decides whether 40 mm becomes 40 in or 1.575 in, and silently reinterpreting every dimension in a model is not a decision to inherit from a wire default. The units are read back afterwards rather than trusting the setter.
+
 ### Changed
-- Published CREOSON coverage rises from 42 of 175 functions to 112; the CLI now exposes 145 leaf commands.
+- Published CREOSON coverage rises from 42 of 175 functions to 143; the CLI now exposes 176 leaf commands.
+- `file.erase_not_displayed` is deliberately not exposed: it takes no target at all and erases whatever is not on screen, which is the wildcard mutation this adapter refuses everywhere else.
 - `surface_id` and `edge_id` join the ids normalized to strings on output, and `geometry edges` accepts `surface_ids` as strings and converts them to the published integers on the wire, matching how `assembly transform` already handles component paths.
 
 ## [1.0.0] - 2026-09-18

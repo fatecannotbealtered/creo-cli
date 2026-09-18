@@ -64,7 +64,9 @@ class World:
                 "family": {"bracket_s": {"d1": 30.0}, "bracket_l": {"d1": 60.0}},
                 "family_columns": {"d1": "DOUBLE"}, "family_parents": [],
                 "cur_sheet": 1, "cur_model": "bracket.prt", "sheet_scale": 1.0,
-                "symbols": ["note.sym"], "symbol_defs": ["note.sym"]}
+                "symbols": ["note.sym"], "symbol_defs": ["note.sym"],
+                "groups": {"GROUP_1": [{"name": "HOLE_1", "type": "HOLE", "status": "ACTIVE", "feat_id": 10}]},
+                "patterns": {"PATTERN_1": [{"name": "HOLE_1", "type": "HOLE", "status": "ACTIVE", "feat_id": 10}]}}
 
     def handle(self, body):
         cmd, fn, q = body["command"], body["function"], body.get("data") or {}
@@ -143,6 +145,11 @@ class World:
                 rows = [{"name": n, "status": s, "id": i} for i, (n, s) in enumerate(m.get("layers", {}).items(), start=1)]
                 return {"layers": [r for r in rows if r["name"] == q["name"]] if q.get("name") else rows}
             if fn == "exists": return {"exists": q.get("name") in m.get("layers", {})}
+            if self.skip_mutation: return {}
+            if fn == "show":
+                if q.get("name") in m.get("layers", {}): m["layers"][q["name"]] = "SHOWN" if q["show"] else "HIDDEN"
+                return None
+            if fn == "delete": m.get("layers", {}).pop(q.get("name"), None); return None
         if cmd == "note":
             notes = m.get("notes", {})
             if fn == "list":
@@ -153,6 +160,13 @@ class World:
                 if q["name"] not in notes: return {"status": {"error": True, "message": "no such note"}}
                 return {"name": q["name"], "value": notes[q["name"]], "encoded": False,
                         "url": "", "location": {"x": 0.0, "y": 0.0, "z": 0.0}}
+            if self.skip_mutation: return {}
+            if fn == "set": notes[q["name"]] = q.get("value", ""); return None
+            if fn == "delete": notes.pop(q["name"], None); return None
+            if fn == "copy":
+                dest = self.models.get(q.get("to_file", name), m).setdefault("notes", notes)
+                dest[q.get("to_name", q["name"])] = notes.get(q["name"], "")
+                return None
         if cmd == "creo":
             if fn == "pwd": return {"dirname": str(self.cwd)}
             if fn == "set_creo_version": self.major = q["version"]; return None
@@ -187,6 +201,10 @@ class World:
             if fn == "postregen_relations_get": return {"relations": m["postregen_relations"]}
             if fn == "list_instances": return {"generic": name, "dirname": str(self.root), "files": ["bracket_s.prt", "bracket_l.prt"]}
             if fn == "list_materials": return {"materials": m["materials"]}
+            if fn == "list_materials_wildcard":
+                return {"materials": [{"file": name, "material": x} for x in m.get("materials", [])]}
+            if fn == "get_cur_material_wildcard":
+                return {"materials": [{"file": name, "material": m.get("material")}]}
             if fn == "get_cur_material": return {"material": m["material"]}
             if fn == "massprops": return {"mass": 0.27, "volume": 100000.0, "density": 0.0000027, "surface_area": 2200, "ctr_grav": {"x": 1, "y": 2, "z": 3}}
             if fn == "get_transform": return {"origin": {"x": 0, "y": 0, "z": 0}, "x_axis": {"x": 1, "y": 0, "z": 0}, "y_axis": {"x": 0, "y": 1, "z": 0}, "z_axis": {"x": 0, "y": 0, "z": 1}, "x_rot": 0.0, "y_rot": 0.0, "z_rot": 0.0}
@@ -194,7 +212,7 @@ class World:
             if fn == "exists": return {"exists": name in self.loaded}
             if fn == "is_active": return {"active": name == self.active}
             if fn == "get_accuracy": return {"accuracy": 0.0012, "relative": True}
-            if fn == "get_unit_system": return {"name": "mmNs"}
+            if fn == "get_unit_system": return {"name": m.get("unit_system", "mmNs")}
             if fn == "has_instances": return {"exists": bool(m.get("instances"))}
             if fn == "list_simp_reps": return {"reps": list(m.get("simp_reps", []))}
             if self.skip_mutation: return {}
@@ -206,6 +224,20 @@ class World:
                 self.loaded.append(name); self.active = name
                 return {"files": [name], "dirname": q["dirname"], "revision": 1}
             if fn == "erase": self.loaded.remove(name); return None
+            if fn == "rename":
+                self.loaded[self.loaded.index(name)] = q["new_name"]
+                self.models[q["new_name"]] = m
+                if self.active == name: self.active = q["new_name"]
+                return {"file": q["new_name"]}
+            if fn == "set_length_units": m["length_units"] = q["units"]; return None
+            if fn == "set_mass_units": m["mass_units"] = q["units"]; return None
+            if fn == "set_unit_system": m["unit_system"] = q["name"]; return None
+            if fn == "create_unit_system": return None
+            if fn == "load_material_file": m.setdefault("materials", []).append(q["material"]); return {"files": [name]}
+            if fn == "delete_material":
+                m["materials"] = [x for x in m.get("materials", []) if x != q["material"]]; return {"files": [name]}
+            if fn == "relations_set": m["relations"] = list(q.get("relations", [])); return None
+            if fn == "postregen_relations_set": m["postregen_relations"] = list(q.get("relations", [])); return None
             if fn == "display": self.active = name; return None
             if fn in ("regenerate", "close_window"): return None
             if fn == "save": (self.root / (name + ".2")).write_bytes(b"SIMULATED SAVE " + json.dumps(m).encode()); return None
@@ -217,9 +249,38 @@ class World:
                 fid = max(x["feat_id"] for x in asm["features"]) + 1
                 asm["features"].append({"name": "COMPONENT_" + str(fid), "feat_id": fid, "feat_number": fid, "type": "COMPONENT", "status": "ACTIVE"})
                 return {"files": [name], "dirname": str(self.root), "revision": 1, "featureid": fid}
+        if cmd == "dimension":
+            dims = m.get("dimensions", [])
+            if fn == "list":
+                rows = [x for x in dims if "name" not in q or x["name"].lower() == q["name"].lower()]
+                if q.get("dim_type"): rows = [x for x in rows if x.get("dim_type") == q["dim_type"]]
+                return {"dimlist": rows}
+            if not self.skip_mutation:
+                if fn == "set_text":
+                    for x in dims:
+                        if x["name"] == q["name"]: x["text"] = [q["text"]]
+                    return None
+                if fn == "copy":
+                    src = next((x for x in dims if x["name"] == q["name"]), None)
+                    dest = self.models.get(q.get("to_file", name), m)
+                    if src: dest.setdefault("dimensions", []).append(dict(src, name=q.get("to_name", q["name"])))
+                    return None
+                if fn == "show": return None
         if cmd == "parameter":
             if fn == "list": return {"paramlist": [x for x in m["parameters"] if "name" not in q or x["name"].lower() == q["name"].lower()]}
             if fn == "exists": return {"exists": any(x["name"] == q.get("name") for x in m["parameters"])}
+            if not self.skip_mutation:
+                if fn == "delete":
+                    m["parameters"] = [x for x in m["parameters"] if x["name"] != q["name"]]; return None
+                if fn == "set_designated":
+                    for x in m["parameters"]:
+                        if x["name"] == q["name"]: x["designate"] = q["designate"]
+                    return None
+                if fn == "copy":
+                    src = next((x for x in m["parameters"] if x["name"] == q["name"]), None)
+                    dest = self.models.get(q.get("to_file", name), m)
+                    if src: dest.setdefault("parameters", []).append(dict(src, name=q.get("to_name", q["name"])))
+                    return None
             if fn == "set":
                 if not self.skip_mutation:
                     old = next((x for x in m["parameters"] if x["name"] == q["name"]), None)
@@ -242,6 +303,15 @@ class World:
                 return {"paramlist": [r for r in rows if r["name"] == q["param"]] if q.get("param") else rows}
             if fn == "param_exists":
                 return {"exists": q.get("param") in m.get("feature_params", {}).get(q["name"], {})}
+            if fn == "list_group_features": return {"featlist": list(m.get("groups", {}).get(q["group_name"], []))}
+            if fn == "list_pattern_features": return {"featlist": list(m.get("patterns", {}).get(q["pattern_name"], []))}
+            if not self.skip_mutation:
+                if fn == "delete":
+                    m["features"] = [x for x in m["features"] if x["name"] != q["name"]]; return None
+                if fn == "set_param":
+                    m.setdefault("feature_params", {}).setdefault(q["name"], {})[q["param"]] = q["value"]; return None
+                if fn == "delete_param":
+                    m.get("feature_params", {}).get(q["name"], {}).pop(q["param"], None); return None
             row = next(x for x in m["features"] if x["name"] == q["name"])
             if not self.skip_mutation:
                 if fn == "rename": row["name"] = q["new_name"]
