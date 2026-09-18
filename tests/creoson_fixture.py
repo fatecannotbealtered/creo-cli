@@ -62,7 +62,9 @@ class World:
                 "feature_params": {"HOLE_1": {"DEPTH": "THRU"}},
                 "exploded_views": ["EXPLODE_1"], "simp_reps": ["MASTER"], "instances": ["bracket_s.prt"],
                 "family": {"bracket_s": {"d1": 30.0}, "bracket_l": {"d1": 60.0}},
-                "family_columns": {"d1": "DOUBLE"}, "family_parents": []}
+                "family_columns": {"d1": "DOUBLE"}, "family_parents": [],
+                "cur_sheet": 1, "cur_model": "bracket.prt", "sheet_scale": 1.0,
+                "symbols": ["note.sym"], "symbol_defs": ["note.sym"]}
 
     def handle(self, body):
         cmd, fn, q = body["command"], body["function"], body.get("data") or {}
@@ -256,6 +258,26 @@ class World:
                 return None
         if cmd == "bom" and fn == "get_paths":
             return {"file": name, "generic": name, "children": [{"file": "bracket.prt", "path": [39], "seq_path": "root.1"}], "has_simprep": False}
+        if cmd == "drawing":
+            views = m.get("drawing_views", [])
+            row = next((v for v in views if v["name"] == q.get("view")), {})
+            if fn == "get_cur_sheet": return {"sheet": m.get("cur_sheet", 1)}
+            if fn == "get_cur_model": return {"file": m.get("cur_model", "bracket.prt")}
+            if fn == "get_sheet_size": return {"size": "A4"}
+            if fn == "get_sheet_scale": return {"scale": m.get("sheet_scale", 1.0)}
+            if fn == "get_sheet_format":
+                return {"file": "a4.drw", "full_name": "a4", "common_name": "A4 FORMAT"}
+            if fn == "list_views":
+                names = [v["name"] for v in views]
+                return {"views": [n for n in names if n == q["view"]] if q.get("view") else names}
+            if fn == "get_view_loc": return dict(row.get("location", {"x": 0.0, "y": 0.0, "z": 0.0}))
+            if fn == "get_view_scale": return {"scale": row.get("scale", 1.0)}
+            if fn == "get_view_sheet": return {"sheet": row.get("sheet", 1)}
+            if fn == "view_bound_box": return {"xmin": 0.0, "xmax": 80.0, "ymin": 0.0, "ymax": 40.0}
+            if fn == "list_symbols":
+                return {"symbols": [{"id": i, "symbol_name": n, "sheet": 1}
+                                    for i, n in enumerate(m.get("symbols", []), start=1)]}
+            if fn == "is_symbol_def_loaded": return {"loaded": q.get("symbol_file") in m.get("symbol_defs", [])}
         if cmd == "drawing":
             if fn == "list_models": return {"files": m["models"]}
             if fn == "list_view_details": return {"views": m["drawing_views"]}

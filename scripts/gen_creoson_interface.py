@@ -150,6 +150,15 @@ def write_spec_ids(index: dict) -> None:
              "",
              "SPEC_BLOB_SHA = {"]
     lines += [f'    "{key}": "{entry["git_blob_sha"]}",' for key, entry in index["functions"].items()]
+    lines += ["}", "",
+              "# Published response field types, so a result schema can fall back to the upstream's",
+              "# own answer instead of a hand-written table guessing at it. Deliberate overrides",
+              "# (ids as strings, enriched or composed keys) still live in creoson_schemas.",
+              "RESPONSE_TYPES = {"]
+    for key, entry in index["functions"].items():
+        fields = {f["name"]: f["type"] for f in entry["response"]}
+        if fields:
+            lines.append(f'    "{key}": {fields!r},')
     lines += ["}", ""]
     with io.open(SPEC_IDS, "w", encoding="utf-8", newline="\n") as handle:
         handle.write("\n".join(lines))

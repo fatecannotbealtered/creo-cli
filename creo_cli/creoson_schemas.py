@@ -33,6 +33,7 @@ CELL = obj({"colid": S, "value": {"type": ["string", "number", "boolean", "null"
 # Nested family tables recurse; the depth is the upstream's, so children stays generic
 # rather than pretending to a fixed shape this adapter has not seen on a real table.
 FAMILY_NODE = obj({"name": S, "total": I, "children": {"type": "array"}}, ("name",))
+SYMBOL_INSTANCE = obj({"id": S, "symbol_name": S, "sheet": I, "location": VECTOR, "attach_type": S}, ("id",))
 BASE_FIELDS = {"file": S, "dirname": S, "revision": I, "files": array(S), "generic": S, "has_simprep": B,
                "material": {"type": ["string", "null"]}, "num_sheets": I, "featureid": S,
                "origin": VECTOR, "x_axis": VECTOR, "y_axis": VECTOR, "z_axis": VECTOR, "x_rot": N, "y_rot": N, "z_rot": N,
@@ -47,8 +48,33 @@ BASE_FIELDS = {"file": S, "dirname": S, "revision": I, "files": array(S), "gener
                "columns": array(CELL), "children": array(FAMILY_NODE)}
 
 
+def published_type(op, name):
+    """Shape for a response key taken from CREOSON's own published type.
+
+    BASE_FIELDS still wins where this adapter deliberately differs -- ids leave as
+    strings, some keys are enriched or composed -- but everything else should follow
+    the upstream rather than a hand-maintained table that has to be extended for
+    every new command and is only wrong at runtime.
+    """
+    from .creoson_spec_ids import RESPONSE_TYPES
+    kind = RESPONSE_TYPES.get(f"{op.command}.{op.function}", {}).get(name)
+    scalar = {"string": S, "boolean": B, "integer": I, "double": N}
+    if kind in scalar:
+        return dict(scalar[kind])
+    if kind == "array:string":
+        return array(S)
+    if kind == "array:integer":
+        return array(I)
+    if kind and kind.startswith("object_array:"):
+        return {"type": "array"}
+    if kind and kind.startswith("object:"):
+        return {"type": "object"}
+    return {"type": "object"}
+
+
 def result_schema(op):
-    props = {name: deepcopy(BASE_FIELDS.get(name, {"type": "object"})) for name in op.response_fields}
+    props = {name: deepcopy(BASE_FIELDS[name]) if name in BASE_FIELDS else published_type(op, name)
+             for name in op.response_fields}
     required = []
     if op.path == "file units": required = ["length_units", "mass_units"]
     if op.path == "file massprops":
@@ -62,7 +88,15 @@ def result_schema(op):
         item = {"parameter list": PARAMETER, "dimension list": DIMENSION, "feature list": FEATURE,
                 "drawing views": DRAWING_VIEW, "feature params": PARAMETER, "layer list": LAYER,
                 "note list": NOTE, "geometry surfaces": SURFACE, "geometry edges": CONTOUR,
-                "familytable header": CELL}.get(op.path, S)
+                "familytable header": CELL, "drawing list-symbols": SYMBOL_INSTANCE}.get(op.path)
+        if item is None:
+            # Unmapped lists follow the published element type: a list of objects must
+            # not be schema'd as a list of strings just because no shape was written.
+            # Read the upstream kind directly -- array:string and object_array:X both
+            # become "array" once converted, which is exactly the distinction needed.
+            from .creoson_spec_ids import RESPONSE_TYPES
+            kind = RESPONSE_TYPES.get(f"{op.command}.{op.function}", {}).get(op.list_key, "")
+            item = {"type": "object"} if kind.startswith("object_array:") else I if kind == "array:integer" else S
         props |= {"items": array(item), "count": I, "total": I, "offset": I, "has_more": B, "next_offset": I, "_untrusted": array(S)}
         required = ["items", "count", "total", "offset", "has_more", "_untrusted"]
     if op.verifier == "export":

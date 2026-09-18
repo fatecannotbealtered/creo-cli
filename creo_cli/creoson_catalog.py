@@ -312,4 +312,22 @@ add("familytable replace", "familytable", "replace", "Swap one assembly componen
 add("familytable delete-instance", "familytable", "delete_inst", "Remove one named instance row from a family table", FT, (), {"file": "bracket.prt", "instance": "bracket_s"}, required=("file", "instance"), verifier="familytable_absent", dangerous=True, **W)
 add("familytable delete", "familytable", "delete", "Remove a model's entire family table and every variant it defines", F, (), {"file": "bracket.prt"}, verifier="familytable_table_absent", dangerous=True, **W)
 
+# Drawings, read the way a person inspects a sheet: which sheet and model are current,
+# how big the sheet is and at what scale, where each view sits and how large it is, and
+# which symbols have been placed. Every target is named explicitly -- the upstream lets
+# these default to the active drawing, which this adapter has never allowed.
+SYMBOL_FILE = text(pattern=r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,120}$")
+add("drawing current-sheet", "drawing", "get_cur_sheet", "Read which sheet of a drawing is current", D, ("sheet",), {"drawing": "bracket.drw"}, target_keys=("drawing",))
+add("drawing current-model", "drawing", "get_cur_model", "Read a drawing's current model", D, ("file",), {"drawing": "bracket.drw"}, target_keys=("drawing",))
+add("drawing sheet-size", "drawing", "get_sheet_size", "Read one sheet's size designation", D | {"sheet": SHEET}, ("size",), {"drawing": "bracket.drw", "sheet": 1}, target_keys=("drawing",))
+add("drawing sheet-scale", "drawing", "get_sheet_scale", "Read one sheet's scale", D | {"sheet": SHEET, "model": MODEL}, ("scale",), {"drawing": "bracket.drw", "sheet": 1}, required=("drawing", "sheet"), target_keys=("drawing",))
+add("drawing sheet-format", "drawing", "get_sheet_format", "Read the format applied to one sheet", D | {"sheet": SHEET}, ("file", "full_name", "common_name"), {"drawing": "bracket.drw", "sheet": 1}, target_keys=("drawing",))
+add("drawing list-views", "drawing", "list_views", "List view names on a drawing", D | {"view": NAME}, ("views",), {"drawing": "bracket.drw"}, required=("drawing",), target_keys=("drawing",), list_key="views")
+add("drawing view-location", "drawing", "get_view_loc", "Read one view's placement in drawing units", D | {"view": NAME}, ("x", "y", "z"), {"drawing": "bracket.drw", "view": "FRONT_MAIN"}, target_keys=("drawing",))
+add("drawing view-scale", "drawing", "get_view_scale", "Read one view's scale", D | {"view": NAME}, ("scale",), {"drawing": "bracket.drw", "view": "FRONT_MAIN"}, target_keys=("drawing",))
+add("drawing view-sheet", "drawing", "get_view_sheet", "Read which sheet carries one view", D | {"view": NAME}, ("sheet",), {"drawing": "bracket.drw", "view": "FRONT_MAIN"}, target_keys=("drawing",))
+add("drawing view-bound-box", "drawing", "view_bound_box", "Read one view's bounding box in drawing units", D | {"view": NAME}, ("xmin", "xmax", "ymin", "ymax"), {"drawing": "bracket.drw", "view": "FRONT_MAIN"}, target_keys=("drawing",))
+add("drawing list-symbols", "drawing", "list_symbols", "List placed symbol instances", D | {"symbol_file": SYMBOL_FILE, "sheet": SHEET}, ("symbols",), {"drawing": "bracket.drw"}, required=("drawing",), target_keys=("drawing",), list_key="symbols")
+add("drawing symbol-loaded", "drawing", "is_symbol_def_loaded", "Check whether a symbol definition is loaded in a drawing", D | {"symbol_file": SYMBOL_FILE}, ("loaded",), {"drawing": "bracket.drw", "symbol_file": "note.sym"}, target_keys=("drawing",))
+
 BY_PATH = {op.path: op for op in OPS}
