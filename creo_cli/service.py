@@ -5,7 +5,7 @@ import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
-from . import __version__, models, native, registry, safety
+from . import __version__, creoson_env, models, native, registry, safety
 from .core import Error, CODES, canonical, read_json, page, atomic_write
 
 RELEASE = {"level": "unpublishable", "fcc_required": True, "fcc_status": "unknown", "mock_upstream_required": True,
@@ -70,6 +70,46 @@ def inspect(path):
     return {"path": str(p.absolute()), "sha256": h.hexdigest(), "size_bytes": size,
             "provenance": {"backend": "filesystem", "simulation": False}, "not_checked": ["native_file_contents", "model_validity"], "_untrusted": ["path"]}
 
+def creoson_checks() -> list[dict]:
+    """Doctor checks for the primary route: is the toolkit there, and can we write?
+
+    Offline by design, like the rest of doctor. Liveness of the service is a separate
+    question with its own command (`creoson status`), and the fix text says so rather
+    than making doctor reach out over the network.
+    """
+    env = creoson_env.probe()
+    if env["api_toolkit_present"]:
+        toolkit = {"status": "pass", "fix": None}
+    elif env["streamed_delivery"]:
+        # The case that cost a day: the toolkit is not merely unselected, it cannot be
+        # added, because a streamed build has no installer to re-run.
+        toolkit = {"status": "fail",
+                   "fix": "Creo appears to be delivered by an application-streaming player, which "
+                          "ships without the API toolkits and has no installer to add them. CREOSON "
+                          "needs a standard licensed installation with the "
+                          f"'{creoson_env.TOOLKIT_COMPONENT}' component selected."}
+    else:
+        toolkit = {"status": "fail",
+                   "fix": f"re-run the Creo installer and select API Toolkits -> "
+                          f"'{creoson_env.TOOLKIT_COMPONENT}' (it is free with a Creo seat, and it is "
+                          f"what ships {creoson_env.JLINK_JAR}; there has been no separate J-Link "
+                          f"installer since Creo 4.0)"}
+    space = env["workspace"]
+    return [
+        {"check": "creo_api_toolkit", **toolkit,
+         "message": env["api_toolkit_detail"],
+         "details": {"creo_load_point": env["creo_load_point"], "streamed_delivery": env["streamed_delivery"]}},
+        {"check": "creoson_service", "status": "warn",
+         "fix": "run `creo-cli creoson status` to probe the service; doctor stays offline",
+         "message": "liveness is not checked here"},
+        {"check": "creoson_workspace",
+         "status": "pass" if space["usable"] else "warn",
+         "fix": None if space["usable"] else "set CREO_CLI_WORKSPACE to an existing disposable directory "
+                                             "with no symlink or junction in its path",
+         "message": space["detail"]},
+    ]
+
+
 def changelog(since):
     if since and not re.fullmatch(r"\d+\.\d+\.\d+", since):
         raise Error("E_VALIDATION", "--since expects a stable semantic version")
@@ -113,6 +153,7 @@ def execute(path, o):
     if path == "doctor":
         checks = [{"check": k, "status": "pass" if v else "warn", "fix": None if v else "see docs/NATIVE_ADAPTER.md; offline commands remain usable"}
                   for k, v in native.probe().items() if k not in ("configured", "license_status", "live_verified")]
+        checks += creoson_checks()
         checks += [{"check": "native_live_evidence", "status": "warn", "fix": "record a disposable-part live run"},
                    {"check": "release_readiness", "status": "fail", "fix": RELEASE["reason"], "details": {"level": RELEASE["level"]}}]
         return {"checks": checks}

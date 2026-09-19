@@ -22,6 +22,8 @@ This file is the only human-maintained change source. Runtime copies are generat
 
 - Data exchange and the last session settings: `import file` brings STEP/IGES/NEUTRAL/PV geometry in as a new model, `import program` loads a Pro/Program file, `export 3dpdf` joins the staged no-clobber exports, and `export plot`/`export program` are verified against the location Creo reports because they name their own output. `creo std-color`/`set-std-color` complete the session settings.
 
+- `doctor` now reports on the CREOSON route, not only the VB API adapter: `creo_api_toolkit`, `creoson_service` and `creoson_workspace`. The toolkit check names the installer component that actually ships J-Link rather than J-Link itself -- there has been no separate J-Link installer since Creo 4.0 -- and when Creo is delivered by an application-streaming player it says the toolkit cannot be added at all, because such a build has no installer to re-run. Its lookup walks directory entries instead of stat-ing a composed path, since those streamed installations answer `stat` with FileNotFoundError while enumeration of the same location works; a probe written the obvious way reports a good installation as missing.
+
 ### Changed
 - Published CREOSON coverage rises from 42 of 175 functions to 150; the CLI now exposes 183 leaf commands. That is every function the release publishes except twenty-five deliberate omissions, each named with its reason in `tests/test_creoson_interface.py` and enforced by a test, so the uncovered surface cannot grow silently.
 - Both READMEs describe the full command surface and state plainly what is left out and why.
