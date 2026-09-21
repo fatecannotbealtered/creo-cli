@@ -33,3 +33,6 @@ dist/
 *.key
 *.p12
 *.pfx
+
+# Built by scripts/build_otk_service.py against a local Creo installation.
+otk_service/build/
