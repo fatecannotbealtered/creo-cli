@@ -23,6 +23,13 @@ python -m creo_cli reference --command "dimension set" --compact
 python -m pip install -e .
 ```
 
+**Before installing Creo, read [installation prerequisites](docs/CREO_SETUP.md).** The
+API this CLI runs on is an optional component chosen in the Creo installer -- *Creo
+Object TOOLKIT Java*, under API Toolkits. It is free with a Creo seat, and there is no
+component called "J-Link" to look for; J-Link ships inside it. Missing it cannot be
+fixed without re-running the installer. `creo-cli doctor` reports it as
+`creo_api_toolkit`.
+
 Read [the bundled Skill](skills/creo-cli/SKILL.md). No npm package or binary is
 claimed published; `@fateforge/creo-cli` remains private. The Node source launcher
 is a development convenience. For the new backend, install/configure an external

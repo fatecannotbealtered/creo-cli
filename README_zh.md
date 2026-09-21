@@ -20,6 +20,10 @@ python -m creo_cli reference --command "dimension set" --compact
 python -m pip install -e .
 ```
 
+**装 Creo 之前先看[安装前置条件](docs/CREO_SETUP.md)。** 本 CLI 依赖的 API 是 Creo 安装程序里的可选组件——
+API 工具包下的 **Creo Object TOOLKIT Java**。它随 Creo 席位免费，而且**安装程序里没有叫 "J-Link" 的选项**，
+J-Link 就装在它里面。漏勾了只能重跑安装程序才能补。`creo-cli doctor` 的 `creo_api_toolkit` 一项会报出来。
+
 阅读[内置 Skill](skills/creo-cli/SKILL.md)。npm 包和二进制未发布；`@fateforge/creo-cli` 保持私有，Node 启动器仅用于源码开发。
 CREOSON 后端需要在同一台电脑上配置外部 [CREOSON 服务](https://github.com/SimplifiedLogic/creoson)和已授权的 Creo；本项目不打包、不自动启动它们。
 见[安装说明](docs/CREOSON.md)。独立 VB API 路线仍通过 `pip install -e ".[native]"` 安装可选依赖。

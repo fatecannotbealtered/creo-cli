@@ -19,6 +19,16 @@ creo-cli doctor --compact
 creo-cli reference --compact
 ```
 
+**If `doctor` reports `creo_api_toolkit` as `fail`, stop and tell the user before
+anything else.** The API this CLI runs on is an optional component selected when Creo
+is installed: *Creo Object TOOLKIT Java*, under API Toolkits. It is free with a Creo
+seat, and there is no installer entry called "J-Link" -- J-Link ships inside that
+component, which is why "install J-Link" is not usable advice. A missing toolkit
+cannot be fixed from this side; the user must re-run the Creo installer. If the check
+also reports `streamed_delivery`, the installation is an application-streamed trial
+that has no installer at all, and no amount of configuration will help. See
+`docs/CREO_SETUP.md`.
+
 Read the live `reference`, scoped by command when possible, for exact arguments,
 request JSON schema, result schema, safe defaults, backend and examples. Check
 `context.version` against the minimum above; inspect each doctor check, not merely

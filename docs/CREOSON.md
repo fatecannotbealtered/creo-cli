@@ -11,6 +11,12 @@
 
 ## Environment
 
+Creo must have been installed with the **Creo Object TOOLKIT Java** component
+selected under API Toolkits; that is what ships `pfcasync.jar`, which CREOSON loads at
+startup. Without it CREOSON aborts with `NoClassDefFoundError: com/ptc/cipjava/jxthrowable`
+before serving anything. There is no separate "J-Link" component to select -- see
+[installation prerequisites](CREO_SETUP.md).
+
 Run this CLI, CREOSON and licensed Creo on the same host. The integration is
 implemented against CREOSON 3.0.2-oriented published interfaces and source snapshots
 listed in [UPSTREAM_SOURCES.md](UPSTREAM_SOURCES.md); **no real installation has
