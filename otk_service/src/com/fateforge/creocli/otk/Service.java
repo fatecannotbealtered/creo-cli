@@ -1,5 +1,11 @@
 package com.fateforge.creocli.otk;
 
+import com.ptc.pfc.pfcGlobal.pfcGlobal;
+import com.ptc.pfc.pfcSession.Session;
+import com.ptc.wfc.wfcSession.Timer;
+import com.ptc.wfc.wfcSession.TimerAction_u;
+import com.ptc.wfc.wfcSession.WSession;
+import com.ptc.wfc.wfcSession.wfcSession;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -15,7 +21,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -23,11 +35,10 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * <p>This lives in Creo's process rather than beside it because that is the only place
  * the geometry-creating API exists. Object TOOLKIT Java has no asynchronous connection
- * — {@code otk.jar} ships no {@code AsyncConnection} class and its method list contains
- * no asynchronous entry point — while the asynchronous library, {@code pfcasync.jar},
- * carries only the {@code pfc} domain and therefore cannot create features. Creation
- * lives in {@code wfc}, and {@code wfc} is reachable only from a synchronous
- * application that Creo itself loads.
+ * — {@code otk.jar} ships no {@code AsyncConnection} class — while the asynchronous
+ * library, {@code pfcasync.jar}, carries only the {@code pfc} domain and not one of the
+ * 2122 {@code wfc} classes. Creation lives in {@code wfc}, and {@code wfc} is reachable
+ * only from a synchronous application that Creo itself loads.
  *
  * <p>Being a guest in someone else's process sets the rules for everything here:
  *
@@ -39,13 +50,13 @@ import java.util.concurrent.atomic.AtomicReference;
  *   <li>The listener binds the loopback address explicitly, never a wildcard.
  *   <li>Diagnostics go to a file. There is no console to write to, and stdout inside
  *       Creo belongs to Creo.
+ *   <li><b>No toolkit call happens on an HTTP thread.</b> See {@link #onToolkitThread}.
  * </ul>
  *
- * <p>This first version deliberately separates two questions that are easy to confuse
- * when something does not work: {@code /health} touches no Creo API at all and answers
- * "did Creo load and run this code", while {@code /session} makes one API call and
- * answers "does the Object TOOLKIT license activate for it". A single endpoint doing
- * both would report one failure for two very different causes.
+ * <p>{@code /health} touches no Creo API at all and answers "did Creo load and run this
+ * code"; {@code /session} answers "does the Object TOOLKIT license activate for it".
+ * Keeping them apart means a failure names its own cause instead of one endpoint
+ * reporting two very different problems identically.
  */
 public final class Service {
 
@@ -58,21 +69,29 @@ public final class Service {
     /** Bounded so a stop during a request cannot hang Creo's shutdown. */
     private static final int STOP_GRACE_SECONDS = 2;
     /** Small pool, not the dispatch thread: one slow handler must not wedge the rest. */
-    private static final int HANDLER_THREADS = 2;
+    private static final int HANDLER_THREADS = 4;
+    /**
+     * How long a request waits for Creo to come back to us. Generous, because the wait
+     * is for a person: the toolkit thread is busy while a dialog is open or a
+     * regeneration is running, and neither is an error.
+     */
+    private static final long TOOLKIT_TIMEOUT_SECONDS = 120;
+    /**
+     * How often Creo is asked to come back to us. Ten times a second: below what anyone
+     * would notice as latency on a command, and far below what a CAD session notices as
+     * load.
+     */
+    private static final int PUMP_PERIOD_MICROSECONDS = 100_000;
+    /** Queued work run per tick, so a long queue cannot hold Creo's thread. */
+    private static final int MAX_JOBS_PER_TICK = 8;
 
     private static final AtomicReference<HttpServer> RUNNING = new AtomicReference<>();
-    /**
-     * What the toolkit told us during {@link #start()}, which is the only moment we are
-     * on the thread Creo drives.
-     *
-     * <p>Calling the toolkit from a request thread blocks: Creo spawns this JVM and
-     * talks to it over a socket, and the connection is serviced by the thread Creo
-     * calls into, not by ours. Observed directly -- a probe issued from a handler never
-     * returned and, because handlers then ran on the dispatch thread, took the whole
-     * endpoint with it. The session is therefore read once, here, and reported from
-     * cache until there is a way to hand work back to that thread.
-     */
-    private static final AtomicReference<String> TOOLKIT_REPORT = new AtomicReference<>();
+    /** The thread Creo drives, recorded so we can recognise it and never queue behind it. */
+    private static final AtomicReference<Thread> TOOLKIT_THREAD = new AtomicReference<>();
+    private static final AtomicReference<String> STARTUP_REPORT = new AtomicReference<>();
+    /** Work waiting for the toolkit thread. Plain Java: no Creo API is involved in queuing. */
+    private static final BlockingQueue<Runnable> QUEUE = new LinkedBlockingQueue<>();
+    private static final AtomicReference<Timer> PUMP = new AtomicReference<>();
 
     private Service() {
     }
@@ -84,6 +103,10 @@ public final class Service {
                 log("start called while already running; ignoring");
                 return;
             }
+            // Creo calls start() on the toolkit thread, which is the one thread allowed
+            // to talk to it. Everything else in this class routes work back here.
+            TOOLKIT_THREAD.set(Thread.currentThread());
+
             HttpServer server = HttpServer.create(
                     new InetSocketAddress(InetAddress.getLoopbackAddress(), port()), BACKLOG);
             server.createContext("/health", Service::health);
@@ -96,9 +119,11 @@ public final class Service {
             server.start();
             RUNNING.set(server);
             log("listening on " + server.getAddress());
-            // Still on Creo's thread here, so this is the one place the toolkit answers.
-            TOOLKIT_REPORT.set(probeToolkit());
-            log("toolkit probe: " + TOOLKIT_REPORT.get());
+
+            STARTUP_REPORT.set(describeSession());
+            log("session at startup: " + STARTUP_REPORT.get());
+            startPump();
+            log("toolkit pump running every " + (PUMP_PERIOD_MICROSECONDS / 1000) + "ms");
         } catch (Throwable failure) {
             // Creo called us; it must not receive an exception for our problem.
             log("start failed: " + describe(failure));
@@ -114,10 +139,108 @@ public final class Service {
                 return;
             }
             server.stop(STOP_GRACE_SECONDS);
+            Timer pump = PUMP.getAndSet(null);
+            if (pump != null) {
+                pump.Stop();
+                pump.Destroy();
+            }
             log("stopped");
         } catch (Throwable failure) {
             log("stop failed: " + describe(failure));
         }
+    }
+
+    /**
+     * Run {@code work} on the thread Creo drives, and wait for its answer.
+     *
+     * <p>The toolkit is single-threaded in a way that is structural rather than merely
+     * undocumented: Creo spawns this JVM and talks to it over one socket whose framing
+     * carries no request identifiers, and the Java side keeps one static connection for
+     * the whole process. Two threads calling at once would interleave halves of two
+     * conversations, so a toolkit call issued from an HTTP thread simply never returns.
+     * {@code wfcSession.InvokeLater} does not escape that — its own bytecode sends on
+     * that same connection and then runs the dispatch loop on the calling thread.
+     *
+     * <p>So nothing here calls Creo from an HTTP thread. Work goes into an ordinary Java
+     * queue, and the only thing that touches Creo is {@link #pump}, a toolkit timer
+     * created on the toolkit thread during {@link #start()} and fired by Creo on that
+     * same thread from then on. A request arriving while a dialog is open waits instead
+     * of failing, because the queue simply is not drained until Creo comes back.
+     *
+     * <p>Calls that are already on the toolkit thread run inline. Queueing them would
+     * deadlock: the pump cannot run until the thread waiting for it returns.
+     */
+    static <T> T onToolkitThread(ToolkitWork<T> work) throws Exception {
+        if (Thread.currentThread() == TOOLKIT_THREAD.get()) {
+            return work.run();
+        }
+        if (PUMP.get() == null) {
+            throw new IllegalStateException("the toolkit pump is not running; "
+                    + "see " + logPath() + " for what happened during start");
+        }
+        CompletableFuture<T> answer = new CompletableFuture<>();
+        QUEUE.add(() -> {
+            try {
+                answer.complete(work.run());
+            } catch (Throwable failure) {
+                // Must not propagate: this runs inside a callback Creo is making.
+                answer.completeExceptionally(failure);
+            }
+        });
+        try {
+            return answer.get(TOOLKIT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (ExecutionException wrapped) {
+            Throwable cause = wrapped.getCause();
+            throw cause instanceof Exception ? (Exception) cause : new IllegalStateException(cause);
+        } catch (TimeoutException expired) {
+            throw new IllegalStateException("Creo did not become free within "
+                    + TOOLKIT_TIMEOUT_SECONDS + "s; it is most likely waiting for input", expired);
+        }
+    }
+
+    /**
+     * Ask Creo to call us back regularly, and drain the queue when it does.
+     *
+     * <p>Created here because here we are on the toolkit thread. Everything the timer
+     * runs is therefore on that thread too, which is the entire point: the queue is
+     * plain Java, and the only Creo API involved in the hand-off is this timer.
+     */
+    private static void startPump() throws Exception {
+        Timer pump = wfcSession.CreateTimer(new TimerAction_u() {
+            @Override
+            public boolean OnTimer() {
+                drain();
+                return true;
+            }
+        });
+        pump.Start(wfcSession.TimeValue_Create(0, PUMP_PERIOD_MICROSECONDS));
+        PUMP.set(pump);
+    }
+
+    /**
+     * Run what is waiting, bounded.
+     *
+     * <p>The bound matters more than it looks: this runs on the thread Creo needs back
+     * to stay responsive, so a burst of queued work is spread over several ticks rather
+     * than holding the CAD system for as long as the queue is long.
+     */
+    private static void drain() {
+        for (int done = 0; done < MAX_JOBS_PER_TICK; done++) {
+            Runnable job = QUEUE.poll();
+            if (job == null) {
+                return;
+            }
+            try {
+                job.run();
+            } catch (Throwable failure) {
+                log("a queued job threw past its own handler: " + describe(failure));
+            }
+        }
+    }
+
+    /** Work that needs Creo. Handed to {@link #onToolkitThread} rather than called directly. */
+    interface ToolkitWork<T> {
+        T run() throws Exception;
     }
 
     /**
@@ -128,36 +251,45 @@ public final class Service {
         respond(exchange, 200, "{\"ok\":true,\"service\":\"creo-cli-otk\",\"checked\":\"process_only\"}");
     }
 
-    /** Reports what the toolkit answered at startup. Makes no call of its own. */
+    /**
+     * Reads the session now, from this HTTP thread, by way of the toolkit thread.
+     *
+     * <p>Answering from a cache would be cheaper and would prove nothing. The point of
+     * this endpoint is that the hand-off works on a live request.
+     */
     private static void session(HttpExchange exchange) throws IOException {
-        String report = TOOLKIT_REPORT.get();
-        respond(exchange, 200, report == null
-                ? "{\"ok\":false,\"error\":\"toolkit was not probed; start() did not complete\"}"
-                : report);
+        String body;
+        try {
+            body = onToolkitThread(Service::describeSession);
+        } catch (Exception failure) {
+            body = "{\"ok\":false,\"error\":\"" + escape(describe(failure)) + "\""
+                    + ",\"at_startup\":" + (STARTUP_REPORT.get() == null ? "null" : STARTUP_REPORT.get()) + "}";
+        }
+        respond(exchange, 200, body);
     }
 
     /**
-     * One Object TOOLKIT call, made on Creo's own thread during startup.
+     * One reading of the session. Must run on the toolkit thread.
      *
-     * <p>Reaching the session proves the licence activated for this application, which
-     * is the question a liveness check cannot answer. Reflection rather than a direct
-     * reference keeps this class loadable when {@code otk.jar} is absent: the failure
-     * is then a readable message here instead of a {@code NoClassDefFoundError} while
-     * Creo is loading the application, which is far harder to see from the Creo side.
+     * <p>Whether the session casts to {@link WSession} is the question that decides what
+     * this tool can do: {@code WSession} is where element trees are built, and element
+     * trees are how features are created. A J-Link application gets a plain
+     * {@code Session} here and can modify a model but never create one.
      */
-    private static String probeToolkit() {
+    private static String describeSession() {
         try {
-            Class<?> global = Class.forName("com.ptc.pfc.pfcGlobal.pfcGlobal");
-            Object creoSession = global.getMethod("GetProESession").invoke(null);
-            String version = String.valueOf(global.getMethod("GetProEVersion").invoke(null));
-            String build = String.valueOf(global.getMethod("GetProEBuildCode").invoke(null));
-            return "{\"ok\":true,\"probed\":\"at_startup\""
-                    + ",\"session_reachable\":" + (creoSession != null)
-                    + ",\"creo_version\":\"" + escape(version) + "\""
-                    + ",\"creo_build\":\"" + escape(build) + "\"}";
+            Session session = pfcGlobal.GetProESession();
+            boolean creation = session instanceof WSession;
+            return "{\"ok\":true"
+                    + ",\"session_reachable\":" + (session != null)
+                    + ",\"session_class\":\"" + escape(session == null ? "null" : session.getClass().getName()) + "\""
+                    + ",\"creation_api\":" + creation
+                    + ",\"creo_version\":\"" + escape(String.valueOf(pfcGlobal.GetProEVersion())) + "\""
+                    + ",\"creo_build\":\"" + escape(String.valueOf(pfcGlobal.GetProEBuildCode())) + "\""
+                    + ",\"working_directory\":\"" + escape(session == null ? "" : session.GetCurrentDirectory()) + "\""
+                    + ",\"thread\":\"" + escape(Thread.currentThread().getName()) + "\"}";
         } catch (Throwable failure) {
-            return "{\"ok\":false,\"probed\":\"at_startup\",\"error\":\""
-                    + escape(describe(failure)) + "\"}";
+            return "{\"ok\":false,\"error\":\"" + escape(describe(failure)) + "\"}";
         }
     }
 
@@ -217,8 +349,7 @@ public final class Service {
      * Append one line to the log file, swallowing every failure.
      *
      * <p>Logging that can throw would defeat its own purpose here: these calls sit in
-     * the catch blocks that keep exceptions away from Creo. A full stack trace is kept
-     * for start failures because that is the case with no other evidence anywhere.
+     * the catch blocks that keep exceptions away from Creo.
      */
     private static void log(String message) {
         try {

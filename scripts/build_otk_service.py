@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import json
 import io
+import locale
 import os
 import shutil
 import subprocess
@@ -48,10 +49,29 @@ def tool(java_home: Path | None, name: str) -> str:
     return found
 
 
+def decode(raw: bytes) -> str:
+    """Decode tool output the way this console produced it.
+
+    The JDK writes messages in the system's ANSI code page, not UTF-8, so on a Chinese
+    or Japanese Windows a UTF-8 read turns the one thing that explains a failure into
+    replacement characters.
+    """
+    for encoding in (locale.getpreferredencoding(False), "utf-8"):
+        try:
+            return raw.decode(encoding)
+        except (UnicodeDecodeError, LookupError):
+            continue
+    return raw.decode("utf-8", errors="replace")
+
+
 def run(command: list[str]) -> None:
-    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    result = subprocess.run(command, capture_output=True)
     if result.returncode != 0:
-        raise RuntimeError((result.stderr or result.stdout or "command failed").strip()[:2000])
+        message = (decode(result.stderr) or decode(result.stdout) or "command failed").strip()
+        if "jar" in command[0] and ("move" in message or "FileSystemException" in message):
+            message += ("\n\nCreo keeps the jar open for the life of its session. Close Creo, or "
+                        "use scripts/reload_otk_service.py --restart, which does it in order.")
+        raise RuntimeError(message[:2000])
 
 
 def sources() -> list[str]:
@@ -86,6 +106,41 @@ def registry(classpath: Path, *, auto_start: bool = True) -> str:
     ])
 
 
+def otk_jar(creo: Path) -> Path:
+    """The library to compile against, with the installer step named if it is absent."""
+    jar = creo.joinpath(*OTK_JAR)
+    if not jar.is_file():
+        raise RuntimeError(f"otk.jar not found at {jar}; is 'Creo Object TOOLKIT Java' installed? "
+                           f"see docs/CREO_SETUP.md")
+    return jar
+
+
+def build(creo: Path, java_home: Path | None = None) -> dict:
+    """Compile and jar the service, recording which installation it was built against."""
+    otk = otk_jar(creo)
+    classes = BUILD / "classes"
+    if classes.exists():
+        shutil.rmtree(classes)
+    classes.mkdir(parents=True)
+    run([tool(java_home, "javac"), "--release", RELEASE, "-nowarn",
+         "-cp", str(otk), "-d", str(classes), *sources()])
+    jar = BUILD / JAR_NAME
+    run([tool(java_home, "jar"), "--create", "--file", str(jar), "-C", str(classes), "."])
+    return {"jar": str(jar), "jar_sha256": hashlib.sha256(jar.read_bytes()).hexdigest(),
+            "compiled_against": str(otk),
+            "otk_jar_sha256": hashlib.sha256(otk.read_bytes()).hexdigest(),
+            "application": APP_NAME, "entry_class": APP_CLASS}
+
+
+def write_registry(target: Path, jar: Path, *, auto_start: bool = True) -> Path:
+    """Put protk.dat where Creo looks for it: the directory Creo starts in."""
+    target.mkdir(parents=True, exist_ok=True)
+    registry_file = target / "protk.dat"
+    with io.open(registry_file, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(registry(jar, auto_start=auto_start))
+    return registry_file
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--creo", required=True, help="Creo load point, the directory holding 'Common Files'")
@@ -96,38 +151,19 @@ def main() -> int:
                    help="require a human to press Start in Auxiliary Applications")
     a = p.parse_args()
 
-    creo = Path(a.creo).expanduser()
-    otk = creo.joinpath(*OTK_JAR)
-    java_home = Path(a.java_home).expanduser() if a.java_home else None
     try:
-        if not otk.is_file():
-            raise RuntimeError(f"otk.jar not found at {otk}; is 'Creo Object TOOLKIT Java' installed? "
-                               f"see docs/CREO_SETUP.md")
-        classes = BUILD / "classes"
-        if classes.exists():
-            shutil.rmtree(classes)
-        classes.mkdir(parents=True)
-        run([tool(java_home, "javac"), "--release", RELEASE, "-nowarn",
-             "-cp", str(otk), "-d", str(classes), *sources()])
-        jar = BUILD / JAR_NAME
-        run([tool(java_home, "jar"), "--create", "--file", str(jar), "-C", str(classes), "."])
-        written = {"jar": str(jar.relative_to(ROOT))}
+        built = build(Path(a.creo).expanduser(),
+                      Path(a.java_home).expanduser() if a.java_home else None)
+        built["jar"] = str(Path(built["jar"]).relative_to(ROOT))
         if a.register:
-            target = Path(a.register).expanduser()
-            target.mkdir(parents=True, exist_ok=True)
-            registry_file = target / "protk.dat"
-            with io.open(registry_file, "w", encoding="utf-8", newline="\n") as handle:
-                handle.write(registry(jar, auto_start=not a.manual_start))
-            written["registry"] = str(registry_file)
-            written["auto_start"] = not a.manual_start
+            registry_file = write_registry(Path(a.register).expanduser(), BUILD / JAR_NAME,
+                                           auto_start=not a.manual_start)
+            built["registry"] = str(registry_file)
+            built["auto_start"] = not a.manual_start
     except (OSError, RuntimeError) as failure:
         print(json.dumps({"ok": False, "error": str(failure)}))
         return 1
-    print(json.dumps({"ok": True, **written,
-                      "jar_sha256": hashlib.sha256(jar.read_bytes()).hexdigest(),
-                      "compiled_against": str(otk),
-                      "otk_jar_sha256": hashlib.sha256(otk.read_bytes()).hexdigest(),
-                      "application": APP_NAME, "entry_class": APP_CLASS}))
+    print(json.dumps({"ok": True, **built}))
     return 0
 
 
