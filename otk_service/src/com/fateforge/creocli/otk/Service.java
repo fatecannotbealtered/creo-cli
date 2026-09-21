@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -56,8 +57,22 @@ public final class Service {
     private static final int BACKLOG = 4;
     /** Bounded so a stop during a request cannot hang Creo's shutdown. */
     private static final int STOP_GRACE_SECONDS = 2;
+    /** Small pool, not the dispatch thread: one slow handler must not wedge the rest. */
+    private static final int HANDLER_THREADS = 2;
 
     private static final AtomicReference<HttpServer> RUNNING = new AtomicReference<>();
+    /**
+     * What the toolkit told us during {@link #start()}, which is the only moment we are
+     * on the thread Creo drives.
+     *
+     * <p>Calling the toolkit from a request thread blocks: Creo spawns this JVM and
+     * talks to it over a socket, and the connection is serviced by the thread Creo
+     * calls into, not by ours. Observed directly -- a probe issued from a handler never
+     * returned and, because handlers then ran on the dispatch thread, took the whole
+     * endpoint with it. The session is therefore read once, here, and reported from
+     * cache until there is a way to hand work back to that thread.
+     */
+    private static final AtomicReference<String> TOOLKIT_REPORT = new AtomicReference<>();
 
     private Service() {
     }
@@ -73,12 +88,17 @@ public final class Service {
                     new InetSocketAddress(InetAddress.getLoopbackAddress(), port()), BACKLOG);
             server.createContext("/health", Service::health);
             server.createContext("/session", Service::session);
-            // The default executor runs handlers on the dispatch thread, which is what
-            // we want: no pool of threads calling into Creo concurrently.
-            server.setExecutor(null);
+            server.setExecutor(Executors.newFixedThreadPool(HANDLER_THREADS, runnable -> {
+                Thread thread = new Thread(runnable, "creo-cli-otk-http");
+                thread.setDaemon(true);
+                return thread;
+            }));
             server.start();
             RUNNING.set(server);
             log("listening on " + server.getAddress());
+            // Still on Creo's thread here, so this is the one place the toolkit answers.
+            TOOLKIT_REPORT.set(probeToolkit());
+            log("toolkit probe: " + TOOLKIT_REPORT.get());
         } catch (Throwable failure) {
             // Creo called us; it must not receive an exception for our problem.
             log("start failed: " + describe(failure));
@@ -108,29 +128,36 @@ public final class Service {
         respond(exchange, 200, "{\"ok\":true,\"service\":\"creo-cli-otk\",\"checked\":\"process_only\"}");
     }
 
-    /**
-     * One Object TOOLKIT call. Reaching the session proves the licence activated for
-     * this application, which is the question a health check cannot answer.
-     *
-     * <p>Reflection rather than a direct reference keeps this class loadable when
-     * {@code otk.jar} is absent from the classpath: the failure is then a readable
-     * message on this endpoint instead of a {@code NoClassDefFoundError} while Creo
-     * is loading the application, which is far harder to diagnose from the Creo side.
-     */
+    /** Reports what the toolkit answered at startup. Makes no call of its own. */
     private static void session(HttpExchange exchange) throws IOException {
+        String report = TOOLKIT_REPORT.get();
+        respond(exchange, 200, report == null
+                ? "{\"ok\":false,\"error\":\"toolkit was not probed; start() did not complete\"}"
+                : report);
+    }
+
+    /**
+     * One Object TOOLKIT call, made on Creo's own thread during startup.
+     *
+     * <p>Reaching the session proves the licence activated for this application, which
+     * is the question a liveness check cannot answer. Reflection rather than a direct
+     * reference keeps this class loadable when {@code otk.jar} is absent: the failure
+     * is then a readable message here instead of a {@code NoClassDefFoundError} while
+     * Creo is loading the application, which is far harder to see from the Creo side.
+     */
+    private static String probeToolkit() {
         try {
             Class<?> global = Class.forName("com.ptc.pfc.pfcGlobal.pfcGlobal");
             Object creoSession = global.getMethod("GetProESession").invoke(null);
             String version = String.valueOf(global.getMethod("GetProEVersion").invoke(null));
             String build = String.valueOf(global.getMethod("GetProEBuildCode").invoke(null));
-            respond(exchange, 200, "{\"ok\":true"
+            return "{\"ok\":true,\"probed\":\"at_startup\""
                     + ",\"session_reachable\":" + (creoSession != null)
                     + ",\"creo_version\":\"" + escape(version) + "\""
-                    + ",\"creo_build\":\"" + escape(build) + "\"}");
+                    + ",\"creo_build\":\"" + escape(build) + "\"}";
         } catch (Throwable failure) {
-            // Reported, not thrown: the caller needs the reason, and Creo must not see it.
-            log("session probe failed: " + describe(failure));
-            respond(exchange, 200, "{\"ok\":false,\"error\":\"" + escape(describe(failure)) + "\"}");
+            return "{\"ok\":false,\"probed\":\"at_startup\",\"error\":\""
+                    + escape(describe(failure)) + "\"}";
         }
     }
 

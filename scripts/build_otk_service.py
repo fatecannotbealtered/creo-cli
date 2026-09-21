@@ -58,14 +58,17 @@ def sources() -> list[str]:
     return [str(p) for p in sorted(SOURCE.rglob("*.java"))]
 
 
-def registry(classpath: Path) -> str:
+def registry(classpath: Path, *, auto_start: bool = True) -> str:
     """The protk.dat Creo reads to find this application.
 
     `startup otk_java` and `toolkit object` are what distinguish an Object TOOLKIT
     Java application from a J-Link one; with `startup java` Creo would load it against
-    the library that cannot create geometry. `delay_start true` keeps Creo's own
-    startup unaffected -- the application is started deliberately from Auxiliary
-    Applications rather than every time anyone opens Creo.
+    the library that cannot create geometry.
+
+    `delay_start` defaults to false so the service is simply there whenever Creo is.
+    The alternative makes every session begin with a human opening a dialog and
+    clicking Start, which is the kind of manual step this tool exists to remove --
+    and it cannot be automated from outside, since it is a Creo UI action.
     """
     return "\n".join([
         f"name              {APP_NAME}",
@@ -77,7 +80,7 @@ def registry(classpath: Path) -> str:
         "java_app_start    start",
         "java_app_stop     stop",
         "allow_stop        true",
-        "delay_start       true",
+        f"delay_start       {'false' if auto_start else 'true'}",
         "end",
         "",
     ])
@@ -87,7 +90,10 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--creo", required=True, help="Creo load point, the directory holding 'Common Files'")
     p.add_argument("--java-home", help="JDK to compile with; defaults to javac on PATH")
-    p.add_argument("--register", help="also write protk.dat into this directory")
+    p.add_argument("--register", help="also write protk.dat into this directory; "
+                                      "Creo reads it from the directory it starts in")
+    p.add_argument("--manual-start", action="store_true",
+                   help="require a human to press Start in Auxiliary Applications")
     a = p.parse_args()
 
     creo = Path(a.creo).expanduser()
@@ -111,8 +117,9 @@ def main() -> int:
             target.mkdir(parents=True, exist_ok=True)
             registry_file = target / "protk.dat"
             with io.open(registry_file, "w", encoding="utf-8", newline="\n") as handle:
-                handle.write(registry(jar))
+                handle.write(registry(jar, auto_start=not a.manual_start))
             written["registry"] = str(registry_file)
+            written["auto_start"] = not a.manual_start
     except (OSError, RuntimeError) as failure:
         print(json.dumps({"ok": False, "error": str(failure)}))
         return 1
