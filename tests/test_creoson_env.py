@@ -159,6 +159,31 @@ class DoctorChecks(unittest.TestCase):
         self.assertTrue(check["details"]["streamed_delivery"])
         self.assertIn("no installer", check["fix"])
 
+    def test_an_unset_java_command_warns_with_the_version_creo_needs(self):
+        # Creo starts the toolkit application in a JVM it launches; with no suitable
+        # one it fails the application during load, before the application can log
+        # anything. The only symptom is Creo saying the start failed, so doctor has to
+        # carry the explanation.
+        checks = self.doctor({k: v for k, v in os.environ.items() if k != "PRO_JAVA_COMMAND"})
+        check = checks["creo_otk_java_runtime"]
+        self.assertEqual(check["status"], "warn")
+        self.assertIn("PRO_JAVA_COMMAND", check["fix"])
+        self.assertIn("Java 25", check["fix"])
+
+    def test_a_resolvable_java_command_passes(self):
+        java = self.root / "jdk" / "bin"
+        java.mkdir(parents=True)
+        (java / "java.exe").write_bytes(b"NOT A REAL JVM")
+        checks = self.doctor(dict(os.environ, PRO_JAVA_COMMAND=str(java / "java.exe")))
+        self.assertEqual(checks["creo_otk_java_runtime"]["status"], "pass")
+
+    def test_a_java_command_pointing_nowhere_is_reported(self):
+        missing = str(self.root / "absent" / "java.exe")
+        checks = self.doctor(dict(os.environ, PRO_JAVA_COMMAND=missing))
+        check = checks["creo_otk_java_runtime"]
+        self.assertEqual(check["status"], "warn")
+        self.assertIn("missing file", check["message"])
+
     def test_an_unset_workspace_warns_rather_than_failing(self):
         checks = self.doctor({k: v for k, v in os.environ.items() if k != "CREO_CLI_WORKSPACE"})
         self.assertEqual(checks["creoson_workspace"]["status"], "warn")

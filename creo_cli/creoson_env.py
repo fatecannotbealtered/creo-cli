@@ -120,6 +120,31 @@ def streamed_delivery() -> bool:
     return any(Path(marker).name.casefold() in entries(Path(marker).parent) for marker in STREAMING_MARKERS)
 
 
+def java_runtime() -> dict:
+    """Which JVM Creo will use for a synchronous Object TOOLKIT Java application.
+
+    Creo 13.4 requires Java 25 and starts the toolkit application in a JVM it
+    launches itself. When it cannot find a suitable one the application fails during
+    load, before any of its own code runs -- so there is no log from the application
+    to read, and the only visible symptom is Creo reporting that the start failed.
+    That was worth a long diagnosis once; it should be one line of `doctor` now.
+
+    PRO_JAVA_COMMAND overrides the choice and takes precedence over the config option
+    jlink_java_command, so it is the reliable thing to report on.
+    """
+    configured = os.environ.get("PRO_JAVA_COMMAND")
+    if configured:
+        exists = Path(configured).name.casefold() in entries(Path(configured).parent)
+        return {"source": "PRO_JAVA_COMMAND", "command": configured, "resolved": exists,
+                "detail": configured if exists else f"PRO_JAVA_COMMAND points at a missing file: {configured}"}
+    home = os.environ.get("JAVA_HOME")
+    if home:
+        return {"source": "JAVA_HOME", "command": str(Path(home) / "bin" / "java.exe"), "resolved": True,
+                "detail": f"PRO_JAVA_COMMAND is unset; Creo falls back to its own detection, and JAVA_HOME is {home}"}
+    return {"source": None, "command": None, "resolved": False,
+            "detail": "neither PRO_JAVA_COMMAND nor JAVA_HOME is set"}
+
+
 def workspace() -> dict:
     raw = os.environ.get("CREO_CLI_WORKSPACE")
     if not raw:
@@ -137,4 +162,4 @@ def probe() -> dict:
     kit = toolkit()
     return {"creo_load_point": kit["creo_load_point"], "api_toolkit_present": kit["api_toolkit_present"],
             "api_toolkit_detail": kit["detail"], "streamed_delivery": streamed_delivery(),
-            "workspace": workspace()}
+            "java_runtime": java_runtime(), "workspace": workspace()}

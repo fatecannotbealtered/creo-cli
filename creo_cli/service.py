@@ -94,11 +94,19 @@ def creoson_checks() -> list[dict]:
                           f"'{creoson_env.TOOLKIT_COMPONENT}' (it is free with a Creo seat, and it is "
                           f"what ships {creoson_env.JLINK_JAR}; there has been no separate J-Link "
                           f"installer since Creo 4.0)"}
+    java = env["java_runtime"]
     space = env["workspace"]
     return [
         {"check": "creo_api_toolkit", **toolkit,
          "message": env["api_toolkit_detail"],
          "details": {"creo_load_point": env["creo_load_point"], "streamed_delivery": env["streamed_delivery"]}},
+        {"check": "creo_otk_java_runtime",
+         "status": "pass" if java["source"] == "PRO_JAVA_COMMAND" and java["resolved"] else "warn",
+         "fix": None if java["source"] == "PRO_JAVA_COMMAND" and java["resolved"] else
+                "set PRO_JAVA_COMMAND to a Java 25 java.exe and restart Creo; Creo 13.4 needs Java 25 "
+                "for synchronous Object TOOLKIT Java and fails the application during load when it "
+                "cannot find one, before the application logs anything (see docs/CREO_SETUP.md)",
+         "message": java["detail"]},
         {"check": "creoson_service", "status": "warn",
          "fix": "run `creo-cli creoson status` to probe the service; doctor stays offline",
          "message": "liveness is not checked here"},

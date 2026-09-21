@@ -41,6 +41,26 @@ probe finds the installation by enumerating the standard load points, so it work
 whether Creo landed in `C:\Program Files\PTC` or somewhere like
 `D:\PTC\Creo13.4\Creo 13.4.1.0`.
 
+## Java, for the creation route only
+
+Creo 13.4 requires **Java 25**, and starts a synchronous Object TOOLKIT Java
+application in a JVM it launches itself. When it cannot find a suitable one the
+application fails while loading -- before any of its own code runs, so there is no
+application log to read and the only symptom is Creo reporting that the start failed.
+
+Point Creo at a Java 25 runtime explicitly rather than relying on detection:
+
+```powershell
+setx PRO_JAVA_COMMAND "<jdk25>in\java.exe"
+```
+
+Then restart Creo; the variable does not reach a running process. `PRO_JAVA_COMMAND`
+takes precedence over the `jlink_java_command` config option. `doctor` reports this as
+`creo_otk_java_runtime`.
+
+The CREOSON route does not need this: that service runs outside Creo in a JVM of its
+own choosing.
+
 ## Licensing
 
 J-Link needs no license module. Reading models, editing parameters and dimensions,
