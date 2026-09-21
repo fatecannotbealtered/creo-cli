@@ -40,40 +40,72 @@ def entries(directory: Path) -> dict[str, os.DirEntry]:
         return {}
 
 
-def common_files() -> Path | None:
-    """Locate Creo's Common Files directory without trusting a composed path."""
+COMMON_FILES = "common files"
+# Installers nest the load point under a container directory -- D:\PTC\Creo13.4\Creo
+# 13.4.1.0\Common Files -- and some layouts repeat the version folder again inside
+# it, so searching only the first level finds nothing and stopping at the first hit
+# can land on the wrong copy. Bounded, because an unbounded walk of a 12 GB tree is
+# not something `doctor` should do.
+SEARCH_DEPTH = 4
+
+
+def common_files_candidates() -> list[Path]:
+    """Every plausible Creo Common Files directory, best guess first."""
+    found: list[Path] = []
     configured = os.environ.get("PRO_COMM_MSG_EXE")
     if configured:
         # <load point>/Common Files/<platform>/obj/pro_comm_msg.exe
         candidate = Path(configured).parent.parent.parent
         if entries(candidate):
-            return candidate
+            found.append(candidate)
     for root in PTC_ROOTS:
-        for name, entry in sorted(entries(Path(root)).items()):
-            if not name.startswith("creo"):
-                continue
-            found = entries(Path(entry.path)).get("common files")
-            if found:
-                return Path(found.path)
-    return None
+        queue = [(Path(root), 0)]
+        while queue:
+            directory, depth = queue.pop(0)
+            for name, entry in sorted(entries(directory).items()):
+                path = Path(entry.path)
+                if name == COMMON_FILES:
+                    found.append(path)
+                elif depth < SEARCH_DEPTH and name.startswith(("creo", "ptc", "m0", "f0")):
+                    queue.append((path, depth + 1))
+    return found
+
+
+def common_files() -> Path | None:
+    candidates = common_files_candidates()
+    return candidates[0] if candidates else None
+
+
+def jlink_jar(root: Path) -> Path | None:
+    directory = root
+    for part in JLINK_SUBDIR:
+        found = entries(directory).get(part)
+        if not found:
+            return None
+        directory = Path(found.path)
+    found = entries(directory).get(JLINK_JAR.casefold())
+    return Path(found.path) if found else None
 
 
 def toolkit() -> dict:
-    """Report whether the API toolkit that ships J-Link is present."""
-    root = common_files()
-    if root is None:
+    """Report whether the API toolkit that ships J-Link is present.
+
+    Checks every candidate load point rather than the first: a layout that repeats
+    the version directory inside itself yields two, and only one carries the jar.
+    """
+    candidates = common_files_candidates()
+    if not candidates:
         return {"creo_load_point": None, "api_toolkit_present": False,
                 "detail": "no Creo installation found under the standard load points"}
-    java_dir = root
-    for part in JLINK_SUBDIR:
-        found = entries(java_dir).get(part)
-        if not found:
-            return {"creo_load_point": str(root), "api_toolkit_present": False,
-                    "detail": f"{'/'.join(JLINK_SUBDIR)} is absent from the installation"}
-        java_dir = Path(found.path)
-    present = JLINK_JAR.casefold() in entries(java_dir)
-    return {"creo_load_point": str(root), "api_toolkit_present": present,
-            "detail": f"{JLINK_JAR} {'found' if present else 'missing'} in {java_dir}"}
+    for root in candidates:
+        jar = jlink_jar(root)
+        if jar is not None:
+            return {"creo_load_point": str(root), "api_toolkit_present": True,
+                    "detail": f"{JLINK_JAR} found at {jar}"}
+    root = candidates[0]
+    return {"creo_load_point": str(root), "api_toolkit_present": False,
+            "detail": f"{JLINK_JAR} is absent under {root / Path(*JLINK_SUBDIR)}; "
+                      f"{len(candidates)} load point(s) checked"}
 
 
 def streamed_delivery() -> bool:

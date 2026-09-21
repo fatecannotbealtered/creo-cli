@@ -41,6 +41,11 @@ class ToolkitProbe(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
+        # Pin the search roots away from this machine: once a real Creo is installed,
+        # an unpinned scan finds it and every "absent toolkit" assertion flips.
+        isolated = patch.object(creoson_env, "PTC_ROOTS", (str(self.root / "no-ptc-here"),))
+        isolated.start()
+        self.addCleanup(isolated.stop)
 
     def env(self, common: Path, **extra):
         return dict(os.environ, PRO_COMM_MSG_EXE=str(common / "x86e_win64" / "obj" / "pro_comm_msg.exe"), **extra)
@@ -69,6 +74,32 @@ class ToolkitProbe(unittest.TestCase):
         self.assertTrue(result["api_toolkit_present"],
                         "toolkit lookup must not depend on os.stat of a composed path")
 
+    def test_a_load_point_nested_under_a_container_directory_is_found(self):
+        # Real layout: D:\PTC\Creo13.4\Creo 13.4.1.0\Common Files. Searching only the
+        # first level under the PTC root finds the container and stops, reporting a
+        # perfectly good installation as absent.
+        container = self.root / "Creo13.4"
+        container.mkdir()
+        creo_tree(container, with_toolkit=True)
+        with patch.dict(os.environ, {k: v for k, v in os.environ.items() if k != "PRO_COMM_MSG_EXE"}, clear=True):
+            with patch.object(creoson_env, "PTC_ROOTS", (str(self.root),)):
+                result = creoson_env.toolkit()
+        self.assertTrue(result["api_toolkit_present"], result["detail"])
+
+    def test_the_load_point_that_actually_has_the_jar_wins(self):
+        # Some installations repeat the version directory inside itself; only one copy
+        # carries the toolkit, so the first candidate found is not necessarily right.
+        container = self.root / "Creo13.4"
+        container.mkdir()
+        real = creo_tree(container, with_toolkit=True)
+        decoy = real.parent / "Creo 13.4.1.0"
+        (decoy / "Common Files" / "text" / "java").mkdir(parents=True)
+        with patch.dict(os.environ, {k: v for k, v in os.environ.items() if k != "PRO_COMM_MSG_EXE"}, clear=True):
+            with patch.object(creoson_env, "PTC_ROOTS", (str(self.root),)):
+                result = creoson_env.toolkit()
+        self.assertTrue(result["api_toolkit_present"], result["detail"])
+        self.assertEqual(Path(result["creo_load_point"]), real)
+
     def test_missing_installation_is_reported_without_raising(self):
         with patch.dict(os.environ, {k: v for k, v in os.environ.items() if k != "PRO_COMM_MSG_EXE"}, clear=True):
             with patch.object(creoson_env, "PTC_ROOTS", (str(self.root / "absent"),)):
@@ -82,6 +113,11 @@ class DoctorChecks(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
+        # Pin the search roots away from this machine: once a real Creo is installed,
+        # an unpinned scan finds it and every "absent toolkit" assertion flips.
+        isolated = patch.object(creoson_env, "PTC_ROOTS", (str(self.root / "no-ptc-here"),))
+        isolated.start()
+        self.addCleanup(isolated.stop)
 
     def doctor(self, env) -> dict:
         out = io.StringIO()
