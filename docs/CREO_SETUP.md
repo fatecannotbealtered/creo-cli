@@ -51,7 +51,7 @@ application log to read and the only symptom is Creo reporting that the start fa
 Point Creo at a Java 25 runtime explicitly rather than relying on detection:
 
 ```powershell
-setx PRO_JAVA_COMMAND "<jdk25>in\java.exe"
+setx PRO_JAVA_COMMAND "<jdk25 install dir>\bin\java.exe"
 ```
 
 Then restart Creo; the variable does not reach a running process. `PRO_JAVA_COMMAND`
