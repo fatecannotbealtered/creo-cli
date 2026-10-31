@@ -1,0 +1,37 @@
+{
+  "steps": [
+    {
+      "id": "save",
+      "command": "model save",
+      "args": {
+        "model": "bracket.prt"
+      }
+    },
+    {
+      "id": "change",
+      "command": "parameter set",
+      "args": {
+        "model": "bracket.prt",
+        "name": "DESCRIPTION",
+        "type": "string",
+        "value": "unsaved after save"
+      }
+    },
+    {
+      "id": "read",
+      "kind": "read",
+      "command": "model show",
+      "args": {
+        "model": "bracket.prt"
+      }
+    },
+    {
+      "id": "assert_unsaved",
+      "kind": "assert",
+      "actual": {
+        "$ref": "read.modified"
+      },
+      "expected": true
+    }
+  ]
+}

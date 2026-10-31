@@ -1,0 +1,22 @@
+ND_RelParSet_K01 = {
+Name = R11_SYNTH_D2700
+PARAMETERS =
+{
+Name = PTC_MATERIAL_TYPE
+Type = Integer
+Default = 9
+Access = Locked
+},
+{
+Name = PTC_MATERIAL_DESCRIPTION
+Type = String
+Default = 'Synthetic density-only acceptance material; no grade or approval'
+Access = Full
+},
+{
+Name = PTC_MASS_DENSITY
+Type = Real
+Default = 0.0000000027 tonne / mm^3
+Access = Full
+}
+}

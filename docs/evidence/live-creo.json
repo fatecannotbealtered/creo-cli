@@ -1,0 +1,6830 @@
+{
+  "ok": true,
+  "real_creo_verified": true,
+  "at": "2026-10-04T00:40:25.022603Z",
+  "creo": {
+    "creo_version": "Creo 13",
+    "creo_build": "2026163",
+    "native_sketch_available": true
+  },
+  "scope": "Historical command-path index only; not current native qualification or new evidence",
+  "original_sha256": "458ea2696abead7154b8f6de4bdf1b422c8360c97c6ce3e03008c29b17dd3712",
+  "calls": [
+    {
+      "argv": [
+        "reference"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "context"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "changelog"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "doctor"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "session",
+        "status"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "session",
+        "cd"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "session",
+        "cd",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "delete"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "delete",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "open"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "open",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "round"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "round",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "chamfer"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "chamfer",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "measure"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "material",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "material",
+        "assign"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "material",
+        "assign",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "suppress"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "suppress",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "resume"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "resume",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rename"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rename",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "import"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "import",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "mirror"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "mirror",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "draft"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "draft"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "draft",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "draft"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "draft",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rib"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rib",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rib"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rib",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "model",
+        "set-tolerance-standard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "set-tolerance-standard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "tolerance",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 2
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "thread"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "thread",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "thread"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "thread",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "open"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "open",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "sweep",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "parameter",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "family",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "family",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "family",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "open"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "open",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "replace"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "replace",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "explode"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "explode",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "set-common-name"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "set-common-name",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "set-common-name"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "set-common-name",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-bom"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-bom",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "family",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "family",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-title-block"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-title-block",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "pattern",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "chamfer"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "chamfer",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "round"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "round",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "shell",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "draft"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "draft",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rib"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rib"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "rib",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "revolve",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "relation",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "relation",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "relation",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "dimension",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "dimension",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "relation",
+        "set"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "relation",
+        "set",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-axis",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "add",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "assembly",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "render"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-bom"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-bom",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-table"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-table",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-balloons"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-balloons",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "part",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "extrude",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "hole",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "export",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "save",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "hide-dimension"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "hide-dimension",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "annotate",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-note"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-note",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "edit-note"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "edit-note",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-dimension"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-dimension",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-dimension"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-dimension",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-dimension"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-dimension",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "hide-dimension"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-table"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-table"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-table",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-symbol"
+      ],
+      "exit_code": 3
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-symbol"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-symbol",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "feature",
+        "datum-plane",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-view"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "move-view",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 6
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-datum"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-datum",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-datum"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-datum",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-gtol"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-gtol",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "geometry",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-gtol"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-gtol",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-gtol"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "add-gtol",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "remove",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "drawing",
+        "create",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "workflow",
+        "run"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "workflow",
+        "run",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "operation",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "operation",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "operation",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "operation",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "operation",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "close",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "workspace",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "operation",
+        "list"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "operation",
+        "show"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "model",
+        "discard",
+        "--confirm",
+        "<redacted>"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "units": "mm",
+  "name": "POCKET",
+  "depth": 5,
+  "material": "remove",
+  "sketch": {
+    "plane": "FRONT",
+    "orient_ref": "RIGHT",
+    "profile": {
+      "type": "rectangle",
+      "width": 10,
+      "height": 6,
+      "center": [
+        8,
+        2
+      ]
+    }
+  }
+}

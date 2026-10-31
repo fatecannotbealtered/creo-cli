@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "creo-cli"
+dynamic = ["version"]
+description = "PTC Creo Parametric for AI agents: build parts, assemblies, drawings and exchange files in a live Creo, every write previewed, confirmed, read back and recorded"
+requires-python = ">=3.11"
+license = "MIT"
+readme = "README.md"
+authors = [{ name = "Sean Guo" }]
+# The CLI uses only the Python standard library.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.15", "pyinstaller>=6", "pip-audit>=2.7", "jsonschema>=4.26"]
+
+[project.scripts]
+creo-cli = "creo_cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/fatecannotbealtered/creo-cli"
+
+[tool.setuptools.dynamic]
+version = { attr = "creo_cli.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["creo_cli*"]
+
+# `changelog` reads CHANGELOG.md from the source tree, a frozen binary, or here.
+[tool.setuptools.data-files]
+"share/creo-cli" = ["CHANGELOG.md"]
+"share/creo-cli/driver/schemas" = [".agent/driver/schemas/*.json"]

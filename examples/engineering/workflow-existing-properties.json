@@ -1,0 +1,12 @@
+{
+  "steps": [
+    {"id":"read","kind":"read","command":"model show","args":{"model":"bracket.prt"}},
+    {"id":"units","kind":"assert","actual":{"$ref":"read.units.length"},"expected":"mm"},
+    {"id":"material","command":"material assign","args":{"model":"bracket.prt","material":"R11_SYNTH_D2700","file":"materials/R11_SYNTH_D2700.mtl"}},
+    {"id":"standard","command":"model set-tolerance-standard","args":{"model":"bracket.prt","standard":"iso","class":"medium"}},
+    {"id":"numeric","command":"dimension set-tolerance","args":{"model":"bracket.prt","dimension":"d1","symmetric":0.2,"units":"mm"},"depends_on":["standard"]},
+    {"id":"regenerate","command":"model regenerate","args":{"model":"bracket.prt"}},
+    {"id":"readback","kind":"read","command":"dimension list","args":{"model":"bracket.prt"}},
+    {"id":"save","command":"model save","args":{"model":"bracket.prt"}}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "units": "mm",
+  "name": "HOLE",
+  "depth": 10,
+  "material": "remove",
+  "sketch": {
+    "plane": "FRONT",
+    "orient_ref": "RIGHT",
+    "profile": {
+      "type": "circle",
+      "diameter": 6,
+      "center": [
+        -12,
+        0
+      ]
+    }
+  }
+}

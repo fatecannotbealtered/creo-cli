@@ -1,0 +1,76 @@
+name: Verify complete Windows beta draft
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Reviewed existing prerelease tag
+        required: true
+        type: string
+      source_sha:
+        description: Reviewed clean public source commit
+        required: true
+        type: string
+      archive_sha256:
+        description: Independently reviewed complete ZIP hash
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      ARCHIVE_SHA256: ${{ inputs.archive_sha256 }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check exact source, repository, permission and draft status
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:GITHUB_REPOSITORY -ne 'fatecannotbealtered/creo-cli') { throw 'Wrong repository' }
+          if ($env:SOURCE_SHA -notmatch '^[a-f0-9]{40}$' -or $env:ARCHIVE_SHA256 -notmatch '^[a-f0-9]{64}$') { throw 'Invalid identity' }
+          if ((git rev-parse HEAD) -ne $env:SOURCE_SHA) { throw 'Wrong checkout' }
+          $profile = Get-Content release/PROFILE.json -Raw | ConvertFrom-Json
+          if (-not $profile.public_distribution -or -not $profile.prerelease) { throw 'Sensitive release review pending' }
+          if ($env:RELEASE_TAG -ne ('v' + $profile.version)) { throw 'Wrong tag' }
+          $release = gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --json isDraft,isPrerelease | ConvertFrom-Json
+          if (-not $release.isDraft -or -not $release.isPrerelease) { throw 'Expected unpublished prerelease draft' }
+          gh api ('repos/' + $env:GITHUB_REPOSITORY + '/git/ref/tags/' + $env:RELEASE_TAG) --jq .object.sha | Set-Content tag-sha.txt
+          if ((Get-Content tag-sha.txt).Trim() -ne $env:SOURCE_SHA) { throw 'Expected exact lightweight reviewed tag' }
+      - name: Download and verify the actual complete package
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $name = 'creo-cli-1.1.0-beta.1-windows-x64.zip'
+          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern $name --dir downloaded
+          if ($LASTEXITCODE) { throw 'Download failed' }
+          if ((Get-FileHash ('downloaded/' + $name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $env:ARCHIVE_SHA256) { throw 'ZIP mismatch' }
+          Expand-Archive -LiteralPath ('downloaded/' + $name) -DestinationPath installed
+          python scripts/verify_public_package.py installed/creo-cli-1.1.0-beta.1-windows-x64
+          if ($LASTEXITCODE) { throw 'Package integrity failed' }
+          $origins = Get-Content installed/creo-cli-1.1.0-beta.1-windows-x64/COMPONENT-ORIGINS.json -Raw | ConvertFrom-Json
+          if ($origins.deployment_helpers_public_commit -ne $env:SOURCE_SHA) { throw 'Helper source mismatch' }
+          ($env:ARCHIVE_SHA256 + '  ' + $name) | Set-Content checksums.txt -Encoding utf8NoBOM
+      - uses: sigstore/cosign-installer@v3
+      - name: Sign verified checksums and attach only to the existing draft
+        shell: pwsh
+        run: |
+          cosign sign-blob --new-bundle-format --bundle checksums.txt.sigstore.json checksums.txt --yes
+          if ($LASTEXITCODE) { throw 'Signing failed' }
+          gh release upload $env:RELEASE_TAG checksums.txt checksums.txt.sigstore.json --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE) { throw 'Upload failed; inspect draft before retry' }
+      # This workflow does not build native code or publish a Release. The controller
+      # performs fresh offline installation verification and reviews the actual draft.

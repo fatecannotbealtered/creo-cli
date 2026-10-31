@@ -1,0 +1,12 @@
+{
+  "steps": [
+    {"id":"units","kind":"read","command":"model show","args":{"model":"bracket.prt"}},
+    {"id":"mm","kind":"assert","actual":{"$ref":"units.units.length"},"expected":"mm"},
+    {"id":"parameter","kind":"write","command":"parameter set","args":{"model":"bracket.prt","name":"PLATE_LENGTH","type":"real","value":"80"},"depends_on":["mm"]},
+    {"id":"regenerate","kind":"write","command":"model regenerate","args":{"model":"bracket.prt"},"depends_on":["parameter"]},
+    {"id":"dimensions","kind":"read","command":"dimension list","args":{"model":"bracket.prt"},"depends_on":["regenerate"]},
+    {"id":"save","kind":"write","command":"model save","args":{"model":"bracket.prt"},"depends_on":["dimensions"]},
+    {"id":"saved","kind":"read","command":"model show","args":{"model":"bracket.prt"},"depends_on":["save"]},
+    {"id":"clean","kind":"assert","actual":{"$ref":"saved.modified"},"expected":false,"depends_on":["saved"]}
+  ]
+}

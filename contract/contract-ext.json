@@ -1,0 +1,45 @@
+{
+  "error_codes": {
+    "E_NATIVE_READ_PENDING": {
+      "exit": 8,
+      "retryable": false
+    },
+    "E_BACKEND_UNAVAILABLE": {
+      "exit": 4,
+      "retryable": false
+    },
+    "E_UNSUPPORTED": {
+      "exit": 2,
+      "retryable": false
+    },
+    "E_PROTOCOL": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_NATIVE_FAILURE": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_PARTIAL": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_OUTCOME_UNKNOWN": {
+      "exit": 6,
+      "retryable": false
+    },
+    "E_VERIFY_FAILED": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_VERIFY_INCOMPLETE": {
+      "exit": 1,
+      "retryable": false
+    },
+    "E_NATIVE_DIAGNOSTIC": {
+      "exit": 1,
+      "retryable": false
+    }
+  },
+  "note": "Project extension codes, merged into creo_cli/contract_gen.py by scripts/gen-contract.js. E_BACKEND_UNAVAILABLE: the service in Creo is absent, speaks another protocol, or lacks a capability. E_UNSUPPORTED: a valid request this build or this session cannot carry out. E_PROTOCOL: a reply the CLI cannot read. E_NATIVE_FAILURE: Creo rejected the operation. E_NATIVE_READ_PENDING: a native read was confirmed started and remains unresolved, or a sent native read has an unreadable/lost reply so its start or completion is unknown. Exit 8 remains non-retryable. Only confirmed starts carry started=true/native_call_pending=true; unknown dispatch omits started and carries native_call_may_be_pending=true. The same Client blocks later CAD dispatch but this guard is not persistent across clients/processes. Preserve diagnostics and original request correlation, inspect process-only health/OS state, and do not issue another CAD request until the pending call is resolved. This read creates no write receipt or operation ID. Full reference.extensions.creo.native_read_recovery publishes its project-owned details schema. E_OUTCOME_UNKNOWN: a write was sent and what it did cannot be established; never retried. E_VERIFY_FAILED: Creo reported a write done and a postcondition read back afterwards failed. E_VERIFY_INCOMPLETE: a required independent read-back or native check could not be completed; inspect the recorded result, never repeat the write automatically. E_NATIVE_DIAGNOSTIC: the service observed a serious native message or a durable diagnostic failure and stopped further CAD dispatch. This is not evidence of a pending getter; retain the original native_diagnostic context, effects and actual request correlation. No automatic retry or new Client recovery. Local records/process-only health/OS observations do not establish native health."
+}

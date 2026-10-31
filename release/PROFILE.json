@@ -1,0 +1,11 @@
+{
+  "schema": "creo-public-distribution/v1",
+  "version": "1.1.0-beta.1",
+  "target": "windows-x64",
+  "prerelease": true,
+  "public_distribution": false,
+  "phase": "prepared_for_sensitive_release_review",
+  "native_qualification": "bounded_existing_component_evidence_only",
+  "npm_publication": false,
+  "cad_execution_in_preparation": false
+}

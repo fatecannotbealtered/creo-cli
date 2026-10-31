@@ -1,0 +1,12 @@
+{
+  "scope_id": "user-authorized-engineering-task",
+  "tool": "creo-cli",
+  "granted_by": "replace with the actual user authorization",
+  "granted_at": "2026-10-07T00:00:00Z",
+  "expires_at": null,
+  "effects": ["observe", "session", "change", "persist", "artifact"],
+  "dangerous": false,
+  "roots": ["D:/creo-ws"],
+  "outputs": ["D:/creo-ws"],
+  "limits": {"max_operations": 100}
+}

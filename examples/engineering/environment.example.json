@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Engineer-supplied current local environment for the actual candidate package. Replace placeholders from its final binding and fresh observations; this template is not a connection or permission grant.",
+  "creo": "<licensed Creo root containing Common Files and Parametric>",
+  "java": "<legal declared JDK root containing bin/java.exe; verified host JDK25.0.3, target17 is not Java17 qualification>",
+  "installation": "<source-verified component directory for the actual candidate; JAR/DLL are separate from the EXE>",
+  "true_global_history": "<existing separately retained global operations.sqlite3>",
+  "environment_variables": {
+    "CREO_CLI_WORKSPACE": "<authorized owned workspace>",
+    "CREO_CLI_CONFIG_DIR": "<existing continuous CLI history directory>",
+    "CREO_CLI_PERMISSION": "read",
+    "CREO_CLI_EXPERIMENTAL_NATIVE_WRITES": "0",
+    "CREO_CLI_SERVICE_URL": "<owned current service URL>",
+    "CREO_CLI_SERVICE_TOKEN_FILE": "<declared local credential file; contents are never printed>",
+    "CREO_CLI_SCOPE_FILE": "<existing explicit task scope file>"
+  },
+  "observed_at_utc": null,
+  "runtime_pin": {},
+  "component_files": {
+    "creo-cli-service.jar": {
+      "sha256": "<actual candidate manifest JAR SHA-256; verify the installed file>",
+      "bytes": null
+    },
+    "creo_cli_sketch.dll": {
+      "sha256": "<actual candidate manifest DLL SHA-256; verify the installed file>",
+      "bytes": null
+    }
+  },
+  "independent_consumer": null,
+  "optional_frozen_STEP_investigation": "Not required by the first-trial core or EXE client. Only for a separately authorized STEP investigation, supply an actual Python/OCP interpreter/module binding and an explicitly supplied consumer. Missing Python/OCP does not fail core environment discovery.",
+  "rules": [
+    "Only the task owner can authorize write permission and scope. The template grants neither. No separate Python or Node installation is needed by the single-EXE client; supplied scripts require PowerShell 7.4 or later.",
+    "Read component_files from the final package binding, then verify actual installed bytes. Never reuse R5 or another historical JAR hash just because a template listed it.",
+    "Fill runtime_pin only from a fresh public process-only context observation checked against the owned startup and actual component sources.",
+    "A successful process-only check proves neither CAD idle nor getter completion nor recovery of an old operation.",
+    "Do not change history directories, aliases, ports or Clients to bypass unresolved operations."
+  ]
+}

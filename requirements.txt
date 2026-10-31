@@ -1,0 +1,2 @@
+# The CLI uses only the Python standard library at run time.
+# Development tools are declared in pyproject.toml ([project.optional-dependencies] dev).

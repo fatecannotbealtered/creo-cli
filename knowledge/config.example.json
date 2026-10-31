@@ -1,0 +1,25 @@
+{
+  "schema_version": "creo-cli.knowledge.v1",
+  "base": "config_directory",
+  "purpose": "Format example only. Select <CLI-resource-root>/knowledge.local.json (the resource root is the parent of the default index.json's knowledge directory), or one user-declared absolute config path. Resolve this external config's relative entries from its own directory, never implicitly from the engineer wrapper root. The paths below are examples, not installed or authorized resources.",
+  "entries": [
+    {
+      "id": "example-team-mechanical-rules",
+      "name": "User-supplied team mechanical rules",
+      "category": "team",
+      "purpose": "Read only the rules explicitly supplied for the engineering task.",
+      "location": {"kind": "file", "path": "team/mechanical-rules.md"},
+      "applicable_versions": "Example: declare the actual approved document revision and supported Creo version before use.",
+      "read_method": "Resolve from this config's directory; report missing/access-denied documents. Never override authorization, safety or the original stop."
+    },
+    {
+      "id": "example-owned-model-catalogue",
+      "name": "User-supplied owned model catalogue",
+      "category": "model-resource",
+      "purpose": "Locate named task inputs, templates or materials without scanning unrelated directories.",
+      "location": {"kind": "file", "path": "models/catalogue.json"},
+      "applicable_versions": "Example: declare exact model/template revisions, units and legal Creo compatibility before use.",
+      "read_method": "Read catalogue metadata only. A listed CAD path is not permission to load, modify, save, upload or redistribute it."
+    }
+  ]
+}

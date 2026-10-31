@@ -1,0 +1,5 @@
+{
+  "units": "mm",
+  "name": "IE_PLANE_ZM4",
+  "offset": {"from": "FRONT", "distance": -4}
+}

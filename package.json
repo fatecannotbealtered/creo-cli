@@ -1,0 +1,55 @@
+{
+  "name": "@fateforge/creo-cli",
+  "version": "1.1.0-beta.1",
+  "description": "PTC Creo Parametric for AI agents: build parts feature by feature, assemble them, make drawings and exchange files in a live Creo, through a service that runs inside it. Every write is previewed, confirmed once, read back and recorded.",
+  "keywords": [
+    "creo",
+    "creo-parametric",
+    "cad",
+    "mechanical-design",
+    "cli",
+    "agent",
+    "ai-native"
+  ],
+  "author": "Sean Guo",
+  "homepage": "https://github.com/fatecannotbealtered/creo-cli#readme",
+  "bugs": {
+    "url": "https://github.com/fatecannotbealtered/creo-cli/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fatecannotbealtered/creo-cli.git"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "creo-cli": "scripts/run.js"
+  },
+  "scripts": {
+    "version": "node scripts/sync-version.js",
+    "check-version": "node scripts/check-version.js"
+  },
+  "optionalDependencies": {
+    "@fateforge/creo-cli-win32-x64": "1.1.0-beta.1"
+  },
+  "files": [
+    "scripts/run.js",
+    "skills/",
+    "README.md",
+    "README_zh.md",
+    "LICENSE",
+    "NOTICE.md",
+    "CHANGELOG.md",
+    "docs/licenses/",
+    ".agent/driver/LICENSE",
+    ".agent/driver/SDK-NOTICE.txt",
+    ".agent/driver/DISTRIBUTION.json",
+    ".agent/driver/THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "private": true
+}

@@ -1,0 +1,19 @@
+{
+  "units": "mm",
+  "name": "SLEEVE",
+  "angle": 360,
+  "side": "one",
+  "material": "add",
+  "body": "default",
+  "axis": [[0, 0], [0, 1]],
+  "sketch": {
+    "plane": "SLEEVE_PLANE",
+    "orient_ref": "RIGHT",
+    "orient": "right",
+    "references": ["RIGHT", "TOP"],
+    "profile": {
+      "type": "polygon",
+      "points": [[4, 0], [10, 0], [10, 25], [4, 25]]
+    }
+  }
+}

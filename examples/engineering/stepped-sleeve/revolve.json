@@ -1,0 +1,19 @@
+{
+  "units": "mm",
+  "name": "IE_STEPPED_SLEEVE",
+  "angle": 360,
+  "side": "one",
+  "material": "add",
+  "body": "default",
+  "axis": "IE_AXIS_Y",
+  "sketch": {
+    "plane": "IE_PLANE_ZM4",
+    "orient_ref": "RIGHT",
+    "orient": "right",
+    "references": ["RIGHT", "TOP"],
+    "profile": {
+      "type": "polygon",
+      "points": [[3, 0], [12, 0], [12, 12], [8, 12], [8, 30], [3, 30]]
+    }
+  }
+}

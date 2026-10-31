@@ -1,0 +1,18 @@
+{
+  "units": "mm",
+  "name": "PLATE",
+  "depth": 8,
+  "sketch": {
+    "plane": "FRONT",
+    "orient_ref": "RIGHT",
+    "profile": {
+      "type": "rectangle",
+      "width": 60,
+      "height": 40,
+      "holes": [
+        {"type": "circle", "diameter": 6, "center": [-20, 0]},
+        {"type": "circle", "diameter": 6, "center": [20, 0]}
+      ]
+    }
+  }
+}

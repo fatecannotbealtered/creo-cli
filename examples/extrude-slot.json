@@ -1,0 +1,15 @@
+{
+  "units": "mm",
+  "name": "SLOT",
+  "depth": 8,
+  "material": "remove",
+  "sketch": {
+    "plane": "FRONT",
+    "orient_ref": "RIGHT",
+    "profile": {
+      "type": "ellipse",
+      "x_radius": 6,
+      "y_radius": 3
+    }
+  }
+}

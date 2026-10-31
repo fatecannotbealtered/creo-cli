@@ -1,0 +1,115 @@
+{
+  "schema_version": "creo-cli.knowledge.v1",
+  "base": "package_root",
+  "purpose": "Bundled read-only navigation. base=package_root means the CLI resource root: parent of this index.json's knowledge directory (repository root in source; <engineer-package-root>/cli in an engineer package). It does not mean the outer wrapper README directory. Not an independent KB, runtime configuration or authorization source.",
+  "entries": [
+    {
+      "id": "ptc-creo-13-model-api",
+      "name": "PTC Creo 13 Object TOOLKIT Java Model API",
+      "category": "official",
+      "purpose": "Consult the supplier's model API semantics when the task requires source attribution.",
+      "location": {
+        "kind": "url",
+        "url": "https://support.ptc.com/help/creo_toolkit/otk_java_pma/r13/usascii/creo_toolkit/api/dita/c-pfcModel-Model.html"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read the specific public page only when relevant; report login/permission failures without automatic authentication."
+    },
+    {
+      "id": "java-25-api",
+      "name": "Java 25 API documentation",
+      "category": "official",
+      "purpose": "Consult Java runtime API semantics separately from Creo compatibility.",
+      "location": {
+        "kind": "url",
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/index.html"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read task-relevant public API documentation; do not infer installed runtime or licensing from this entry."
+    },
+    {
+      "id": "team-delivery-boundaries",
+      "name": "Project delivery and evidence boundaries",
+      "category": "team",
+      "purpose": "Distinguish project delivery conventions from an external team's manufacturing standards.",
+      "location": {
+        "kind": "file",
+        "path": "knowledge/TEAM-NORMS.md"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read as project guidance; no manufacturing approval, write policy or implicit external-team rule follows."
+    },
+    {
+      "id": "skill-operation-safety",
+      "name": "Write safety, pending-call stops and receipts",
+      "category": "operation-contract",
+      "purpose": "Read the operational safety and honest-receipt rules before writes or recovery.",
+      "location": {
+        "kind": "file",
+        "path": "skills/creo-cli/SKILL.md"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read as instructions subordinate to user authorization; discover exact command fields from the supplied EXE reference."
+    },
+    {
+      "id": "constraint-edit-contract",
+      "name": "Existing-occurrence constraint recipe",
+      "category": "operation-contract",
+      "purpose": "Resolve the bounded existing-occurrence edit, protected state, save/reopen and recovery requirements.",
+      "location": {
+        "kind": "file",
+        "path": "docs/ASSEMBLY-CONSTRAINTS.md"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read before a qualified constraint-edit task; historical five-success evidence does not qualify the fixed candidate automatically."
+    },
+    {
+      "id": "owned-deployment-contract",
+      "name": "Owned automatic startup and component qualification",
+      "category": "operation-contract",
+      "purpose": "Separate bundle installation, automatic owned startup, actual component source identity, external trust/license prerequisites and native engineering evidence.",
+      "location": {
+        "kind": "file",
+        "path": "docs/STARTUP-NATIVE.md"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read together with root README and manifest; preserve global configuration and stopped instances. Java-only source qualification cannot replace complete DLL startup acceptance."
+    },
+    {
+      "id": "native-source-appearance-display",
+      "name": "Native source-part appearance and explicit presentation contract",
+      "category": "operation-contract",
+      "purpose": "Read shared-source authorization, exact RGB and restore, texture inventory, modified-state, explicit context, visibility, fit and image verification boundaries.",
+      "location": {
+        "kind": "file",
+        "path": "docs/NATIVE-APPEARANCE-DISPLAY.md"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read with the supplied EXE reference and task authorization. Refuse incomplete identity or context, unsupported overrides and unproved persistence; never substitute CAD desktop input."
+    },
+    {
+      "id": "model-resource-catalogue",
+      "name": "Model, template and material resource declarations",
+      "category": "model-resource",
+      "purpose": "Explain the default unbound model-resource state and the explicit external-catalogue route.",
+      "location": {
+        "kind": "file",
+        "path": "knowledge/MODEL-RESOURCES.md"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1 bounded Windows beta; actual component and task qualification required.",
+      "read_method": "Read the catalogue instructions only; do not scan disks, open old stopped models or load a model without actual task authorization."
+    },
+    {
+      "id": "native-read-stop-contract",
+      "name": "Native read recovery boundaries",
+      "category": "operation-contract",
+      "purpose": "Keep pending and unknown operations until independently settled",
+      "location": {
+        "kind": "file",
+        "path": "docs/NATIVE-READ-RECOVERY.md"
+      },
+      "applicable_versions": "creo-cli 1.1.0-beta.1",
+      "read_method": "Read before recovery; health and a new client do not prove an old native call ended"
+    }
+  ]
+}

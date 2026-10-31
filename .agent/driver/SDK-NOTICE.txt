@@ -1,0 +1,8 @@
+Scope checks in creo_cli/driver_scope.py are adapted from tool-driver-cli-spec
+v1.0.2, commit 9607a35fe0ea33fe822e1f2ad2704eae260d4018,
+packages/tool_driver_sdk/scope.py. Changes: local error/JSON adapters, imports and formatting.
+Copyright 2026 Sean Guo. The original SDK and driver schemas are Apache-2.0;
+see LICENSE and DISTRIBUTION.json. The inherited ai-native-cli-spec baseline retains MIT.
+The current rights-holder licensing statement is at
+https://github.com/fatecannotbealtered/tool-driver-cli-spec/blob/53d8e6f8d013be88b7ec2a7487371b16552c049a/THIRD_PARTY_NOTICES.md
+The historical source PIN and schema hashes have not been changed.

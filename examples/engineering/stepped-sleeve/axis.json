@@ -1,0 +1,4 @@
+{
+  "name": "IE_AXIS_Y",
+  "through": ["IE_PLANE_ZM4", "RIGHT"]
+}

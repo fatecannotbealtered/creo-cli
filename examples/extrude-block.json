@@ -1,0 +1,14 @@
+{
+  "units": "mm",
+  "name": "BLOCK",
+  "depth": 10,
+  "sketch": {
+    "plane": "FRONT",
+    "orient_ref": "RIGHT",
+    "profile": {
+      "type": "rectangle",
+      "width": 40,
+      "height": 20
+    }
+  }
+}
