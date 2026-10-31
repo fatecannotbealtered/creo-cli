@@ -123,7 +123,8 @@ def package(original: Path, client: Path, output: Path):
         initializer_revision="public-" + VERSION,
         qualification=(
             "Rebuilt client checked offline; original JAR/DLL retained. "
-            "No new native CAD qualification."
+            "These exact components passed one owned visible empty start and normal exit. "
+            "No additional engineering qualification."
         ),
         baseline_package_sha256=INPUT_SHA256,
     )
@@ -140,6 +141,9 @@ def package(original: Path, client: Path, output: Path):
         ("docs", "cli/docs"),
         (".agent/driver", "cli/.agent/driver"),
         ("release/RELEASE-NOTES.md", "RELEASE-NOTES.md"),
+        ("release/PROFILE.json", "release/PROFILE.json"),
+        ("release/NATIVE-START-EXIT.json", "NATIVE-START-EXIT.json"),
+        ("release/NATIVE-START-EXIT.json", "release/NATIVE-START-EXIT.json"),
         ("release/CLIENT-BUILD.json", "CLIENT-BUILD.json"),
         ("release/CLIENT-ARTIFACT.json", "CLIENT-ARTIFACT.json"),
         ("release/RUNTIME-DISTRIBUTION.json", "RUNTIME-DISTRIBUTION.json"),
@@ -204,7 +208,8 @@ def package(original: Path, client: Path, output: Path):
         },
         "scope": (
             "Only the client is rebuilt. Native JAR/DLL retain original bytes and build source; "
-            "offline checks add no native qualification"
+            "one owned visible empty start and normal exit binds these exact components, "
+            "without additional engineering qualification"
         ),
     }
     write_json(bundle / "COMPONENT-ORIGINS.json", origins)
