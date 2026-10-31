@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
-import shutil
 import subprocess
+import tarfile
 import zipfile
 from pathlib import Path, PurePosixPath
 
@@ -55,6 +56,30 @@ def package(original: Path, output: Path):
     ).strip()
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT):
         raise ValueError("Freeze a clean source snapshot before packaging")
+    # Committed blobs exclude ignored local material and checkout-specific line endings.
+    with tarfile.open(
+        fileobj=io.BytesIO(
+            subprocess.check_output(["git", "archive", "--format=tar", source_commit], cwd=ROOT)
+        )
+    ) as source_archive:
+        snapshot = {
+            member.name: source_archive.extractfile(member).read()
+            for member in source_archive.getmembers()
+            if member.isfile()
+        }
+
+    def copy_snapshot(source, destination):
+        if source in snapshot:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(snapshot[source])
+            return
+        prefix = source.rstrip("/") + "/"
+        for name, data in snapshot.items():
+            if name.startswith(prefix):
+                path = destination / name.removeprefix(prefix)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(data)
+
     output.mkdir(parents=True)
     bundle = output / ("creo-cli-" + VERSION + "-windows-x64")
     bundle.mkdir()
@@ -82,15 +107,7 @@ def package(original: Path, output: Path):
         (".agent/driver", "cli/.agent/driver"),
         ("release/RELEASE-NOTES.md", "RELEASE-NOTES.md"),
     ]:
-        src, dst = ROOT / source, bundle / destination
-        if src.is_dir():
-            shutil.copytree(
-                src, dst, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "evidence")
-            )
-        else:
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(src, dst)
-    helpers = ROOT / "examples/engineering"
+        copy_snapshot(source, bundle / destination)
     for name in [
         "Initialize-CreoWorkspace.ps1",
         "Start-CreoWorkspace.ps1",
@@ -104,33 +121,26 @@ def package(original: Path, output: Path):
         "Start-OwnedCreoProcess.ps1",
     ]:
         dst = bundle / "cli/examples/engineering" / name
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(helpers / name, dst)
+        copy_snapshot("examples/engineering/" + name, dst)
     # Root documentation paths work both in the archive and in the source repository.
     for name in ["RUNTIME-DEPENDENCIES.md", "STARTUP-NATIVE.md"]:
         dst = bundle / "docs" / name
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(ROOT / "docs" / name, dst)
-    shutil.copytree(ROOT / "docs/licenses", bundle / "docs/licenses")
+        copy_snapshot("docs/" + name, dst)
+    copy_snapshot("docs/licenses", bundle / "docs/licenses")
     for source, dest in [
         (".agent/driver", ".agent/driver"),
         ("release/RELEASE-NOTES.md", "release/RELEASE-NOTES.md"),
     ]:
-        src, dst = ROOT / source, bundle / dest
-        if src.is_dir():
-            shutil.copytree(src, dst)
-        else:
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(src, dst)
+        copy_snapshot(source, bundle / dest)
     (bundle / "docs/STARTUP-NATIVE.md").write_text(
-        (ROOT / "docs/STARTUP-NATIVE.md")
-        .read_text(encoding="utf-8")
+        snapshot["docs/STARTUP-NATIVE.md"]
+        .decode("utf-8")
         .replace("../examples/engineering/", "../cli/examples/engineering/"),
         encoding="utf-8",
     )
     # A full CLI-directory notice keeps attribution with a separately copied CLI folder.
     for name in ("LICENSE", "NOTICE.md"):
-        shutil.copyfile(ROOT / name, bundle / "cli" / name)
+        copy_snapshot(name, bundle / "cli" / name)
     origins = {
         "schema": "creo-component-origins/v1",
         "version": VERSION,
