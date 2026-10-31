@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 COMPONENTS = {
-    "cli/creo-cli.exe": "cd3c18cbc139dfb85b0c9f20ac9a30734b81d29385a9d7a87379ad097d771668",
+    "cli/creo-cli.exe": "07cb21b2534f9b9918f0a30b82ead8a6ca953e2a188887ab1e521d528a28faef",
     "cli/service-bundle/creo-cli-service.jar": (
         "bbc5f5a9952876aebb726f29d53d67b509278c91d4d2a3a66386f3f2270cae39"
     ),
@@ -48,6 +48,7 @@ def verify(root: Path):
     }
     required |= {"NOTICE.md", "LICENSE", "cli/.agent/driver/LICENSE", "COMPONENT-ORIGINS.json"}
     required |= {"CLIENT-BUILD.json", "CLIENT-ARTIFACT.json", "RUNTIME-DISTRIBUTION.json"}
+    required |= {"release/CONTROLLED-RUNTIME.json", "release/CONTROLLED-RUNTIME-INPUTS.json"}
     if not required <= names:
         raise ValueError("Missing helpers, skills or notices: " + str(sorted(required - names)))
     actual = {p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()} - {
@@ -89,6 +90,19 @@ def verify(root: Path):
             raise ValueError("Required runtime copyright notice differs: " + name)
     if len(runtime["native_files"]) != 20 or len(runtime["components"]) != 12:
         raise ValueError("Unexpected embedded runtime inventory")
+    control = json.loads((root / "release/CONTROLLED-RUNTIME.json").read_text())
+    if (
+        runtime["native_files"]["_lzma.pyd"]["sha256"]
+        != control["test_lzma"]["runtime_lzma_sha256"]
+    ):
+        raise ValueError("Frozen XZ extension does not match the tested controlled runtime")
+    if control["xz"] != "5.8.4" or len(control["upstream_regressions"]) != 2:
+        raise ValueError("Missing patched XZ source/regression identity")
+    if (
+        hashlib.sha256((root / "release/CONTROLLED-RUNTIME.json").read_bytes()).hexdigest()
+        != (runtime["controlled_source_proof"]["control_record_sha256"])
+    ):
+        raise ValueError("Controlled source provenance differs")
     return {
         "status": "passed",
         "files_verified": len(names),

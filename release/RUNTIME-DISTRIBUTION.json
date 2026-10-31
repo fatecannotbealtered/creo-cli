@@ -2,10 +2,10 @@
   "schema": "creo-frozen-runtime-distribution/v1",
   "version": "1.1.0-beta.1",
   "client": {
-    "sha256": "cd3c18cbc139dfb85b0c9f20ac9a30734b81d29385a9d7a87379ad097d771668",
-    "bytes": 11786239
+    "sha256": "07cb21b2534f9b9918f0a30b82ead8a6ca953e2a188887ab1e521d528a28faef",
+    "bytes": 11303573
   },
-  "client_source_commit": "87ad66e6e5d6a549545620b4d8899ef7176f32e5",
+  "client_source_commit": "94e038db1b89adb065778b9804d0a7857c75505a",
   "runtime": {
     "python": "3.15.2",
     "openssl": "OpenSSL 3.5.9 29 Sep 2026",
@@ -13,22 +13,68 @@
     "pyinstaller": "6.22.3",
     "free_threaded": false
   },
-  "official_distribution": {
-    "url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
-    "sha256": "d6da9c33a32cf111e1d52b91392c83ea6a808545b646e0557f66cb6d9ee76785",
-    "index_url": "https://www.python.org/ftp/python/3.15.2/windows-3.15.2.json",
-    "sbom_url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip.spdx.json",
-    "authenticode_signer": "Python Software Foundation",
-    "installation": "Official ordinary x64 ZIP, isolated extraction; no system registration",
-    "index_sha256": "4e6277874416b570dcc6971243105b17097fb7412bc17959aefb1d28da46a778",
-    "sbom_sha256": "c2da4e6f1afbc6d6ca5ca128124757e97fe77f9420ec9e6dd06ee6404d20a898"
+  "controlled_distribution": {
+    "kind": "project-controlled-source-build",
+    "source_inputs_sha256": "1a344a26290b6e2af17bcdd9b82afd5a14bc328f4d52641c89c2956a150f7f72",
+    "control_record": "release/CONTROLLED-RUNTIME.json",
+    "control_record_sha256": "33f4a59656edb0d3205f961d1f94275dda377f8e1d764162826f66a26a61382a",
+    "cpython_source": {
+      "archive": "Python-3.15.2.tgz",
+      "sha256": "f74e1db0eabd651cd01e4e2a00201bd41866abe74869ab716f9bf33cbbaa0943",
+      "extracted_files": 5455,
+      "url": "https://www.python.org/ftp/python/3.15.2/Python-3.15.2.tgz"
+    },
+    "xz_source": {
+      "archive": "xz-5.8.4.tar.gz",
+      "sha256": "0014c7886930454fe8bd4228665b51af55eeae560ea135c9c4cd33f55b2591d9",
+      "extracted_files": 558,
+      "url": "https://github.com/tukaani-project/xz/releases/download/v5.8.4/xz-5.8.4.tar.gz"
+    }
   },
-  "embedded_client_build_sha256": "2bd3cd1ed002dc5e07eadbccf081cd52b9fefef42427123517b45ca44655118e",
+  "controlled_source_proof": {
+    "control_record_sha256": "33f4a59656edb0d3205f961d1f94275dda377f8e1d764162826f66a26a61382a",
+    "fixed_xz_sources": {
+      "src/liblzma/common/alone_decoder.c": "5483145280dd3e21bd4e4e1f061f8b4eb51e9d6a92ae77c2dcff313c7bf83621",
+      "src/liblzma/common/index.c": "5c7eb33e466d056e9c6cecfafa2e9eca08a4b93230ec67a4701117db7d713113",
+      "src/liblzma/api/lzma/version.h": "9dec302470df2f505474cad90065a12eed8f65a7944e44ae1844499e72a4bb9f"
+    },
+    "xz_static_library_sha256": "dc93f6e338c31e94f0a3087da47b22a2243bb575c5cf5792678d829228293068",
+    "lzma_link_record_sha256": "907b0874c45673d430b52e3c7f0d4285311527a2e402487d8e1c9035f4696dfc",
+    "upstream_regressions": [
+      {
+        "binary": "test_alone_decoder",
+        "original_function": "test_reuse_after_failure",
+        "exit_code": 0,
+        "source_sha256": "5b24d1606f418a3c08216c395e20aa739c6d20f09cc15c0c90cc9757c1775b0f"
+      },
+      {
+        "binary": "test_index",
+        "original_function": "test_decode_empty_and_append",
+        "exit_code": 0,
+        "source_sha256": "3b3ad7b0a9d998df15b62b8a317e8274170c6e835166de07985a854cd26cbccf"
+      }
+    ],
+    "test_lzma": {
+      "result": "SUCCESS",
+      "run": 121,
+      "skipped": 1,
+      "skip_reason": "Release build has no sys.gettotalrefcount debug interface",
+      "output_sha256": "bd02f2afb82ee155cc879d89da3fe9bd1f20fe3b7def69f68115dcf2b02b368b",
+      "runtime_python_sha256": "f81a6f4c684ecbf4c03bca24ddf3e7bcdd722270aa6b28cbdd07ff30ba6f6605",
+      "runtime_lzma_sha256": "9f91e6ed1c963c7f698d26d24c5dea052f8a5548aca723e6f557f8b0f6874bfc"
+    },
+    "patches": {
+      "release/runtime-patches/cpython-xz-link.patch": "970e63c8f45ff7c8b8536bf6a87a39473e81c6986c68779f6f9e46c82d75139d",
+      "release/runtime-patches/mpdecimal-diagnostic-path.patch": "891026d9500caae53fb76b0a04fb73c1b823c6198f671087a5ba7eeab772029d",
+      "release/runtime-patches/no-host-paths.props": "f43b33b70fc7e2bd804701ca376054711f72494c50942c632c4d68d02b219e88"
+    }
+  },
+  "embedded_client_build_sha256": "0a3d6d22ff979184e3f3ddacd1814cf464a8fd3487ae828bdf1f0e7163d2f688",
   "components": [
     {
       "name": "CPython",
       "version": "3.15.2",
-      "source": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
+      "source": "https://www.python.org/ftp/python/3.15.2/Python-3.15.2.tgz",
       "upstream_spdx_id": "SPDXRef-PACKAGE-cpython",
       "contained_in": [
         "python315.dll"
@@ -37,7 +83,7 @@
       "notices": [
         "docs/licenses/PYTHON-3.15.2-LICENSE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "openssl",
@@ -54,7 +100,7 @@
       "notices": [
         "docs/licenses/OpenSSL-3.5.9-LICENSE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "sqlite",
@@ -69,7 +115,7 @@
       "notices": [
         "docs/licenses/SQLite-NOTICE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "libffi",
@@ -84,7 +130,7 @@
       "notices": [
         "docs/licenses/libffi-3.4.4-LICENSE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "bzip2",
@@ -98,22 +144,22 @@
       "notices": [
         "docs/licenses/bzip2-1.0.8-LICENSE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "xz",
-      "version": "5.8.1.1",
-      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/xz-5.8.1.1.tar.gz",
+      "version": "5.8.4",
+      "source": "https://github.com/tukaani-project/xz/releases/download/v5.8.4/xz-5.8.4.tar.gz",
       "upstream_spdx_id": "SPDXRef-PACKAGE-xz",
       "contained_in": [
         "_lzma.pyd"
       ],
       "license": "0BSD and included notices",
       "notices": [
-        "docs/licenses/xz-5.8.1.1-COPYING.txt",
-        "docs/licenses/xz-5.8.1.1-0BSD.txt"
+        "docs/licenses/xz-5.8.4-COPYING.txt",
+        "docs/licenses/xz-5.8.4-0BSD.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "mpdecimal",
@@ -127,7 +173,7 @@
       "notices": [
         "docs/licenses/mpdecimal-4.0.0-LICENSE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "zstd",
@@ -141,7 +187,7 @@
       "notices": [
         "docs/licenses/zstd-1.5.7-LICENSE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "zlib-ng",
@@ -155,7 +201,7 @@
       "notices": [
         "docs/licenses/zlib-ng-2.2.4-LICENSE.md"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "hacl-star",
@@ -170,7 +216,7 @@
         "docs/licenses/HACL-GENERATED-MIT.txt",
         "docs/licenses/HACL-LICENSE.txt"
       ],
-      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+      "version_evidence": "Embedded hashes equal the controlled runtime manifest; fixed source inputs and compile/link records identify dependencies"
     },
     {
       "name": "Microsoft Visual C++ runtime",
@@ -202,121 +248,121 @@
     "VCRUNTIME140.dll": {
       "bytes": 178616,
       "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7",
-      "official_archive_member": "vcruntime140.dll",
+      "controlled_runtime_member": "vcruntime140.dll",
       "pe_file_version": "14.51.36247.0"
     },
     "VCRUNTIME140_1.dll": {
       "bytes": 50112,
       "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e",
-      "official_archive_member": "vcruntime140_1.dll",
+      "controlled_runtime_member": "vcruntime140_1.dll",
       "pe_file_version": "14.51.36247.0"
     },
     "_bz2.pyd": {
-      "bytes": 86240,
-      "sha256": "2ae45b2ff932dc8a864c862d8150eb3f5b55e60e3e74ec554c4f52c4f1ad81e0",
-      "official_archive_member": "DLLs/_bz2.pyd",
+      "bytes": 80896,
+      "sha256": "fea2d0aaefef8764f749b66c8aa55536a6214548d3247f6e6ebc5c87704494de",
+      "controlled_runtime_member": "DLLs/_bz2.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_ctypes.pyd": {
-      "bytes": 144096,
-      "sha256": "8bb22628ae859877b1cf55381c1a8cf54bb0aa70c56295053bc3303262e21c87",
-      "official_archive_member": "DLLs/_ctypes.pyd",
+      "bytes": 139264,
+      "sha256": "68e4a84cdc398417dfba1d16ba6b7ed64714e7c5a0933b8f5d18de562868936e",
+      "controlled_runtime_member": "DLLs/_ctypes.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_decimal.pyd": {
-      "bytes": 326368,
-      "sha256": "93360ba1650bf5f1a673aac22d444ad2d33a039550926f325ad19dafd950e04c",
-      "official_archive_member": "DLLs/_decimal.pyd",
+      "bytes": 390656,
+      "sha256": "27fbabfdaaee215a720e546d3bd0db7a212e031f7886f7b06a5c15fc907dc0ac",
+      "controlled_runtime_member": "DLLs/_decimal.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_hashlib.pyd": {
-      "bytes": 72928,
-      "sha256": "3cfb95355576805d6362b878d2207e254125887fce12ff8199becab34beb0694",
-      "official_archive_member": "DLLs/_hashlib.pyd",
+      "bytes": 55808,
+      "sha256": "bd56ec69fb4217f258d2881c7fe662be4696a60fce6e7970538ca8ce686ce13d",
+      "controlled_runtime_member": "DLLs/_hashlib.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_lzma.pyd": {
-      "bytes": 171744,
-      "sha256": "d9033e94387aa70777d23514263d342486899256ffc14478be6bb1e6a0b05683",
-      "official_archive_member": "DLLs/_lzma.pyd",
+      "bytes": 160256,
+      "sha256": "9f91e6ed1c963c7f698d26d24c5dea052f8a5548aca723e6f557f8b0f6874bfc",
+      "controlled_runtime_member": "DLLs/_lzma.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_socket.pyd": {
-      "bytes": 88288,
-      "sha256": "ba52c110c0cbc429add306acccf86dd2f77c777a9db68df7cddfc4489e91bce7",
-      "official_archive_member": "DLLs/_socket.pyd",
+      "bytes": 76288,
+      "sha256": "6f6e7b27c422f8bc7d1aca59b2fd32803b2b984be6652cb023b4ba62aad4a029",
+      "controlled_runtime_member": "DLLs/_socket.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_sqlite3.pyd": {
-      "bytes": 132320,
-      "sha256": "851e8bfa65328162ddad2dff9f7c213f8eceb2d90baf179aa472704ec3ca6295",
-      "official_archive_member": "DLLs/_sqlite3.pyd",
+      "bytes": 110592,
+      "sha256": "c032f7e5f9ea2d53018628085ece56b595cf73d076a23b84a87d0263f976a73c",
+      "controlled_runtime_member": "DLLs/_sqlite3.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_ssl.pyd": {
-      "bytes": 200416,
-      "sha256": "a9c54ec4d115597880e0e44ff26b740328d0388a777dfb613d3aa2eb66b31e49",
-      "official_archive_member": "DLLs/_ssl.pyd",
+      "bytes": 190976,
+      "sha256": "8fd6a4ba434112b8a446a929a47a92d2ab2f65755a3f274755bc0c6ad82e7820",
+      "controlled_runtime_member": "DLLs/_ssl.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_uuid.pyd": {
-      "bytes": 27872,
-      "sha256": "a3380826957922fae7350f5ea64fface688bf55c79e086823a4b1d50455a9bfa",
-      "official_archive_member": "DLLs/_uuid.pyd",
+      "bytes": 13824,
+      "sha256": "adc5941c5624c7936f24e6ec75530ec7e8c1ce8e9795d4576e84276caad7d0f6",
+      "controlled_runtime_member": "DLLs/_uuid.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_wmi.pyd": {
-      "bytes": 39648,
-      "sha256": "0650bf237b3f556ba844ba372fef6de1b65d618a608014405360aef83f8a4e34",
-      "official_archive_member": "DLLs/_wmi.pyd",
+      "bytes": 26624,
+      "sha256": "2259962a4f18f9784e32d866460a6ac9bc4c2fa7c743763183efd94a46ae51cd",
+      "controlled_runtime_member": "DLLs/_wmi.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "_zstd.pyd": {
-      "bytes": 506592,
-      "sha256": "a977471edf7b6712a9e89ada98b79b1973c79740632f820b67365f242b5e05cc",
-      "official_archive_member": "DLLs/_zstd.pyd",
+      "bytes": 489984,
+      "sha256": "440bb0785a4c1a0e0f1a25c5dd7ed5b1b0af00344776f692f1e62b5e706b107f",
+      "controlled_runtime_member": "DLLs/_zstd.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "libcrypto-3.dll": {
       "bytes": 6021880,
       "sha256": "75495fe0e079ab00d49be740d3c710a0b94e3f74f9648cb7cc9f768fc7f52319",
-      "official_archive_member": "DLLs/libcrypto-3.dll",
+      "controlled_runtime_member": "DLLs/libcrypto-3.dll",
       "pe_file_version": "3.5.9.0"
     },
     "libffi-8.dll": {
       "bytes": 39696,
       "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
-      "official_archive_member": "DLLs/libffi-8.dll",
+      "controlled_runtime_member": "DLLs/libffi-8.dll",
       "pe_file_version": null
     },
     "libssl-3.dll": {
       "bytes": 1308920,
       "sha256": "8957182a9c385bfd9f3f790921de2ddc614cf91f99edbed4e9e5446a46504e32",
-      "official_archive_member": "DLLs/libssl-3.dll",
+      "controlled_runtime_member": "DLLs/libssl-3.dll",
       "pe_file_version": "3.5.9.0"
     },
     "python315.dll": {
-      "bytes": 7910624,
-      "sha256": "9862572fd449f32a62c1eaec2c6750a9c9fa512f4c9c2ea0e66776cf9212b7c2",
-      "official_archive_member": "python315.dll",
+      "bytes": 7450112,
+      "sha256": "cf90fa1e2abac1f0b6c5b53b609de2aad4358b9586715e343d6dd18a141abbc9",
+      "controlled_runtime_member": "python315.dll",
       "pe_file_version": "3.15.2150.1013"
     },
     "select.pyd": {
-      "bytes": 32992,
-      "sha256": "d39e00967809d2d2cf8aea78f6fd39923cfb4ad426ccd19bbfe7163020dafffe",
-      "official_archive_member": "DLLs/select.pyd",
+      "bytes": 18944,
+      "sha256": "f26a3c1360c766580a45cdbab58a59d01769aeed0c6726e307032bb4d4304127",
+      "controlled_runtime_member": "DLLs/select.pyd",
       "pe_file_version": "3.15.2150.1013"
     },
     "sqlite3.dll": {
-      "bytes": 1683680,
-      "sha256": "73530e8f4555605d716352ee98fe0ce205a09e5eec57e7e6360d4c915efcacd8",
-      "official_archive_member": "DLLs/sqlite3.dll",
+      "bytes": 1621504,
+      "sha256": "7c9cc3dc4342cd3fbe879d9bc6ebf1f795d0b791b2772b5f02bd8715b9a70fab",
+      "controlled_runtime_member": "DLLs/sqlite3.dll",
       "pe_file_version": "3.53.4.0"
     },
     "unicodedata.pyd": {
-      "bytes": 753376,
-      "sha256": "ba69f643918cc520331c6a13d489d642131be23dd649d05e0cd1068fae92e76d",
-      "official_archive_member": "DLLs/unicodedata.pyd",
+      "bytes": 740352,
+      "sha256": "911cb8437ab4d5605593596fc096293b5fde29a91d7bad248d176fb1f30458f0",
+      "controlled_runtime_member": "DLLs/unicodedata.pyd",
       "pe_file_version": "3.15.2150.1013"
     }
   },
@@ -410,12 +456,12 @@
       "sha256": "ac4414b50ec6f53b3946a5955fcb13c687e3f1ab9564545016f35481accd3236"
     },
     "CHANGELOG.md": {
-      "bytes": 79563,
-      "sha256": "394c1831c8fd1bc72c8c2d794a6df4f1e3c268d00b5b263372d929a44a33f805"
+      "bytes": 79609,
+      "sha256": "f116d7b6ef39e3ff90c12521b1a20edef01b868a4bcfca7a9666debcc4757264"
     },
     "CLIENT-BUILD.json": {
-      "bytes": 15710,
-      "sha256": "2bd3cd1ed002dc5e07eadbccf081cd52b9fefef42427123517b45ca44655118e"
+      "bytes": 17577,
+      "sha256": "0a3d6d22ff979184e3f3ddacd1814cf464a8fd3487ae828bdf1f0e7163d2f688"
     },
     "PYZ.pyz": {
       "bytes": 3018729,
@@ -430,52 +476,52 @@
       "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e"
     },
     "_bz2.pyd": {
-      "bytes": 86240,
-      "sha256": "2ae45b2ff932dc8a864c862d8150eb3f5b55e60e3e74ec554c4f52c4f1ad81e0"
+      "bytes": 80896,
+      "sha256": "fea2d0aaefef8764f749b66c8aa55536a6214548d3247f6e6ebc5c87704494de"
     },
     "_ctypes.pyd": {
-      "bytes": 144096,
-      "sha256": "8bb22628ae859877b1cf55381c1a8cf54bb0aa70c56295053bc3303262e21c87"
+      "bytes": 139264,
+      "sha256": "68e4a84cdc398417dfba1d16ba6b7ed64714e7c5a0933b8f5d18de562868936e"
     },
     "_decimal.pyd": {
-      "bytes": 326368,
-      "sha256": "93360ba1650bf5f1a673aac22d444ad2d33a039550926f325ad19dafd950e04c"
+      "bytes": 390656,
+      "sha256": "27fbabfdaaee215a720e546d3bd0db7a212e031f7886f7b06a5c15fc907dc0ac"
     },
     "_hashlib.pyd": {
-      "bytes": 72928,
-      "sha256": "3cfb95355576805d6362b878d2207e254125887fce12ff8199becab34beb0694"
+      "bytes": 55808,
+      "sha256": "bd56ec69fb4217f258d2881c7fe662be4696a60fce6e7970538ca8ce686ce13d"
     },
     "_lzma.pyd": {
-      "bytes": 171744,
-      "sha256": "d9033e94387aa70777d23514263d342486899256ffc14478be6bb1e6a0b05683"
+      "bytes": 160256,
+      "sha256": "9f91e6ed1c963c7f698d26d24c5dea052f8a5548aca723e6f557f8b0f6874bfc"
     },
     "_socket.pyd": {
-      "bytes": 88288,
-      "sha256": "ba52c110c0cbc429add306acccf86dd2f77c777a9db68df7cddfc4489e91bce7"
+      "bytes": 76288,
+      "sha256": "6f6e7b27c422f8bc7d1aca59b2fd32803b2b984be6652cb023b4ba62aad4a029"
     },
     "_sqlite3.pyd": {
-      "bytes": 132320,
-      "sha256": "851e8bfa65328162ddad2dff9f7c213f8eceb2d90baf179aa472704ec3ca6295"
+      "bytes": 110592,
+      "sha256": "c032f7e5f9ea2d53018628085ece56b595cf73d076a23b84a87d0263f976a73c"
     },
     "_ssl.pyd": {
-      "bytes": 200416,
-      "sha256": "a9c54ec4d115597880e0e44ff26b740328d0388a777dfb613d3aa2eb66b31e49"
+      "bytes": 190976,
+      "sha256": "8fd6a4ba434112b8a446a929a47a92d2ab2f65755a3f274755bc0c6ad82e7820"
     },
     "_uuid.pyd": {
-      "bytes": 27872,
-      "sha256": "a3380826957922fae7350f5ea64fface688bf55c79e086823a4b1d50455a9bfa"
+      "bytes": 13824,
+      "sha256": "adc5941c5624c7936f24e6ec75530ec7e8c1ce8e9795d4576e84276caad7d0f6"
     },
     "_wmi.pyd": {
-      "bytes": 39648,
-      "sha256": "0650bf237b3f556ba844ba372fef6de1b65d618a608014405360aef83f8a4e34"
+      "bytes": 26624,
+      "sha256": "2259962a4f18f9784e32d866460a6ac9bc4c2fa7c743763183efd94a46ae51cd"
     },
     "_zstd.pyd": {
-      "bytes": 506592,
-      "sha256": "a977471edf7b6712a9e89ada98b79b1973c79740632f820b67365f242b5e05cc"
+      "bytes": 489984,
+      "sha256": "440bb0785a4c1a0e0f1a25c5dd7ed5b1b0af00344776f692f1e62b5e706b107f"
     },
     "base_library.zip": {
       "bytes": 1425082,
-      "sha256": "1eab9dc6da971c5a4ff5d7eb0a03e6a4e2fc0a9bcfb3034a831437e0b0d6327e"
+      "sha256": "ac1585def30f32d719f02125b8495d4538f7bb9de5e8d899b73d177ebeb2850e"
     },
     "cli": {
       "bytes": 291,
@@ -518,24 +564,24 @@
       "sha256": "b0fc5fe33d32d8a9c0bebfd93946e452bd3fc871c91e04c71b3ea1e30d6a8622"
     },
     "python315.dll": {
-      "bytes": 7910624,
-      "sha256": "9862572fd449f32a62c1eaec2c6750a9c9fa512f4c9c2ea0e66776cf9212b7c2"
+      "bytes": 7450112,
+      "sha256": "cf90fa1e2abac1f0b6c5b53b609de2aad4358b9586715e343d6dd18a141abbc9"
     },
     "select.pyd": {
-      "bytes": 32992,
-      "sha256": "d39e00967809d2d2cf8aea78f6fd39923cfb4ad426ccd19bbfe7163020dafffe"
+      "bytes": 18944,
+      "sha256": "f26a3c1360c766580a45cdbab58a59d01769aeed0c6726e307032bb4d4304127"
     },
     "sqlite3.dll": {
-      "bytes": 1683680,
-      "sha256": "73530e8f4555605d716352ee98fe0ce205a09e5eec57e7e6360d4c915efcacd8"
+      "bytes": 1621504,
+      "sha256": "7c9cc3dc4342cd3fbe879d9bc6ebf1f795d0b791b2772b5f02bd8715b9a70fab"
     },
     "struct": {
       "bytes": 292,
       "sha256": "9e4ca5b6de2d3d7747c351cee1c1db9ae54182b1b39ed75b89a6cf8cbfa8c687"
     },
     "unicodedata.pyd": {
-      "bytes": 753376,
-      "sha256": "ba69f643918cc520331c6a13d489d642131be23dd649d05e0cd1068fae92e76d"
+      "bytes": 740352,
+      "sha256": "911cb8437ab4d5605593596fc096293b5fde29a91d7bad248d176fb1f30458f0"
     }
   },
   "python_modules": [
@@ -815,13 +861,13 @@
       "sha256": "2713324211652ce4a60e6e21e54f9dc3004299e591b0933a352f1a89c5fb53c2",
       "bytes": 1285
     },
-    "docs/licenses/xz-5.8.1.1-0BSD.txt": {
+    "docs/licenses/xz-5.8.4-0BSD.txt": {
       "sha256": "0b01625d853911cd0e2e088dcfb743261034a091bb379246cb25a14cc4c74bf1",
       "bytes": 607
     },
-    "docs/licenses/xz-5.8.1.1-COPYING.txt": {
-      "sha256": "1d2d9338d5c0620e34ade2153730eff686d07f02a42f889a33d659a30c41eac1",
-      "bytes": 3118
+    "docs/licenses/xz-5.8.4-COPYING.txt": {
+      "sha256": "616a3ad264ce29b8f1cb97e53037b139d406899ca8d1f799651e17bfa09830b8",
+      "bytes": 3119
     },
     "docs/licenses/zlib-ng-2.2.4-LICENSE.md": {
       "sha256": "6c9f0d975b41afaa34d22f55bb8986ce69e5cb7ad327cb2b28820cd425edf5ee",
@@ -833,14 +879,16 @@
     }
   },
   "windows_ucrt": "Operating-system component on the qualified Windows host; no ucrtbase.dll or API-set DLLs are bundled",
-  "upstream_sbom_scope": "The upstream full Python distribution SBOM is provenance only. pip, Tk, Expat and uncollected packages in it are not claimed as shipped",
-  "security_scope": "Official Python/OpenSSL/SQLite/PyInstaller advisories reviewed 2026-10-31; fixed PyPI build lock audited separately. Not a comprehensive native CVE certification or future vulnerability guarantee",
+  "upstream_sbom_scope": "The full PSF SBOM is baseline provenance; controlled CPython/XZ source build identities override it. pip, Tk, Expat and uncollected packages in it are not claimed as shipped",
+  "security_scope": "Official Python/OpenSSL/SQLite/PyInstaller/XZ advisories reviewed 2026-10-31; fixed PyPI build lock audited separately. Not a comprehensive native CVE certification or future vulnerability guarantee",
   "security_sources": [
     "https://www.python.org/downloads/release/python-3152/",
     "https://openssl-library.org/source/",
     "https://openssl-library.org/news/vulnerabilities-3.5/",
     "https://sqlite.org/cves.html",
     "https://pyinstaller.org/en/stable/CHANGES.html",
-    "https://github.com/pyinstaller/pyinstaller/security/advisories/GHSA-9fxf-4qw3-ghmr"
+    "https://github.com/pyinstaller/pyinstaller/security/advisories/GHSA-9fxf-4qw3-ghmr",
+    "https://github.com/tukaani-project/xz/security/advisories/GHSA-5qpq-xqfv-j9pg",
+    "https://github.com/tukaani-project/xz/security/advisories/GHSA-x872-m794-cxhv"
   ]
 }
