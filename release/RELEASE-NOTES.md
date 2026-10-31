@@ -11,6 +11,12 @@ sources, patched XZ 5.8.4, OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller 6.22.3.
 The JAR/DLL remain unchanged. The runtime is not an unmodified PSF binary package.
 The initializer, runtime compatibility and packaging are checked offline against the final package.
 Those checks do not add native engineering or clean-machine qualification.
+The exact three components also completed one owned, visible, empty-session cold
+start (27.60 seconds) and one fresh preview/confirmation for normal ProEngineerEnd
+exit (held-process exit code 0). Generation, process, recovery and the applicable
+isolated unsigned policy were checked. No model was loaded or changed; the prior
+14 unknown/running history records were unchanged. See NATIVE-START-EXIT.json for
+component-bound evidence digests and the limited scope of this observation.
 Bounded native observations remain limited to visible-window Creo 13.4.1.0/JDK 25.0.3,
 source RGB, rigid placement and save/empty/reopen/normal-exit paths. Complex assemblies
 can take minutes. Material/density edits, instance-only appearance, advanced assembly,
