@@ -14,6 +14,11 @@ STEP delivery, deletion and drawing symbols remain restricted. Complex assemblie
 can take minutes. `reference` reports beta/partial readiness; command presence is
 not proof of native qualification.
 
+This package rebuilds only the client with official Python 3.15.2 and PyInstaller
+6.22.3. Its exact embedded runtime and old-history compatibility are checked offline;
+the unchanged JAR/DLL retain their original build sources. Offline runtime checks
+do not extend the historic native qualification.
+
 ## Install the complete Windows package
 
 Download the Windows x64 ZIP and `checksums.txt` from this repository's prerelease.

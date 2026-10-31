@@ -7,7 +7,8 @@
       "ref": "openssl-3.5.9",
       "path": "LICENSE.txt",
       "source_git_blob": "49cc83d2ee29d13453188217f0e4edd70c7f842f",
-      "source_url": "https://github.com/openssl/openssl/blob/openssl-3.5.9/LICENSE.txt"
+      "source_url": "https://github.com/openssl/openssl/blob/openssl-3.5.9/LICENSE.txt",
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
     },
     {
       "file": "docs/licenses/libffi-3.4.4-LICENSE.txt",
@@ -15,7 +16,8 @@
       "ref": "v3.4.4",
       "path": "LICENSE",
       "source_git_blob": "75d1bce11f9118ccfd96b24a2e49af078da1b469",
-      "source_url": "https://github.com/libffi/libffi/blob/v3.4.4/LICENSE"
+      "source_url": "https://github.com/libffi/libffi/blob/v3.4.4/LICENSE",
+      "sha256": "2c9c2acb9743e6b007b91350475308aee44691d96aa20eacef8e199988c8c388"
     },
     {
       "file": "docs/licenses/xz-5.8.1.1-COPYING.txt",
@@ -23,7 +25,8 @@
       "ref": "xz-5.8.1.1",
       "path": "COPYING",
       "source_git_blob": "ef3371389d7d45db6593a146fd9e027347f3122c",
-      "source_url": "https://github.com/python/cpython-source-deps/blob/xz-5.8.1.1/COPYING"
+      "source_url": "https://github.com/python/cpython-source-deps/blob/xz-5.8.1.1/COPYING",
+      "sha256": "1d2d9338d5c0620e34ade2153730eff686d07f02a42f889a33d659a30c41eac1"
     },
     {
       "file": "docs/licenses/xz-5.8.1.1-0BSD.txt",
@@ -31,7 +34,8 @@
       "ref": "xz-5.8.1.1",
       "path": "COPYING.0BSD",
       "source_git_blob": "4a9be38928b35bb910d58d63aa91eb1963c7784a",
-      "source_url": "https://github.com/python/cpython-source-deps/blob/xz-5.8.1.1/COPYING.0BSD"
+      "source_url": "https://github.com/python/cpython-source-deps/blob/xz-5.8.1.1/COPYING.0BSD",
+      "sha256": "0b01625d853911cd0e2e088dcfb743261034a091bb379246cb25a14cc4c74bf1"
     },
     {
       "file": "docs/licenses/zlib-ng-2.2.4-LICENSE.md",
@@ -39,7 +43,8 @@
       "ref": "2.2.4",
       "path": "LICENSE.md",
       "source_git_blob": "e866d7ac18620a2229727e3a0512ab688176cbd8",
-      "source_url": "https://github.com/zlib-ng/zlib-ng/blob/2.2.4/LICENSE.md"
+      "source_url": "https://github.com/zlib-ng/zlib-ng/blob/2.2.4/LICENSE.md",
+      "sha256": "6c9f0d975b41afaa34d22f55bb8986ce69e5cb7ad327cb2b28820cd425edf5ee"
     },
     {
       "file": "docs/licenses/HACL-LICENSE.txt",
@@ -47,7 +52,8 @@
       "ref": "8ba599b2f6c9701b3dc961db895b0856a2210f76",
       "path": "LICENSE",
       "source_git_blob": "9c8f3ea0871e0bfe81da0fa6e7c1d7d156dc380e",
-      "source_url": "https://github.com/hacl-star/hacl-star/blob/8ba599b2f6c9701b3dc961db895b0856a2210f76/LICENSE"
+      "source_url": "https://github.com/hacl-star/hacl-star/blob/8ba599b2f6c9701b3dc961db895b0856a2210f76/LICENSE",
+      "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1"
     },
     {
       "file": "docs/licenses/bzip2-1.0.8-LICENSE.txt",
@@ -55,7 +61,8 @@
       "ref": "bzip2-1.0.8",
       "path": "LICENSE",
       "source_git_blob": "81a37eab7a5be1a34456f38adb74928cc9073e9b",
-      "source_url": "https://github.com/python/cpython-source-deps/blob/bzip2-1.0.8/LICENSE"
+      "source_url": "https://github.com/python/cpython-source-deps/blob/bzip2-1.0.8/LICENSE",
+      "sha256": "c6dbbf828498be844a89eaa3b84adbab3199e342eb5cb2ed2f0d4ba7ec0f38a3"
     },
     {
       "file": "docs/licenses/mpdecimal-4.0.0-LICENSE.txt",
@@ -63,24 +70,38 @@
       "ref": "mpdecimal-4.0.0",
       "path": "COPYRIGHT.txt",
       "source_git_blob": "a78c3f6abf749f384a54d1fad0a2800457cfead7",
-      "source_url": "https://github.com/python/cpython-source-deps/blob/mpdecimal-4.0.0/COPYRIGHT.txt"
+      "source_url": "https://github.com/python/cpython-source-deps/blob/mpdecimal-4.0.0/COPYRIGHT.txt",
+      "sha256": "2713324211652ce4a60e6e21e54f9dc3004299e591b0933a352f1a89c5fb53c2"
     },
     {
       "file": "docs/licenses/zstd-1.5.7-LICENSE.txt",
       "repository": "facebook/zstd",
       "ref": "v1.5.7",
       "path": "LICENSE",
-      "source_url": "https://raw.githubusercontent.com/facebook/zstd/v1.5.7/LICENSE"
+      "source_url": "https://raw.githubusercontent.com/facebook/zstd/v1.5.7/LICENSE",
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8"
     },
     {
       "file": "docs/licenses/PYTHON-3.15.2-LICENSE.txt",
       "source_url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
-      "archive_member": "LICENSE.txt"
+      "archive_member": "LICENSE.txt",
+      "sha256": "935cf13e19f8c31b497d20b05d73623431a226b230c3599bc30fa3348979bc68"
     },
     {
       "file": "docs/licenses/PYINSTALLER-6.22.3-COPYING.txt",
       "source_url": "https://pypi.org/project/pyinstaller/6.22.3/",
-      "archive_member": "pyinstaller-6.22.3.dist-info/licenses/COPYING.txt"
+      "archive_member": "pyinstaller-6.22.3.dist-info/licenses/COPYING.txt",
+      "sha256": "0598064c7d2718e38d7914a7d08343b2fa008e3bea9ebba2aa7a6ffa5900dd64"
+    },
+    {
+      "file": "docs/licenses/HACL-GENERATED-MIT.txt",
+      "repository": "python/cpython",
+      "ref": "v3.15.2",
+      "path": "Modules/_hacl/Hacl_Hash_SHA2.c",
+      "source_git_blob": "d2ee0c9ef5172104df324002881df9da700619bd",
+      "source_url": "https://github.com/python/cpython/blob/v3.15.2/Modules/_hacl/Hacl_Hash_SHA2.c",
+      "extraction": "Complete leading generated-code MIT license comment",
+      "sha256": "c673e1309c5033a6d58788704aac155b07624eadfe7d013265a3859db95cca42"
     }
   ]
 }

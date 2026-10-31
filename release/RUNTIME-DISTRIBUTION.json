@@ -1,0 +1,846 @@
+{
+  "schema": "creo-frozen-runtime-distribution/v1",
+  "version": "1.1.0-beta.1",
+  "client": {
+    "sha256": "cd3c18cbc139dfb85b0c9f20ac9a30734b81d29385a9d7a87379ad097d771668",
+    "bytes": 11786239
+  },
+  "client_source_commit": "87ad66e6e5d6a549545620b4d8899ef7176f32e5",
+  "runtime": {
+    "python": "3.15.2",
+    "openssl": "OpenSSL 3.5.9 29 Sep 2026",
+    "sqlite": "3.53.4",
+    "pyinstaller": "6.22.3",
+    "free_threaded": false
+  },
+  "official_distribution": {
+    "url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
+    "sha256": "d6da9c33a32cf111e1d52b91392c83ea6a808545b646e0557f66cb6d9ee76785",
+    "index_url": "https://www.python.org/ftp/python/3.15.2/windows-3.15.2.json",
+    "sbom_url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip.spdx.json",
+    "authenticode_signer": "Python Software Foundation",
+    "installation": "Official ordinary x64 ZIP, isolated extraction; no system registration",
+    "index_sha256": "4e6277874416b570dcc6971243105b17097fb7412bc17959aefb1d28da46a778",
+    "sbom_sha256": "c2da4e6f1afbc6d6ca5ca128124757e97fe77f9420ec9e6dd06ee6404d20a898"
+  },
+  "embedded_client_build_sha256": "2bd3cd1ed002dc5e07eadbccf081cd52b9fefef42427123517b45ca44655118e",
+  "components": [
+    {
+      "name": "CPython",
+      "version": "3.15.2",
+      "source": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-cpython",
+      "contained_in": [
+        "python315.dll"
+      ],
+      "license": "PSF-2.0 and included notices",
+      "notices": [
+        "docs/licenses/PYTHON-3.15.2-LICENSE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "openssl",
+      "version": "3.5.9",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/openssl-3.5.9.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-openssl",
+      "contained_in": [
+        "_ssl.pyd",
+        "_hashlib.pyd",
+        "libssl-3.dll",
+        "libcrypto-3.dll"
+      ],
+      "license": "Apache-2.0",
+      "notices": [
+        "docs/licenses/OpenSSL-3.5.9-LICENSE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "sqlite",
+      "version": "3.53.4.0",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/sqlite-3.53.4.0.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-sqlite",
+      "contained_in": [
+        "_sqlite3.pyd",
+        "sqlite3.dll"
+      ],
+      "license": "Public domain",
+      "notices": [
+        "docs/licenses/SQLite-NOTICE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "libffi",
+      "version": "3.4.4",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/libffi-3.4.4.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-libffi",
+      "contained_in": [
+        "_ctypes.pyd",
+        "libffi-8.dll"
+      ],
+      "license": "MIT",
+      "notices": [
+        "docs/licenses/libffi-3.4.4-LICENSE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "bzip2",
+      "version": "1.0.8",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/bzip2-1.0.8.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-bzip2",
+      "contained_in": [
+        "_bz2.pyd"
+      ],
+      "license": "bzip2-1.0.6",
+      "notices": [
+        "docs/licenses/bzip2-1.0.8-LICENSE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "xz",
+      "version": "5.8.1.1",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/xz-5.8.1.1.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-xz",
+      "contained_in": [
+        "_lzma.pyd"
+      ],
+      "license": "0BSD and included notices",
+      "notices": [
+        "docs/licenses/xz-5.8.1.1-COPYING.txt",
+        "docs/licenses/xz-5.8.1.1-0BSD.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "mpdecimal",
+      "version": "4.0.0",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/mpdecimal-4.0.0.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-mpdecimal",
+      "contained_in": [
+        "_decimal.pyd"
+      ],
+      "license": "BSD-2-Clause",
+      "notices": [
+        "docs/licenses/mpdecimal-4.0.0-LICENSE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "zstd",
+      "version": "1.5.7",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/zstd-1.5.7.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-zstd",
+      "contained_in": [
+        "_zstd.pyd"
+      ],
+      "license": "BSD-3-Clause",
+      "notices": [
+        "docs/licenses/zstd-1.5.7-LICENSE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "zlib-ng",
+      "version": "2.2.4",
+      "source": "https://github.com/python/cpython-source-deps/archive/refs/tags/zlib-ng-2.2.4.tar.gz",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-zlib-ng",
+      "contained_in": [
+        "python315.dll"
+      ],
+      "license": "Zlib",
+      "notices": [
+        "docs/licenses/zlib-ng-2.2.4-LICENSE.md"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "hacl-star",
+      "version": "8ba599b2f6c9701b3dc961db895b0856a2210f76",
+      "source": "https://github.com/hacl-star/hacl-star/archive/8ba599b2f6c9701b3dc961db895b0856a2210f76.zip",
+      "upstream_spdx_id": "SPDXRef-PACKAGE-hacl-star-8ba599b2f6c9701b3dc961db895b0856a2210f76",
+      "contained_in": [
+        "python315.dll"
+      ],
+      "license": "MIT generated code; upstream Apache-2.0 notice retained",
+      "notices": [
+        "docs/licenses/HACL-GENERATED-MIT.txt",
+        "docs/licenses/HACL-LICENSE.txt"
+      ],
+      "version_evidence": "Actual embedded file hashes equal the official distribution; its exact build SBOM identifies linked sources"
+    },
+    {
+      "name": "Microsoft Visual C++ runtime",
+      "version": "14.51.36247.0",
+      "contained_in": [
+        "VCRUNTIME140.dll",
+        "VCRUNTIME140_1.dll"
+      ],
+      "source": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
+      "license": "Microsoft Distributable Code conditions",
+      "notices": [
+        "docs/licenses/PYTHON-3.15.2-LICENSE.txt",
+        "docs/licenses/MICROSOFT-RUNTIME-NOTICE.md"
+      ]
+    },
+    {
+      "name": "PyInstaller bootloader and import hooks",
+      "version": "6.22.3",
+      "source": "https://pypi.org/project/pyinstaller/6.22.3/",
+      "license": "GPL-2.0-or-later with Bootloader Exception",
+      "notices": [
+        "docs/licenses/PYINSTALLER-6.22.3-COPYING.txt"
+      ],
+      "stock_bootloader_sha256": "581ea23eb35cee8f9df8835c892e91416df95ca629b1a6050289aea19390e08d",
+      "security_checks_enabled": true
+    }
+  ],
+  "native_files": {
+    "VCRUNTIME140.dll": {
+      "bytes": 178616,
+      "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7",
+      "official_archive_member": "vcruntime140.dll",
+      "pe_file_version": "14.51.36247.0"
+    },
+    "VCRUNTIME140_1.dll": {
+      "bytes": 50112,
+      "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e",
+      "official_archive_member": "vcruntime140_1.dll",
+      "pe_file_version": "14.51.36247.0"
+    },
+    "_bz2.pyd": {
+      "bytes": 86240,
+      "sha256": "2ae45b2ff932dc8a864c862d8150eb3f5b55e60e3e74ec554c4f52c4f1ad81e0",
+      "official_archive_member": "DLLs/_bz2.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_ctypes.pyd": {
+      "bytes": 144096,
+      "sha256": "8bb22628ae859877b1cf55381c1a8cf54bb0aa70c56295053bc3303262e21c87",
+      "official_archive_member": "DLLs/_ctypes.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_decimal.pyd": {
+      "bytes": 326368,
+      "sha256": "93360ba1650bf5f1a673aac22d444ad2d33a039550926f325ad19dafd950e04c",
+      "official_archive_member": "DLLs/_decimal.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_hashlib.pyd": {
+      "bytes": 72928,
+      "sha256": "3cfb95355576805d6362b878d2207e254125887fce12ff8199becab34beb0694",
+      "official_archive_member": "DLLs/_hashlib.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_lzma.pyd": {
+      "bytes": 171744,
+      "sha256": "d9033e94387aa70777d23514263d342486899256ffc14478be6bb1e6a0b05683",
+      "official_archive_member": "DLLs/_lzma.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_socket.pyd": {
+      "bytes": 88288,
+      "sha256": "ba52c110c0cbc429add306acccf86dd2f77c777a9db68df7cddfc4489e91bce7",
+      "official_archive_member": "DLLs/_socket.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_sqlite3.pyd": {
+      "bytes": 132320,
+      "sha256": "851e8bfa65328162ddad2dff9f7c213f8eceb2d90baf179aa472704ec3ca6295",
+      "official_archive_member": "DLLs/_sqlite3.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_ssl.pyd": {
+      "bytes": 200416,
+      "sha256": "a9c54ec4d115597880e0e44ff26b740328d0388a777dfb613d3aa2eb66b31e49",
+      "official_archive_member": "DLLs/_ssl.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_uuid.pyd": {
+      "bytes": 27872,
+      "sha256": "a3380826957922fae7350f5ea64fface688bf55c79e086823a4b1d50455a9bfa",
+      "official_archive_member": "DLLs/_uuid.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_wmi.pyd": {
+      "bytes": 39648,
+      "sha256": "0650bf237b3f556ba844ba372fef6de1b65d618a608014405360aef83f8a4e34",
+      "official_archive_member": "DLLs/_wmi.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "_zstd.pyd": {
+      "bytes": 506592,
+      "sha256": "a977471edf7b6712a9e89ada98b79b1973c79740632f820b67365f242b5e05cc",
+      "official_archive_member": "DLLs/_zstd.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "libcrypto-3.dll": {
+      "bytes": 6021880,
+      "sha256": "75495fe0e079ab00d49be740d3c710a0b94e3f74f9648cb7cc9f768fc7f52319",
+      "official_archive_member": "DLLs/libcrypto-3.dll",
+      "pe_file_version": "3.5.9.0"
+    },
+    "libffi-8.dll": {
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "official_archive_member": "DLLs/libffi-8.dll",
+      "pe_file_version": null
+    },
+    "libssl-3.dll": {
+      "bytes": 1308920,
+      "sha256": "8957182a9c385bfd9f3f790921de2ddc614cf91f99edbed4e9e5446a46504e32",
+      "official_archive_member": "DLLs/libssl-3.dll",
+      "pe_file_version": "3.5.9.0"
+    },
+    "python315.dll": {
+      "bytes": 7910624,
+      "sha256": "9862572fd449f32a62c1eaec2c6750a9c9fa512f4c9c2ea0e66776cf9212b7c2",
+      "official_archive_member": "python315.dll",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "select.pyd": {
+      "bytes": 32992,
+      "sha256": "d39e00967809d2d2cf8aea78f6fd39923cfb4ad426ccd19bbfe7163020dafffe",
+      "official_archive_member": "DLLs/select.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    },
+    "sqlite3.dll": {
+      "bytes": 1683680,
+      "sha256": "73530e8f4555605d716352ee98fe0ce205a09e5eec57e7e6360d4c915efcacd8",
+      "official_archive_member": "DLLs/sqlite3.dll",
+      "pe_file_version": "3.53.4.0"
+    },
+    "unicodedata.pyd": {
+      "bytes": 753376,
+      "sha256": "ba69f643918cc520331c6a13d489d642131be23dd649d05e0cd1068fae92e76d",
+      "official_archive_member": "DLLs/unicodedata.pyd",
+      "pe_file_version": "3.15.2150.1013"
+    }
+  },
+  "archive_members": {
+    ".agent\\driver\\schemas\\adoption-lock.schema.json": {
+      "bytes": 3859,
+      "sha256": "d473c98fb0ac692cc837c5b06e69117a52d09354fe9ec191d6e5e18e474089d0"
+    },
+    ".agent\\driver\\schemas\\agent-eval.schema.json": {
+      "bytes": 8510,
+      "sha256": "6a4cc44691e635ec72c6693e11e4fdf188adc79fce7ef8f98a94daef65df0578"
+    },
+    ".agent\\driver\\schemas\\batch.schema.json": {
+      "bytes": 3258,
+      "sha256": "6c7cc33251a267b90e2f99411c2ea85dfc59f3ca5efc016f319baa131f01bfd2"
+    },
+    ".agent\\driver\\schemas\\changelog.schema.json": {
+      "bytes": 2554,
+      "sha256": "25dd93a0524c6d5d22bb9a42945801efd88082e6cd047165fbef2b53e9351665"
+    },
+    ".agent\\driver\\schemas\\common.schema.json": {
+      "bytes": 18709,
+      "sha256": "2e7911303440f362fd588637a2ec8bcebddf8e91621502bdec8b83a5ed318ae3"
+    },
+    ".agent\\driver\\schemas\\context.schema.json": {
+      "bytes": 6297,
+      "sha256": "815582605344370b640361cb383f699c83362a878774d9f33d0c1199a9a9422f"
+    },
+    ".agent\\driver\\schemas\\doctor.schema.json": {
+      "bytes": 2238,
+      "sha256": "e00d4c4eea919412c8d2a00a3dd0bf8cd575ee4ca24241005bc245f3c9593e7a"
+    },
+    ".agent\\driver\\schemas\\evidence.schema.json": {
+      "bytes": 6149,
+      "sha256": "a7d1f9299a2d6f43bfa9111e58f598c3290fa383c8bc7e5bf1ff1068b00e228d"
+    },
+    ".agent\\driver\\schemas\\operation-status.schema.json": {
+      "bytes": 8630,
+      "sha256": "bd09a6043183fcadcea72d3de6a651ee9f62208d0631b2692716b51182fde532"
+    },
+    ".agent\\driver\\schemas\\plan.schema.json": {
+      "bytes": 7227,
+      "sha256": "b24a17934f4f9e5fdc9279869ea9c3a3a6c1ba2c01e38a65aa1565a17c76b123"
+    },
+    ".agent\\driver\\schemas\\product-design.schema.json": {
+      "bytes": 19114,
+      "sha256": "64f637e06166dab1a2482110040c87a4231f3d3deebe91a0f2cd143f19c84d4e"
+    },
+    ".agent\\driver\\schemas\\product-registry.schema.json": {
+      "bytes": 3552,
+      "sha256": "e09b885a72b1953ad50506c7d73715c4ead704b032a92f683aba20f6e1fa0823"
+    },
+    ".agent\\driver\\schemas\\query-page.schema.json": {
+      "bytes": 4589,
+      "sha256": "b4ff6da14a45e5e3952b7076bc3cbb37cd106df07f323828e644782129b69632"
+    },
+    ".agent\\driver\\schemas\\receipt.schema.json": {
+      "bytes": 5612,
+      "sha256": "33559ef2e2dc096b3c4938fa45ca8ac3d7b0c9b62a7d595bb79f1632ee49c4a5"
+    },
+    ".agent\\driver\\schemas\\reference-command.schema.json": {
+      "bytes": 2320,
+      "sha256": "45d1eae0379e006549f0fd779c2b2856e578c25edcd3dce211254ff394d9b57d"
+    },
+    ".agent\\driver\\schemas\\reference-index.schema.json": {
+      "bytes": 1913,
+      "sha256": "5d5d604ce86c243ccfbc6e7aaab37eb2c5012fb9744433567ec8dac0d68b2e65"
+    },
+    ".agent\\driver\\schemas\\reference.schema.json": {
+      "bytes": 9714,
+      "sha256": "b86fff8bc0116afd8f003bbcdd742852101a180527de6236aa632dda34d92ba6"
+    },
+    ".agent\\driver\\schemas\\release-manifest.schema.json": {
+      "bytes": 7648,
+      "sha256": "3cd4ef80566c32b4774d7129264e149c2e880df8d676c287b41a49fd5d0ee48b"
+    },
+    ".agent\\driver\\schemas\\response.schema.json": {
+      "bytes": 7572,
+      "sha256": "ec560493413f1e7245581093c98257a801562a7c4f3f9cb7ad3dc8fc6da72efd"
+    },
+    ".agent\\driver\\schemas\\scope.schema.json": {
+      "bytes": 3021,
+      "sha256": "d3953cd0a704f6b165ee9bc095de190953eb85e7d5d9d7eab7683fcef92728fb"
+    },
+    ".agent\\driver\\schemas\\verification-result.schema.json": {
+      "bytes": 5627,
+      "sha256": "123dce77e838f0e68dfd30efcfea1ad2a85f6c5b55c025d14047577b03d26f0b"
+    },
+    ".agent\\driver\\schemas\\workflow.schema.json": {
+      "bytes": 5564,
+      "sha256": "ac4414b50ec6f53b3946a5955fcb13c687e3f1ab9564545016f35481accd3236"
+    },
+    "CHANGELOG.md": {
+      "bytes": 79563,
+      "sha256": "394c1831c8fd1bc72c8c2d794a6df4f1e3c268d00b5b263372d929a44a33f805"
+    },
+    "CLIENT-BUILD.json": {
+      "bytes": 15710,
+      "sha256": "2bd3cd1ed002dc5e07eadbccf081cd52b9fefef42427123517b45ca44655118e"
+    },
+    "PYZ.pyz": {
+      "bytes": 3018729,
+      "sha256": "157da9e65d283c7900b44ce90c45c9b896c86fa7406ba3bd277dbbbcd12fa9a1"
+    },
+    "VCRUNTIME140.dll": {
+      "bytes": 178616,
+      "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7"
+    },
+    "VCRUNTIME140_1.dll": {
+      "bytes": 50112,
+      "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e"
+    },
+    "_bz2.pyd": {
+      "bytes": 86240,
+      "sha256": "2ae45b2ff932dc8a864c862d8150eb3f5b55e60e3e74ec554c4f52c4f1ad81e0"
+    },
+    "_ctypes.pyd": {
+      "bytes": 144096,
+      "sha256": "8bb22628ae859877b1cf55381c1a8cf54bb0aa70c56295053bc3303262e21c87"
+    },
+    "_decimal.pyd": {
+      "bytes": 326368,
+      "sha256": "93360ba1650bf5f1a673aac22d444ad2d33a039550926f325ad19dafd950e04c"
+    },
+    "_hashlib.pyd": {
+      "bytes": 72928,
+      "sha256": "3cfb95355576805d6362b878d2207e254125887fce12ff8199becab34beb0694"
+    },
+    "_lzma.pyd": {
+      "bytes": 171744,
+      "sha256": "d9033e94387aa70777d23514263d342486899256ffc14478be6bb1e6a0b05683"
+    },
+    "_socket.pyd": {
+      "bytes": 88288,
+      "sha256": "ba52c110c0cbc429add306acccf86dd2f77c777a9db68df7cddfc4489e91bce7"
+    },
+    "_sqlite3.pyd": {
+      "bytes": 132320,
+      "sha256": "851e8bfa65328162ddad2dff9f7c213f8eceb2d90baf179aa472704ec3ca6295"
+    },
+    "_ssl.pyd": {
+      "bytes": 200416,
+      "sha256": "a9c54ec4d115597880e0e44ff26b740328d0388a777dfb613d3aa2eb66b31e49"
+    },
+    "_uuid.pyd": {
+      "bytes": 27872,
+      "sha256": "a3380826957922fae7350f5ea64fface688bf55c79e086823a4b1d50455a9bfa"
+    },
+    "_wmi.pyd": {
+      "bytes": 39648,
+      "sha256": "0650bf237b3f556ba844ba372fef6de1b65d618a608014405360aef83f8a4e34"
+    },
+    "_zstd.pyd": {
+      "bytes": 506592,
+      "sha256": "a977471edf7b6712a9e89ada98b79b1973c79740632f820b67365f242b5e05cc"
+    },
+    "base_library.zip": {
+      "bytes": 1425082,
+      "sha256": "1eab9dc6da971c5a4ff5d7eb0a03e6a4e2fc0a9bcfb3034a831437e0b0d6327e"
+    },
+    "cli": {
+      "bytes": 291,
+      "sha256": "c1bcfff1016a8d4b1f9bc1d926f6e0257ed05c346af28fe7b904fce674373941"
+    },
+    "libcrypto-3.dll": {
+      "bytes": 6021880,
+      "sha256": "75495fe0e079ab00d49be740d3c710a0b94e3f74f9648cb7cc9f768fc7f52319"
+    },
+    "libffi-8.dll": {
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    "libssl-3.dll": {
+      "bytes": 1308920,
+      "sha256": "8957182a9c385bfd9f3f790921de2ddc614cf91f99edbed4e9e5446a46504e32"
+    },
+    "pyi_rth_inspect": {
+      "bytes": 2921,
+      "sha256": "ca24500f196bfd784ce10d5b73f404d9350b10b12bd483890eb266905207bffe"
+    },
+    "pyiboot01_bootstrap": {
+      "bytes": 2049,
+      "sha256": "2562e1ab64d582e9ba0b64fd6d00c908002bf40b20ae5ec1c404b4ff8693a1ca"
+    },
+    "pyimod01_archive": {
+      "bytes": 5035,
+      "sha256": "30651ae552f233143d087718e8b233c1f1fa4c3b29adb73c68caff6d08bf6efc"
+    },
+    "pyimod02_importers": {
+      "bytes": 32409,
+      "sha256": "9943cbd363fdfd324014314b26b7f45a5aef5c49acd9a2a5afb78dc9b537735f"
+    },
+    "pyimod03_ctypes": {
+      "bytes": 6656,
+      "sha256": "702ca23c923ee78f15d8db48d63c47da3144ba4b983390069ca2b07ecbd9bd79"
+    },
+    "pyimod04_pywin32": {
+      "bytes": 1689,
+      "sha256": "b0fc5fe33d32d8a9c0bebfd93946e452bd3fc871c91e04c71b3ea1e30d6a8622"
+    },
+    "python315.dll": {
+      "bytes": 7910624,
+      "sha256": "9862572fd449f32a62c1eaec2c6750a9c9fa512f4c9c2ea0e66776cf9212b7c2"
+    },
+    "select.pyd": {
+      "bytes": 32992,
+      "sha256": "d39e00967809d2d2cf8aea78f6fd39923cfb4ad426ccd19bbfe7163020dafffe"
+    },
+    "sqlite3.dll": {
+      "bytes": 1683680,
+      "sha256": "73530e8f4555605d716352ee98fe0ce205a09e5eec57e7e6360d4c915efcacd8"
+    },
+    "struct": {
+      "bytes": 292,
+      "sha256": "9e4ca5b6de2d3d7747c351cee1c1db9ae54182b1b39ed75b89a6cf8cbfa8c687"
+    },
+    "unicodedata.pyd": {
+      "bytes": 753376,
+      "sha256": "ba69f643918cc520331c6a13d489d642131be23dd649d05e0cd1068fae92e76d"
+    }
+  },
+  "python_modules": [
+    "__future__",
+    "_aix_support",
+    "_ast_unparse",
+    "_colorize",
+    "_compat_pickle",
+    "_opcode_metadata",
+    "_py_abc",
+    "_py_warnings",
+    "_pydatetime",
+    "_pydecimal",
+    "_strptime",
+    "_threading_local",
+    "annotationlib",
+    "argparse",
+    "ast",
+    "base64",
+    "bisect",
+    "bz2",
+    "calendar",
+    "code",
+    "codeop",
+    "compression",
+    "compression._common",
+    "compression._common._streams",
+    "compression.zstd",
+    "compression.zstd._zstdfile",
+    "contextlib",
+    "contextvars",
+    "copy",
+    "creo_cli",
+    "creo_cli.appearance",
+    "creo_cli.assembly_constraints",
+    "creo_cli.binding_diagnostics",
+    "creo_cli.bom",
+    "creo_cli.building",
+    "creo_cli.command_tree",
+    "creo_cli.commands",
+    "creo_cli.commands.appearance",
+    "creo_cli.commands.artifact",
+    "creo_cli.commands.assembly",
+    "creo_cli.commands.build",
+    "creo_cli.commands.detailing",
+    "creo_cli.commands.dimension",
+    "creo_cli.commands.display",
+    "creo_cli.commands.drawing",
+    "creo_cli.commands.family",
+    "creo_cli.commands.feature",
+    "creo_cli.commands.geometry",
+    "creo_cli.commands.layout",
+    "creo_cli.commands.material",
+    "creo_cli.commands.meta",
+    "creo_cli.commands.model",
+    "creo_cli.commands.operation",
+    "creo_cli.commands.parameter",
+    "creo_cli.commands.part",
+    "creo_cli.commands.relation",
+    "creo_cli.commands.resources",
+    "creo_cli.commands.service",
+    "creo_cli.commands.session",
+    "creo_cli.commands.workflow",
+    "creo_cli.commands.workspace",
+    "creo_cli.contract_gen",
+    "creo_cli.core",
+    "creo_cli.dependencies",
+    "creo_cli.deployment",
+    "creo_cli.discovery",
+    "creo_cli.display",
+    "creo_cli.drawing_note_recovery",
+    "creo_cli.drawing_views",
+    "creo_cli.drawing_warnings",
+    "creo_cli.driver",
+    "creo_cli.driver_schema",
+    "creo_cli.driver_scope",
+    "creo_cli.engine",
+    "creo_cli.engineering_properties",
+    "creo_cli.execution_budgets",
+    "creo_cli.export_record",
+    "creo_cli.family_runtime",
+    "creo_cli.install",
+    "creo_cli.machining",
+    "creo_cli.main",
+    "creo_cli.material_files",
+    "creo_cli.model_management",
+    "creo_cli.native_diagnostic_recovery",
+    "creo_cli.native_read_recovery",
+    "creo_cli.object_identity",
+    "creo_cli.operation_index",
+    "creo_cli.operations",
+    "creo_cli.owned_exit",
+    "creo_cli.paths",
+    "creo_cli.presentation",
+    "creo_cli.prismatic",
+    "creo_cli.prismatic_draft",
+    "creo_cli.prismatic_rib",
+    "creo_cli.process_owner",
+    "creo_cli.protected_readback",
+    "creo_cli.registry",
+    "creo_cli.render_record",
+    "creo_cli.requests",
+    "creo_cli.revolved",
+    "creo_cli.runtime_identity",
+    "creo_cli.safety",
+    "creo_cli.schemas",
+    "creo_cli.service_bundle",
+    "creo_cli.service_installation",
+    "creo_cli.sketch",
+    "creo_cli.timing",
+    "creo_cli.transport",
+    "creo_cli.validation",
+    "creo_cli.view_readback",
+    "creo_cli.workflow_properties",
+    "creo_cli.workflow_state",
+    "creo_cli.workflow_tasks",
+    "csv",
+    "ctypes",
+    "ctypes._endian",
+    "ctypes._layout",
+    "ctypes.wintypes",
+    "dataclasses",
+    "datetime",
+    "decimal",
+    "difflib",
+    "dis",
+    "email",
+    "email._encoded_words",
+    "email._header_value_parser",
+    "email._parseaddr",
+    "email._policybase",
+    "email.base64mime",
+    "email.charset",
+    "email.contentmanager",
+    "email.encoders",
+    "email.errors",
+    "email.feedparser",
+    "email.generator",
+    "email.header",
+    "email.headerregistry",
+    "email.iterators",
+    "email.message",
+    "email.parser",
+    "email.policy",
+    "email.quoprimime",
+    "email.utils",
+    "fnmatch",
+    "fractions",
+    "ftplib",
+    "getopt",
+    "getpass",
+    "gettext",
+    "glob",
+    "gzip",
+    "hashlib",
+    "hmac",
+    "http",
+    "http.client",
+    "http.cookiejar",
+    "importlib",
+    "importlib._abc",
+    "importlib._bootstrap",
+    "importlib._bootstrap_external",
+    "importlib.abc",
+    "importlib.machinery",
+    "importlib.metadata",
+    "importlib.metadata._adapters",
+    "importlib.metadata._collections",
+    "importlib.metadata._context",
+    "importlib.metadata._functools",
+    "importlib.metadata._itertools",
+    "importlib.metadata._meta",
+    "importlib.metadata._text",
+    "importlib.metadata._typing",
+    "importlib.readers",
+    "importlib.resources",
+    "importlib.resources._adapters",
+    "importlib.resources._common",
+    "importlib.resources._functional",
+    "importlib.resources._itertools",
+    "importlib.resources.abc",
+    "importlib.resources.readers",
+    "importlib.util",
+    "inspect",
+    "ipaddress",
+    "json",
+    "json.decoder",
+    "json.encoder",
+    "json.scanner",
+    "logging",
+    "lzma",
+    "mimetypes",
+    "netrc",
+    "numbers",
+    "opcode",
+    "pathlib",
+    "pathlib._os",
+    "pickle",
+    "platform",
+    "pprint",
+    "py_compile",
+    "quopri",
+    "random",
+    "secrets",
+    "selectors",
+    "shutil",
+    "signal",
+    "socket",
+    "sqlite3",
+    "sqlite3.__main__",
+    "sqlite3._completer",
+    "sqlite3.dbapi2",
+    "sqlite3.dump",
+    "ssl",
+    "statistics",
+    "string",
+    "stringprep",
+    "subprocess",
+    "sysconfig",
+    "tarfile",
+    "tempfile",
+    "textwrap",
+    "threading",
+    "token",
+    "tokenize",
+    "tracemalloc",
+    "typing",
+    "urllib",
+    "urllib.error",
+    "urllib.parse",
+    "urllib.request",
+    "urllib.response",
+    "uuid",
+    "zipfile",
+    "zipfile._path",
+    "zipfile._path._functools",
+    "zipfile._path.glob"
+  ],
+  "notices": {
+    "docs/licenses/HACL-GENERATED-MIT.txt": {
+      "sha256": "c673e1309c5033a6d58788704aac155b07624eadfe7d013265a3859db95cca42",
+      "bytes": 1208
+    },
+    "docs/licenses/HACL-LICENSE.txt": {
+      "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+      "bytes": 11357
+    },
+    "docs/licenses/MICROSOFT-RUNTIME-NOTICE.md": {
+      "sha256": "6d63b78305e2154dd206ddebdec0a78d1aebdbedf2556bda4077deec20cf2590",
+      "bytes": 1076
+    },
+    "docs/licenses/OpenSSL-3.5.9-LICENSE.txt": {
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+      "bytes": 10175
+    },
+    "docs/licenses/PYINSTALLER-6.22.3-COPYING.txt": {
+      "sha256": "0598064c7d2718e38d7914a7d08343b2fa008e3bea9ebba2aa7a6ffa5900dd64",
+      "bytes": 32604
+    },
+    "docs/licenses/PYTHON-3.15.2-LICENSE.txt": {
+      "sha256": "935cf13e19f8c31b497d20b05d73623431a226b230c3599bc30fa3348979bc68",
+      "bytes": 35407
+    },
+    "docs/licenses/SQLite-NOTICE.txt": {
+      "sha256": "2e15922d7d7bfb89525f3b6bc171de724d2bfe3ce4717115dbef42d35439a05c",
+      "bytes": 514
+    },
+    "docs/licenses/bzip2-1.0.8-LICENSE.txt": {
+      "sha256": "c6dbbf828498be844a89eaa3b84adbab3199e342eb5cb2ed2f0d4ba7ec0f38a3",
+      "bytes": 1896
+    },
+    "docs/licenses/libffi-3.4.4-LICENSE.txt": {
+      "sha256": "2c9c2acb9743e6b007b91350475308aee44691d96aa20eacef8e199988c8c388",
+      "bytes": 1132
+    },
+    "docs/licenses/mpdecimal-4.0.0-LICENSE.txt": {
+      "sha256": "2713324211652ce4a60e6e21e54f9dc3004299e591b0933a352f1a89c5fb53c2",
+      "bytes": 1285
+    },
+    "docs/licenses/xz-5.8.1.1-0BSD.txt": {
+      "sha256": "0b01625d853911cd0e2e088dcfb743261034a091bb379246cb25a14cc4c74bf1",
+      "bytes": 607
+    },
+    "docs/licenses/xz-5.8.1.1-COPYING.txt": {
+      "sha256": "1d2d9338d5c0620e34ade2153730eff686d07f02a42f889a33d659a30c41eac1",
+      "bytes": 3118
+    },
+    "docs/licenses/zlib-ng-2.2.4-LICENSE.md": {
+      "sha256": "6c9f0d975b41afaa34d22f55bb8986ce69e5cb7ad327cb2b28820cd425edf5ee",
+      "bytes": 867
+    },
+    "docs/licenses/zstd-1.5.7-LICENSE.txt": {
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+      "bytes": 1549
+    }
+  },
+  "windows_ucrt": "Operating-system component on the qualified Windows host; no ucrtbase.dll or API-set DLLs are bundled",
+  "upstream_sbom_scope": "The upstream full Python distribution SBOM is provenance only. pip, Tk, Expat and uncollected packages in it are not claimed as shipped",
+  "security_scope": "Official Python/OpenSSL/SQLite/PyInstaller advisories reviewed 2026-10-31; fixed PyPI build lock audited separately. Not a comprehensive native CVE certification or future vulnerability guarantee",
+  "security_sources": [
+    "https://www.python.org/downloads/release/python-3152/",
+    "https://openssl-library.org/source/",
+    "https://openssl-library.org/news/vulnerabilities-3.5/",
+    "https://sqlite.org/cves.html",
+    "https://pyinstaller.org/en/stable/CHANGES.html",
+    "https://github.com/pyinstaller/pyinstaller/security/advisories/GHSA-9fxf-4qw3-ghmr"
+  ]
+}

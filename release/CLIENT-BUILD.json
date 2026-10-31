@@ -1,0 +1,270 @@
+{
+  "schema": "creo-public-client-build/v1",
+  "source_commit": "87ad66e6e5d6a549545620b4d8899ef7176f32e5",
+  "version": "1.1.0-beta.1",
+  "runtime": {
+    "python": "3.15.2",
+    "openssl": "OpenSSL 3.5.9 29 Sep 2026",
+    "sqlite": "3.53.4",
+    "pyinstaller": "6.22.3",
+    "free_threaded": false
+  },
+  "runtime_distribution": {
+    "url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
+    "sha256": "d6da9c33a32cf111e1d52b91392c83ea6a808545b646e0557f66cb6d9ee76785",
+    "index_url": "https://www.python.org/ftp/python/3.15.2/windows-3.15.2.json",
+    "sbom_url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip.spdx.json",
+    "authenticode_signer": "Python Software Foundation",
+    "installation": "Official ordinary x64 ZIP, isolated extraction; no system registration",
+    "index_sha256": "4e6277874416b570dcc6971243105b17097fb7412bc17959aefb1d28da46a778",
+    "sbom_sha256": "c2da4e6f1afbc6d6ca5ca128124757e97fe77f9420ec9e6dd06ee6404d20a898"
+  },
+  "native_build_inputs": {
+    "DLLs/_asyncio.pyd": {
+      "sha256": "fb0768cc8b00cee43638bea2770cae08f2076298ec3db07634818448b6ad67c9",
+      "bytes": 78048
+    },
+    "DLLs/_bz2.pyd": {
+      "sha256": "2ae45b2ff932dc8a864c862d8150eb3f5b55e60e3e74ec554c4f52c4f1ad81e0",
+      "bytes": 86240
+    },
+    "DLLs/_ctypes.pyd": {
+      "sha256": "8bb22628ae859877b1cf55381c1a8cf54bb0aa70c56295053bc3303262e21c87",
+      "bytes": 144096
+    },
+    "DLLs/_decimal.pyd": {
+      "sha256": "93360ba1650bf5f1a673aac22d444ad2d33a039550926f325ad19dafd950e04c",
+      "bytes": 326368
+    },
+    "DLLs/_elementtree.pyd": {
+      "sha256": "7176037f79c25da745403e0f9db184f0d2046eef84ce976c790ff684a202e610",
+      "bytes": 145632
+    },
+    "DLLs/_hashlib.pyd": {
+      "sha256": "3cfb95355576805d6362b878d2207e254125887fce12ff8199becab34beb0694",
+      "bytes": 72928
+    },
+    "DLLs/_lzma.pyd": {
+      "sha256": "d9033e94387aa70777d23514263d342486899256ffc14478be6bb1e6a0b05683",
+      "bytes": 171744
+    },
+    "DLLs/_multiprocessing.pyd": {
+      "sha256": "df1c1a1226a481db6536b6ed697150bc6a34052e4c2cc2ddde59ebda84a68fd6",
+      "bytes": 38112
+    },
+    "DLLs/_overlapped.pyd": {
+      "sha256": "077d6a9ce8a3d379a06d78ac4be2efcf35006fff6cd5be4cd5f574d83e7a9c01",
+      "bytes": 58080
+    },
+    "DLLs/_queue.pyd": {
+      "sha256": "00206e5ea1be8b648ca07d1e68ee244a8d0ee1f4126661187dbe3551c68f6e3b",
+      "bytes": 36064
+    },
+    "DLLs/_remote_debugging.pyd": {
+      "sha256": "dda2ce527761371a7acaa0fb5f7e96489b782ffc68dd1f582c04ad6bd967def8",
+      "bytes": 188640
+    },
+    "DLLs/_socket.pyd": {
+      "sha256": "ba52c110c0cbc429add306acccf86dd2f77c777a9db68df7cddfc4489e91bce7",
+      "bytes": 88288
+    },
+    "DLLs/_sqlite3.pyd": {
+      "sha256": "851e8bfa65328162ddad2dff9f7c213f8eceb2d90baf179aa472704ec3ca6295",
+      "bytes": 132320
+    },
+    "DLLs/_ssl.pyd": {
+      "sha256": "a9c54ec4d115597880e0e44ff26b740328d0388a777dfb613d3aa2eb66b31e49",
+      "bytes": 200416
+    },
+    "DLLs/_tkinter.pyd": {
+      "sha256": "3b4e3ba215fef3521fc72293afe52aa209e981c32e55ee94427032dcaecc26b7",
+      "bytes": 70880
+    },
+    "DLLs/_uuid.pyd": {
+      "sha256": "a3380826957922fae7350f5ea64fface688bf55c79e086823a4b1d50455a9bfa",
+      "bytes": 27872
+    },
+    "DLLs/_wmi.pyd": {
+      "sha256": "0650bf237b3f556ba844ba372fef6de1b65d618a608014405360aef83f8a4e34",
+      "bytes": 39648
+    },
+    "DLLs/_zoneinfo.pyd": {
+      "sha256": "d2e531fb814650d3128779f92e032127e0082258441b255e81dadcc0cda13d33",
+      "bytes": 51424
+    },
+    "DLLs/_zstd.pyd": {
+      "sha256": "a977471edf7b6712a9e89ada98b79b1973c79740632f820b67365f242b5e05cc",
+      "bytes": 506592
+    },
+    "DLLs/libcrypto-3.dll": {
+      "sha256": "75495fe0e079ab00d49be740d3c710a0b94e3f74f9648cb7cc9f768fc7f52319",
+      "bytes": 6021880
+    },
+    "DLLs/libffi-8.dll": {
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "bytes": 39696
+    },
+    "DLLs/libssl-3.dll": {
+      "sha256": "8957182a9c385bfd9f3f790921de2ddc614cf91f99edbed4e9e5446a46504e32",
+      "bytes": 1308920
+    },
+    "DLLs/libtommath.dll": {
+      "sha256": "a3a456c80ff33b80e87891ec77f796df350b0739f3354fd0fa33f894fc656ddb",
+      "bytes": 95456
+    },
+    "DLLs/pyexpat.pyd": {
+      "sha256": "2970cef7642e14721b4791bf40720d25f5c9fb8df4d78c725bd859391d6dec51",
+      "bytes": 215264
+    },
+    "DLLs/select.pyd": {
+      "sha256": "d39e00967809d2d2cf8aea78f6fd39923cfb4ad426ccd19bbfe7163020dafffe",
+      "bytes": 32992
+    },
+    "DLLs/sqlite3.dll": {
+      "sha256": "73530e8f4555605d716352ee98fe0ce205a09e5eec57e7e6360d4c915efcacd8",
+      "bytes": 1683680
+    },
+    "DLLs/tcl90.dll": {
+      "sha256": "b7466b74e0bf656074364dccc965579c2eda3d734f09b326c51a296638c26b2c",
+      "bytes": 3383352
+    },
+    "DLLs/tcl9tk90.dll": {
+      "sha256": "4c80618f6fc81a0dc00f8e426695a93feb3c470961e1d690200daadd8781f0d7",
+      "bytes": 2152408
+    },
+    "DLLs/unicodedata.pyd": {
+      "sha256": "ba69f643918cc520331c6a13d489d642131be23dd649d05e0cd1068fae92e76d",
+      "bytes": 753376
+    },
+    "DLLs/winsound.pyd": {
+      "sha256": "7db6013f33689d7f56e218073fc6af7a3c1548b2089915b6ef558722826eec8b",
+      "bytes": 32480
+    },
+    "DLLs/zlib1.dll": {
+      "sha256": "5807bf5329052ab504074e99387988afff8268a19d4e520b2c77686df2593c8e",
+      "bytes": 116960
+    },
+    "python.exe": {
+      "sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+      "bytes": 105696
+    },
+    "python3.dll": {
+      "sha256": "e394c32bb9e2f0d813f4ed5b858ba717e54e3e6547cd36a8d8aaee66b9ca347f",
+      "bytes": 76512
+    },
+    "python315.dll": {
+      "sha256": "9862572fd449f32a62c1eaec2c6750a9c9fa512f4c9c2ea0e66776cf9212b7c2",
+      "bytes": 7910624
+    },
+    "python3t.dll": {
+      "sha256": "c4c1db006228553e4b728b7856b74a007384e608c7b07e6ae8e0d8251d077e5b",
+      "bytes": 76512
+    },
+    "pythonw.exe": {
+      "sha256": "eec71feb5d41f43b707a1736e8c3a510bd667bc5e1062de924cc24a7713eace0",
+      "bytes": 104160
+    },
+    "vcruntime140.dll": {
+      "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7",
+      "bytes": 178616
+    },
+    "vcruntime140_1.dll": {
+      "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e",
+      "bytes": 50112
+    }
+  },
+  "pyinstaller_bootloader_sha256": "581ea23eb35cee8f9df8835c892e91416df95ca629b1a6050289aea19390e08d",
+  "build_lock_sha256": "280933bb25f5267ad83c5749fd693067009e12350cbcbf28a823006968c8f12c",
+  "source_files": {
+    "creo_cli/__init__.py": "30c6943d2562d1320ad3ad8c0946fb1818b0f14f4da41126ee10282ef638e478",
+    "creo_cli/__main__.py": "130acafaef8483625c857235eb995dace14121a5ba10eec2c7464c9f045153a7",
+    "creo_cli/appearance.py": "a130aaf62a4e95ac92b1e1e3873c66863784a41773ce752133438621df5e69eb",
+    "creo_cli/assembly_constraints.py": "d3be566d0d482663890fb842df3596f64709b1a969d2ab8c78a389fe8f96956e",
+    "creo_cli/binding_diagnostics.py": "3d3fce0d56b53785718d1c1f5c8b84308f4a3d168ca0387063dbc5d2b3b198b7",
+    "creo_cli/bom.py": "991ffd82103c15b402291d4af58ae6ca2a49aa2030d0ddc13004d8dcbf8a0f18",
+    "creo_cli/building.py": "06b60f011584caabeb4b081dc921f495de98ae10033f3e7a8252def1eec648ff",
+    "creo_cli/command_tree.py": "ae3b8e7713c2403cba73434cf2fb431dac37433db258aaec184e09ead6b8b66c",
+    "creo_cli/commands/__init__.py": "935eb58cc89219c01c9c2c989c51942c30f30b16c77047c9252d71c9929d163a",
+    "creo_cli/commands/appearance.py": "8cb691321309a9700c920171747b59d0711bb006bf344ac5c8d9524a27124385",
+    "creo_cli/commands/artifact.py": "10d00f65bd75a740cec6ebe5446a0a7c0ef9555a04450d4e86b2d3938072c62e",
+    "creo_cli/commands/assembly.py": "14b4ae3643b6e234f68629abfdccb83eaf499da805b59d6e0697779df4f1700d",
+    "creo_cli/commands/build.py": "22c0536bde397403ce952d97bf7a18a4204d57e111c65124f30a6b0a9514c6f6",
+    "creo_cli/commands/detailing.py": "2c198cb6ff237be8ab5b3f7efe9fb2fd8c254232a9cfc6d4a0f73adfc6a24d28",
+    "creo_cli/commands/dimension.py": "b7920bf5921b7c0df1646e452f7e46b6c221a5ab53ca05c567f74cc2dedc1fb1",
+    "creo_cli/commands/display.py": "47ebfc18e10f149a65be09d005842e2a14662749af254bb22516f53f3e41cd83",
+    "creo_cli/commands/drawing.py": "c8a01345a21055c97bb553908fb67e71c699f81899ee844baddf0dd23400e8ce",
+    "creo_cli/commands/family.py": "6b9a10e6eba1d1aa240e06e4babfbb53540bb162577ad53bb60f7ce63855f603",
+    "creo_cli/commands/feature.py": "6a960ec4a12deb3ec7439cb56365527cb6574cd67e4927801fed3eb4bb87f3b8",
+    "creo_cli/commands/geometry.py": "0e1d4a659f2d9904ff7c682fd32749ecdfa26f2474985c990d2c1715c95c275e",
+    "creo_cli/commands/layout.py": "352dafaefc6e04462e2b42f3fa48f1ac3a5aabccd3e7c9479abba1965a25fa56",
+    "creo_cli/commands/material.py": "5f91f6f2dcd56d67590953e00092e84c524ee76afc321383f11121893f43b727",
+    "creo_cli/commands/meta.py": "dd33c76bff37ea302e13ffd3c7427beb7b4ea94b3c6405878f74f4b1b8c04525",
+    "creo_cli/commands/model.py": "60a39e5059c55d3968cf6bfbd2fe42962f163056424a6360594a35b81f1dae13",
+    "creo_cli/commands/operation.py": "353c3d85513ec3f0efc4f26f9479a413e439f5e6b6e3d5dac700a086d27a1b91",
+    "creo_cli/commands/parameter.py": "401a58131cf5beb67df4505cc940dc9b90334c1db3e39e316579992cf37dbfc7",
+    "creo_cli/commands/part.py": "2e57b920a4af5d8773d065f840b9be37c2a4b7f8a9cc9f43a661242afddcb431",
+    "creo_cli/commands/relation.py": "09d35bf3179df2a2f3cafd692772764405462de94a9c0924ca5d83ec1716b240",
+    "creo_cli/commands/resources.py": "5bec301e0461a60923561565fd5e4085ecaba44a551f4c6e11df3d45e4b0a858",
+    "creo_cli/commands/service.py": "87a1587714fa6977763c0cdf23e6b6c17faaa0cea0af53ebf9b8c7fd1e458e54",
+    "creo_cli/commands/session.py": "70ad1dd0c14fe5c8602fa8b197bea46dbbb3febf3b880fe37cdb1e208e7aca7f",
+    "creo_cli/commands/workflow.py": "72ad63e88e53714e4045064f29209b582ada1d427385ddeadf0ddd3deb1ba0cf",
+    "creo_cli/commands/workspace.py": "f9669fce76aec3917a3ebdd01091cb5da3f55cd892dd1977e54b22de6e63f296",
+    "creo_cli/contract_gen.py": "e110de8f8ab14ab6987e20ac309ce456d91d5c85da4ce8d023d29b817b03fd84",
+    "creo_cli/core.py": "730a8d03f8c824523e9fbfdb839b1b80d643d63dd281e7651aaf9aeed5a5a55a",
+    "creo_cli/dependencies.py": "92e94d53d0739d8259b92237f69ab5b68089e609e6778ed690da56ee2756aa81",
+    "creo_cli/deployment.py": "a53c6fa766d028e1c1093a07b36776b36806fb6986b152b769f52e763581685c",
+    "creo_cli/discovery.py": "768dd7c418d52bafad85a5759428762253844a9f7a24551f3f9f9dbe49d4e4b1",
+    "creo_cli/display.py": "6bb7e2e30fb72a782a25522bece91fb5a66ee42307f96f9d4430d100faa30fe8",
+    "creo_cli/drawing_note_recovery.py": "1bb282b52553c8cf6e8eeb0b267f58b0a02d66a1f229035db2af176d46122376",
+    "creo_cli/drawing_views.py": "6a81c9b83ae678140143fa4542383aff43577aeaf0937be90e4153858e56f7aa",
+    "creo_cli/drawing_warnings.py": "9e9fd51edb85d97786b838a3225ca29354c324f19f163ba2b1d616dad28a8b38",
+    "creo_cli/driver.py": "feb67a9623b3d8405af5e313febaf86f73840fc78d9fd477e82c95f25c5cba8e",
+    "creo_cli/driver_schema.py": "b1b6d78fcc8dc9e2615ba0f82d0c3b81ca506fbb9b760b883395089c490032dc",
+    "creo_cli/driver_scope.py": "9432f3c2d0986b519451c2b43acaf1542323388370c71099d3a50ce84deb0ec4",
+    "creo_cli/engine.py": "a93fbecb2809fd1abc2ca1208dab0a8e35b399c410015ec50bfc7b4baf48ba85",
+    "creo_cli/engineering_properties.py": "81073315932cf97994bc969809bd0c9cd6f97b15a85e6f5b31e8c4dbbe5a5197",
+    "creo_cli/execution_budgets.py": "58d603cd34922c3abd17999e021ac0a61aa8decda4d61bd3e00dc0106fd7183c",
+    "creo_cli/export_record.py": "54101633970aff2c0edfa8c685ee247ea393531f460ba825482ecfb80e36900d",
+    "creo_cli/family_runtime.py": "1c3ce79afae7334330bc8876574060144c9b6fb5d25501e7e5d73d73b3780def",
+    "creo_cli/install.py": "66a646ae4fa82c63ddbb70a2c2136fbedf164bc53855174fb6ce4a3ba11003f2",
+    "creo_cli/machining.py": "fcffc4efa97403a1fb2bd3b5d8cd18d1145c867587fe3378fc8e942f5aa1c577",
+    "creo_cli/main.py": "8b521b4481921a1930e0963cac6fd7298e4ee75c7db1fc0dffc021a271ee9688",
+    "creo_cli/material_files.py": "c689dfdb87168ed09551b67c1deb9a8d32cbd0626ea36c3444166b86fa5f795e",
+    "creo_cli/model_management.py": "88cffcd678dee2cdc7b0e9a04402f617f3ad4cff374c5dd732f449f52cef66ee",
+    "creo_cli/native_diagnostic_recovery.py": "183cca9d30731990f8c4cdb76992301dafd4a2a71b83ae6cc43125148dbe571a",
+    "creo_cli/native_read_recovery.py": "764fe01debdc9089b1a8b9a99853fed42ca0499556f3ab5616229626965b24d1",
+    "creo_cli/object_identity.py": "68ae08a1da72722283b7c949ecaefe446303e40ba2c9bf644bb8c38e88ecefbb",
+    "creo_cli/operation_index.py": "1e82668a5e3a2bd71fa55d7090c5542f1c28f23e6f510150b47195e74f4b6e0c",
+    "creo_cli/operations.py": "d9598a1d6d31b3efb891c5b299fc130ab96b08cdc0726bb8ad14ff1f6340c001",
+    "creo_cli/owned_exit.py": "5ca2b3b5574f0fec7397366cfd8fb46f206a8b761873a6f1ef4dc57fa6c0430f",
+    "creo_cli/paths.py": "350516d96fd9d224074c2cc3fefbe9b1213f4dbd5b4950811c359ec7dcdcc1d5",
+    "creo_cli/presentation.py": "aabc0ce247d2f8205be35de88bc24abae348e6e3023e0fc067b36a71fb505888",
+    "creo_cli/prismatic.py": "47bddba10cac4fac86cd2e133dd1e4034c42400aa43bae3d7fd50c8b52caa350",
+    "creo_cli/prismatic_draft.py": "0194f8be156170baacb5fc74f6245052c281c5d08723b872c05aae01728ef787",
+    "creo_cli/prismatic_rib.py": "7679038dcadf05427566ba034be31a8b65ea57f62bc06a2c8aa9a5312c5647b1",
+    "creo_cli/process_owner.py": "d1eb1796e57607ada28b1d972e480232d2725a98409865c06c819a5af9831033",
+    "creo_cli/protected_readback.py": "dcc6b05bf7cb0cac07eaff8d165eed8388eb90e279ecc23d8c371fd7bdf0ab81",
+    "creo_cli/registry.py": "4ad672bf4c5c33bc7f8c137b24f527fd5eaf4a05277332da7478baf71155950d",
+    "creo_cli/render_record.py": "ce99e5631b9206db19f972c9c386759eef39ee817d9606b547ceb722df793647",
+    "creo_cli/requests.py": "9671dd303c7242d0455bd607e9d68dfd5c09eb0bb22460d5dcc7b4af0092d356",
+    "creo_cli/revolved.py": "2feba96c503d2f81f11ff07ba2f3d1f2b5c919ddad84c07a56eff360796d82a9",
+    "creo_cli/runtime_identity.py": "98395722ce22118ac5d9a8625f6aea91bb86f6c23f551961e052bd049dce73dc",
+    "creo_cli/safety.py": "866b238102d067481b72f370d4b2a0286a26982c33a100ad7a77d4c5a1aa5267",
+    "creo_cli/schemas.py": "cc38541a371bc0b1968938b17de1d404a5a1a8086d411cfa6de06982e4d4c620",
+    "creo_cli/service_bundle.py": "ca6020ea28fa7df60ca34f22d8687bebd3e766c99ca6fe8e7265008f0fec8ecc",
+    "creo_cli/service_installation.py": "bb916b3c019f96e57dc12a3855f522a090b4e9109056df645d0d21c8722d07f2",
+    "creo_cli/sketch.py": "0d3612274f4aa3fc70df7e613620b8bfdc38e9660b0902e4a3bc04ce09dd7ec3",
+    "creo_cli/timing.py": "8b8cc001adef3c9f078c3800bb9393782f2e3b9d918e736dfd025cd6d247946c",
+    "creo_cli/transport.py": "4b1a2f3b863de105e0e2918d3d812c9a9e1662c46d409a65826aae0ba124f40b",
+    "creo_cli/validation.py": "5d47b1ea7e83edd2479181db80f5a651acf449d947a9f4d3ed57545477ccf5f1",
+    "creo_cli/view_readback.py": "dabacf18750223153b78d4ab9340021c9e93d1932b132ffbc71010a2f672a1d1",
+    "creo_cli/workflow_properties.py": "cdcfd4853af9ab9ce5823b53e59247c1430c30ec573e71edf69ac35b3e727b37",
+    "creo_cli/workflow_state.py": "acc77546829df8fc8dbfce6e737f982141ed82b33c05809911e9c53618663cc5",
+    "creo_cli/workflow_tasks.py": "7ad45881e81c6c03f8d4676a960ed1c65197380e288b97c95b863e8c90850e18",
+    "cli.py": "3f798462f2b4c3106818d381a271ac5d3917373dbd7b1363be5f3a143740e5ad",
+    "CHANGELOG.md": "394c1831c8fd1bc72c8c2d794a6df4f1e3c268d00b5b263372d929a44a33f805"
+  },
+  "built_at_utc": "2026-10-31T09:30:03.459371+00:00",
+  "native_components_rebuilt": false,
+  "stock_bootloader_security_checks": true
+}

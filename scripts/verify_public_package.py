@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 COMPONENTS = {
-    "cli/creo-cli.exe": "18d7eb7dfee41cc0ebae5d78140f6a42c92c19b835c3ce9af4d600d3540a8798",
+    "cli/creo-cli.exe": "cd3c18cbc139dfb85b0c9f20ac9a30734b81d29385a9d7a87379ad097d771668",
     "cli/service-bundle/creo-cli-service.jar": (
         "bbc5f5a9952876aebb726f29d53d67b509278c91d4d2a3a66386f3f2270cae39"
     ),
@@ -47,6 +47,7 @@ def verify(root: Path):
         )
     }
     required |= {"NOTICE.md", "LICENSE", "cli/.agent/driver/LICENSE", "COMPONENT-ORIGINS.json"}
+    required |= {"CLIENT-BUILD.json", "CLIENT-ARTIFACT.json", "RUNTIME-DISTRIBUTION.json"}
     if not required <= names:
         raise ValueError("Missing helpers, skills or notices: " + str(sorted(required - names)))
     actual = {p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()} - {
@@ -68,9 +69,21 @@ def verify(root: Path):
     origins = json.loads((root / "COMPONENT-ORIGINS.json").read_text())
     for name in COMPONENTS:
         if manifest["files"][name]["sha256"] != COMPONENTS[name]:
-            raise ValueError("Component differs from the reviewed original")
+            raise ValueError("Component differs from the reviewed client rebuild/native original")
         if origins["components"][name]["sha256"] != manifest["files"][name]["sha256"]:
             raise ValueError("Component origin mismatch")
+    runtime = json.loads((root / "RUNTIME-DISTRIBUTION.json").read_text())
+    artifact = json.loads((root / "CLIENT-ARTIFACT.json").read_text())
+    client = manifest["files"]["cli/creo-cli.exe"]
+    if artifact["exe"] != client or runtime["client"] != client:
+        raise ValueError("Runtime inventory does not bind this exact client")
+    if artifact["source_commit"] != runtime["client_source_commit"]:
+        raise ValueError("Runtime inventory source binding differs")
+    for name, expected in runtime["notices"].items():
+        if manifest["files"].get(name) != expected:
+            raise ValueError("Required runtime copyright notice differs: " + name)
+    if len(runtime["native_files"]) != 20 or len(runtime["components"]) != 12:
+        raise ValueError("Unexpected embedded runtime inventory")
     return {
         "status": "passed",
         "files_verified": len(names),
