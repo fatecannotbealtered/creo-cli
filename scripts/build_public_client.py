@@ -115,12 +115,12 @@ def main():
         "--specpath",
         str(output / "spec"),
         "--add-data",
-        f"CHANGELOG.md{os.pathsep}.",
+        f"{exported / 'CHANGELOG.md'}{os.pathsep}.",
         "--add-data",
-        f".agent/driver/schemas{os.pathsep}.agent/driver/schemas",
+        f"{exported / '.agent/driver/schemas'}{os.pathsep}.agent/driver/schemas",
         "--add-data",
         f"{binding_path}{os.pathsep}.",
-        "cli.py",
+        str(exported / "cli.py"),
     ]
     env = dict(os.environ, PYINSTALLER_CONFIG_DIR=str(output / "cache"))
     for name in list(env):
