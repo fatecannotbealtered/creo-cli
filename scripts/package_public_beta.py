@@ -1,4 +1,4 @@
-"""Repack the reviewed Windows beta without rebuilding or publishing components."""
+"""Package the reviewed rebuilt client and unchanged native components; never publish."""
 
 from __future__ import annotations
 
@@ -16,8 +16,8 @@ VERSION = "1.1.0-beta.1"
 INPUT_SHA256 = "418bf4717d5f3b82b7c77e866cd7fa783019c172e5f65b697355d2504991264e"
 COMPONENTS = {
     "cli/creo-cli.exe": (
-        "18d7eb7dfee41cc0ebae5d78140f6a42c92c19b835c3ce9af4d600d3540a8798",
-        "8049e16f0ffcf6b84188f037f94d6d0f57f85274",
+        "cd3c18cbc139dfb85b0c9f20ac9a30734b81d29385a9d7a87379ad097d771668",
+        "87ad66e6e5d6a549545620b4d8899ef7176f32e5",
     ),
     "cli/service-bundle/creo-cli-service.jar": (
         "bbc5f5a9952876aebb726f29d53d67b509278c91d4d2a3a66386f3f2270cae39",
@@ -29,7 +29,7 @@ COMPONENTS = {
     ),
 }
 COPY_FROM_ORIGINAL = [
-    *COMPONENTS,
+    *(n for n in COMPONENTS if n != "cli/creo-cli.exe"),
     "BUILD-BINDING.json",
     "cli/deployment/native-preparation.json",
     "cli/service-bundle/manifest.json",
@@ -46,11 +46,13 @@ def write_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def package(original: Path, output: Path):
+def package(original: Path, client: Path, output: Path):
     if sha(original.read_bytes()) != INPUT_SHA256:
         raise ValueError("Original package hash differs from the reviewed source")
     if output.exists():
         raise ValueError("Use a new output directory; preserve existing candidates")
+    if sha(client.read_bytes()) != COMPONENTS["cli/creo-cli.exe"][0]:
+        raise ValueError("Client differs from the reviewed rebuild")
     source_commit = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
     ).strip()
@@ -76,6 +78,11 @@ def package(original: Path, output: Path):
         prefix = source.rstrip("/") + "/"
         for name, data in snapshot.items():
             if name.startswith(prefix):
+                if name in {
+                    "docs/licenses/PYTHON-3.12.10-LICENSE.md",
+                    "docs/licenses/PYINSTALLER-6.21.0-COPYING.md",
+                }:
+                    continue
                 path = destination / name.removeprefix(prefix)
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(data)
@@ -95,6 +102,31 @@ def package(original: Path, output: Path):
             path = bundle / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
+    (bundle / "cli/creo-cli.exe").write_bytes(client.read_bytes())
+    artifact = json.loads(snapshot["release/CLIENT-ARTIFACT.json"])
+    runtime = json.loads(snapshot["release/RUNTIME-DISTRIBUTION.json"])
+    if (
+        artifact["source_commit"] != COMPONENTS["cli/creo-cli.exe"][1]
+        or artifact["exe"] != runtime["client"]
+        or artifact["exe"]["sha256"] != sha(client.read_bytes())
+        or runtime["client_source_commit"] != artifact["source_commit"]
+    ):
+        raise ValueError("Client, build record and actual embedded-runtime inventory differ")
+    binding_path = bundle / "BUILD-BINDING.json"
+    binding = json.loads(binding_path.read_bytes())
+    binding.update(
+        schema="creo.public.beta-binding.v1",
+        client_source_commit=artifact["source_commit"],
+        deployment_helper_source_commit=source_commit,
+        initializer_revision="public-" + VERSION,
+        qualification=(
+            "Rebuilt client checked offline; original JAR/DLL retained. "
+            "No new native CAD qualification."
+        ),
+        baseline_package_sha256=INPUT_SHA256,
+    )
+    binding["components"]["EXE"] = artifact["exe"]
+    write_json(binding_path, binding)
     for source, destination in [
         ("README.md", "README.md"),
         ("README_zh.md", "README_zh.md"),
@@ -106,6 +138,10 @@ def package(original: Path, output: Path):
         ("docs", "cli/docs"),
         (".agent/driver", "cli/.agent/driver"),
         ("release/RELEASE-NOTES.md", "RELEASE-NOTES.md"),
+        ("release/CLIENT-BUILD.json", "CLIENT-BUILD.json"),
+        ("release/CLIENT-ARTIFACT.json", "CLIENT-ARTIFACT.json"),
+        ("release/RUNTIME-DISTRIBUTION.json", "RUNTIME-DISTRIBUTION.json"),
+        ("release/COPYRIGHT-SOURCES.json", "release/COPYRIGHT-SOURCES.json"),
     ]:
         copy_snapshot(source, bundle / destination)
     for name in [
@@ -141,22 +177,25 @@ def package(original: Path, output: Path):
     # A full CLI-directory notice keeps attribution with a separately copied CLI folder.
     for name in ("LICENSE", "NOTICE.md"):
         copy_snapshot(name, bundle / "cli" / name)
+    for name in ("CLIENT-BUILD.json", "CLIENT-ARTIFACT.json", "RUNTIME-DISTRIBUTION.json"):
+        copy_snapshot("release/" + name, bundle / "cli" / name)
     origins = {
         "schema": "creo-component-origins/v1",
         "version": VERSION,
-        "recompiled_components": [],
+        "recompiled_components": ["cli/creo-cli.exe"],
         "deployment_helpers_public_commit": source_commit,
         "components": {
             name: {
                 "sha256": digest,
                 "bytes": (bundle / name).stat().st_size,
                 "build_source_commit": commit,
-                "rebuilt": False,
+                "rebuilt": name == "cli/creo-cli.exe",
             }
             for name, (digest, commit) in COMPONENTS.items()
         },
         "scope": (
-            "Repack of unchanged components; helper-only changes add no native qualification"
+            "Only the client is rebuilt. Native JAR/DLL retain original bytes and build source; "
+            "offline checks add no native qualification"
         ),
     }
     write_json(bundle / "COMPONENT-ORIGINS.json", origins)
@@ -209,6 +248,7 @@ def package(original: Path, output: Path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--original", required=True, type=Path)
+    parser.add_argument("--client", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    print(json.dumps(package(args.original, args.output)))
+    print(json.dumps(package(args.original, args.client, args.output)))

@@ -28,9 +28,9 @@ fixtures and the CPU-only Java scanner tests do not prove runtime SDK/license be
 | Supplied START/startup scripts | Require PowerShell 7.4 or later; direct EXE use does not impose that script dependency | Script `#requires` declarations |
 | Creo without the `ObjectToolkitJava` licence | The service cannot start as an Object TOOLKIT Java application; nothing works | none |
 | Creo delivered by application streaming (PTC trial) | Not usable: no API toolkits, no installer to add them | `doctor` detects it |
-| The CLI on Python 3.11 to 3.13 | Tested offline on Windows | `docs/evidence/offline-tests-1.0.0.json` |
-| The CLI on Linux or macOS | Runs, and the offline suite passes in CI; there is no Creo to talk to | CI |
-| win32-x64 engineering candidate | Locally built EXE and source-bound components; private beta. npm publication remains disabled. | Current engineering package manifest and delivery index |
+| Rebuilt Windows client, official Python 3.15.2/OpenSSL 3.5.9/SQLite 3.53.4 | Bounded offline contract, continuing-history and exact-package checks; original JAR/DLL unchanged | CLIENT-ARTIFACT.json, RUNTIME-DISTRIBUTION.json and package manifest |
+| Other Python versions, Linux or macOS | Historical source checks do not qualify this Windows distribution on other hosts | Not qualified for this beta |
+| win32-x64 public candidate | Bounded unsigned beta; full FCC, clean-machine deployment and npm publication are not qualified | Exact package manifest and release notes |
 
 Creo itself runs only on Windows, so every command that talks to Creo needs the CLI on
 the same Windows machine: the service listens on loopback only.

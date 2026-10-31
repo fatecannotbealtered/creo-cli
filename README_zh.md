@@ -8,6 +8,9 @@ Creo 13.4.1.0/JDK 25.0.3；其他平台、版本、锁屏、最小化、无界�
 源零件 RGB、限定刚性定位、保存后清空会话再重开有原生记录。数值密度/材料修改、实例独立
 外观、高级装配、STEP 交付、删除和符号功能仍受限制。复杂装配可能等待数分钟。
 
+仅客户端使用官方 Python 3.15.2/PyInstaller 6.22.3 重建，JAR/DLL 保留原字节和来源。
+内嵌依赖与旧历史库兼容性有离线检查；这些检查不扩大历史原生资格。
+
 从本仓库 prerelease 下载完整 Windows ZIP 与 checksums.txt，核对 SHA-256 后解压。
 包内同时有 EXE、JAR、DLL、PowerShell 助手、六项 Skills 和许可；无需 Python/Node。
 用户需提供合法 Creo、对应 API/运行许可、JDK 25.0.3 与 PowerShell 7.4+。

@@ -13,7 +13,7 @@ RUNTIME-DISTRIBUTION.json and PACKAGE-MANIFEST.json for exact bytes and sources.
 | PyInstaller 6.22.3 bootloader | COPYING and Bootloader Exception in docs/licenses |
 | Driver schemas and adapted scope checks | Apache-2.0, current attribution and fixed PIN in .agent/driver |
 | Inherited ai-native-cli-spec v1.6.3 | MIT, project copyright notice retained |
-| Microsoft VC/UCRT files embedded in EXE | Applicable Microsoft/Python binary redistribution conditions |
+| Microsoft VC runtime files embedded in EXE | Applicable Microsoft/Python binary redistribution conditions; Windows supplies UCRT |
 | Creo, ucore68.dll, SDK, Java runtime and licenses | Supplied by the user's licensed installation; not bundled |
 
 The bounded host was Windows x64, Creo 13.4.1.0 (build 2026163), JDK 25.0.3 and
