@@ -62,7 +62,7 @@ def trial(tmp_path, request):
     declared = os.environ.get("CREO_TRIAL_SCOPE_PACKAGE")
     if not declared:
         pytest.skip("Set CREO_TRIAL_SCOPE_PACKAGE to an extracted complete candidate")
-    package = tmp_path / "isolated" / "package"
+    package = tmp_path / "isolated 中文 path" / "package"
     shutil.copytree(Path(declared), package)
     # Source regression only: record the override. Final package verification omits it.
     override = os.environ.get("CREO_TRIAL_SCOPE_INITIALIZER")

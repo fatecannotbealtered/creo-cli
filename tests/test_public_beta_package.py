@@ -51,7 +51,7 @@ def test_actual_packaged_reference_changelog_and_skill_family(tmp_path):
 
 def test_actual_public_initializer_refuses_tampered_component_before_install(tmp_path):
     source = declared_package()
-    package = tmp_path / "isolated/package"
+    package = tmp_path / "isolated 中文 path/package"
     shutil.copytree(source, package)
     jar = package / "cli/service-bundle/creo-cli-service.jar"
     jar.write_bytes(jar.read_bytes() + b"CORRUPTED OFFLINE FIXTURE")

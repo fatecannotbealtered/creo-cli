@@ -60,6 +60,7 @@ class Registry(unittest.TestCase):
         self.assertEqual(
             dangerous,
             {
+                "session exit",
                 "model discard",
                 "feature delete",
                 "assembly component remove",

@@ -4,6 +4,13 @@ This file is the only human-maintained change source. Runtime copies are generat
 
 ## [Unreleased]
 
+- Rebuild only the Windows client with fixed official Python 3.15.2, OpenSSL 3.5.9,
+  SQLite 3.53.4 and PyInstaller 6.22.3. Preserve the original JAR/DLL bytes,
+  source-bound component identities, write gates and unknown-operation history.
+- Remove private sample archives from public initialization and provide the complete
+  component package with six mechanical-task Skills. Offline compatibility checks
+  do not add native engineering or clean-machine qualification.
+
 - Include the exact `workspace/.creo-cli/staging` path in an explicitly authorized
   internal-trial initialization, including sibling package/run layouts. Keep the
   common workspace parent outside the grant and refuse automatic runtime scope repair.

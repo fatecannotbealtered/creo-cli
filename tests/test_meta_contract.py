@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 from unittest.mock import patch
 
-from creo_cli import assembly_constraints, registry, safety
+from creo_cli import appearance, assembly_constraints, registry, safety
 from creo_cli.commands import workflow
 from creo_cli.commands.assembly import validate_add, validate_explode
 from creo_cli.commands.detailing import validate_table, validate_title
@@ -197,6 +197,8 @@ class ReceiptsAndTokens(Base):
 
 class PublishedExamples(Base):
     VALIDATORS = {
+        "appearance set": lambda r: validate(r, appearance.SET_SCHEMA),
+        "appearance restore": lambda r: validate(r, appearance.RESTORE_SCHEMA),
         "feature extrude": validate_extrude,
         "feature revolve": validate_revolve,
         "feature datum-plane": validate_datum_plane,

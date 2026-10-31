@@ -1,0 +1,184 @@
+{
+  "schema": "creo-client-runtime-profile/v1",
+  "required_build_versions": {
+    "python": "3.15.2",
+    "openssl": "OpenSSL 3.5.9 29 Sep 2026",
+    "sqlite": "3.53.4",
+    "pyinstaller": "6.22.3",
+    "free_threaded": false
+  },
+  "runtime_distribution": {
+    "url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
+    "sha256": "d6da9c33a32cf111e1d52b91392c83ea6a808545b646e0557f66cb6d9ee76785",
+    "index_url": "https://www.python.org/ftp/python/3.15.2/windows-3.15.2.json",
+    "sbom_url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip.spdx.json",
+    "authenticode_signer": "Python Software Foundation",
+    "installation": "Official ordinary x64 ZIP, isolated extraction; no system registration",
+    "index_sha256": "4e6277874416b570dcc6971243105b17097fb7412bc17959aefb1d28da46a778",
+    "sbom_sha256": "c2da4e6f1afbc6d6ca5ca128124757e97fe77f9420ec9e6dd06ee6404d20a898"
+  },
+  "review_date": "2026-10-31",
+  "security_sources": [
+    "https://www.python.org/downloads/release/python-3152/",
+    "https://openssl-library.org/source/",
+    "https://openssl-library.org/news/vulnerabilities-3.5/",
+    "https://sqlite.org/cves.html",
+    "https://pyinstaller.org/en/stable/CHANGES.html",
+    "https://github.com/pyinstaller/pyinstaller/security/advisories/GHSA-9fxf-4qw3-ghmr"
+  ],
+  "native_build_inputs": {
+    "DLLs/_asyncio.pyd": {
+      "sha256": "fb0768cc8b00cee43638bea2770cae08f2076298ec3db07634818448b6ad67c9",
+      "bytes": 78048
+    },
+    "DLLs/_bz2.pyd": {
+      "sha256": "2ae45b2ff932dc8a864c862d8150eb3f5b55e60e3e74ec554c4f52c4f1ad81e0",
+      "bytes": 86240
+    },
+    "DLLs/_ctypes.pyd": {
+      "sha256": "8bb22628ae859877b1cf55381c1a8cf54bb0aa70c56295053bc3303262e21c87",
+      "bytes": 144096
+    },
+    "DLLs/_decimal.pyd": {
+      "sha256": "93360ba1650bf5f1a673aac22d444ad2d33a039550926f325ad19dafd950e04c",
+      "bytes": 326368
+    },
+    "DLLs/_elementtree.pyd": {
+      "sha256": "7176037f79c25da745403e0f9db184f0d2046eef84ce976c790ff684a202e610",
+      "bytes": 145632
+    },
+    "DLLs/_hashlib.pyd": {
+      "sha256": "3cfb95355576805d6362b878d2207e254125887fce12ff8199becab34beb0694",
+      "bytes": 72928
+    },
+    "DLLs/_lzma.pyd": {
+      "sha256": "d9033e94387aa70777d23514263d342486899256ffc14478be6bb1e6a0b05683",
+      "bytes": 171744
+    },
+    "DLLs/_multiprocessing.pyd": {
+      "sha256": "df1c1a1226a481db6536b6ed697150bc6a34052e4c2cc2ddde59ebda84a68fd6",
+      "bytes": 38112
+    },
+    "DLLs/_overlapped.pyd": {
+      "sha256": "077d6a9ce8a3d379a06d78ac4be2efcf35006fff6cd5be4cd5f574d83e7a9c01",
+      "bytes": 58080
+    },
+    "DLLs/_queue.pyd": {
+      "sha256": "00206e5ea1be8b648ca07d1e68ee244a8d0ee1f4126661187dbe3551c68f6e3b",
+      "bytes": 36064
+    },
+    "DLLs/_remote_debugging.pyd": {
+      "sha256": "dda2ce527761371a7acaa0fb5f7e96489b782ffc68dd1f582c04ad6bd967def8",
+      "bytes": 188640
+    },
+    "DLLs/_socket.pyd": {
+      "sha256": "ba52c110c0cbc429add306acccf86dd2f77c777a9db68df7cddfc4489e91bce7",
+      "bytes": 88288
+    },
+    "DLLs/_sqlite3.pyd": {
+      "sha256": "851e8bfa65328162ddad2dff9f7c213f8eceb2d90baf179aa472704ec3ca6295",
+      "bytes": 132320
+    },
+    "DLLs/_ssl.pyd": {
+      "sha256": "a9c54ec4d115597880e0e44ff26b740328d0388a777dfb613d3aa2eb66b31e49",
+      "bytes": 200416
+    },
+    "DLLs/_tkinter.pyd": {
+      "sha256": "3b4e3ba215fef3521fc72293afe52aa209e981c32e55ee94427032dcaecc26b7",
+      "bytes": 70880
+    },
+    "DLLs/_uuid.pyd": {
+      "sha256": "a3380826957922fae7350f5ea64fface688bf55c79e086823a4b1d50455a9bfa",
+      "bytes": 27872
+    },
+    "DLLs/_wmi.pyd": {
+      "sha256": "0650bf237b3f556ba844ba372fef6de1b65d618a608014405360aef83f8a4e34",
+      "bytes": 39648
+    },
+    "DLLs/_zoneinfo.pyd": {
+      "sha256": "d2e531fb814650d3128779f92e032127e0082258441b255e81dadcc0cda13d33",
+      "bytes": 51424
+    },
+    "DLLs/_zstd.pyd": {
+      "sha256": "a977471edf7b6712a9e89ada98b79b1973c79740632f820b67365f242b5e05cc",
+      "bytes": 506592
+    },
+    "DLLs/libcrypto-3.dll": {
+      "sha256": "75495fe0e079ab00d49be740d3c710a0b94e3f74f9648cb7cc9f768fc7f52319",
+      "bytes": 6021880
+    },
+    "DLLs/libffi-8.dll": {
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "bytes": 39696
+    },
+    "DLLs/libssl-3.dll": {
+      "sha256": "8957182a9c385bfd9f3f790921de2ddc614cf91f99edbed4e9e5446a46504e32",
+      "bytes": 1308920
+    },
+    "DLLs/libtommath.dll": {
+      "sha256": "a3a456c80ff33b80e87891ec77f796df350b0739f3354fd0fa33f894fc656ddb",
+      "bytes": 95456
+    },
+    "DLLs/pyexpat.pyd": {
+      "sha256": "2970cef7642e14721b4791bf40720d25f5c9fb8df4d78c725bd859391d6dec51",
+      "bytes": 215264
+    },
+    "DLLs/select.pyd": {
+      "sha256": "d39e00967809d2d2cf8aea78f6fd39923cfb4ad426ccd19bbfe7163020dafffe",
+      "bytes": 32992
+    },
+    "DLLs/sqlite3.dll": {
+      "sha256": "73530e8f4555605d716352ee98fe0ce205a09e5eec57e7e6360d4c915efcacd8",
+      "bytes": 1683680
+    },
+    "DLLs/tcl90.dll": {
+      "sha256": "b7466b74e0bf656074364dccc965579c2eda3d734f09b326c51a296638c26b2c",
+      "bytes": 3383352
+    },
+    "DLLs/tcl9tk90.dll": {
+      "sha256": "4c80618f6fc81a0dc00f8e426695a93feb3c470961e1d690200daadd8781f0d7",
+      "bytes": 2152408
+    },
+    "DLLs/unicodedata.pyd": {
+      "sha256": "ba69f643918cc520331c6a13d489d642131be23dd649d05e0cd1068fae92e76d",
+      "bytes": 753376
+    },
+    "DLLs/winsound.pyd": {
+      "sha256": "7db6013f33689d7f56e218073fc6af7a3c1548b2089915b6ef558722826eec8b",
+      "bytes": 32480
+    },
+    "DLLs/zlib1.dll": {
+      "sha256": "5807bf5329052ab504074e99387988afff8268a19d4e520b2c77686df2593c8e",
+      "bytes": 116960
+    },
+    "python.exe": {
+      "sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+      "bytes": 105696
+    },
+    "python3.dll": {
+      "sha256": "e394c32bb9e2f0d813f4ed5b858ba717e54e3e6547cd36a8d8aaee66b9ca347f",
+      "bytes": 76512
+    },
+    "python315.dll": {
+      "sha256": "9862572fd449f32a62c1eaec2c6750a9c9fa512f4c9c2ea0e66776cf9212b7c2",
+      "bytes": 7910624
+    },
+    "python3t.dll": {
+      "sha256": "c4c1db006228553e4b728b7856b74a007384e608c7b07e6ae8e0d8251d077e5b",
+      "bytes": 76512
+    },
+    "pythonw.exe": {
+      "sha256": "eec71feb5d41f43b707a1736e8c3a510bd667bc5e1062de924cc24a7713eace0",
+      "bytes": 104160
+    },
+    "vcruntime140.dll": {
+      "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7",
+      "bytes": 178616
+    },
+    "vcruntime140_1.dll": {
+      "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e",
+      "bytes": 50112
+    }
+  },
+  "pyinstaller_bootloader_sha256": "581ea23eb35cee8f9df8835c892e91416df95ca629b1a6050289aea19390e08d"
+}

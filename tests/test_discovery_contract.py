@@ -79,8 +79,8 @@ class DiscoveryContract(Base):
     def test_full_reference_matches_fixed_public_schema(self):
         result = self.cli("reference")["data"]
         validate("urn:tool-driver-cli-spec:reference:2.0", result)
-        self.assertEqual(len(result["commands"]), 128)
-        self.assertEqual(result["runtime_migration"]["write_paths_total"], 78)
+        self.assertEqual(len(result["commands"]), 129)
+        self.assertEqual(result["runtime_migration"]["write_paths_total"], 79)
 
     def test_single_command_and_index_use_pinned_views_without_public_schema_bodies(self):
         index = self.cli("reference", "--index")["data"]

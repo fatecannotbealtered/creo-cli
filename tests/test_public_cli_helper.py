@@ -135,6 +135,8 @@ class Case:
         script.write_text(
             "param([string]$Configuration)\n"
             "$ErrorActionPreference = 'Stop'\n"
+            "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)\n"
+            "$OutputEncoding = [Console]::OutputEncoding\n"
             "$config = Get-Content -LiteralPath $Configuration -Raw -Encoding utf8 | "
             "ConvertFrom-Json -AsHashtable\n"
             ". $config.script\n"

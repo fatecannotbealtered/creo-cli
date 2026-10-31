@@ -1,15 +1,16 @@
 # Runtime components and redistribution
 
-The complete Windows x64 package uses the unchanged 1.1.0-beta.1 client from source
-8049e16f0ffcf6b84188f037f94d6d0f57f85274 and unchanged JAR/DLL from source
-156a619cecdb17714481a7dbe2807ebc1a2d8699. It is a repack, not a new component build.
-See COMPONENT-ORIGINS.json and PACKAGE-MANIFEST.json for exact bytes and sources.
+The Windows x64 client is rebuilt from the public source with the fixed official
+Python 3.15.2 ordinary x64 runtime, OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller
+6.22.3. The original JAR/DLL from source 156a619cecdb17714481a7dbe2807ebc1a2d8699
+remain unchanged. See CLIENT-BUILD.json, COMPONENT-ORIGINS.json,
+RUNTIME-DISTRIBUTION.json and PACKAGE-MANIFEST.json for exact bytes and sources.
 
 | Component | License / responsibility |
 |---|---|
 | Original CLI, Java service and native adapter | Project MIT; ordinary unlocked native adapter, NotSigned |
-| Python 3.12.10 and collected libraries | Full Python license and third-party conditions in docs/licenses |
-| PyInstaller 6.21.0 bootloader | COPYING and Bootloader Exception in docs/licenses |
+| Python 3.15.2 and collected libraries | Exact per-component attribution in RUNTIME-DISTRIBUTION.json and docs/licenses |
+| PyInstaller 6.22.3 bootloader | COPYING and Bootloader Exception in docs/licenses |
 | Driver schemas and adapted scope checks | Apache-2.0, current attribution and fixed PIN in .agent/driver |
 | Inherited ai-native-cli-spec v1.6.3 | MIT, project copyright notice retained |
 | Microsoft VC/UCRT files embedded in EXE | Applicable Microsoft/Python binary redistribution conditions |

@@ -1,0 +1,11 @@
+SQLite 3.53.4
+
+The original SQLite deliverable library is dedicated to the public domain by its
+authors and may be distributed in compiled form. It is not relicensed by the
+creo-cli project's MIT license.
+
+The distributed DLL is supplied by the official Python 3.15.2 Windows x64 runtime.
+Its exact bytes and source association are recorded in RUNTIME-DISTRIBUTION.json.
+
+Authoritative declaration: https://sqlite.org/copyright.html
+Build source: https://github.com/python/cpython-source-deps/tree/sqlite-3.53.4.0

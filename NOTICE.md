@@ -12,11 +12,12 @@ NotSigned; ordinary unlocking does not create a Windows publisher signature, and
 Java unlocking does not remove its runtime license requirements. See
 [runtime dependencies](docs/RUNTIME-DEPENDENCIES.md) for the supplier's official guidance.
 
-The unchanged frozen client embeds Python 3.12.10 and dependencies collected by
-PyInstaller 6.21.0. Preserve the complete [Python license and binary-build conditions](docs/licenses/PYTHON-3.12.10-LICENSE.md)
-and [PyInstaller COPYING and Bootloader Exception](docs/licenses/PYINSTALLER-6.21.0-COPYING.md).
-These notices retain the embedded libraries' terms, including applicable Microsoft
-VC/UCRT conditions; project MIT is not a substitute license for these components.
+The rebuilt frozen client uses the official ordinary x64 Python 3.15.2 runtime and
+PyInstaller 6.22.3. Preserve the complete [Python license and binary-build conditions](docs/licenses/PYTHON-3.15.2-LICENSE.txt)
+and [PyInstaller COPYING and Bootloader Exception](docs/licenses/PYINSTALLER-6.22.3-COPYING.txt).
+RUNTIME-DISTRIBUTION.json binds the actual embedded components to their versions,
+sources, hashes and applicable notices in docs/licenses, including OpenSSL, SQLite,
+libffi and Microsoft runtime conditions. Project MIT does not relicense these components.
 No separate ucore68.dll, Java runtime or PTC vendor runtime is redistributed.
 
 Driver schemas and adapted scope checks retain their original source PIN and use

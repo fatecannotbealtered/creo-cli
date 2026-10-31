@@ -1,13 +1,14 @@
 # Creo CLI 1.1.0-beta.1 — Windows x64 prerelease
 
-Complete isolated unsigned Windows distribution with the original EXE/JAR/DLL,
+Complete isolated unsigned Windows distribution with a rebuilt client and original JAR/DLL,
 manifest verification, owned startup helpers and six mechanical-task Skills.
 Initialization no longer depends on private sample archives. It creates empty
 project directories and retains the exact staging boundary, reinitialization refusal,
 continuing history and stop-on-unknown behavior.
 
-This package repacks previously qualified component bytes; they were not rebuilt.
-The initializer and packaging changes are checked offline against the final package.
+Only the client is rebuilt with the fixed official Python 3.15.2 ordinary x64 runtime,
+OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller 6.22.3. The JAR/DLL remain unchanged.
+The initializer, runtime compatibility and packaging are checked offline against the final package.
 Those checks do not add native engineering or clean-machine qualification.
 Bounded native observations remain limited to visible-window Creo 13.4.1.0/JDK 25.0.3,
 source RGB, rigid placement and save/empty/reopen/normal-exit paths. Complex assemblies
