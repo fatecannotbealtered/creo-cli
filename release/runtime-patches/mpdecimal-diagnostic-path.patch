@@ -1,0 +1,7 @@
+--- a/libmpdec/typearith.h
++++ b/libmpdec/typearith.h
+@@ -1,3 +1,4 @@
++#line 1 "mpdecimal/typearith.h"
+ /*
+  * Copyright (c) 2008-2024 Stefan Krah. All rights reserved.
+  *

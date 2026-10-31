@@ -1,0 +1,309 @@
+{
+  "schema": "creo-controlled-python-runtime/v1",
+  "kind": "project-controlled-source-build",
+  "python": "3.15.2",
+  "xz": "5.8.4",
+  "source_inputs": "release/CONTROLLED-RUNTIME-INPUTS.json",
+  "source_inputs_sha256": "1a344a26290b6e2af17bcdd9b82afd5a14bc328f4d52641c89c2956a150f7f72",
+  "toolchain": {
+    "visual_studio": "17.14.37710.0",
+    "platform_toolset": "v143",
+    "vctools": "14.44.35207",
+    "compiler": "19.44.35229.0",
+    "windows_sdk": "10.0.26100.0",
+    "architecture": "x64",
+    "configuration": "Release",
+    "free_threaded": false
+  },
+  "patches": {
+    "release/runtime-patches/cpython-xz-link.patch": "970e63c8f45ff7c8b8536bf6a87a39473e81c6986c68779f6f9e46c82d75139d",
+    "release/runtime-patches/mpdecimal-diagnostic-path.patch": "891026d9500caae53fb76b0a04fb73c1b823c6198f671087a5ba7eeab772029d",
+    "release/runtime-patches/no-host-paths.props": "f43b33b70fc7e2bd804701ca376054711f72494c50942c632c4d68d02b219e88"
+  },
+  "patch_scope": [
+    "CPython _lzma project links official XZ 5.8.4 CMake-built static library",
+    "Relative source diagnostics and path-free PDB references",
+    "One #line directive changes only mpdecimal header diagnostic filename; arithmetic/error branches and original line numbers remain unchanged"
+  ],
+  "cpython_lzma_project_sha256": "d4783097a79ff93fe31150cb2a4d21e607fb135a4c7cb35ad7cc5ecaeb76be00",
+  "fixed_xz_sources": {
+    "src/liblzma/common/alone_decoder.c": "5483145280dd3e21bd4e4e1f061f8b4eb51e9d6a92ae77c2dcff313c7bf83621",
+    "src/liblzma/common/index.c": "5c7eb33e466d056e9c6cecfafa2e9eca08a4b93230ec67a4701117db7d713113",
+    "src/liblzma/api/lzma/version.h": "9dec302470df2f505474cad90065a12eed8f65a7944e44ae1844499e72a4bb9f"
+  },
+  "xz_static_library_sha256": "dc93f6e338c31e94f0a3087da47b22a2243bb575c5cf5792678d829228293068",
+  "xz_compiler_record_sha256": "82091e526d45fa7a00d51196638a43d59995f217f7800fe5bd86381768b748e2",
+  "lzma_link_record_sha256": "907b0874c45673d430b52e3c7f0d4285311527a2e402487d8e1c9035f4696dfc",
+  "windows_configuration": {
+    "method": "Official XZ CMake Windows feature checks and generated compiler definitions; CPython PCbuild with recorded per-build props",
+    "cmake_cache_sha256": "d6d4a8e7cf4c0db33e9a9906f0621cbb31d4880c8c82178a7baceaa2ccb4cb0b",
+    "generated_library_project_sha256": "3d38e92b6aa8fbdaea3fbaf0d74d3403aede6617ed9d11cafe85976fa83c2fde"
+  },
+  "security_flags": {
+    "stack_protection": true,
+    "control_flow_guard": true,
+    "aslr": true,
+    "nx": true,
+    "stock_pyinstaller_checks": true,
+    "kill_python": false
+  },
+  "native_files": {
+    "DLLs/_asyncio.pyd": {
+      "sha256": "79c87a3dae538747c2ab56131f9cc3c4ff2a5cef70cdc6c08248b6a4a572b320",
+      "bytes": 68096
+    },
+    "DLLs/_bz2.pyd": {
+      "sha256": "fea2d0aaefef8764f749b66c8aa55536a6214548d3247f6e6ebc5c87704494de",
+      "bytes": 80896
+    },
+    "DLLs/_ctypes.pyd": {
+      "sha256": "68e4a84cdc398417dfba1d16ba6b7ed64714e7c5a0933b8f5d18de562868936e",
+      "bytes": 139264
+    },
+    "DLLs/_ctypes_test.pyd": {
+      "sha256": "ec47b357d6a5f189a5f27bb51528ec40825617345ccdf1f083792986f14385f6",
+      "bytes": 119808
+    },
+    "DLLs/_decimal.pyd": {
+      "sha256": "27fbabfdaaee215a720e546d3bd0db7a212e031f7886f7b06a5c15fc907dc0ac",
+      "bytes": 390656
+    },
+    "DLLs/_elementtree.pyd": {
+      "sha256": "0d8f6c956b4f92ba900630e3fafc3ea911fec3865bc51e78be18a47f8b4f8d68",
+      "bytes": 136704
+    },
+    "DLLs/_hashlib.pyd": {
+      "sha256": "bd56ec69fb4217f258d2881c7fe662be4696a60fce6e7970538ca8ce686ce13d",
+      "bytes": 55808
+    },
+    "DLLs/_lzma.pyd": {
+      "sha256": "9f91e6ed1c963c7f698d26d24c5dea052f8a5548aca723e6f557f8b0f6874bfc",
+      "bytes": 160256
+    },
+    "DLLs/_multiprocessing.pyd": {
+      "sha256": "f2d4ec4e13bc5535c9f7c5d952e6ebec49b5547e15579926246ff6ecc12c3cc5",
+      "bytes": 24576
+    },
+    "DLLs/_overlapped.pyd": {
+      "sha256": "f1ac9c836a5f3be80166a23ec5cc72c21ced49f12c94fc3f00a32f9b661214f7",
+      "bytes": 45056
+    },
+    "DLLs/_queue.pyd": {
+      "sha256": "49e3e661cdd7822a0fe64bc9a691a52eec6818f97e79930824d806dd5dd35a05",
+      "bytes": 21504
+    },
+    "DLLs/_remote_debugging.pyd": {
+      "sha256": "93fbd8a9ac169fd9c45fd540be13cde062814853dcd3db25ee8cf27c902aa6c9",
+      "bytes": 181760
+    },
+    "DLLs/_socket.pyd": {
+      "sha256": "6f6e7b27c422f8bc7d1aca59b2fd32803b2b984be6652cb023b4ba62aad4a029",
+      "bytes": 76288
+    },
+    "DLLs/_sqlite3.pyd": {
+      "sha256": "c032f7e5f9ea2d53018628085ece56b595cf73d076a23b84a87d0263f976a73c",
+      "bytes": 110592
+    },
+    "DLLs/_ssl.pyd": {
+      "sha256": "8fd6a4ba434112b8a446a929a47a92d2ab2f65755a3f274755bc0c6ad82e7820",
+      "bytes": 190976
+    },
+    "DLLs/_testbuffer.pyd": {
+      "sha256": "5e10284ca09e12c9ca4e4af4b7c92ee1bd7280716d6f3430796f1b3818531323",
+      "bytes": 45056
+    },
+    "DLLs/_testcapi.pyd": {
+      "sha256": "1a8c5ba6dbbbc17e1ac7d4d5425c862d02fb201320dc4b854aa079d160c3b6bd",
+      "bytes": 343040
+    },
+    "DLLs/_testclinic.pyd": {
+      "sha256": "35f140290f548216695ad839e2bf92a43eac01b6dc681a62e32eec2d46adfb67",
+      "bytes": 103936
+    },
+    "DLLs/_testclinic_limited.pyd": {
+      "sha256": "ce3c8c207a9ec07f74cd73e69d6bd98e665ca861475098e93854780e28c46f88",
+      "bytes": 16384
+    },
+    "DLLs/_testconsole.pyd": {
+      "sha256": "3e5c06bb1d8888d575b552de0b4eac6cd38707e7753b4dc9ecc7a6ad3e6534ac",
+      "bytes": 15872
+    },
+    "DLLs/_testimportmultiple.pyd": {
+      "sha256": "83332de310f2cdd51773e6e8e917fc12b5e47648f04a68169828912e1d2af0f3",
+      "bytes": 13824
+    },
+    "DLLs/_testinternalcapi.pyd": {
+      "sha256": "839c3906f907cbe49c962d5b3fb869dbdb1a96c4739889567f6421946885f09f",
+      "bytes": 161792
+    },
+    "DLLs/_testlimitedcapi.pyd": {
+      "sha256": "a0604bd47d2aae695e37b3ccd4f7536ccfc2df3d040aac68d948b30ec34d8d24",
+      "bytes": 169472
+    },
+    "DLLs/_testmultiphase.pyd": {
+      "sha256": "e9ea68ba4d507c0fb6ebe13ebe186b672fc263786e0db05675ce5c082924c89d",
+      "bytes": 31744
+    },
+    "DLLs/_testsinglephase.pyd": {
+      "sha256": "ec4267948bc172502b6860640e3ee45e0d30385b2823e287f9d4ddb0f66c6cb7",
+      "bytes": 20992
+    },
+    "DLLs/_uuid.pyd": {
+      "sha256": "adc5941c5624c7936f24e6ec75530ec7e8c1ce8e9795d4576e84276caad7d0f6",
+      "bytes": 13824
+    },
+    "DLLs/_wmi.pyd": {
+      "sha256": "2259962a4f18f9784e32d866460a6ac9bc4c2fa7c743763183efd94a46ae51cd",
+      "bytes": 26624
+    },
+    "DLLs/_zoneinfo.pyd": {
+      "sha256": "fe9ffe581009026217a0208162b48e7e6af4d33dbdb43dd042a8e3ff78abf464",
+      "bytes": 38400
+    },
+    "DLLs/_zstd.pyd": {
+      "sha256": "440bb0785a4c1a0e0f1a25c5dd7ed5b1b0af00344776f692f1e62b5e706b107f",
+      "bytes": 489984
+    },
+    "DLLs/libcrypto-3.dll": {
+      "sha256": "75495fe0e079ab00d49be740d3c710a0b94e3f74f9648cb7cc9f768fc7f52319",
+      "bytes": 6021880
+    },
+    "DLLs/libffi-8.dll": {
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "bytes": 39696
+    },
+    "DLLs/libssl-3.dll": {
+      "sha256": "8957182a9c385bfd9f3f790921de2ddc614cf91f99edbed4e9e5446a46504e32",
+      "bytes": 1308920
+    },
+    "DLLs/pyexpat.pyd": {
+      "sha256": "a4b46dddca0463a1be901798161c4ca216b417c90038f8fcaf818947d2ce513f",
+      "bytes": 223232
+    },
+    "DLLs/select.pyd": {
+      "sha256": "f26a3c1360c766580a45cdbab58a59d01769aeed0c6726e307032bb4d4304127",
+      "bytes": 18944
+    },
+    "DLLs/sqlite3.dll": {
+      "sha256": "7c9cc3dc4342cd3fbe879d9bc6ebf1f795d0b791b2772b5f02bd8715b9a70fab",
+      "bytes": 1621504
+    },
+    "DLLs/unicodedata.pyd": {
+      "sha256": "911cb8437ab4d5605593596fc096293b5fde29a91d7bad248d176fb1f30458f0",
+      "bytes": 740352
+    },
+    "DLLs/winsound.pyd": {
+      "sha256": "4e14d5b9a3fe78c5f7a7f162a4c2bbcfba4d04145b33972ff74760f38fa22c2d",
+      "bytes": 18944
+    },
+    "DLLs/xxlimited.pyd": {
+      "sha256": "1a2bd01de0ade5f24e8f5501d3de1c2a1e59cfeddb4af4b8bf4e14627ff49739",
+      "bytes": 16384
+    },
+    "DLLs/xxlimited_35.pyd": {
+      "sha256": "888ce185dd5b8f62fc18f1a8070f71bebc837b1b06d29c602a28330a089ff995",
+      "bytes": 13824
+    },
+    "DLLs/xxlimited_3_13.pyd": {
+      "sha256": "dddcb94e7c64a33a48fbd90fe4588115e09724d05a7a12162ed94580a9a13ad8",
+      "bytes": 14336
+    },
+    "Lib/venv/scripts/nt/venvlauncher.exe": {
+      "sha256": "acd3ef6acb11b183d7ba71ae908cd2e8051829f7e2e7e6def463677a02a15721",
+      "bytes": 242176
+    },
+    "Lib/venv/scripts/nt/venvwlauncher.exe": {
+      "sha256": "deda3cc037586a9286315c85da428a87b3f2a634e1015346f8cdf494ae03e126",
+      "bytes": 238592
+    },
+    "python.exe": {
+      "sha256": "f81a6f4c684ecbf4c03bca24ddf3e7bcdd722270aa6b28cbdd07ff30ba6f6605",
+      "bytes": 91648
+    },
+    "python3.dll": {
+      "sha256": "7ea1610f71fe257cfeee3b8cd0b91fe7022c25a5590cddf453b1e1c2bb102b29",
+      "bytes": 65536
+    },
+    "python315.dll": {
+      "sha256": "cf90fa1e2abac1f0b6c5b53b609de2aad4358b9586715e343d6dd18a141abbc9",
+      "bytes": 7450112
+    },
+    "python3t.dll": {
+      "sha256": "8125b9b129d5ea0293f3f4ec5d6dfc7c55e03bb54b99d94a064238fa0f285f13",
+      "bytes": 66048
+    },
+    "pythonw.exe": {
+      "sha256": "290ba485de2e4ab20f1bd056bb40b3ab3810529a629a1326ef964cc3141bc729",
+      "bytes": 90112
+    },
+    "vcruntime140.dll": {
+      "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7",
+      "bytes": 178616
+    },
+    "vcruntime140_1.dll": {
+      "sha256": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e",
+      "bytes": 50112
+    }
+  },
+  "unmodified_official_provider_files": {
+    "microsoft_vc_source": {
+      "url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip",
+      "sha256": "d6da9c33a32cf111e1d52b91392c83ea6a808545b646e0557f66cb6d9ee76785",
+      "index_url": "https://www.python.org/ftp/python/3.15.2/windows-3.15.2.json",
+      "sbom_url": "https://www.python.org/ftp/python/3.15.2/python-3.15.2-amd64.zip.spdx.json",
+      "authenticode_signer": "Python Software Foundation",
+      "installation": "Official ordinary x64 ZIP, isolated extraction; no system registration",
+      "index_sha256": "4e6277874416b570dcc6971243105b17097fb7412bc17959aefb1d28da46a778",
+      "sbom_sha256": "c2da4e6f1afbc6d6ca5ca128124757e97fe77f9420ec9e6dd06ee6404d20a898"
+    },
+    "openssl_libffi": "Exact pinned Python cpython-bin-deps commits in source inputs"
+  },
+  "upstream_regressions": [
+    {
+      "binary": "test_alone_decoder",
+      "original_function": "test_reuse_after_failure",
+      "exit_code": 0,
+      "source_sha256": "5b24d1606f418a3c08216c395e20aa739c6d20f09cc15c0c90cc9757c1775b0f"
+    },
+    {
+      "binary": "test_index",
+      "original_function": "test_decode_empty_and_append",
+      "exit_code": 0,
+      "source_sha256": "3b3ad7b0a9d998df15b62b8a317e8274170c6e835166de07985a854cd26cbccf"
+    }
+  ],
+  "test_lzma": {
+    "result": "SUCCESS",
+    "run": 121,
+    "skipped": 1,
+    "skip_reason": "Release build has no sys.gettotalrefcount debug interface",
+    "output_sha256": "bd02f2afb82ee155cc879d89da3fe9bd1f20fe3b7def69f68115dcf2b02b368b",
+    "runtime_python_sha256": "f81a6f4c684ecbf4c03bca24ddf3e7bcdd722270aa6b28cbdd07ff30ba6f6605",
+    "runtime_lzma_sha256": "9f91e6ed1c963c7f698d26d24c5dea052f8a5548aca723e6f557f8b0f6874bfc"
+  },
+  "command": [
+    "<existing-MSBuild>",
+    "<build-root>\\Python-3.15.2\\PCbuild\\pcbuild.proj",
+    "/t:Build",
+    "/m:4",
+    "/nologo",
+    "/v:minimal",
+    "/p:Configuration=Release",
+    "/p:Platform=x64",
+    "/p:PlatformToolset=v143",
+    "/p:IncludeExternals=true",
+    "/p:IncludeTkinter=false",
+    "/p:IncludeTests=true",
+    "/p:KillPython=false",
+    "/p:EnableControlFlowGuard=Guard",
+    "/p:PythonForBuild=<verified-bootstrap-python>",
+    "/p:PySourcePath=..\\",
+    "/p:ExternalsDir=..\\externals\\",
+    "/p:lzmaDir=<build-root>\\xz-5.8.4/",
+    "/p:ControlledLzmaLibrary=<build-root>\\xz-build\\Release\\lzma.lib",
+    "/p:ForceImportBeforeCppTargets=<build-root>\\no-host-paths.props"
+  ],
+  "reproducibility": "Fixed official inputs and existing toolchain/configuration; no claim of cross-machine bit-for-bit PE/PDB reproducibility",
+  "installation": "Private assembled build runtime only; no installer, registry/global PATH/security/trust changes or credentials",
+  "native_tests_not_shipped": "Test extensions and full upstream test library are build inputs only; actual frozen inventory is separate"
+}

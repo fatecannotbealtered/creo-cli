@@ -1,10 +1,13 @@
 # Runtime components and redistribution
 
-The Windows x64 client is rebuilt from the public source with the fixed official
-Python 3.15.2 ordinary x64 runtime, OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller
+The Windows x64 client is rebuilt from the public source with a project-controlled
+Python 3.15.2 ordinary x64 source build, XZ 5.8.4, OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller
 6.22.3. The original JAR/DLL from source 156a619cecdb17714481a7dbe2807ebc1a2d8699
 remain unchanged. See CLIENT-BUILD.json, COMPONENT-ORIGINS.json,
 RUNTIME-DISTRIBUTION.json and PACKAGE-MANIFEST.json for exact bytes and sources.
+The controlled build uses official source archives and the existing MSVC toolchain;
+it does not claim PSF Authenticode or byte identity with a stock Python ZIP.
+See [runtime build inputs and configuration](RUNTIME-BUILD.md).
 
 | Component | License / responsibility |
 |---|---|

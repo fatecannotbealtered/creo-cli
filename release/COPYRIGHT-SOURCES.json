@@ -20,24 +20,6 @@
       "sha256": "2c9c2acb9743e6b007b91350475308aee44691d96aa20eacef8e199988c8c388"
     },
     {
-      "file": "docs/licenses/xz-5.8.1.1-COPYING.txt",
-      "repository": "python/cpython-source-deps",
-      "ref": "xz-5.8.1.1",
-      "path": "COPYING",
-      "source_git_blob": "ef3371389d7d45db6593a146fd9e027347f3122c",
-      "source_url": "https://github.com/python/cpython-source-deps/blob/xz-5.8.1.1/COPYING",
-      "sha256": "1d2d9338d5c0620e34ade2153730eff686d07f02a42f889a33d659a30c41eac1"
-    },
-    {
-      "file": "docs/licenses/xz-5.8.1.1-0BSD.txt",
-      "repository": "python/cpython-source-deps",
-      "ref": "xz-5.8.1.1",
-      "path": "COPYING.0BSD",
-      "source_git_blob": "4a9be38928b35bb910d58d63aa91eb1963c7784a",
-      "source_url": "https://github.com/python/cpython-source-deps/blob/xz-5.8.1.1/COPYING.0BSD",
-      "sha256": "0b01625d853911cd0e2e088dcfb743261034a091bb379246cb25a14cc4c74bf1"
-    },
-    {
       "file": "docs/licenses/zlib-ng-2.2.4-LICENSE.md",
       "repository": "zlib-ng/zlib-ng",
       "ref": "2.2.4",
@@ -102,6 +84,24 @@
       "source_url": "https://github.com/python/cpython/blob/v3.15.2/Modules/_hacl/Hacl_Hash_SHA2.c",
       "extraction": "Complete leading generated-code MIT license comment",
       "sha256": "c673e1309c5033a6d58788704aac155b07624eadfe7d013265a3859db95cca42"
+    },
+    {
+      "file": "docs/licenses/xz-5.8.4-COPYING.txt",
+      "repository": "tukaani-project/xz",
+      "ref": "v5.8.4",
+      "path": "COPYING",
+      "source_git_blob": "ef3371389d7d45db6593a146fd9e027347f3122c",
+      "source_url": "https://github.com/tukaani-project/xz/blob/v5.8.4/COPYING",
+      "sha256": "616a3ad264ce29b8f1cb97e53037b139d406899ca8d1f799651e17bfa09830b8"
+    },
+    {
+      "file": "docs/licenses/xz-5.8.4-0BSD.txt",
+      "repository": "tukaani-project/xz",
+      "ref": "v5.8.4",
+      "path": "COPYING.0BSD",
+      "source_git_blob": "4322122aecf1aecff317bd50334ba206dcb9ac41",
+      "source_url": "https://github.com/tukaani-project/xz/blob/v5.8.4/COPYING.0BSD",
+      "sha256": "0b01625d853911cd0e2e088dcfb743261034a091bb379246cb25a14cc4c74bf1"
     }
   ]
 }
