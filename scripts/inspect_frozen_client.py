@@ -1,4 +1,4 @@
-"""Bind the actual frozen archive to verified official runtime files and notices."""
+"""Bind the actual frozen archive to the reviewed controlled runtime and notices."""
 
 from __future__ import annotations
 
@@ -30,7 +30,11 @@ def inspect(exe: Path, build: Path):
             raise ValueError("Embedded build provenance differs: " + key)
     if result["runtime"] != profile["required_build_versions"]:
         raise ValueError("Unexpected runtime profile")
-    official = {Path(n).name.lower(): (n, v) for n, v in profile["native_build_inputs"].items()}
+    pinned = {Path(n).name.lower(): (n, v) for n, v in profile["native_build_inputs"].items()}
+    control_data = (ROOT / "release/CONTROLLED-RUNTIME.json").read_bytes()
+    if sha(control_data) != profile["runtime_distribution"]["control_record_sha256"]:
+        raise ValueError("Controlled runtime provenance changed")
+    control = json.loads(control_data)
     native = {}
     members = {}
     for name in sorted(archive.toc):
@@ -38,11 +42,9 @@ def inspect(exe: Path, build: Path):
         members[name] = {"bytes": len(data), "sha256": sha(data)}
         if not name.lower().endswith((".dll", ".pyd")):
             continue
-        relative, expected = official.get(name.lower(), (None, None))
+        relative, expected = pinned.get(name.lower(), (None, None))
         if expected != members[name]:
-            raise ValueError(
-                "Native member is not an exact verified official runtime file: " + name
-            )
+            raise ValueError("Native member differs from the reviewed controlled runtime: " + name)
         pe = pefile.PE(data=data, fast_load=False)
         if pe.FILE_HEADER.Machine != 0x8664:
             raise ValueError("Unexpected native architecture: " + name)
@@ -59,7 +61,7 @@ def inspect(exe: Path, build: Path):
                 )
             )
         native[name] = members[name] | {
-            "official_archive_member": relative,
+            "controlled_runtime_member": relative,
             "pe_file_version": version,
         }
     for required in ("python315.dll", "_ssl.pyd", "libssl-3.dll", "libcrypto-3.dll", "sqlite3.dll"):
@@ -77,13 +79,25 @@ def inspect(exe: Path, build: Path):
         "requests",
         "pip_audit",
         "tkinter",
+        "test",
+        "_testcapi",
+        "_testinternalcapi",
+        "_testlimitedcapi",
     }
     if {n.split(".")[0] for n in modules} & forbidden:
         raise ValueError("Unexpected build-only package in frozen runtime")
     sbom_data = (ROOT / "release/PYTHON-3.15.2-OFFICIAL-SBOM.json").read_bytes()
-    if sha(sbom_data) != profile["runtime_distribution"]["sbom_sha256"]:
+    if sha(sbom_data) != profile["upstream_sbom"]["sha256"]:
         raise ValueError("Official upstream SBOM changed")
     packages = {p["SPDXID"]: p for p in json.loads(sbom_data)["packages"]}
+    packages["SPDXRef-PACKAGE-cpython"]["downloadLocation"] = profile["runtime_distribution"][
+        "cpython_source"
+    ]["url"]
+    packages["SPDXRef-PACKAGE-xz"].update(
+        versionInfo="5.8.4", downloadLocation=profile["runtime_distribution"]["xz_source"]["url"]
+    )
+    if native["_lzma.pyd"]["sha256"] != control["test_lzma"]["runtime_lzma_sha256"]:
+        raise ValueError("Frozen XZ extension is not the exact tested controlled build")
     definitions = [
         (
             "cpython",
@@ -104,7 +118,7 @@ def inspect(exe: Path, build: Path):
             "xz",
             ["_lzma.pyd"],
             "0BSD and included notices",
-            ["xz-5.8.1.1-COPYING.txt", "xz-5.8.1.1-0BSD.txt"],
+            ["xz-5.8.4-COPYING.txt", "xz-5.8.4-0BSD.txt"],
         ),
         ("mpdecimal", ["_decimal.pyd"], "BSD-2-Clause", ["mpdecimal-4.0.0-LICENSE.txt"]),
         ("zstd", ["_zstd.pyd"], "BSD-3-Clause", ["zstd-1.5.7-LICENSE.txt"]),
@@ -131,8 +145,8 @@ def inspect(exe: Path, build: Path):
                 "license": license_name,
                 "notices": ["docs/licenses/" + n for n in notices],
                 "version_evidence": (
-                    "Actual embedded file hashes equal the official distribution; "
-                    "its exact build SBOM identifies linked sources"
+                    "Embedded hashes equal the controlled runtime manifest; "
+                    "fixed source inputs and compile/link records identify dependencies"
                 ),
             }
         )
@@ -141,7 +155,7 @@ def inspect(exe: Path, build: Path):
             "name": "Microsoft Visual C++ runtime",
             "version": native["VCRUNTIME140.dll"]["pe_file_version"],
             "contained_in": ["VCRUNTIME140.dll", "VCRUNTIME140_1.dll"],
-            "source": profile["runtime_distribution"]["url"],
+            "source": control["unmodified_official_provider_files"]["microsoft_vc_source"]["url"],
             "license": "Microsoft Distributable Code conditions",
             "notices": [
                 "docs/licenses/PYTHON-3.15.2-LICENSE.txt",
@@ -165,7 +179,16 @@ def inspect(exe: Path, build: Path):
         "client": result["exe"],
         "client_source_commit": result["source_commit"],
         "runtime": result["runtime"],
-        "official_distribution": profile["runtime_distribution"],
+        "controlled_distribution": profile["runtime_distribution"],
+        "controlled_source_proof": {
+            "control_record_sha256": sha(control_data),
+            "fixed_xz_sources": control["fixed_xz_sources"],
+            "xz_static_library_sha256": control["xz_static_library_sha256"],
+            "lzma_link_record_sha256": control["lzma_link_record_sha256"],
+            "upstream_regressions": control["upstream_regressions"],
+            "test_lzma": control["test_lzma"],
+            "patches": control["patches"],
+        },
         "embedded_client_build_sha256": sha(embedded),
         "components": components,
         "native_files": native,
@@ -180,11 +203,12 @@ def inspect(exe: Path, build: Path):
             "no ucrtbase.dll or API-set DLLs are bundled"
         ),
         "upstream_sbom_scope": (
-            "The upstream full Python distribution SBOM is provenance only. "
+            "The full PSF SBOM is baseline provenance; controlled CPython/XZ source "
+            "build identities override it. "
             "pip, Tk, Expat and uncollected packages in it are not claimed as shipped"
         ),
         "security_scope": (
-            "Official Python/OpenSSL/SQLite/PyInstaller advisories reviewed 2026-10-31; "
+            "Official Python/OpenSSL/SQLite/PyInstaller/XZ advisories reviewed 2026-10-31; "
             "fixed PyPI build lock audited separately. "
             "Not a comprehensive native CVE certification or future vulnerability guarantee"
         ),

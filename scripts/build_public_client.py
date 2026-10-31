@@ -49,7 +49,7 @@ def main():
     base_python = Path(sys.base_prefix)
     for relative, expected in profile["native_build_inputs"].items():
         if digest(base_python / relative) != expected["sha256"]:
-            raise ValueError("Official runtime file differs: " + relative)
+            raise ValueError("Reviewed controlled runtime file differs: " + relative)
     pyinstaller_root = Path(
         importlib.metadata.distribution("pyinstaller").locate_file("PyInstaller")
     )

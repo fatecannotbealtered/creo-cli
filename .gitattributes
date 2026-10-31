@@ -9,5 +9,8 @@ release/COPYRIGHT-SOURCES.json -text
 release/PYTHON-3.15.2-OFFICIAL-SBOM.json -text
 release/CLIENT-RUNTIME.json -text
 release/BUILD-INPUT-WHEELS.json -text
+release/CONTROLLED-RUNTIME.json -text
+release/CONTROLLED-RUNTIME-INPUTS.json -text
+release/runtime-patches/* -text
 *.png binary
 *.zip binary

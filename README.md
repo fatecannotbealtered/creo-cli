@@ -14,8 +14,9 @@ STEP delivery, deletion and drawing symbols remain restricted. Complex assemblie
 can take minutes. `reference` reports beta/partial readiness; command presence is
 not proof of native qualification.
 
-This package rebuilds only the client with official Python 3.15.2 and PyInstaller
-6.22.3. Its exact embedded runtime and old-history compatibility are checked offline;
+This package rebuilds only the client with project-controlled Python 3.15.2,
+patched XZ 5.8.4 and PyInstaller 6.22.3. The runtime is compiled from official
+sources using the recorded build configuration. Its exact embedded runtime and old-history compatibility are checked offline;
 the unchanged JAR/DLL retain their original build sources. Offline runtime checks
 do not extend the historic native qualification.
 

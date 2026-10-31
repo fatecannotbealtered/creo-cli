@@ -6,8 +6,9 @@ Initialization no longer depends on private sample archives. It creates empty
 project directories and retains the exact staging boundary, reinitialization refusal,
 continuing history and stop-on-unknown behavior.
 
-Only the client is rebuilt with the fixed official Python 3.15.2 ordinary x64 runtime,
-OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller 6.22.3. The JAR/DLL remain unchanged.
+Only the client is rebuilt with project-controlled Python 3.15.2 from official
+sources, patched XZ 5.8.4, OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller 6.22.3.
+The JAR/DLL remain unchanged. The runtime is not an unmodified PSF binary package.
 The initializer, runtime compatibility and packaging are checked offline against the final package.
 Those checks do not add native engineering or clean-machine qualification.
 Bounded native observations remain limited to visible-window Creo 13.4.1.0/JDK 25.0.3,

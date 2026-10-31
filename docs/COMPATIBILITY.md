@@ -28,7 +28,7 @@ fixtures and the CPU-only Java scanner tests do not prove runtime SDK/license be
 | Supplied START/startup scripts | Require PowerShell 7.4 or later; direct EXE use does not impose that script dependency | Script `#requires` declarations |
 | Creo without the `ObjectToolkitJava` licence | The service cannot start as an Object TOOLKIT Java application; nothing works | none |
 | Creo delivered by application streaming (PTC trial) | Not usable: no API toolkits, no installer to add them | `doctor` detects it |
-| Rebuilt Windows client, official Python 3.15.2/OpenSSL 3.5.9/SQLite 3.53.4 | Bounded offline contract, continuing-history and exact-package checks; original JAR/DLL unchanged | CLIENT-ARTIFACT.json, RUNTIME-DISTRIBUTION.json and package manifest |
+| Rebuilt Windows client, controlled Python 3.15.2/XZ 5.8.4/OpenSSL 3.5.9/SQLite 3.53.4 | Bounded offline contract, continuing-history and exact-package checks; original JAR/DLL unchanged | CLIENT-ARTIFACT.json, RUNTIME-DISTRIBUTION.json and package manifest |
 | Other Python versions, Linux or macOS | Historical source checks do not qualify this Windows distribution on other hosts | Not qualified for this beta |
 | win32-x64 public candidate | Bounded unsigned beta; full FCC, clean-machine deployment and npm publication are not qualified | Exact package manifest and release notes |
 

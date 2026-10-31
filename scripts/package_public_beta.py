@@ -81,6 +81,8 @@ def package(original: Path, client: Path, output: Path):
                 if name in {
                     "docs/licenses/PYTHON-3.12.10-LICENSE.md",
                     "docs/licenses/PYINSTALLER-6.21.0-COPYING.md",
+                    "docs/licenses/xz-5.8.1.1-COPYING.txt",
+                    "docs/licenses/xz-5.8.1.1-0BSD.txt",
                 }:
                     continue
                 path = destination / name.removeprefix(prefix)
@@ -142,6 +144,9 @@ def package(original: Path, client: Path, output: Path):
         ("release/CLIENT-ARTIFACT.json", "CLIENT-ARTIFACT.json"),
         ("release/RUNTIME-DISTRIBUTION.json", "RUNTIME-DISTRIBUTION.json"),
         ("release/COPYRIGHT-SOURCES.json", "release/COPYRIGHT-SOURCES.json"),
+        ("release/CONTROLLED-RUNTIME.json", "release/CONTROLLED-RUNTIME.json"),
+        ("release/CONTROLLED-RUNTIME-INPUTS.json", "release/CONTROLLED-RUNTIME-INPUTS.json"),
+        ("release/runtime-patches", "release/runtime-patches"),
     ]:
         copy_snapshot(source, bundle / destination)
     for name in [
@@ -159,7 +164,7 @@ def package(original: Path, client: Path, output: Path):
         dst = bundle / "cli/examples/engineering" / name
         copy_snapshot("examples/engineering/" + name, dst)
     # Root documentation paths work both in the archive and in the source repository.
-    for name in ["RUNTIME-DEPENDENCIES.md", "STARTUP-NATIVE.md"]:
+    for name in ["RUNTIME-DEPENDENCIES.md", "RUNTIME-BUILD.md", "STARTUP-NATIVE.md"]:
         dst = bundle / "docs" / name
         copy_snapshot("docs/" + name, dst)
     copy_snapshot("docs/licenses", bundle / "docs/licenses")

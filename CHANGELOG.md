@@ -4,8 +4,9 @@ This file is the only human-maintained change source. Runtime copies are generat
 
 ## [Unreleased]
 
-- Rebuild only the Windows client with fixed official Python 3.15.2, OpenSSL 3.5.9,
-  SQLite 3.53.4 and PyInstaller 6.22.3. Preserve the original JAR/DLL bytes,
+- Rebuild only the Windows client with project-controlled Python 3.15.2 from
+  official sources, patched XZ 5.8.4, OpenSSL 3.5.9, SQLite 3.53.4 and PyInstaller
+  6.22.3. Preserve the original JAR/DLL bytes,
   source-bound component identities, write gates and unknown-operation history.
 - Remove private sample archives from public initialization and provide the complete
   component package with six mechanical-task Skills. Offline compatibility checks

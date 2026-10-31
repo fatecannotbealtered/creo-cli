@@ -12,8 +12,9 @@ NotSigned; ordinary unlocking does not create a Windows publisher signature, and
 Java unlocking does not remove its runtime license requirements. See
 [runtime dependencies](docs/RUNTIME-DEPENDENCIES.md) for the supplier's official guidance.
 
-The rebuilt frozen client uses the official ordinary x64 Python 3.15.2 runtime and
-PyInstaller 6.22.3. Preserve the complete [Python license and binary-build conditions](docs/licenses/PYTHON-3.15.2-LICENSE.txt)
+The rebuilt frozen client uses a project-controlled ordinary x64 Python 3.15.2
+source build, patched XZ 5.8.4 and PyInstaller 6.22.3. This is not an unmodified
+PSF Windows binary distribution. Preserve the complete [Python license and binary-build conditions](docs/licenses/PYTHON-3.15.2-LICENSE.txt)
 and [PyInstaller COPYING and Bootloader Exception](docs/licenses/PYINSTALLER-6.22.3-COPYING.txt).
 RUNTIME-DISTRIBUTION.json binds the actual embedded components to their versions,
 sources, hashes and applicable notices in docs/licenses, including OpenSSL, SQLite,
