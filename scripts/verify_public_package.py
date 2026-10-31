@@ -79,9 +79,10 @@ def verify(root: Path):
         raise ValueError("Runtime inventory does not bind this exact client")
     if artifact["source_commit"] != runtime["client_source_commit"]:
         raise ValueError("Runtime inventory source binding differs")
-    if hashlib.sha256((root / "CLIENT-BUILD.json").read_bytes()).hexdigest() != runtime[
-        "embedded_client_build_sha256"
-    ]:
+    if (
+        hashlib.sha256((root / "CLIENT-BUILD.json").read_bytes()).hexdigest()
+        != runtime["embedded_client_build_sha256"]
+    ):
         raise ValueError("Embedded client build record sidecar differs")
     for name, expected in runtime["notices"].items():
         if manifest["files"].get(name) != expected:
