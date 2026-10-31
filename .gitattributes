@@ -1,3 +1,13 @@
 * text=auto eol=lf
+
+# These artifacts bind exact distributed/embedded bytes; never normalize them.
+docs/licenses/* -text
+release/CLIENT-BUILD.json -text
+release/CLIENT-ARTIFACT.json -text
+release/RUNTIME-DISTRIBUTION.json -text
+release/COPYRIGHT-SOURCES.json -text
+release/PYTHON-3.15.2-OFFICIAL-SBOM.json -text
+release/CLIENT-RUNTIME.json -text
+release/BUILD-INPUT-WHEELS.json -text
 *.png binary
 *.zip binary
