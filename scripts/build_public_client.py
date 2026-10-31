@@ -123,8 +123,14 @@ def main():
         str(exported / "cli.py"),
     ]
     env = dict(os.environ, PYINSTALLER_CONFIG_DIR=str(output / "cache"))
+    # Ambient tool PATH entries can supply unrelated runtime DLLs to dependency
+    # discovery. Use the verified interpreter and the Windows runtime only.
+    windows = Path(os.environ["SystemRoot"])
+    env["PATH"] = os.pathsep.join(
+        str(p) for p in (base_python, Path(sys.executable).parent, windows / "System32", windows)
+    )
     for name in list(env):
-        if name.startswith(("CREO_CLI_", "PYI_", "_PYI_")):
+        if name.startswith(("CREO_CLI_", "PYI_", "_PYI_")) or name in {"PYTHONPATH", "PYTHONHOME"}:
             del env[name]
     with (output / "build.stdout").open("wb") as out, (output / "build.stderr").open("wb") as err:
         result = subprocess.run(command, cwd=exported, env=env, stdout=out, stderr=err)
@@ -157,6 +163,12 @@ def main():
         "--add-data",
         "<build>/CLIENT-BUILD.json;.",
         "cli.py",
+    ]
+    binding["dependency_search_path"] = [
+        "<official-python>",
+        "<build-venv>/Scripts",
+        "%SystemRoot%/System32",
+        "%SystemRoot%",
     ]
     (output / "BUILD-RESULT.json").write_text(
         json.dumps(binding, indent=2) + "\n", encoding="utf-8"
