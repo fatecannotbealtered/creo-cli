@@ -16,8 +16,8 @@ VERSION = "1.1.0-beta.1"
 INPUT_SHA256 = "418bf4717d5f3b82b7c77e866cd7fa783019c172e5f65b697355d2504991264e"
 COMPONENTS = {
     "cli/creo-cli.exe": (
-        "cd3c18cbc139dfb85b0c9f20ac9a30734b81d29385a9d7a87379ad097d771668",
-        "87ad66e6e5d6a549545620b4d8899ef7176f32e5",
+        "07cb21b2534f9b9918f0a30b82ead8a6ca953e2a188887ab1e521d528a28faef",
+        "94e038db1b89adb065778b9804d0a7857c75505a",
     ),
     "cli/service-bundle/creo-cli-service.jar": (
         "bbc5f5a9952876aebb726f29d53d67b509278c91d4d2a3a66386f3f2270cae39",
@@ -147,6 +147,10 @@ def package(original: Path, client: Path, output: Path):
         ("release/CONTROLLED-RUNTIME.json", "release/CONTROLLED-RUNTIME.json"),
         ("release/CONTROLLED-RUNTIME-INPUTS.json", "release/CONTROLLED-RUNTIME-INPUTS.json"),
         ("release/runtime-patches", "release/runtime-patches"),
+        ("release/CONTROLLED-RUNTIME.json", "cli/release/CONTROLLED-RUNTIME.json"),
+        ("release/CONTROLLED-RUNTIME-INPUTS.json", "cli/release/CONTROLLED-RUNTIME-INPUTS.json"),
+        ("release/runtime-patches", "cli/release/runtime-patches"),
+        ("release/COPYRIGHT-SOURCES.json", "cli/release/COPYRIGHT-SOURCES.json"),
     ]:
         copy_snapshot(source, bundle / destination)
     for name in [
