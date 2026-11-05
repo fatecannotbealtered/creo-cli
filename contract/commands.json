@@ -37,12 +37,6 @@
         "dimensions[*].id",
         "dimensions[*].name"
       ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-011"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {},
@@ -78,12 +72,6 @@
         "material",
         "units"
       ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-001"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {},
@@ -117,22 +105,16 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
+          "summary": "Items per page; default 20, at most 100."
         },
         {
           "name": "--offset",
           "type": "integer",
-          "summary": "Skip this many items first."
+          "summary": "Start position of the page; default 0."
         }
       ],
       "untrusted_fields": [
         "name"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-010"
       ],
       "irreversible": false,
       "halt": false,
@@ -181,23 +163,17 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
+          "summary": "Items per page; default 20, at most 100."
         },
         {
           "name": "--offset",
           "type": "integer",
-          "summary": "Skip this many items first."
+          "summary": "Start position of the page; default 0."
         }
       ],
       "untrusted_fields": [
-        "name",
-        "reference"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-030"
+        "reference",
+        "name"
       ],
       "irreversible": false,
       "halt": false,
@@ -252,12 +228,6 @@
         }
       ],
       "untrusted_fields": [],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-031"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {},
@@ -296,23 +266,17 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
+          "summary": "Items per page; default 20, at most 100."
         },
         {
           "name": "--offset",
           "type": "integer",
-          "summary": "Skip this many items first."
+          "summary": "Start position of the page; default 0."
         }
       ],
       "untrusted_fields": [
         "id",
         "name"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-032"
       ],
       "irreversible": false,
       "halt": false,
@@ -424,16 +388,6 @@
         "id",
         "name"
       ],
-      "adapter_capabilities": [
-        "read",
-        "preview",
-        "apply",
-        "read_back"
-      ],
-      "survey_ids": [
-        "CAP-033",
-        "CAP-034"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {
@@ -474,12 +428,12 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
+          "summary": "Items per page; default 20, at most 100."
         },
         {
           "name": "--offset",
           "type": "integer",
-          "summary": "Skip this many items first."
+          "summary": "Start position of the page; default 0."
         }
       ],
       "untrusted_fields": [
@@ -487,12 +441,6 @@
         "name",
         "value",
         "unit"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-035"
       ],
       "irreversible": false,
       "halt": false,
@@ -555,15 +503,6 @@
         "value",
         "unit"
       ],
-      "adapter_capabilities": [
-        "read",
-        "preview",
-        "apply",
-        "read_back"
-      ],
-      "survey_ids": [
-        "CAP-035"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {
@@ -577,7 +516,7 @@
     },
     {
       "path": "relation list",
-      "summary": "A model's relations, one per line, as Tools > Relations shows them.",
+      "summary": "A model's relations, one item per line, numbered as Tools > Relations shows them.",
       "effects": [
         "observe"
       ],
@@ -595,16 +534,20 @@
           "name": "--doc",
           "type": "string",
           "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--limit",
+          "type": "integer",
+          "summary": "Items per page; default 20, at most 100."
+        },
+        {
+          "name": "--offset",
+          "type": "integer",
+          "summary": "Start position of the page; default 0."
         }
       ],
       "untrusted_fields": [
-        "lines[*]"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-036"
+        "text"
       ],
       "irreversible": false,
       "halt": false,
@@ -643,22 +586,16 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
+          "summary": "Items per page; default 20, at most 100."
         },
         {
           "name": "--offset",
           "type": "integer",
-          "summary": "Skip this many items first."
+          "summary": "Start position of the page; default 0."
         }
       ],
       "untrusted_fields": [
         "name"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-040"
       ],
       "irreversible": false,
       "halt": false,
@@ -696,22 +633,16 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
+          "summary": "Items per page; default 20, at most 100."
         },
         {
           "name": "--offset",
           "type": "integer",
-          "summary": "Skip this many items first."
+          "summary": "Start position of the page; default 0."
         }
       ],
       "untrusted_fields": [
         "model"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-050"
       ],
       "irreversible": false,
       "halt": false,
@@ -772,15 +703,6 @@
       "untrusted_fields": [
         "name"
       ],
-      "adapter_capabilities": [
-        "read",
-        "preview",
-        "apply",
-        "read_back"
-      ],
-      "survey_ids": [
-        "CAP-012"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {},
@@ -819,15 +741,6 @@
         }
       ],
       "untrusted_fields": [],
-      "adapter_capabilities": [
-        "read",
-        "preview",
-        "apply",
-        "read_back"
-      ],
-      "survey_ids": [
-        "CAP-003"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {},
@@ -876,15 +789,6 @@
         }
       ],
       "untrusted_fields": [],
-      "adapter_capabilities": [
-        "read",
-        "preview",
-        "apply",
-        "read_back"
-      ],
-      "survey_ids": [
-        "CAP-004"
-      ],
       "irreversible": false,
       "halt": false,
       "tolerances": {},

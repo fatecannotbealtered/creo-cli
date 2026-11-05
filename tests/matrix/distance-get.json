@@ -16,11 +16,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131138-distance-get.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -42,12 +38,7 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "--to is missing."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131138-distance-get.json#invalid_input"
+      }
     },
     {
       "row": "not_found",
@@ -65,12 +56,7 @@
       "expected": {
         "exit": 3,
         "code": "E_NOT_FOUND"
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131138-distance-get.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -85,12 +71,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_AMBIGUOUS"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131441-distance-get.json#ambiguous"
+      }
     },
     {
       "row": "conflict",
@@ -119,12 +100,7 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      },
-      "actual": {
-        "exit": 7,
-        "code": "E_BUSY"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131337-distance-get.json#busy"
+      }
     },
     {
       "row": "dialog",
@@ -143,12 +119,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      },
-      "actual": {
-        "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131359-distance-get.json#dialog"
+      }
     },
     {
       "row": "disconnect",
@@ -185,11 +156,7 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131239-distance-get.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",

@@ -1,7 +1,7 @@
 """The envelope on stdout (DCLI-001 to DCLI-008, DCLI-010 to DCLI-014).
 
-One JSON envelope per call, compact unless ``--pretty``. ``meta`` holds ``duration_ms`` and,
-when not empty, ``notices`` and ``untrusted``. Envelopes keep within the size limits of the
+One JSON envelope per call, compact unless ``--pretty``. ``meta`` holds ``notices`` and
+``untrusted`` when they are not empty, and is left out when both are. Envelopes keep within the size limits of the
 contract: a list page is shortened and says ``has_more``; an oversized error keeps its
 codes and drops detail the Agent can fetch with ``operation get``.
 """
@@ -47,19 +47,17 @@ class Envelopes:
         self.contract = contract
         self.limits = contract["envelope"]["limits"]
 
-    def success(self, result: Result, notices: list[dict[str, str]], duration_ms: int) -> dict[str, Any]:
-        env = {"ok": True, "schema_version": self.contract.schema_version, "data": result.data,
-               "meta": self._meta(duration_ms, notices, ["$.data" + p for p in result.untrusted])}
+    def success(self, result: Result, notices: list[dict[str, str]]) -> dict[str, Any]:
+        env = {"ok": True, "data": result.data, **self._meta(notices, ["$.data" + p for p in result.untrusted])}
         _resolve_untrusted(env)
         if len(dumps(env)) > self.limits["success_chars"]:
             env = self._shrink_success(env, result)
         return env
 
-    def failure(self, err: DriverError, notices: list[dict[str, str]], duration_ms: int) -> dict[str, Any]:
+    def failure(self, err: DriverError, notices: list[dict[str, str]]) -> dict[str, Any]:
         spec = self.contract.errors[err.code]
         error = {"code": err.code, "message": err.message, "retryable": spec["retryable"], "details": dict(err.details)}
-        env = {"ok": False, "schema_version": self.contract.schema_version, "error": error,
-               "meta": self._meta(duration_ms, notices, ["$.error." + p.lstrip(".") for p in err.untrusted])}
+        env = {"ok": False, "error": error, **self._meta(notices, ["$.error." + p.lstrip(".") for p in err.untrusted])}
         _resolve_untrusted(env)
         limit = self.limits["confirmation_required_chars" if err.code == "E_CONFIRMATION_REQUIRED" else "error_chars"]
         if len(dumps(env)) > limit:
@@ -71,13 +69,14 @@ class Envelopes:
         return 0 if env["ok"] else self.contract.errors[env["error"]["code"]]["exit"]
 
     @staticmethod
-    def _meta(duration_ms: int, notices: list[dict[str, str]], untrusted: list[str]) -> dict[str, Any]:
-        meta: dict[str, Any] = {"duration_ms": max(0, int(duration_ms))}
+    def _meta(notices: list[dict[str, str]], untrusted: list[str]) -> dict[str, Any]:
+        """``{"meta": {...}}`` with what is not empty, or nothing (DCLI-004)."""
+        meta: dict[str, Any] = {}
         if notices:
             meta["notices"] = notices
         if untrusted:
             meta["untrusted"] = sorted(set(untrusted))
-        return meta
+        return {"meta": meta} if meta else {}
 
     def _shrink_success(self, env: dict[str, Any], result: Result) -> dict[str, Any]:
         data = env["data"]
@@ -137,16 +136,18 @@ _STEP = re.compile(r"\.([a-z0-9_]+)|\[([0-9]+|\*)\]")
 
 
 def _resolve_untrusted(env: dict[str, Any]) -> None:
-    """Keep only the untrusted paths that point at something in the envelope."""
-    paths = env["meta"].get("untrusted")
-    if not paths:
-        env["meta"].pop("untrusted", None)
-        return
-    kept = [p for p in paths if _exists(env, p)]
+    """Keep only the untrusted paths that point at something in the envelope; an empty
+    ``meta`` is left out (DCLI-004)."""
+    meta = env.get("meta", {})
+    kept = [p for p in meta.get("untrusted", []) if _exists(env, p)]
     if kept:
-        env["meta"]["untrusted"] = sorted(set(kept))
+        meta["untrusted"] = sorted(set(kept))
     else:
-        env["meta"].pop("untrusted", None)
+        meta.pop("untrusted", None)
+    if meta:
+        env["meta"] = meta
+    else:
+        env.pop("meta", None)
 
 
 def _exists(root: Any, path: str) -> bool:
@@ -177,7 +178,7 @@ def render_text(env: dict[str, Any]) -> str:
         lines.append(f"next: {err['details'].get('next_action', '')}")
         rest = {k: v for k, v in err["details"].items() if k not in ("next_action",)}
         _text(rest, 1, lines)
-    for notice in env["meta"].get("notices", []):
+    for notice in env.get("meta", {}).get("notices", []):
         lines.append(f"[{notice['severity']}] {notice['message']}")
     return "\n".join(lines)
 

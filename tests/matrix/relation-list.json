@@ -12,11 +12,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131141-relation-list.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -30,11 +26,7 @@
       "expected": {
         "exit": 0,
         "summary": "Run on a model without relations (plate.prt): no lines."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131152-relation-list.json#empty"
+      }
     },
     {
       "row": "invalid_input",
@@ -49,12 +41,7 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131141-relation-list.json#invalid_input"
+      }
     },
     {
       "row": "not_found",
@@ -69,12 +56,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131141-relation-list.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -84,12 +66,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_AMBIGUOUS"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131501-relation-list.json#ambiguous"
+      }
     },
     {
       "row": "conflict",
@@ -114,12 +91,7 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      },
-      "actual": {
-        "exit": 7,
-        "code": "E_BUSY"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131354-relation-list.json#busy"
+      }
     },
     {
       "row": "dialog",
@@ -134,12 +106,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      },
-      "actual": {
-        "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131416-relation-list.json#dialog"
+      }
     },
     {
       "row": "disconnect",
@@ -168,11 +135,7 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131300-relation-list.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",

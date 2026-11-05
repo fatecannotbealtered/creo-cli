@@ -6,15 +6,9 @@
       "applies": true,
       "arguments": [],
       "expected": {
-        "exit": 5,
-        "code": "E_CONFIRMATION_REQUIRED",
-        "summary": "Two-step (configure): the preview names the version."
-      },
-      "actual": {
-        "exit": 5,
-        "code": "E_CONFIRMATION_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131205-plugin-remove.json#normal"
+        "exit": 0,
+        "summary": "Two-step (configure), confirmed with its token: removes the host component; plugin get reports no version on disk."
+      }
     },
     {
       "row": "empty",
@@ -30,12 +24,7 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131205-plugin-remove.json#invalid_input"
+      }
     },
     {
       "row": "not_found",
@@ -65,12 +54,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not grant configure."
-      },
-      "actual": {
-        "exit": 4,
-        "code": "E_FORBIDDEN"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131321-plugin-remove.json#no_scope"
+      }
     },
     {
       "row": "busy",
@@ -99,7 +83,7 @@
       "expected": {
         "exit": 1,
         "code": "E_VERIFY_FAILED",
-        "summary": "Prepared live: a confirmed removal after which plugin get still reports a version on disk. The matrix runner runs one call per row and passes no confirm token, so it stops at the preview (exit 5) and never reaches this row (spec issue 14); until it can, the command stays at maturity draft."
+        "summary": "While the tool waits before its read-back, --tamper puts the removed host component back."
       }
     }
   ]

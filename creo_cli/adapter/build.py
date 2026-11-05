@@ -1,6 +1,6 @@
 """Build the host component on the user's computer, during `plugin install`.
 
-creo-cli ships the host component as source (plugin/src) and no binary. An Object TOOLKIT Java
+creo-cli ships the host component as source (plugin/source) and no binary. An Object TOOLKIT Java
 application must be unlocked with the PTC tool `protk_unlock` before Creo loads it from a seat
 without a development license, and an unlocked file must not change afterwards. So the JAR is
 compiled with the user's JDK 25 against the user's own `otk.jar`, and unlocked there with the
@@ -25,7 +25,7 @@ UNLOCK_TIMEOUT_S = 50
 
 
 def source_digest(sources: Path) -> str:
-    """One SHA-256 over every source file, by its path below plugin/src and its bytes."""
+    """One SHA-256 over every source file, by its path below plugin/source and its bytes."""
     digest = hashlib.sha256()
     for path in sorted(sources.rglob("*.java")):
         digest.update(path.relative_to(sources).as_posix().encode("utf-8") + b"\0")

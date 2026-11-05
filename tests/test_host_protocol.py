@@ -1,6 +1,6 @@
 """The host component's protocol code, over a real named pipe, against the runtime's own client.
 
-The core classes of the host component (plugin/src/.../host/core) use no Creo classes, so they
+The core classes of the host component (plugin/source/.../host/core) use no Creo classes, so they
 compile with a plain JDK. tests/host/TestHost.java wires them into a host without Creo; this
 test talks to it with creo_cli._driver.hostproto, the client every CLI call uses. The test is
 skipped when no JDK 22 or later is found (CREO_CLI_JDK, JAVA_HOME or PRO_JAVA_COMMAND).
@@ -21,7 +21,7 @@ from pathlib import Path
 from creo_cli._driver.hostproto import Connection, HostReplyError, NoReply, _connect
 
 ROOT = Path(__file__).resolve().parents[1]
-CORE = ROOT / "plugin" / "src" / "com" / "fateforge" / "creocli" / "host" / "core"
+CORE = ROOT / "plugin" / "source" / "com" / "fateforge" / "creocli" / "host" / "core"
 NO_WINDOW = 0x08000000 if os.name == "nt" else 0
 
 
@@ -80,14 +80,14 @@ class HostProtocolTest(unittest.TestCase):
         shutil.rmtree(cls.work, ignore_errors=True)
 
     def connect(self) -> Connection:
-        conn = Connection(self.address, "test", "1.0.0")
+        conn = Connection(self.address, "test", "1.2.0")
         conn.open(3000)
         self.addCleanup(conn.close)
         return conn
 
     def test_hello_answers_the_handshake(self) -> None:
         conn = self.connect()
-        self.assertEqual(conn.hello["protocol_version"], "1.0.0")
+        self.assertEqual(conn.hello["protocol_version"], "1.2.0")
         self.assertEqual(conn.hello["session"], {"id": "creo-1-1", "generation": 0})
         self.assertIn("read", conn.hello["methods"])
 
@@ -155,7 +155,7 @@ class HostProtocolTest(unittest.TestCase):
         self.assertEqual(caught.exception.data["dispatch_state"], "not_started")
 
     def test_a_reply_after_the_deadline_never_comes(self) -> None:
-        conn = Connection(self.address, "test", "1.0.0")
+        conn = Connection(self.address, "test", "1.2.0")
         conn.open(3000)
         try:
             with self.assertRaises(NoReply) as caught:

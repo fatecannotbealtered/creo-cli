@@ -10,11 +10,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131158-doc-list.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -26,11 +22,7 @@
       "expected": {
         "exit": 0,
         "summary": "A session with no document open: no items."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131116-doc-list.json#empty"
+      }
     },
     {
       "row": "invalid_input",
@@ -39,17 +31,13 @@
         "--session",
         "{session}",
         "--limit",
-        "0"
+        "101"
       ],
       "expected": {
         "exit": 2,
-        "code": "E_USAGE"
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131158-doc-list.json#invalid_input"
+        "code": "E_USAGE",
+        "summary": "--limit above its maximum of 100."
+      }
     },
     {
       "row": "not_found",
@@ -61,12 +49,7 @@
       "expected": {
         "exit": 3,
         "code": "E_NOT_FOUND"
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131158-doc-list.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -108,11 +91,7 @@
       "expected": {
         "exit": 0,
         "summary": "A document with unsaved changes is listed with dirty true."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131242-doc-list.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",

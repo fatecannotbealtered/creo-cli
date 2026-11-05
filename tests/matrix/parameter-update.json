@@ -16,11 +16,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131230-parameter-update.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -38,11 +34,7 @@
       "expected": {
         "exit": 0,
         "summary": "PART_CODE is already DSC-002: nothing changes."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131230-parameter-update.json#empty"
+      }
     },
     {
       "row": "invalid_input",
@@ -59,12 +51,7 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "--value is missing."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131230-parameter-update.json#invalid_input"
+      }
     },
     {
       "row": "not_found",
@@ -82,12 +69,7 @@
       "expected": {
         "exit": 3,
         "code": "E_NOT_FOUND"
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131230-parameter-update.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -102,12 +84,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_AMBIGUOUS"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131500-parameter-update.json#ambiguous"
+      }
     },
     {
       "row": "conflict",
@@ -126,12 +103,7 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "HALF_DIAMETER is driven by the relation HALF_DIAMETER = DIAMETER / 2."
-      },
-      "actual": {
-        "exit": 6,
-        "code": "E_CONFLICT"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131230-parameter-update.json#conflict"
+      }
     },
     {
       "row": "no_scope",
@@ -150,12 +122,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      },
-      "actual": {
-        "exit": 4,
-        "code": "E_FORBIDDEN"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131315-parameter-update.json#no_scope"
+      }
     },
     {
       "row": "busy",
@@ -174,12 +141,7 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      },
-      "actual": {
-        "exit": 7,
-        "code": "E_BUSY"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131353-parameter-update.json#busy"
+      }
     },
     {
       "row": "dialog",
@@ -198,12 +160,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      },
-      "actual": {
-        "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131415-parameter-update.json#dialog"
+      }
     },
     {
       "row": "disconnect",
@@ -240,16 +197,26 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131259-parameter-update.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",
-      "applies": false,
-      "reason": "Creo stores every value the host passes as given (measured on Creo 13.4.1.0 with symbols, tabs, control and zero-width characters). The values it stores otherwise are refused before dispatch: characters such as emoji (Creo stored an empty value), line breaks (Creo refused them) and more than 79 characters."
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "PART_CODE",
+        "--value",
+        "DSC-003"
+      ],
+      "expected": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED",
+        "summary": "While the tool waits before its read-back, --tamper sets PART_CODE to another value in Creo."
+      }
     }
   ]
 }

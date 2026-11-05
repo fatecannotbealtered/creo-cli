@@ -2,7 +2,7 @@
 
 English | [中文](APPLICATION_zh.md)
 
-This survey records what Creo Parametric can do and how it can be automated. It is filled in before commands are designed: every domain command of creo-cli names the capability IDs it implements, and every capability has a disposition.
+This survey records what Creo Parametric can do and how it can be automated. It is filled in before commands are designed, and every capability has a disposition: `provided` when a command of creo-cli offers it.
 
 Sources marked "earlier creo-cli" are the documents and code of the earlier creo-cli at commit `fd35893` (in this repository's git history). They record observations made on Creo Parametric 13.4.1.0.
 

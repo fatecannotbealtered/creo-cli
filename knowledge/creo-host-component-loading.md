@@ -4,9 +4,6 @@ title: How Creo loads the host component
 kind: guide
 applies_to: [plugin install, plugin get, session list]
 tags: [install, host-component]
-lang: en
-based_on: PTC Creo Object TOOLKIT Java User's Guide, Registering a Creo Object TOOLKIT Java Application; earlier creo-cli at commit fd35893, docs/SERVICE.md
-updated_on: 2026-11-05
 ---
 Creo reads registry files only when it starts: `protk.dat` or `creotk.dat` in the folder it starts in, and the file named by `toolkit_registry_file` in `config.pro`.
 

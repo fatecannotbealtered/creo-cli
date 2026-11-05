@@ -4,9 +4,6 @@ title: Creo needs a visible desktop
 kind: rule
 applies_to: [model render, session list]
 tags: [display]
-lang: en
-based_on: earlier creo-cli at commit fd35893, docs/HEADLESS-SUPPORT.md and docs/SERVICE.md
-updated_on: 2026-11-05
 severity: warning
 check: the person keeps Creo visible and the screen unlocked during work
 ---

@@ -4,9 +4,6 @@ title: Licenses creo-cli needs
 kind: rule
 applies_to: [doctor, plugin install]
 tags: [license]
-lang: en
-based_on: PTC, Creo Object TOOLKIT Java User's Guide, Unlocking, Running and Signing the Creo Object TOOLKIT Java Application; earlier creo-cli at commit fd35893, docs/COMPATIBILITY.md
-updated_on: 2026-11-05
 severity: error
 check: doctor passes its license check and session list shows plugin_loaded
 ---

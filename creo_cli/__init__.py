@@ -25,6 +25,9 @@ TOOL = Tool(
     versions=">=13.4 <13.5",
     modes=["session"],
     host_component=True,
+    # Standard writes that take Creo Parametric more than a minute: opening a large assembly
+    # retrieves every model it uses. The runtime runs them as long jobs (DCLI-065).
+    long_commands=["doc open"],
     # plugin/manifest.json records the host component's files and methods; `python scripts/spec.py
     # generate` writes all of it but `methods` (DCLI-240).
     plugin_manifest=ROOT / "plugin" / "manifest.json",

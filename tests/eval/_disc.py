@@ -19,7 +19,12 @@ def path(run):
 
 
 def open_disc(run):
+    """Open disc.prt; doc open runs as a long job, so wait until the job ends."""
     reply = run.tool("doc", "open", "--doc", path(run))
+    job = ((reply.get("data") or {}).get("result") or {}).get("job")
+    if reply.get("ok") and job:
+        done = run.tool("job", "get", "--job", job["id"], "--wait", "120s")
+        reply = {"ok": bool((done.get("data") or {}).get("ok")), "error": done.get("data")}
     if not reply.get("ok"):
         raise RuntimeError(f"disc.prt did not open in Creo: {reply.get('error')}")
 

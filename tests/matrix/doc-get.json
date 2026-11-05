@@ -12,11 +12,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131200-doc-get.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -28,21 +24,13 @@
       "applies": true,
       "arguments": [
         "--session",
-        "{session}",
-        "--doc",
-        "{doc}",
-        "--bogus"
+        "{session}"
       ],
       "expected": {
         "exit": 2,
         "code": "E_USAGE",
-        "summary": "An unknown option."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131200-doc-get.json#invalid_input"
+        "summary": "--doc is missing."
+      }
     },
     {
       "row": "not_found",
@@ -57,12 +45,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131200-doc-get.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -75,12 +58,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions have the document open."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_AMBIGUOUS"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131443-doc-get.json#ambiguous"
+      }
     },
     {
       "row": "conflict",
@@ -119,11 +97,7 @@
       "expected": {
         "exit": 0,
         "summary": "Reported with dirty true."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131241-doc-get.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",

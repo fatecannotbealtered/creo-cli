@@ -14,11 +14,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131214-model-render.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -38,12 +34,7 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "--output is missing."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131214-model-render.json#invalid_input"
+      }
     },
     {
       "row": "not_found",
@@ -59,12 +50,7 @@
       "expected": {
         "exit": 3,
         "code": "E_NOT_FOUND"
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131214-model-render.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -77,12 +63,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_AMBIGUOUS"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131457-model-render.json#ambiguous"
+      }
     },
     {
       "row": "conflict",
@@ -99,12 +80,7 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "Run on plate.prt while only pair.asm is open: plate.prt is in session as a component and has no window of its own."
-      },
-      "actual": {
-        "exit": 6,
-        "code": "E_CONFLICT"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131150-model-render.json#conflict"
+      }
     },
     {
       "row": "no_scope",
@@ -121,12 +97,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      },
-      "actual": {
-        "exit": 4,
-        "code": "E_FORBIDDEN"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131326-model-render.json#no_scope"
+      }
     },
     {
       "row": "busy",
@@ -143,12 +114,7 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      },
-      "actual": {
-        "exit": 7,
-        "code": "E_BUSY"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131350-model-render.json#busy"
+      }
     },
     {
       "row": "dialog",
@@ -165,12 +131,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      },
-      "actual": {
-        "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131412-model-render.json#dialog"
+      }
     },
     {
       "row": "disconnect",
@@ -203,16 +164,24 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131306-model-render.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",
-      "applies": false,
-      "reason": "An artifact's read-back checks the file the command wrote: it exists, and its size and SHA-256 are recorded. No stored value can differ from the preview, so a mismatch cannot happen."
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--output",
+        "{dir}/disc.jpg"
+      ],
+      "expected": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED",
+        "summary": "While the tool waits before its read-back, --tamper deletes the image it wrote."
+      }
     }
   ]
 }

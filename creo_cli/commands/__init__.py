@@ -7,10 +7,12 @@ registration that breaks a rule, so a mistake shows up at once. A command needs:
 - ``summary``: one line
 - ``effects``: what it changes (DCLI-051); the runtime derives the confirmation and risk tiers
 - ``modes``, ``target_kind``, ``flags`` (with a unit for every physical quantity), ``untrusted_fields``
-- ``adapter_capabilities``: the adapter methods it calls (DCLI-260)
-- ``survey_ids``: the capability IDs of docs/APPLICATION.md it provides (DREPO-061)
 - ``irreversible``, ``halt``, ``tolerances``, ``default_fields``, ``related_knowledge``
 - ``output_schema``, ``examples``, ``maturity`` and ``evidence``
+
+The runtime derives the adapter capabilities from the effects (DCLI-260), and adds ``--limit``
+and ``--offset`` to every list command (DCLI-026). The capabilities a command offers are marked
+``provided`` in docs/APPLICATION.md (DREPO-060).
 
 Every command also gets a behavior matrix in tests/matrix/; its ``normal`` row is the write
 sample (DVER-002, DVER-030). Run ``python scripts/spec.py generate`` after a change.
@@ -25,13 +27,7 @@ from typing import Any
 from ..maturity import DOMAIN as MATURITY
 
 MODEL = "the model's default coordinate system; lengths in mm"
-READ = ["read"]
-WRITE = ["read", "preview", "apply", "read_back"]
 EXAMPLE = "creo-cli {path} --session creo-9184-1d9a4c2e --doc D:/work/bracket.prt"
-
-LIMIT = {"name": "--limit", "type": "integer",
-         "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."}
-OFFSET = {"name": "--offset", "type": "integer", "summary": "Skip this many items first."}
 
 
 def _items(item: dict[str, Any]) -> dict[str, Any]:
@@ -41,11 +37,11 @@ def _items(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def _read(path: str, summary: str, target_kind: str, flags: list[dict[str, Any]], output: dict[str, Any],
-          survey: list[str], untrusted: list[str], example: str = "", **extra: Any) -> dict[str, Any]:
+          untrusted: list[str], example: str = "", **extra: Any) -> dict[str, Any]:
     return {
         "path": path, "summary": summary, "effects": ["observe"], "modes": ["session"],
         "target_kind": target_kind, "flags": flags, "untrusted_fields": untrusted,
-        "adapter_capabilities": READ, "survey_ids": survey, "irreversible": False, "halt": False,
+        "irreversible": False, "halt": False,
         "tolerances": {}, "default_fields": [], "related_knowledge": [], "output_schema": output,
         "examples": [EXAMPLE.format(path=path) + example], "maturity": "draft", "evidence": [], **extra,
     }
@@ -66,8 +62,6 @@ PARAMETER_ITEM = {
     "driven_by_relation": BOOL,
 }
 
-# The first read with untrusted fields takes --id: the conformance suite checks the marking of
-# untrusted fields on the first such read, with a field on the object it names.
 COMMANDS: list[dict[str, Any]] = [
     _read(
         "feature get", "One feature: its dimensions, parents and children.",
@@ -76,7 +70,7 @@ COMMANDS: list[dict[str, Any]] = [
         {"type": "object", "properties": {
             **FEATURE_ITEM, "dimensions": {"type": "array", "items": {"type": "object", "properties": DIMENSION_ITEM}},
             "parents": {"type": "array"}, "children": {"type": "array"}}},
-        ["CAP-011"], ["name", "parents[*].name", "children[*].name", "dimensions[*].id", "dimensions[*].name"], " --id 12", related_knowledge=["creo-localized-names"],
+        ["name", "parents[*].name", "children[*].name", "dimensions[*].id", "dimensions[*].name"], " --id 12", related_knowledge=["creo-localized-names"],
     ),
     _read(
         "model get", "A model's summary: kind, units, material, mass properties, bounding box and feature count.",
@@ -86,11 +80,11 @@ COMMANDS: list[dict[str, Any]] = [
             "volume_mm3": NUM, "surface_area_mm2": NUM, "mass_kg": {"type": ["number", "null"]},
             "center_of_mass_mm": {"type": "array"},
             "bounding_box_mm": {"type": "object"}, "feature_count": INT}},
-        ["CAP-001"], ["name", "material", "units"], output_coordinate_system=MODEL, related_knowledge=["creo-units", "creo-materials"],
+        ["name", "material", "units"], output_coordinate_system=MODEL, related_knowledge=["creo-units", "creo-materials"],
     ),
     _read(
         "feature list", "The features of a model in regeneration order: ID, number, name, type and status.",
-        "feature", [LIMIT, OFFSET], _items(FEATURE_ITEM), ["CAP-010"], ["name"], related_knowledge=["creo-localized-names"],
+        "feature", [], _items(FEATURE_ITEM), ["name"], related_knowledge=["creo-localized-names"],
         default_fields=["id", "name", "type", "status"],
     ),
     _read(
@@ -98,12 +92,11 @@ COMMANDS: list[dict[str, Any]] = [
         "geometry", [
             {"name": "--kind", "type": "string",
              "summary": "Only this kind: surface, edge, axis, datum-plane or coordinate-system."},
-            {"name": "--feature", "type": "string", "summary": "Only the geometry this feature created: its ID or name."},
-            LIMIT, OFFSET],
+            {"name": "--feature", "type": "string", "summary": "Only the geometry this feature created: its ID or name."}],
         _items({"reference": STR, "kind": STR, "shape": STR, "feature_id": INT, "name": STR, "normal": {"type": "array"},
                 "origin_mm": {"type": "array"}, "axis_direction": {"type": "array"}, "axis_origin_mm": {"type": "array"},
                 "radius_mm": NUM, "length_mm": NUM}),
-        ["CAP-030"], ["name", "reference"], " --kind surface", output_coordinate_system=MODEL,
+        ["reference", "name"], " --kind surface", output_coordinate_system=MODEL,
         related_knowledge=["creo-geometry-references", "creo-units"],
         default_fields=["reference", "kind", "shape", "feature_id", "normal", "origin_mm", "axis_direction", "radius_mm"],
     ),
@@ -114,13 +107,12 @@ COMMANDS: list[dict[str, Any]] = [
              "summary": "A reference from geometry list, such as surface:41, or a datum name such as FRONT."},
             {"name": "--to", "type": "string", "required": True, "summary": "A second reference, as --from."}],
         {"type": "object", "properties": {"from": STR, "to": STR, "distance_mm": NUM}},
-        ["CAP-031"], [], " --from FRONT --to surface:41", related_knowledge=["creo-geometry-references", "creo-units"],
+        [], " --from FRONT --to surface:41", related_knowledge=["creo-geometry-references", "creo-units"],
     ),
     _read(
         "dimension list", "The dimensions of a model, or of one feature: name, kind, value, tolerance and owner.",
-        "dimension", [{"name": "--feature", "type": "string", "summary": "Only this feature's dimensions: its ID or name."},
-                      LIMIT, OFFSET],
-        _items(DIMENSION_ITEM), ["CAP-032"], ["id", "name"], related_knowledge=["creo-relations-and-dimensions", "creo-units"],
+        "dimension", [{"name": "--feature", "type": "string", "summary": "Only this feature's dimensions: its ID or name."}],
+        _items(DIMENSION_ITEM), ["id", "name"], related_knowledge=["creo-relations-and-dimensions", "creo-units"],
         default_fields=["id", "kind", "value_mm", "value_deg", "driven_by_relation", "tolerance"],
     ),
     {
@@ -140,7 +132,7 @@ COMMANDS: list[dict[str, Any]] = [
             {"name": "--basic", "type": "boolean", "summary": "Make it a basic dimension, the exact value a geometric tolerance refers to."},
             {"name": "--nominal", "type": "boolean", "summary": "Remove its tolerance."},
         ],
-        "untrusted_fields": ["id", "name"], "adapter_capabilities": WRITE, "survey_ids": ["CAP-033", "CAP-034"],
+        "untrusted_fields": ["id", "name"],
         "irreversible": False, "halt": False,
         "tolerances": {"value_mm": 0.000001, "value_deg": 0.000001, "plus_mm": 0.000001, "minus_mm": 0.000001,
                        "upper_mm": 0.000001, "lower_mm": 0.000001},
@@ -152,8 +144,8 @@ COMMANDS: list[dict[str, Any]] = [
     },
     _read(
         "parameter list", "A model's parameters: name, type, value, unit and whether a relation drives it.",
-        "parameter", [LIMIT, OFFSET],
-        _items(PARAMETER_ITEM), ["CAP-035"], ["id", "name", "value", "unit"],
+        "parameter", [],
+        _items(PARAMETER_ITEM), ["id", "name", "value", "unit"],
         related_knowledge=["creo-relations-and-dimensions", "creo-units"],
         default_fields=["id", "type", "value", "unit", "value_mm", "driven_by_relation"],
     ),
@@ -166,7 +158,7 @@ COMMANDS: list[dict[str, Any]] = [
             {"name": "--value", "type": "string", "required": True,
              "summary": "The new value: 12, 4.5, true or text; 12.5mm for a parameter with a length unit."},
         ],
-        "untrusted_fields": ["id", "name", "value", "unit"], "adapter_capabilities": WRITE, "survey_ids": ["CAP-035"],
+        "untrusted_fields": ["id", "name", "value", "unit"],
         "irreversible": False, "halt": False, "tolerances": {"value": 0.000001}, "default_fields": [],
         "related_knowledge": ["creo-relations-and-dimensions", "creo-units"],
         "output_schema": {"type": "object", "properties": PARAMETER_ITEM},
@@ -174,22 +166,21 @@ COMMANDS: list[dict[str, Any]] = [
         "maturity": "draft", "evidence": [],
     },
     _read(
-        "relation list", "A model's relations, one per line, as Tools > Relations shows them.",
-        "relation", [], {"type": "object", "properties": {"lines": {"type": "array", "items": STR}}},
-        ["CAP-036"], ["lines[*]"], related_knowledge=["creo-relations-and-dimensions"],
+        "relation list", "A model's relations, one item per line, numbered as Tools > Relations shows them.",
+        "relation", [], _items({"number": INT, "text": STR}),
+        ["text"], related_knowledge=["creo-relations-and-dimensions"],
     ),
     _read(
         "material list", "The materials in Creo's material library and the model's own materials, with the one assigned.",
-        "material", [{"name": "--query", "type": "string", "summary": "Only materials whose name contains this text."},
-                     LIMIT, OFFSET],
-        _items({"name": STR, "source": STR, "assigned": BOOL}), ["CAP-040"], ["name"], related_knowledge=["creo-materials"],
+        "material", [{"name": "--query", "type": "string", "summary": "Only materials whose name contains this text."}],
+        _items({"name": STR, "source": STR, "assigned": BOOL}), ["name"], related_knowledge=["creo-materials"],
         default_fields=["name", "source", "assigned"],
     ),
     _read(
         "component list", "The top-level components of an assembly: model, status and position.",
-        "component", [LIMIT, OFFSET],
+        "component", [],
         _items({"id": INT, "model": STR, "kind": STR, "status": STR, "origin_mm": {"type": "array"}}),
-        ["CAP-050"], ["model"], output_coordinate_system="the assembly's default coordinate system; lengths in mm",
+        ["model"], output_coordinate_system="the assembly's default coordinate system; lengths in mm",
         related_knowledge=["creo-units"], default_fields=["id", "model", "kind", "status"],
     ),
     {
@@ -201,7 +192,7 @@ COMMANDS: list[dict[str, Any]] = [
             {"name": "--status", "type": "string", "summary": "suppressed or active."},
             {"name": "--name", "type": "string", "summary": "A new name: a letter, then letters, digits or _, 31 at most."},
         ],
-        "untrusted_fields": ["name"], "adapter_capabilities": WRITE, "survey_ids": ["CAP-012"],
+        "untrusted_fields": ["name"],
         "irreversible": False, "halt": False, "tolerances": {}, "default_fields": [], "related_knowledge": ["creo-localized-names"],
         "output_schema": {"type": "object", "properties": FEATURE_ITEM},
         "examples": [EXAMPLE.format(path="feature update") + " --id 12 --status suppressed"],
@@ -213,7 +204,7 @@ COMMANDS: list[dict[str, Any]] = [
         "effects": ["artifact"], "modes": ["session"], "target_kind": "file",
         "flags": [{"name": "--output", "type": "path", "required": True, "output": True,
                    "summary": "The new file: .stp or .step, .igs or .iges, .stl, or .pdf for a drawing."}],
-        "untrusted_fields": [], "adapter_capabilities": WRITE, "survey_ids": ["CAP-003"],
+        "untrusted_fields": [],
         "irreversible": False, "halt": False, "tolerances": {}, "default_fields": [], "related_knowledge": ["creo-save-versions"],
         "output_schema": {"type": "object", "properties": {"path": STR, "format": STR, "bytes": INT}},
         "examples": [EXAMPLE.format(path="model export") + " --output D:/work/out/bracket.stp"],
@@ -228,7 +219,7 @@ COMMANDS: list[dict[str, Any]] = [
             {"name": "--width", "type": "integer", "summary": "Image width in pixels, 1 to 4096; 1024 by default."},
             {"name": "--height", "type": "integer", "summary": "Image height in pixels, 1 to 4096; 768 by default."},
         ],
-        "untrusted_fields": [], "adapter_capabilities": WRITE, "survey_ids": ["CAP-004"],
+        "untrusted_fields": [],
         "irreversible": False, "halt": False, "tolerances": {}, "default_fields": [], "related_knowledge": ["creo-display-requirements"],
         "output_schema": {"type": "object", "properties": {"path": STR, "width": INT, "height": INT, "bytes": INT}},
         "examples": [EXAMPLE.format(path="model render") + " --output D:/work/out/bracket.jpg"],

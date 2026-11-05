@@ -6,15 +6,9 @@
       "applies": true,
       "arguments": [],
       "expected": {
-        "exit": 5,
-        "code": "E_CONFIRMATION_REQUIRED",
-        "summary": "Two-step (configure): the preview names the version."
-      },
-      "actual": {
-        "exit": 5,
-        "code": "E_CONFIRMATION_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131204-plugin-install.json#normal"
+        "exit": 0,
+        "summary": "Two-step (configure), confirmed with its token: builds and installs the host component; plugin get reports the version on disk."
+      }
     },
     {
       "row": "empty",
@@ -30,12 +24,7 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131204-plugin-install.json#invalid_input"
+      }
     },
     {
       "row": "not_found",
@@ -65,12 +54,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not grant configure."
-      },
-      "actual": {
-        "exit": 4,
-        "code": "E_FORBIDDEN"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131319-plugin-install.json#no_scope"
+      }
     },
     {
       "row": "busy",
@@ -99,7 +83,7 @@
       "expected": {
         "exit": 1,
         "code": "E_VERIFY_FAILED",
-        "summary": "Prepared live: a confirmed install after which plugin get reports another version on disk. The matrix runner runs one call per row and passes no confirm token, so it stops at the preview (exit 5) and never reaches this row (spec issue 14); until it can, the command stays at maturity draft."
+        "summary": "While the tool waits before its read-back, --tamper deletes protk.dat from the install folder, so plugin get finds no version on disk."
       }
     }
   ]

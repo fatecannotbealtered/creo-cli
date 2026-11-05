@@ -12,11 +12,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131133-material-list.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -32,11 +28,7 @@
       "expected": {
         "exit": 0,
         "summary": "No material matches: no items."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131133-material-list.json#empty"
+      }
     },
     {
       "row": "invalid_input",
@@ -47,17 +39,13 @@
         "--doc",
         "{doc}",
         "--limit",
-        "0"
+        "101"
       ],
       "expected": {
         "exit": 2,
-        "code": "E_USAGE"
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131133-material-list.json#invalid_input"
+        "code": "E_USAGE",
+        "summary": "--limit above its maximum of 100."
+      }
     },
     {
       "row": "not_found",
@@ -72,12 +60,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131133-material-list.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -87,12 +70,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_AMBIGUOUS"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131452-material-list.json#ambiguous"
+      }
     },
     {
       "row": "conflict",
@@ -117,12 +95,7 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      },
-      "actual": {
-        "exit": 7,
-        "code": "E_BUSY"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131347-material-list.json#busy"
+      }
     },
     {
       "row": "dialog",
@@ -137,12 +110,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      },
-      "actual": {
-        "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131409-material-list.json#dialog"
+      }
     },
     {
       "row": "disconnect",
@@ -171,11 +139,7 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131253-material-list.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",

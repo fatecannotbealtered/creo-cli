@@ -2,7 +2,7 @@
 
 [English](APPLICATION.md) | 中文
 
-本调查记录 Creo Parametric 能做什么、能怎样自动化。它在设计命令之前填写：creo-cli 的每个领域命令都写明它实现的能力编号，每项能力都有处置。
+本调查记录 Creo Parametric 能做什么、能怎样自动化。它在设计命令之前填写，每项能力都有处置：creo-cli 有命令提供的，处置为 `provided`。
 
 标为“早期 creo-cli”的出处，是本仓库 git 历史里提交 `fd35893` 的早期 creo-cli 的文档和代码，记录的是在 Creo Parametric 13.4.1.0 上观察到的情况。
 

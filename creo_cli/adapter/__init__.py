@@ -32,7 +32,7 @@ from . import build, windows
 
 PTC_ROOTS = (r"C:\Program Files\PTC", r"C:\PTC", r"D:\PTC", r"E:\PTC")
 SEARCH_DEPTH = 4
-PROTOCOL = "1.0.0"
+PROTOCOL = "1.2.0"
 PLUGIN_NAME = "creo-cli-host"
 APP_CLASS = "com.fateforge.creocli.host.Host"
 JAR = "creo-cli-host.jar"
@@ -112,7 +112,7 @@ class Adapter(BaseAdapter):
             title = windows.blocker(pid)
             if title is not None:
                 item["state"] = "blocked"
-                item["blocker"] = {"action": "dismiss_dialog", "title": title}
+                item["blocker"] = {"action": "dismiss_dialog", "title": title, "knowledge": ["creo-troubleshooting"]}
             entry = hosts.get(pid)
             if entry is not None:
                 item["plugin_loaded"] = str(entry.get("plugin_version"))
@@ -194,11 +194,11 @@ class Adapter(BaseAdapter):
         if not found:
             raise AdapterError("E_UNSUPPORTED", "No Creo installation with Object TOOLKIT Java was found, so the host "
                                "component cannot be built.", dispatch_state="not_started")
-        digest = build.source_digest(source / "src")
+        digest = build.source_digest(source / "source")
         jar = target / JAR
         if not (jar.is_file() and _installed_digest(target) == digest):
             fresh = folder / f".{JAR}.{os.getpid()}.new"
-            build.build(source / "src", found[0], fresh)
+            build.build(source / "source", found[0], fresh)
             try:
                 target.mkdir(parents=True, exist_ok=True)
                 os.replace(fresh, jar)

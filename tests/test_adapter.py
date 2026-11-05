@@ -73,7 +73,7 @@ class AdapterTest(unittest.TestCase):
         self.assertTrue((target / "creo-cli-host.jar").is_file())
         config = json.loads((self.home / "creo-cli-host.json").read_text(encoding="utf-8"))
         self.assertEqual(config, {"state_dir": str(self.state), "version": version,
-                                  "source_sha256": creo_adapter.build.source_digest(ROOT / "plugin" / "src")})
+                                  "source_sha256": creo_adapter.build.source_digest(ROOT / "plugin" / "source")})
 
     def test_each_state_directory_has_its_own_host_folder(self) -> None:
         other = self.state / "elsewhere"
@@ -114,7 +114,7 @@ class AdapterTest(unittest.TestCase):
         self.install()
         status = self.adapter.plugin_status({})
         self.assertEqual(status["version_on_disk"], json.loads((ROOT / "package.json").read_text())["version"])
-        self.assertEqual(status["protocol_version"], "1.0.0")
+        self.assertEqual(status["protocol_version"], "1.2.0")
         self.assertEqual(status["loaded"], [])
 
     def test_status_lists_the_hosts_that_are_running(self) -> None:
@@ -152,7 +152,8 @@ class AdapterTest(unittest.TestCase):
                 mock.patch.object(creo_adapter, "session_id", return_value="creo-4242-1"):
             item = self.adapter.sessions({})["items"][0]
         self.assertEqual(item["state"], "blocked")
-        self.assertEqual(item["blocker"], {"action": "dismiss_dialog", "title": "Creo Parametric Options"})
+        self.assertEqual(item["blocker"], {"action": "dismiss_dialog", "title": "Creo Parametric Options",
+                                           "knowledge": ["creo-troubleshooting"]})
 
     def test_a_busy_host_keeps_the_last_document_list(self) -> None:
         hosts = self.state / "hosts"

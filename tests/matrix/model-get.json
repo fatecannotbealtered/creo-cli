@@ -12,11 +12,7 @@
       ],
       "expected": {
         "exit": 0
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131120-model-get.json#normal"
+      }
     },
     {
       "row": "empty",
@@ -36,12 +32,7 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_USAGE"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131120-model-get.json#invalid_input"
+      }
     },
     {
       "row": "not_found",
@@ -56,12 +47,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      },
-      "actual": {
-        "exit": 3,
-        "code": "E_NOT_FOUND"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131120-model-get.json#not_found"
+      }
     },
     {
       "row": "ambiguous",
@@ -71,12 +57,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      },
-      "actual": {
-        "exit": 2,
-        "code": "E_AMBIGUOUS"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131455-model-get.json#ambiguous"
+      }
     },
     {
       "row": "conflict",
@@ -101,12 +82,7 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      },
-      "actual": {
-        "exit": 7,
-        "code": "E_BUSY"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131349-model-get.json#busy"
+      }
     },
     {
       "row": "dialog",
@@ -121,12 +97,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      },
-      "actual": {
-        "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131411-model-get.json#dialog"
+      }
     },
     {
       "row": "disconnect",
@@ -155,11 +126,7 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
-      },
-      "actual": {
-        "exit": 0
-      },
-      "evidence": "live:docs/evidence/2026-11-05-131254-model-get.json#unsaved"
+      }
     },
     {
       "row": "read_back_mismatch",
