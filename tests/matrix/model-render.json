@@ -10,7 +10,7 @@
         "--doc",
         "{doc}",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 0
@@ -45,7 +45,7 @@
         "--doc",
         "not-open",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 3,
@@ -57,7 +57,7 @@
       "applies": true,
       "arguments": [
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 2,
@@ -74,7 +74,7 @@
         "--doc",
         "{doc}",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 6,
@@ -91,7 +91,7 @@
         "--doc",
         "{doc}",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 4,
@@ -108,7 +108,7 @@
         "--doc",
         "{doc}",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 7,
@@ -125,7 +125,7 @@
         "--doc",
         "{doc}",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 9,
@@ -142,7 +142,7 @@
         "--doc",
         "{doc}",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 8,
@@ -159,7 +159,7 @@
         "--doc",
         "{doc}",
         "--output",
-        "{dir}/block.jpg"
+        "{dir}/disc.jpg"
       ],
       "expected": {
         "exit": 0,

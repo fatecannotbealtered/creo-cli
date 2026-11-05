@@ -8,7 +8,8 @@ Live runs execute the behavior matrices of creo-cli on the real Creo Parametric,
 
 This section is the only list of the Creo Parametric instances, files, folders and devices that live runs may use. Only a person adds a target to it; a coding Agent never does. Each target is one list item that starts with the target in backticks, written the way the scope file writes targets: a `file://` URL of a file or folder, or `device:<id>` for a device, followed by a colon and a description of the target. An instance of Creo Parametric has no lasting ID, so live runs use only instances a person started for the run, with documents from the files and folders listed here. Live runs use no other target, and the scope file for live runs grants only the targets listed here.
 
-No target is authorized yet.
+- `file:///D:/driver-work/creo-cli/targets/`: practice models made for creo-cli's live tests (disc.prt, plate.prt, pair.asm, disc.drw), and the folder exports and renders go to.
+- `file:///D:/driver-work/creo-cli/evals/`: the folder for the evaluation workspaces.
 
 ## Procedure
 

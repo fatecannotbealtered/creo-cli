@@ -97,14 +97,14 @@
         "--doc",
         "{doc}",
         "--id",
-        "HEIGHT",
+        "RADIUS",
         "--length",
-        "30mm"
+        "3mm"
       ],
       "expected": {
         "exit": 6,
         "code": "E_CONFLICT",
-        "summary": "HEIGHT is driven by the relation HEIGHT = WIDTH / 2."
+        "summary": "RADIUS is driven by the relation RADIUS = DIAMETER / 20."
       }
     },
     {
