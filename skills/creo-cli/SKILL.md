@@ -36,6 +36,15 @@ Check `ok`; on failure, read `error.details.next_action`.
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
+- `model`: get, export, render
+- `feature`: list, get, update
+- `geometry`: list
+- `distance`: get
+- `dimension`: list, update
+- `parameter`: list, update
+- `relation`: list
+- `material`: list
+- `component`: list
 <!-- driver:command-map:end -->
 
 ## Write recipe

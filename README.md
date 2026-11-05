@@ -24,7 +24,7 @@ English | [中文](README_zh.md)
 | Modes | session |
 | Systems and CPUs | Windows (x64) |
 | Risk tier | T2 |
-| Maturity | draft: 0 draft, 0 verified, 0 stable |
+| Maturity | draft: 15 draft, 0 verified, 0 stable |
 | Specification | tool-driver-cli-spec 1.0.0 |
 | Host component | yes |
 <!-- driver:info-card:end -->
@@ -84,6 +84,15 @@ Every command of creo-cli, generated from its command registration; `(dangerous)
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
+- `model`: get, export, render
+- `feature`: list, get, update
+- `geometry`: list
+- `distance`: get
+- `dimension`: list, update
+- `parameter`: list, update
+- `relation`: list
+- `material`: list
+- `component`: list
 <!-- driver:command-map:end -->
 
 ## How It Works

@@ -1,5 +1,809 @@
 {
   "tool": "creo-cli",
   "version": "1.0.0",
-  "commands": []
+  "commands": [
+    {
+      "path": "model get",
+      "summary": "A model's summary: kind, units, material, mass properties, bounding box and feature count.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "model",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "material"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-001"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "feature list",
+      "summary": "The features of a model in regeneration order: ID, number, name, type and status.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--limit",
+          "type": "integer",
+          "summary": "At most this many items, 1 to 1000; 100 by default."
+        },
+        {
+          "name": "--offset",
+          "type": "integer",
+          "summary": "Skip this many items first."
+        }
+      ],
+      "untrusted_fields": [
+        "name"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-010"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "feature get",
+      "summary": "One feature: its dimensions, parents and children.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--id",
+          "type": "string",
+          "summary": "The feature's ID, such as 12, or its name.",
+          "required": true
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "parents[*].name",
+        "children[*].name"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-011"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "geometry list",
+      "summary": "Faces, edges, axes, datum planes and coordinate systems with the references other commands take.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "geometry",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--kind",
+          "type": "string",
+          "summary": "Only this kind: surface, edge, axis, datum-plane or coordinate-system."
+        },
+        {
+          "name": "--feature",
+          "type": "string",
+          "summary": "Only the geometry this feature created: its ID or name."
+        },
+        {
+          "name": "--limit",
+          "type": "integer",
+          "summary": "At most this many items, 1 to 1000; 100 by default."
+        },
+        {
+          "name": "--offset",
+          "type": "integer",
+          "summary": "Skip this many items first."
+        }
+      ],
+      "untrusted_fields": [
+        "name"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-030"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "distance get",
+      "summary": "The shortest distance between two geometry references, as Creo measures it.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "geometry",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--from",
+          "type": "string",
+          "summary": "A reference from geometry list, such as surface:41, or a datum name such as FRONT.",
+          "required": true
+        },
+        {
+          "name": "--to",
+          "type": "string",
+          "summary": "A second reference, as --from.",
+          "required": true
+        }
+      ],
+      "untrusted_fields": [],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-031"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "dimension list",
+      "summary": "The dimensions of a model, or of one feature: name, kind, value, tolerance and owner.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "dimension",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--feature",
+          "type": "string",
+          "summary": "Only this feature's dimensions: its ID or name."
+        },
+        {
+          "name": "--limit",
+          "type": "integer",
+          "summary": "At most this many items, 1 to 1000; 100 by default."
+        },
+        {
+          "name": "--offset",
+          "type": "integer",
+          "summary": "Skip this many items first."
+        }
+      ],
+      "untrusted_fields": [],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-032"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "dimension update",
+      "summary": "Change one dimension's value or tolerance and regenerate; Creo takes back a value the model cannot regenerate with.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "dimension",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--id",
+          "type": "string",
+          "summary": "The dimension's name, such as d12.",
+          "required": true
+        },
+        {
+          "name": "--length",
+          "type": "quantity",
+          "summary": "The new value of a linear, radius or diameter dimension.",
+          "quantity": "length"
+        },
+        {
+          "name": "--angle",
+          "type": "quantity",
+          "summary": "The new value of an angular dimension.",
+          "quantity": "angle"
+        },
+        {
+          "name": "--plus",
+          "type": "quantity",
+          "summary": "With --minus: the upper deviation of a plus-minus tolerance.",
+          "quantity": "length"
+        },
+        {
+          "name": "--minus",
+          "type": "quantity",
+          "summary": "With --plus: the lower deviation, as a positive amount.",
+          "quantity": "length"
+        },
+        {
+          "name": "--symmetric",
+          "type": "quantity",
+          "summary": "A symmetric tolerance of plus or minus this much.",
+          "quantity": "length"
+        },
+        {
+          "name": "--upper",
+          "type": "quantity",
+          "summary": "With --lower: the upper limit itself.",
+          "quantity": "length"
+        },
+        {
+          "name": "--lower",
+          "type": "quantity",
+          "summary": "With --upper: the lower limit itself.",
+          "quantity": "length"
+        },
+        {
+          "name": "--fit",
+          "type": "string",
+          "summary": "An ISO 286 fit: capitals for a hole (H7), small letters for a shaft (g6)."
+        },
+        {
+          "name": "--basic",
+          "type": "boolean",
+          "summary": "Make it a basic dimension, the exact value a geometric tolerance refers to."
+        },
+        {
+          "name": "--nominal",
+          "type": "boolean",
+          "summary": "Remove its tolerance."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [],
+      "adapter_capabilities": [
+        "read",
+        "preview",
+        "apply",
+        "read_back"
+      ],
+      "survey_ids": [
+        "CAP-033",
+        "CAP-034"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06,
+        "value_deg": 1e-06,
+        "plus_mm": 1e-06,
+        "minus_mm": 1e-06,
+        "upper_mm": 1e-06,
+        "lower_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "parameter list",
+      "summary": "A model's parameters: name, type, value, unit and whether a relation drives it.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "parameter",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--limit",
+          "type": "integer",
+          "summary": "At most this many items, 1 to 1000; 100 by default."
+        },
+        {
+          "name": "--offset",
+          "type": "integer",
+          "summary": "Skip this many items first."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "value"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-035"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "parameter update",
+      "summary": "Set a parameter's value, keeping its type; a parameter with a unit takes the value with a unit.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "parameter",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--id",
+          "type": "string",
+          "summary": "The parameter's name.",
+          "required": true
+        },
+        {
+          "name": "--value",
+          "type": "string",
+          "summary": "The new value: 12, 4.5, true or text; 12.5mm for a parameter with a length unit.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "value"
+      ],
+      "adapter_capabilities": [
+        "read",
+        "preview",
+        "apply",
+        "read_back"
+      ],
+      "survey_ids": [
+        "CAP-035"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "relation list",
+      "summary": "A model's relations, one per line, as Tools > Relations shows them.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "relation",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        }
+      ],
+      "untrusted_fields": [
+        "lines[*]"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-036"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "material list",
+      "summary": "The materials in Creo's material library and the model's own materials, with the one assigned.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "material",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--query",
+          "type": "string",
+          "summary": "Only materials whose name contains this text."
+        },
+        {
+          "name": "--limit",
+          "type": "integer",
+          "summary": "At most this many items, 1 to 1000; 100 by default."
+        },
+        {
+          "name": "--offset",
+          "type": "integer",
+          "summary": "Skip this many items first."
+        }
+      ],
+      "untrusted_fields": [
+        "name"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-040"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "component list",
+      "summary": "The top-level components of an assembly: model, status and position.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "component",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--limit",
+          "type": "integer",
+          "summary": "At most this many items, 1 to 1000; 100 by default."
+        },
+        {
+          "name": "--offset",
+          "type": "integer",
+          "summary": "Skip this many items first."
+        }
+      ],
+      "untrusted_fields": [
+        "model"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-050"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "feature update",
+      "summary": "Suppress, resume or rename one feature; suppressing takes the features that depend on it along.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--id",
+          "type": "string",
+          "summary": "The feature's ID, such as 12, or its name.",
+          "required": true
+        },
+        {
+          "name": "--status",
+          "type": "string",
+          "summary": "suppressed or active."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "A new name: a letter, then letters, digits or _, 31 at most."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name"
+      ],
+      "adapter_capabilities": [
+        "read",
+        "preview",
+        "apply",
+        "read_back"
+      ],
+      "survey_ids": [
+        "CAP-012"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "model export",
+      "summary": "Write a part or assembly to STEP, IGES or STL, or a drawing to PDF; the file extension picks the format.",
+      "effects": [
+        "artifact"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "file",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "The new file: .stp or .step, .igs or .iges, .stl, or .pdf for a drawing.",
+          "required": true,
+          "output": true
+        }
+      ],
+      "untrusted_fields": [],
+      "adapter_capabilities": [
+        "read",
+        "preview",
+        "apply",
+        "read_back"
+      ],
+      "survey_ids": [
+        "CAP-003"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    },
+    {
+      "path": "model render",
+      "summary": "Write a JPEG image of a part or assembly as its window shows it.",
+      "effects": [
+        "artifact"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "file",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "The new .jpg file.",
+          "required": true,
+          "output": true
+        },
+        {
+          "name": "--width",
+          "type": "integer",
+          "summary": "Image width in pixels, 1 to 4096; 1024 by default."
+        },
+        {
+          "name": "--height",
+          "type": "integer",
+          "summary": "Image height in pixels, 1 to 4096; 768 by default."
+        }
+      ],
+      "untrusted_fields": [],
+      "adapter_capabilities": [
+        "read",
+        "preview",
+        "apply",
+        "read_back"
+      ],
+      "survey_ids": [
+        "CAP-004"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": []
+    }
+  ]
 }
