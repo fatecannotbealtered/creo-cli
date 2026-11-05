@@ -1,0 +1,53 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.0.0",
+  "commit": "0c1fd9cf8969",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-05T13:11:56Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "session get",
+      "arguments": [
+        "--session",
+        "creo-37492-320fd115c"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session",
+      "envelope_sha256": "e8b86b1b65c391017957ac433f1b862db317f28d2f2ba5d6b25e76d088390087"
+    },
+    {
+      "command": "session get",
+      "arguments": [
+        "--session"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session",
+      "envelope_sha256": "7be0f6844e6dd3058a0c5f87b92b8b238d0024cea7fea977e546ef77a38722b0"
+    },
+    {
+      "command": "session get",
+      "arguments": [
+        "--session",
+        "creo-1-0"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session",
+      "envelope_sha256": "70274382a88ce01823b1dba812a36f3898581c4214f3fd36a6378aa721ebd32f"
+    }
+  ]
+}

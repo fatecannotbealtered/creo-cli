@@ -18,7 +18,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-05-120939-feature-get.json#normal"
+      "evidence": "live:docs/evidence/2026-11-05-131136-feature-get.json#normal"
     },
     {
       "row": "empty",
@@ -43,7 +43,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-05-120939-feature-get.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-05-131136-feature-get.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -64,7 +64,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND"
       },
-      "evidence": "live:docs/evidence/2026-11-05-120939-feature-get.json#not_found"
+      "evidence": "live:docs/evidence/2026-11-05-131136-feature-get.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -82,7 +82,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS"
       },
-      "evidence": "live:docs/evidence/2026-11-05-122658-feature-get.json#ambiguous"
+      "evidence": "live:docs/evidence/2026-11-05-131447-feature-get.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -114,7 +114,7 @@
         "exit": 7,
         "code": "E_BUSY"
       },
-      "evidence": "live:docs/evidence/2026-11-05-121855-feature-get.json#busy"
+      "evidence": "live:docs/evidence/2026-11-05-131342-feature-get.json#busy"
     },
     {
       "row": "dialog",
@@ -136,7 +136,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-122119-feature-get.json#dialog"
+      "evidence": "live:docs/evidence/2026-11-05-131404-feature-get.json#dialog"
     },
     {
       "row": "disconnect",
@@ -173,7 +173,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-05-121508-feature-get.json#unsaved"
+      "evidence": "live:docs/evidence/2026-11-05-131247-feature-get.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

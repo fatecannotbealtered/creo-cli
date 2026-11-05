@@ -14,7 +14,7 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-121148-plugin-install.json#normal"
+      "evidence": "live:docs/evidence/2026-11-05-131204-plugin-install.json#normal"
     },
     {
       "row": "empty",
@@ -35,7 +35,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-05-121148-plugin-install.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-05-131204-plugin-install.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -70,7 +70,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN"
       },
-      "evidence": "live:docs/evidence/2026-11-05-121728-plugin-install.json#no_scope"
+      "evidence": "live:docs/evidence/2026-11-05-131319-plugin-install.json#no_scope"
     },
     {
       "row": "busy",

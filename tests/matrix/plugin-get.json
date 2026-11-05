@@ -11,7 +11,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-05-121140-plugin-get.json#normal"
+      "evidence": "live:docs/evidence/2026-11-05-131202-plugin-get.json#normal"
     },
     {
       "row": "empty",
@@ -24,7 +24,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-05-121205-plugin-get.json#empty"
+      "evidence": "live:docs/evidence/2026-11-05-131206-plugin-get.json#empty"
     },
     {
       "row": "invalid_input",
@@ -40,7 +40,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-05-121140-plugin-get.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-05-131202-plugin-get.json#invalid_input"
     },
     {
       "row": "not_found",
