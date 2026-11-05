@@ -297,7 +297,7 @@ final class Docs {
 
     // ------------------------------------------------------------------ open, save, close
 
-    Map<String, Object> open(String path) throws jxthrowable {
+    Object open(String path) throws jxthrowable {
         File file = new File(path).getAbsoluteFile();
         String name = file.getName().replaceFirst("\\.[0-9]+$", "");
         String lower = name.toLowerCase(Locale.ROOT);
@@ -349,8 +349,13 @@ final class Docs {
             model.Display();
         } catch (Throwable noWindow) {
             // The model is open; a window is only for the person.
+            return facts("dispatched", "applied", Json.map("document", describe(model)));
         }
-        return facts("dispatched", "applied", Json.map("document", describe(model)));
+        // Creo builds the new window after this task returns -- in a Creo just started that
+        // takes it seconds (measured on Creo 13.4) -- and runs no timer meanwhile. The reply
+        // waits for the next tick, so the read-back that follows finds Creo free.
+        final Model opened = model;
+        return new MainThread.Later(() -> facts("dispatched", "applied", Json.map("document", describe(opened))));
     }
 
     Map<String, Object> save(Model model) throws Exception {

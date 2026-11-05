@@ -140,6 +140,50 @@ class AdapterTest(unittest.TestCase):
         self.assertEqual(item["state"], "blocked")
         self.assertEqual(item["blocker"], {"action": "dismiss_dialog", "title": "Creo Parametric Options"})
 
+    def test_a_busy_host_keeps_the_last_document_list(self) -> None:
+        hosts = self.state / "hosts"
+        hosts.mkdir()
+        (hosts / "creo-4242-1.json").write_text(json.dumps({"address": r"\\.\pipe\x", "pid": 4242}), encoding="utf-8")
+        docs = [{"id": "disc.prt", "path": r"D:\work\disc.prt", "dirty": False}]
+
+        class Host:
+            busy = False
+
+            def __init__(self, *args: object) -> None:
+                pass
+
+            def open(self, deadline_ms: int) -> dict:
+                return {"session": {"generation": 3}}
+
+            def call(self, method: str, params: dict, deadline_ms: int) -> dict:
+                if Host.busy:
+                    raise creo_adapter.HostReplyError("busy", {"code": "E_BUSY", "dispatch_state": "not_started"})
+                return {"items": docs}
+
+            def close(self) -> None:
+                pass
+
+        def listed() -> dict:
+            with mock.patch.object(creo_adapter.windows, "processes", return_value=[4242]), \
+                    mock.patch.object(creo_adapter.windows, "image_path", return_value=None), \
+                    mock.patch.object(creo_adapter.windows, "blocker", return_value=None), \
+                    mock.patch.object(creo_adapter, "pid_alive", return_value=True), \
+                    mock.patch.object(creo_adapter, "session_id", return_value="creo-4242-1"), \
+                    mock.patch.object(creo_adapter, "Connection", Host):
+                return self.adapter.sessions({})["items"][0]
+
+        self.assertEqual(listed()["documents"], docs)
+        Host.busy = True
+        item = listed()
+        self.assertEqual(item["state"], "busy")
+        self.assertEqual(item["documents"], docs)
+
+    def test_main_windows_are_told_from_dialogs_by_title(self) -> None:
+        for title in ("DISC - Creo Parametric 13", "Creo Parametric 13", "PAIR (Active) - Creo Parametric 13.4"):
+            self.assertTrue(creo_adapter.windows.is_main_title(title), title)
+        for title in ("Creo Parametric Options", "Creo Parametric", "Relations", "creo-cli test dialog"):
+            self.assertFalse(creo_adapter.windows.is_main_title(title), title)
+
     def test_windows_helpers_answer_for_missing_processes(self) -> None:
         self.assertIsInstance(creo_adapter.windows.processes("no-such-program.exe"), list)
         self.assertIsNone(creo_adapter.windows.image_path(0))

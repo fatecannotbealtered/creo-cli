@@ -7,6 +7,7 @@ enabled window of that process, and its title says what it is.
 from __future__ import annotations
 
 import ctypes
+import re
 import sys
 from ctypes import wintypes
 from typing import Any
@@ -80,11 +81,23 @@ def image_path(pid: int) -> str | None:
         kernel.CloseHandle(handle)
 
 
+MAIN_TITLE = re.compile(r"(^| - )Creo Parametric \d+(\.\d+)*$")
+
+
+def is_main_title(title: str) -> bool:
+    """A Creo main window: "DISC - Creo Parametric 13", or "Creo Parametric 13" with no model."""
+    return bool(MAIN_TITLE.search(title))
+
+
 def blocker(pid: int) -> str | None:
     """The title of the dialog that holds this process, or None when nothing holds it.
 
-    The process is held when one of its visible top-level windows without an owner -- the
-    main window -- is disabled. The title is the application's own text: untrusted.
+    The process is held when a visible top-level window of it is a dialog: a titled window
+    that is not a main window, or any window while a main window is disabled. Creo 13.4 does
+    not disable its main window under a modal dialog (measured with File > Options and a
+    toolkit message dialog), so the title tells them apart; a modeless Creo window also
+    counts, which errs on the side of the person. The title is the application's own text:
+    untrusted.
     """
     if not WINDOWS:
         return None
@@ -108,17 +121,16 @@ def blocker(pid: int) -> str | None:
         enabled = bool(user.IsWindowEnabled(hwnd))
         title = ctypes.create_unicode_buffer(512)
         user.GetWindowTextW(hwnd, title, 512)
-        if user.GetWindow(hwnd, GW_OWNER):
-            if enabled:
+        if user.GetWindow(hwnd, GW_OWNER) or not is_main_title(title.value):
+            if enabled and title.value:
                 others.append(title.value)
         else:
             mains.append((hwnd, enabled))
-            if enabled and not title.value.startswith("Creo Parametric"):
-                others.append(title.value)
         return True
 
     user.EnumWindows(enum_proc(visit), 0)
+    if others:
+        return others[0]
     if mains and any(not enabled for _, enabled in mains):
-        titles = [t for t in others if t]
-        return titles[0] if titles else ""
+        return ""
     return None

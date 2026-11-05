@@ -75,7 +75,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions have the document open."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-114612-doc-get.json#ambiguous"
     },
     {
       "row": "conflict",

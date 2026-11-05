@@ -943,7 +943,14 @@ final class Ops {
     /** Set one value and regenerate; Creo undoes a regeneration that fails, and the old value is put back. */
     private static void setValue(Solid solid, BaseDimension dim, double value) throws Exception {
         double old = dim.GetDimValue();
-        dim.SetDimValue(value);
+        try {
+            dim.SetDimValue(value);
+        } catch (jxthrowable refused) {
+            // Creo took nothing: it refuses the value before any regeneration (0.01 mm for a
+            // depth, measured on Creo 13.4).
+            throw new HostError(HostError.VALIDATION, "Creo does not accept that value for dimension " + dim.GetSymbol()
+                    + "; nothing changed.", "dispatched").nativeMessage(refused.toString());
+        }
         WRegenInstructions regen = wfcSolidInstructions.WRegenInstructions_Create();
         regen.SetUndoIfFail(true);
         regen.SetNoResolveMode(true);
@@ -1132,6 +1139,14 @@ final class Ops {
         ParamValue value;
         switch (type == null ? "" : type) {
             case "string":
+                if (text.indexOf('\n') >= 0 || text.indexOf('\r') >= 0) {
+                    throw new HostError(HostError.VALIDATION, "A string parameter holds one line; Creo refuses a line break.");
+                }
+                if (text.codePoints().anyMatch(c -> c > 0xFFFF)) {
+                    // Measured on Creo 13.4: such a value is stored as an empty string.
+                    throw new HostError(HostError.VALIDATION, "Creo cannot store characters such as emoji in a parameter "
+                            + "(it would store an empty value); leave them out.");
+                }
                 if (text.length() > 79) {
                     throw new HostError(HostError.VALIDATION, "A string parameter holds at most 79 characters.");
                 }

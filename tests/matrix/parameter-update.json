@@ -102,7 +102,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-114208-parameter-update.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -169,7 +174,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113204-parameter-update.json#busy"
     },
     {
       "row": "dialog",
@@ -188,7 +198,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113934-parameter-update.json#dialog"
     },
     {
       "row": "disconnect",
@@ -233,22 +248,8 @@
     },
     {
       "row": "read_back_mismatch",
-      "applies": true,
-      "arguments": [
-        "--session",
-        "{session}",
-        "--doc",
-        "{doc}",
-        "--id",
-        "PART_CODE",
-        "--value",
-        "DSC-003"
-      ],
-      "expected": {
-        "exit": 1,
-        "code": "E_VERIFY_FAILED",
-        "summary": "Prepared live: a situation in which Creo stores another value than the one given."
-      }
+      "applies": false,
+      "reason": "Creo stores every value the host passes as given (measured on Creo 13.4.1.0 with symbols, tabs, control and zero-width characters). The values it stores otherwise are refused before dispatch: characters such as emoji (Creo stored an empty value), line breaks (Creo refused them) and more than 79 characters."
     }
   ]
 }

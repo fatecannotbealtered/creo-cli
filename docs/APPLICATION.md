@@ -58,7 +58,7 @@ From documents down, with the names Creo's user interface and manuals use:
 
 ## Threading and Blocking
 
-- Every toolkit call must run on Creo's main thread; a synchronous application gets there from a timer callback. A modal dialog stops the timer, so nothing runs until a person closes it.
+- Every toolkit call must run on Creo's main thread; a synchronous application gets there from a timer callback. Creo 13.4 keeps firing the timer while a modal dialog is open (measured with File > Options and a toolkit message dialog), and it leaves its main window enabled; the CLI finds the dialog by its window title and refuses every call until a person closes it.
 - Dialogs seen blocking automation: the unsigned toolkit DLL prompt at load (each session), the "Retrieval"/"检索"/"恢复" recovery dialogs at startup, ORDER_DEBUG, a View States "Apply" request, license dialogs, and a crash dialog when the workstation was locked (Intel OpenGL driver) (earlier creo-cli, `docs/SERVICE.md`, `examples/engineering/RecoveryIsolation.ps1`, `docs/ASSEMBLY-INSTRUCTIONS-WORKFLOW.md`).
 - Creo is busy during regeneration and long operations; measured: complex assembly constraint edits 135–194 s, a family table preview about 76 s, a BOM table confirmation 568 s (earlier creo-cli, `docs/ASSEMBLY-CONSTRAINTS.md`, `docs/FAMILY-TABLES.md`, `docs/WORKFLOW-BUDGET.md`).
 - A running toolkit call cannot be cancelled; ending the client's wait does not stop it.
@@ -85,7 +85,7 @@ From documents down, with the names Creo's user interface and manuals use:
 ## Instances and Concurrency
 
 - Several Creo processes can run at once; each loads its own host component and is told apart by process ID and start time.
-- A person can work in the same session while the host runs between the person's actions; a person's modal dialog blocks the host. A person's edits change the model state and show as external changes before a save.
+- A person can work in the same session while the host runs between the person's actions; while a person has a modal dialog open, the CLI sends nothing. A person's edits change the model state and show as external changes before a save.
 - The tool never restarts, reloads or closes a person's Creo to load or upgrade the host component (DSEC-052).
 
 ## Licensing

@@ -75,7 +75,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-114604-doc-close.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -125,7 +130,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113145-doc-close.json#busy"
     },
     {
       "row": "dialog",
@@ -140,7 +150,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113911-doc-close.json#dialog"
     },
     {
       "row": "disconnect",
@@ -179,18 +194,8 @@
     },
     {
       "row": "read_back_mismatch",
-      "applies": true,
-      "arguments": [
-        "--session",
-        "{session}",
-        "--doc",
-        "{doc}"
-      ],
-      "expected": {
-        "exit": 1,
-        "code": "E_VERIFY_FAILED",
-        "summary": "Prepared live: a situation in which the document is still in session afterwards."
-      }
+      "applies": false,
+      "reason": "Creo either erases the model or refuses with an error, and the host refuses before it closes anything a model that another open model uses (measured on Creo 13.4.1.0 with an assembly and a drawing). No call leaves the document in session while reporting success."
     }
   ]
 }

@@ -104,7 +104,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-114037-dimension-update.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -171,7 +176,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113141-dimension-update.json#busy"
     },
     {
       "row": "dialog",
@@ -190,7 +200,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113907-dimension-update.json#dialog"
     },
     {
       "row": "disconnect",
@@ -242,17 +257,20 @@
         "--doc",
         "{doc}",
         "--id",
-        "DEPTH",
-        "--plus",
-        "0.1mm",
-        "--minus",
-        "0.05mm"
+        "OFFSET",
+        "--length",
+        "-10mm"
       ],
       "expected": {
         "exit": 1,
         "code": "E_VERIFY_FAILED",
-        "summary": "Prepared live: a situation in which Creo stores another tolerance than the one given."
-      }
+        "summary": "A negative offset: Creo flips DTM_OFFSET to the other side of FRONT and stores 10 mm, not -10 mm."
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-112705-dimension-update.json#read_back_mismatch"
     }
   ]
 }

@@ -25,6 +25,7 @@ from typing import Any
 from .._driver import Adapter as BaseAdapter
 from .._driver import AdapterError
 from .._driver.adapter import session_id
+from .._driver.errors import DriverError
 from .._driver.hostproto import Connection, HostReplyError, NoReply, ProtocolError, Unreachable, read_discovery
 from .._driver.records import pid_alive
 from . import build, windows
@@ -123,19 +124,35 @@ class Adapter(BaseAdapter):
         """The generation and the open documents, from the host. A host that cannot be reached
         is reported by the runtime, which probes every host itself (DCLI-205, DCLI-278)."""
         conn = Connection(entry["address"], _cli_version(), PROTOCOL)
+        remembered = f"documents-{sid}"
         try:
             hello = conn.open(SESSION_CALL_MS)
             item["generation"] = int((hello.get("session") or {}).get("generation", 0))
             if documents:
                 docs = conn.call("documents", {"session": sid}, SESSION_CALL_MS).get("items", [])
                 item["documents"] = [{"id": d["id"], "path": d.get("path"), "dirty": bool(d.get("dirty"))} for d in docs]
+                self._remember(remembered, item["documents"])
+            else:
+                # Blocked by a dialog: Creo is not asked. The runtime finds --doc among a
+                # blocked or busy session's documents before it refuses the call, so the last
+                # list read stands in for the one not asked for.
+                item["documents"] = self.store.get(remembered, [])
         except HostReplyError as exc:
             if exc.code == "E_BUSY":
                 item["state"] = "busy"
+                item["documents"] = self.store.get(remembered, [])
         except (Unreachable, NoReply, ProtocolError, OSError, ValueError, KeyError, TypeError):
             pass
         finally:
             conn.close()
+
+    def _remember(self, key: str, documents: list[dict[str, Any]]) -> None:
+        """Keep the document list for when the host is busy; a list that cannot be kept only costs that."""
+        try:
+            if self.store.get(key) != documents:
+                self.store.set(key, documents)
+        except (OSError, ValueError, DriverError):
+            pass
 
     # ------------------------------------------------------------------ the host component on disk
 

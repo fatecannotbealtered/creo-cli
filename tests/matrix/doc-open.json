@@ -75,7 +75,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-114052-doc-open.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -130,7 +135,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113147-doc-open.json#busy"
     },
     {
       "row": "dialog",
@@ -145,7 +155,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-113912-doc-open.json#dialog"
     },
     {
       "row": "disconnect",
@@ -179,8 +194,13 @@
       "expected": {
         "exit": 1,
         "code": "E_VERIFY_FAILED",
-        "summary": "Prepared live: a situation in which Creo opens another file than the one named."
-      }
+        "summary": "Name pair.asm.2 while pair.asm.3 is on disk and pair.asm is not open: Creo opens the newest version, another file than the one named."
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-112713-doc-open.json#read_back_mismatch"
     }
   ]
 }

@@ -228,6 +228,7 @@ public final class Host {
     /** How many times a host started in this Creo process: the session's generation (DCLI-203). */
     private static int nextGeneration(Path state, String sessionId) {
         Path file = state.resolve("hosts").resolve(sessionId + ".generation");
+        forgetEndedSessions(file.getParent());
         int next = 0;
         try {
             if (Files.isRegularFile(file)) {
@@ -239,6 +240,25 @@ public final class Host {
             return next;
         }
         return next;
+    }
+
+    /** The generation files of Creo processes that have ended (creo-PID-START.generation); each Creo start leaves one. */
+    private static void forgetEndedSessions(Path hosts) {
+        try (java.util.stream.Stream<Path> files = Files.list(hosts)) {
+            files.forEach(path -> {
+                java.util.regex.Matcher name = java.util.regex.Pattern.compile("^creo-([0-9]+)-[0-9a-f]+\\.generation$")
+                        .matcher(path.getFileName().toString());
+                if (name.matches() && ProcessHandle.of(Long.parseLong(name.group(1))).isEmpty()) {
+                    try {
+                        Files.deleteIfExists(path);
+                    } catch (IOException ignored) {
+                        // Another host removes it next time.
+                    }
+                }
+            });
+        } catch (IOException | RuntimeException unreadable) {
+            // No hosts folder yet, or it cannot be listed: nothing to forget.
+        }
     }
 
     // ------------------------------------------------------------------ state directory and discovery
