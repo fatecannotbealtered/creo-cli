@@ -1,3 +1,34 @@
-"""Agent-native Creo automation; native support is experimental, not live verified."""
+"""creo-cli: lets an AI Agent operate Creo Parametric safely from the command line.
 
-__version__ = "1.1.0-beta.1"
+The driver runtime in ``_driver/`` does everything every driver tool shares. This package adds
+the domain commands (``commands/``) and the adapter that talks to Creo Parametric (``adapter/``).
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+from ._driver import Tool
+from .adapter import Adapter
+from .commands import COMMANDS
+
+# package.json, CHANGELOG.md, knowledge/, skills/ and contract/ sit at the project root; in the
+# native program they are bundled next to the code.
+ROOT = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
+
+TOOL = Tool(
+    root=ROOT,
+    adapter=Adapter,
+    commands=COMMANDS,
+    application="Creo Parametric",
+    versions=">=13.4 <13.5",
+    modes=["session"],
+    host_component=True,
+    # plugin/manifest.json records the host component's files and methods; `python scripts/spec.py
+    # generate` writes all of it but `methods` (DCLI-240).
+    plugin_manifest=ROOT / "plugin" / "manifest.json",
+)
+
+
+def main() -> None:
+    TOOL.main()

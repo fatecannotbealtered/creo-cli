@@ -1,5 +1,0 @@
-{
-  "units": "mm",
-  "name": "SLEEVE_PLANE",
-  "offset": {"from": "FRONT", "distance": 3}
-}

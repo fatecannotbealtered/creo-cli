@@ -1,32 +1,215 @@
-# Creo CLI
+# creo-cli
 
-面向机械工程任务的 Creo 命令行与 Agent Skills。通过合法 Creo 内的服务读取和编辑，
-写入必须经过新预览、一次确认、实际回读和留存回执。
+{{fill: 一句话定位：本工具让 Agent 在 Creo Parametric 里做什么}}
 
-当前为 **1.1.0-beta.1 Windows x64 隔离未签名测试版**。已观测环境为可见窗口下的
-Creo 13.4.1.0/JDK 25.0.3；其他平台、版本、锁屏、最小化、无界面和干净新机未获资格。
-源零件 RGB、限定刚性定位、保存后清空会话再重开有原生记录。数值密度/材料修改、实例独立
-外观、高级装配、STEP 交付、删除和符号功能仍受限制。复杂装配可能等待数分钟。
+<!-- driver:badges:start -->
+![Agent-native](https://img.shields.io/badge/🤖-Agent--native-6f42c1)
+[![CI](https://github.com/fatecannotbealtered/creo-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/fatecannotbealtered/creo-cli/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@fateforge/creo-cli)](https://www.npmjs.com/package/@fateforge/creo-cli)
+![drives](https://img.shields.io/badge/drives-Creo_Parametric_%3E%3D13.4_%3C13.5-1f6feb)
+![mode](https://img.shields.io/badge/mode-session-0e8a16)
+![platform](https://img.shields.io/badge/platform-Windows-555555)
+![risk](https://img.shields.io/badge/risk-T2-d29922)
+![maturity](https://img.shields.io/badge/maturity-draft-8957e5)
+![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.0-0969da)
+![license](https://img.shields.io/badge/license-Apache--2.0-blue)
+<!-- driver:badges:end -->
 
-仅客户端使用项目受控 Python 3.15.2、已修补 XZ 5.8.4 与 PyInstaller 6.22.3 重建；
-运行时从官方源码按记录配置编译，JAR/DLL 保留原字节和来源。
-内嵌依赖与旧历史库兼容性有离线检查；这些检查不扩大历史原生资格。
+[English](README.md) | 中文
 
-从本仓库 prerelease 下载完整 Windows ZIP 与 checksums.txt，核对 SHA-256 后解压。
-包内同时有 EXE、JAR、DLL、PowerShell 助手、六项 Skills 和许可；无需 Python/Node。
-用户需提供合法 Creo、对应 API/运行许可、JDK 25.0.3 与 PowerShell 7.4+。
+<!-- driver:info-card:start -->
+| 项目 | 内容 |
+|---|---|
+| 软件 | Creo Parametric >=13.4 <13.5 |
+| 模式 | session |
+| 系统与 CPU | Windows (x64) |
+| 风险等级 | T2 |
+| 成熟度 | draft：draft 0 个，verified 0 个，stable 0 个 |
+| 规范 | tool-driver-cli-spec 1.0.0 |
+| 宿主组件 | 需要 |
+<!-- driver:info-card:end -->
 
-按[英文入口的可复制命令](README.md)先调用 Initialize-CreoWorkspace.ps1，再预检并启动。
-初始化只安装组件和建立隔离目录，不启动 CAD，不需要私有演示工程。把有权使用的工程与依赖
-复制到 run/projects 后再打开。升级沿用已有 CLI 历史，遇到拒绝不自动扩大 scope。
-公共父目录不会整体获权，临时出图只纳入精确 workspace/.creo-cli/staging。
+## 安装
 
-未签名策略只作用于新建进程；它允许该进程加载未签名应用，并非单 DLL 白名单或发布者签名。
-全局配置、许可和其他 CAD 会话保持原样。启动后必须用 context/doctor 核对真正加载的三组件。
-超时不等于取消；未知或未完成调用必须保留，不能盲重试、关闭、丢弃或杀进程。
+1. 从 npm 安装 creo-cli：
 
-可用 `npx skills add fatecannotbealtered/creo-cli -y -g` 安装整个 Skills 家族；无 Node 时，
-把包内 cli/skills 完整复制到 Agent 的技能目录。creo-cli 负责环境与安全，建模、装配、工程图、
-外观出图和保存交付分别由对应任务 Skill 引导。精确参数与资格以实际 EXE 的 reference 为准。
+   ```bash
+   npm install -g @fateforge/creo-cli
+   ```
 
-[发布说明](release/RELEASE-NOTES.md) · [依赖与许可](docs/RUNTIME-DEPENDENCIES.md)
+2. 运行一次 `update`。刚装好的已经是最新版本，所以 `update` 只把命令入口指向原生程序；这样每次调用都不用先启动 Node.js：
+
+   ```bash
+   creo-cli update
+   ```
+
+3. 从已安装的包里安装 Skill，Skill 从不从网络获取。把它们复制到 Agent 的 Skill 目录。用 bash：
+
+   ```bash
+   mkdir -p ~/.agents/skills
+   cp -r "$(npm root -g)/@fateforge/creo-cli/skills/"* ~/.agents/skills/
+   ```
+
+   用 PowerShell：
+
+   ```powershell
+   New-Item -ItemType Directory -Force "$HOME\.agents\skills" | Out-Null
+   Copy-Item -Recurse -Force "$(npm root -g)\@fateforge/creo-cli\skills\*" "$HOME\.agents\skills\"
+   ```
+
+   其他 Agent 的 Skill 目录做法相同。以后运行 `creo-cli update` 时，这几个目录里的副本会跟着工具一起更新：`~/.agents/skills/`、`~/.claude/skills/`、`~/.codex/skills/`、`~/.cursor/skills/`、`~/.gemini/skills/`。放在别处的副本不会更新。
+
+4. 把宿主组件装进 Creo Parametric。这是两步确认的写操作，需要允许 `configure` 的授权范围文件（见「授权」）。第一次调用什么都不改，返回预览和确认令牌；第二次调用才安装：
+
+   ```bash
+   creo-cli plugin install
+   creo-cli plugin install --confirm <token>
+   ```
+
+   装好后启动或重启 Creo Parametric，让它加载宿主组件。
+
+## 能力
+
+下面是 creo-cli 的全部命令，由命令登记生成；`(dangerous)` 表示该命令属于危险级，`creo-cli reference --command "<path>"` 给出单个命令的完整说明。
+
+<!-- driver:command-map:start -->
+- `reference`
+- `context`
+- `doctor`
+- `changelog`
+- `operation`: get, list, resolve
+- `update`
+- `session`: list, get, open, close
+- `doc`: list, get, create, open, save, save-as, close, undo
+- `job`: list, get, cancel
+- `plugin`: get, install, remove
+- `knowledge`: list, get, search, create, delete
+<!-- driver:command-map:end -->
+
+## 工作方式
+
+creo-cli 每次调用都输出一个 JSON 信封。`creo-cli reference` 列出全部命令，`creo-cli reference --command "<path>"` 说明单个命令，包括它的参数、效果和在每种模式下的确认级别。
+
+**实例与文档。** creo-cli 驱动正在运行的 Creo Parametric 实例。`creo-cli session list` 列出每个实例的会话 ID、状态和打开的文档，`creo-cli doc list` 列出文档。用 `--session <id>` 指定实例，用 `--doc <path-or-id>` 指定文档。有多个实例在运行而命令没有指定时，命令返回 `E_AMBIGUOUS` 和候选列表：creo-cli 从不按窗口焦点或最近使用来挑实例。`--doc` 指定的文档只有一个实例打开时，就选中这个实例。被某个实例打开的文件只经由这个实例修改，直接写这个文件会被 `E_CONFLICT` 拒绝。
+
+**确认级别。** 每次写操作都会检查授权范围、生成预览、在派发前再检查一次状态、锁定目标、读回修改并返回回执。只有确认方式随级别不同，级别由 creo-cli 根据命令声明的效果得出：
+
+| 级别 | 适用 | 调用方式 |
+|---|---|---|
+| 直接执行 | 保存之前只在内存里的修改；启动实例；新建和打开文档；不覆盖已有文件的新文件；停止工作 | 一次调用就执行 |
+| 两步确认 | 保存和覆盖文件；文件模式和设备模式下的修改；设置；宿主组件 | 第一次调用什么都不改，返回 `E_CONFIRMATION_REQUIRED`，带预览和确认令牌；再带 `--confirm <token>` 运行同一条命令才执行 |
+| 危险 | 物理动作；把内容交给外部的人或系统；不可撤回的修改；放弃未保存的修改；关闭不是 creo-cli 启动的实例 | 与两步确认相同，确认的那次调用还要加 `--dangerous`；授权范围必须允许危险操作 |
+
+`--dry-run` 显示任何写操作的预览，什么都不改。确认令牌只能用一次，10 分钟内有效，而且只对它预览过的那次修改有效。授权范围文件设了 `"confirm": "always"` 时，除停止工作外的所有写操作都改为两步确认，人可以逐个批准预览。
+
+**会话模式下的保存。** 修改不等于保存。修改之后，回执报告 `persistence: unchanged`，文档仍有未保存的修改；只有 `creo-cli doc save` 才写入文档的文件。保存的预览列出上次保存以来的所有修改，包括人在 Creo Parametric 里做的修改（`origin: external`），以及结果仍然未知的写操作。
+
+**回执。** 每次写操作都返回回执，分别报告修改是否执行、是否生效、是否送达、是否保存、是否验证。写操作的回复丢失时，creo-cli 返回 `E_OUTCOME_UNKNOWN` 和查明结果的命令，绝不会把写操作再发一遍。
+
+## 授权
+
+creo-cli 读取不需要许可，但只写入人在授权范围文件里允许的内容。这个 JSON 文件由人亲手写；没有命令会写它，Agent 也从不创建或修改它。creo-cli 从 `CREO_CLI_SCOPE_FILE` 指定的路径读取它；没有设置这个变量时，读取状态目录里的 `scope.json`，不从其他任何地方读取。
+
+```json
+{
+  "scope_id": "demo-rework",
+  "effects": ["change", "persist"],
+  "dangerous": false,
+  "targets": ["file:///D:/projects/demo/"],
+  "expires_at": "2027-01-31T18:00:00Z"
+}
+```
+
+| 字段 | 含义 |
+|---|---|
+| `scope_id` | 这份授权的名称；操作记录会带上它 |
+| `effects` | 写操作可以有的效果；读取不需要授权范围 |
+| `dangerous` | 是否允许危险级的操作 |
+| `targets` | 写操作可以触及的对象的目标键前缀：`file:///D:/projects/demo/` 覆盖这个文件夹下的所有文件，`untitled:` 覆盖新建的文档，`device:<id>` 覆盖一台设备 |
+| `expires_at` | 授权到期的时间，用 UTC |
+| `confirm` | 可选；设为 `always` 时，除停止工作外的每个写操作都要等人批准预览后才执行 |
+
+授权范围不覆盖的写操作什么都不改，返回 `E_FORBIDDEN`，说明缺什么，并给出一段人可以直接粘贴进文件的片段。`creo-cli context` 显示当前生效的授权范围，`SECURITY_zh.md` 完整说明了授权范围。
+
+{{fill: creo-cli 的命令需要哪些效果、每种效果用于哪些命令，比如用一张效果与命令的表}}
+
+## 关于本工具
+
+{{fill: Creo Parametric 的领域特点、Agent 用 creo-cli 完成的典型任务，以及截图或简短示例}}
+
+## 配置
+
+| 变量 | 默认值 | 含义 |
+|---|---|---|
+| `CREO_CLI_STATE_DIR` | `~/.creo-cli` | 状态目录：操作记录、锁、更新检查的缓存和团队知识的登记 |
+| `CREO_CLI_SCOPE_FILE` | 状态目录里的 `scope.json` | 授权范围文件（见「授权」） |
+| `HTTPS_PROXY`、`HTTP_PROXY`、`NO_PROXY` | 未设置 | `update` 和 `doctor` 用的代理，只有这两个命令访问 npm 仓库 |
+| `CREO_CLI_FAKE_HOST` | 未设置 | 只用于测试：把每次调用发给模拟宿主而不是 Creo Parametric，并把每个结果标为模拟结果 |
+
+### 怎样找到 Creo Parametric
+
+{{fill: creo-cli 怎样找到 Creo Parametric：安装位置、版本识别、运行中的实例，以及用户可以修改的设置}}
+
+## 卸载
+
+先在 creo-cli 还装着的时候卸载宿主组件。和安装一样，卸载也是两步确认的写操作，需要允许 `configure` 的授权范围。运行中的实例仍在使用的版本会留在磁盘上；关闭 Creo Parametric 后再运行一次命令即可删除。
+
+```bash
+creo-cli plugin remove
+creo-cli plugin remove --confirm <token>
+```
+
+趁 npm 包还在、能列出 Skill 名称时，删除已安装的 Skill。用 bash：
+
+```bash
+for skill in "$(npm root -g)/@fateforge/creo-cli/skills/"*; do rm -rf ~/.agents/skills/"$(basename "$skill")"; done
+```
+
+用 PowerShell：
+
+```powershell
+Get-ChildItem "$(npm root -g)\@fateforge/creo-cli\skills" | ForEach-Object { Remove-Item -Recurse -Force "$HOME\.agents\skills\$($_.Name)" -ErrorAction SilentlyContinue }
+```
+
+复制过 Skill 的其他 Agent Skill 目录，如 `~/.claude/skills/`，也照此删除。然后卸载 npm 包：
+
+```bash
+npm uninstall -g @fateforge/creo-cli
+```
+
+在 Windows 上，如果 npm 全局 `node_modules` 文件夹（`npm root -g`）里有 `.creo-cli-trash`，也把它删掉；状态目录在另一块磁盘上时，`update` 会把旧的程序文件放在那里，等下次运行再删。
+
+最后删除状态目录：`~/.creo-cli`，或 `CREO_CLI_STATE_DIR` 指定的文件夹。里面有操作记录、锁、默认位置的授权范围文件和团队知识的登记；想保留记录就留着它。
+
+```bash
+rm -rf ~/.creo-cli
+```
+
+```powershell
+Remove-Item -Recurse -Force "$HOME\.creo-cli"
+```
+
+## 开发
+
+creo-cli 用 Python 写成，建立在 `creo_cli/_driver/` 里的驱动运行时之上；这是固定副本，从不修改。领域命令在 `creo_cli/commands/`，适配层在 `creo_cli/adapter/`。
+宿主组件的源码在 `plugin/`。
+
+```bash
+python -m pip install --require-hashes --no-deps -r requirements-dev.txt
+python scripts/spec.py check
+python -m unittest discover -s tests
+python scripts/spec.py suites
+```
+
+测试和一致性测试都用模拟宿主，从不需要 Creo Parametric。工作流程、行为矩阵和真实软件运行见 `CONTRIBUTING_zh.md`。
+
+## 链接
+
+- 规范：[tool-driver-cli-spec 1.0.0](.agent/)，固定副本在 `.agent/`
+- [CHANGELOG.md](CHANGELOG.md)：每个版本的改动（英文）
+- [SECURITY_zh.md](SECURITY_zh.md)：安全模型，以及怎样报告漏洞
+- [CONTRIBUTING_zh.md](CONTRIBUTING_zh.md)：怎样参与贡献
+- [docs/APPLICATION_zh.md](docs/APPLICATION_zh.md)：Creo Parametric 的能力调查
+- [docs/COMPATIBILITY_zh.md](docs/COMPATIBILITY_zh.md)：creo-cli 在哪里能用
+- [docs/E2E_zh.md](docs/E2E_zh.md)：真实软件验收及其记录
+- 问题跟踪：<https://github.com/fatecannotbealtered/creo-cli/issues>

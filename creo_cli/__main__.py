@@ -1,3 +1,3 @@
-from .main import main
+from creo_cli import main
 
-raise SystemExit(main())
+main()

@@ -1,72 +1,147 @@
-# Contributing
+# Contributing to creo-cli
 
-Read `AGENTS.md` and `.agent/AGENT.md` first; the specs there take priority.
+English | [中文](CONTRIBUTING_zh.md)
 
-## The CLI
+People and coding Agents contribute through the same workflow. Coding Agents also follow `AGENTS.md`.
 
-Python 3.11+, standard library only at run time.
+## Development Setup
 
-```bash
-python -m pip install -e ".[dev]"
-python -m pytest tests
-ruff check creo_cli tests scripts && ruff format --check creo_cli tests scripts
-python scripts/test.py --evidence docs/evidence/offline-tests-1.0.0.json   # the suite, recorded
-```
+You need:
 
-The tests drive the real CLI against `tests/fixture.py`, a stateful loopback substitute
-of the service. For every public behaviour add a command-level test: the success path,
-bad arguments, and the failures that matter (refused, lost reply, changed state).
+- Python 3.12 or later
+- Node.js with npm, to build and test the npm packages
+- Git
 
-A new command is declared next to its handler in `creo_cli/commands/`, with its output
-schema, its service ops and, for a write, a plan whose preview is read from Creo and
-whose verifier reads the result back. The registry, `reference`, the parser and output
-validation all follow from the declaration.
+The tests and the conformance suites never need Creo Parametric: the fake host stands in for it. You need Creo Parametric only for live runs on authorized targets (`docs/E2E.md`).
 
-## The service
-
-Java 25 (the JDK Creo 13.4 requires), a Creo with the Object TOOLKIT Java component and
-licence; for the native sketch library also Visual Studio 2022 Build Tools with the C++
-workload and the Creo Parametric Toolkit component.
+Clone the repository:
 
 ```bash
-python scripts/reload_service.py --restart   # compile, unlock, register, restart Creo
-python scripts/service_call.py '{"op": "session.status"}'
+git clone https://github.com/fatecannotbealtered/creo-cli.git
 ```
 
-The reload refuses while models are open (a restart loses unsaved work) unless given
-`--force`. A new op goes into `Ops.java` under the name of the command that calls it,
-reads back what it did, and reports the reading. Element ids and values come from
-`Ptc.java` under PTC's names, never as literals.
+Then, in the cloned folder, create a virtual environment, install the development dependencies and run the project check:
 
-## Live evidence
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --require-hashes --no-deps -r requirements-dev.txt
+python scripts/spec.py check
+```
 
-A command is not `live_verified` until `scripts/record_live.py` has run it on a real
-Creo (`docs/E2E.md`). Add its scenario there, run the recorder on a disposable
-workspace, then add the command to `registry.LIVE_VERIFIED`; `tests/test_contract.py`
-holds the mark to the record.
+On Windows, activate the environment with `.venv\Scripts\activate` instead. `requirements-dev.txt` pins every development dependency with its hash, so only the reviewed versions are installed.
 
-## Versions and specs
+## Commands
 
-`package.json` is the version source: `node scripts/sync-version.js` propagates it and
-`node scripts/check-version.js` verifies. `node scripts/sync-spec.js` re-vendors the fleet
-spec and `node scripts/check-spec.js` verifies it. Record user-visible changes in
-`CHANGELOG.md` and keep `README.md` and `README_zh.md` aligned.
+| Command | What it does |
+|---|---|
+| `python scripts/spec.py check` | Runs the project check: layout, documents and their fixed text, generated content, pinned copies, versions, Skills, knowledge, behavior matrices, evidence and maturity |
+| `python scripts/spec.py generate` | Regenerates `contract/commands.json`, the command maps, the badge row, the info card, the risk block, the support matrix, the evidence index and `knowledge/index.json` |
+| `python scripts/spec.py suites` | Runs both conformance suites against creo-cli, with the fake host in place of Creo Parametric |
+| `python scripts/spec.py sync <version>` | Replaces the pinned copies with those of another tool-driver-cli-spec release |
+| `python scripts/spec.py matrix --command "<path>" --set <placeholder>=<value>` | Runs the behavior matrix of one command on the real Creo Parametric, on authorized targets, and writes a live record |
+| `python scripts/spec.py eval --workspace-root <folder>` | Runs the evaluation questions in `tests/eval/` with Claude Code on the real Creo Parametric, in an authorized folder, and writes an evaluation report; with `--check --fake-host`, checks each grader against the scripted agents |
+| `python -m unittest discover -s tests` | Runs the unit tests |
+| `python scripts/build.py` | Builds the native program and the platform package for this machine |
+| `python scripts/pack.py` | Builds the npm packages and runs the package content check |
+| `python scripts/smoke.py` | Runs the key operation of platform delivery against the built packages |
 
-Never commit CAD models, the unlocked service binaries, tokens, keys or the state
-database.
+The pinned copies are `.agent/`, `contract/driver-contract.json`, `creo_cli/_driver/` and `licenses/`. Never edit them; `sync` replaces them together.
 
-## Releasing
+## Branch and Commit Convention
 
-The owner reviews the release candidate, tags it and pushes the tag.
+- `main` always passes the merge gate. Work on a branch and merge through a pull request.
+- Name a branch `<kind>/<topic>`, where the kind is `feat`, `fix`, `docs`, `test` or `chore`, for example `feat/part-move`.
+- Write commit messages in English: a subject line of at most 72 characters in the imperative mood, such as `Add part move`, then a blank line and a body that says why.
+- Keep each commit to one change, together with its tests, its behavior matrix, its documents in both languages and its CHANGELOG entry.
+- Only a maintainer releases. A release sets the new version in `package.json`, the only source of the version, and moves the `[Unreleased]` entries into a section `[X.Y.Z] - YYYY-MM-DD`. After the merge, the maintainer pushes the annotated tag `vX.Y.Z`, and the release workflow does the rest.
 
-1. On the licensed machine, on the release candidate: `python scripts/reload_service.py
-   --restart`, then the live record (`docs/E2E.md`) and
-   `python scripts/test.py --evidence docs/evidence/offline-tests-<version>.json`. Both
-   records carry the fingerprint of the tree they ran on; a later edit makes them stale.
-2. `python scripts/build_bundle.py --output dist --creo-build <build>` packs the unlocked
-   jar and DLL as `dist/creo-cli-service-<version>.zip`.
-3. Tag `v<version>` and push the tag. The release workflow tests, builds the Windows
-   binary, signs the checksums, publishes the GitHub release and the npm packages.
-4. Attach the bundle to that release: `gh release upload v<version>
-   dist/creo-cli-service-<version>.zip`. The workflow cannot build it, because unlocking
-   needs the TOOLKIT licence, and users install it from the release page.
+## CI Checks
+
+`.github/workflows/ci.yml` runs the merge gate on every change. Its last job, `merge gate passed`, succeeds only when every check passed on every shipped system; make it the required status check of the main branch, so that a failed check blocks the merge. The release runs the same checks.
+
+| Check | What it covers | Run it locally |
+|---|---|---|
+| Lint | The tool's code style rules | `python -m ruff check .` |
+| Unit tests | The tool's own tests in `tests/` | `python -m unittest discover -s tests` |
+| Conformance suites | Both suites, on every shipped platform | `python scripts/spec.py suites` |
+| Project check | Layout, documents, labels, pinned copies, Skills, knowledge and capability tracing | `python scripts/spec.py check` |
+| Output size check | Every envelope stays within the size limits; general conformance test R04 performs it | `python scripts/spec.py suites` |
+| npm package content check | Each package holds only what it may, with no install scripts | `python scripts/pack.py` |
+
+`.github/workflows/release.yml` runs only when a maintainer pushes a version tag. It runs the same checks, then platform delivery: on the operating system and CPU of each platform package, it installs the packages that will be published into a clean environment, starts creo-cli and runs one key operation, as `python scripts/smoke.py` does. It publishes to npm, with provenance, only when everything passed for every platform package. A version with a prerelease part, such as `1.2.0-rc.1`, is published under the npm tag `next`, so `update` does not install it by default. Linux packages are built on Debian 11 (glibc 2.31), so they also run on older Linux systems. The workflow publishes through npm trusted publishing when the package has it set up on npmjs.com, otherwise with the `NPM_TOKEN` secret; set up trusted publishing after the first release and then disallow token publishing.
+
+## Tests and Evidence
+
+**Conformance suites.** `python scripts/spec.py suites` runs the general and the driver conformance suite. They start creo-cli as a separate process with `CREO_CLI_FAKE_HOST` set, so the fake host stands in for Creo Parametric, and judge only the exit codes, the output and what the fake host received. Never skip, weaken or edit a test, and never mark one as an expected failure; a test that applies but did not run counts as failed. Results from the fake host are simulated and never count as evidence.
+
+**Unit tests.** The tool's own tests live in `tests/`. Every test sets `CREO_CLI_STATE_DIR` to a new temporary directory, and either points `CREO_CLI_SCOPE_FILE` at a scope file inside it or removes that variable.
+
+**Behavior matrices.** Every domain command, and every standard command that calls an adapter capability, has one matrix file in `tests/matrix/`, named after the command path, such as `tests/matrix/part-move.json`. The file lists each row once: `normal`, `empty`, `invalid_input`, `not_found`, `ambiguous`, `conflict`, `no_scope`, `busy`, `dialog`, `disconnect`, `unsaved` and `read_back_mismatch`. A row that applies holds the arguments and the expected exit code and error code; a row that does not apply holds `applies: false` and the reason. The arguments of the `normal` row of a write command are its sample, which the general suite runs against the fake host. Arguments name the session, the document, the device and the output folder only through the placeholders `{session}`, `{doc}`, `{device}` and `{dir}`.
+
+**Live records.** `python scripts/spec.py matrix --command "<path>" --set <placeholder>=<value>` runs one matrix on the real Creo Parametric, with one `--set` for each placeholder the matrix uses, named without braces, such as `--set doc=<file>`; each value is an authorized target. It writes a live record to `docs/evidence/` and fills in the actual result and the `live:` evidence reference of each row. `docs/E2E.md` describes the procedure. A row that cannot be caused on demand, such as `disconnect`, may be marked `unrunnable` with the reason; the `normal`, `dialog` and `read_back_mismatch` rows never may.
+
+**Evaluation.** Before a command is marked stable, `tests/eval/` holds a question for every per-tool scenario that applies to creo-cli, and `docs/evidence/` holds the newest evaluation report from the real Creo Parametric: it covers every question as the files are now, every question passed, and one question lists the command in `COMMANDS` and ran it. Each question is one Python file named after its ID; files named `_*.py` hold helpers the questions share.
+
+```python
+"""Move one footprint inside the scope."""
+SCENARIO = "scoped_change"
+COMMANDS = ["footprint move"]
+TURNS = ["Move footprint R1 in {documents}/board.kicad_pcb to x 12.5 mm, y 30 mm."]
+FILES = "boards"          # copied into the question's documents folder
+
+
+def grade(run):
+    part = run.tool("footprint", "get", "--doc", str(run.documents / "board.kicad_pcb"), "--id", "R1")["data"]["items"][0]
+    run.check(part["x_mm"] == 12.5, "R1 did not move")
+    run.check(len([c for c in run.write_calls() if c.ok]) == 1, "not exactly one write")
+```
+
+`python scripts/spec.py eval --workspace-root <folder>` runs the questions with Claude Code on the real Creo Parametric and writes the report; the folder must be listed under Authorized Targets in `docs/E2E.md`. For each question the runner makes a workspace inside that folder with the Skills and the scope file, keeps the documents in a folder beside it, and records every run of creo-cli; the Agent's shell runs only creo-cli, and its file tools reach only the workspace. `{documents}` in `TURNS` and in scope targets stands for the documents folder. By default the scope grants that folder, the effects of the commands in `COMMANDS` and `dangerous` only when one of them needs it; `SCOPE` replaces any of these fields, and a question whose commands only read gets no scope file. The runner writes that scope file itself; nobody edits it. On the real Creo Parametric, creo-cli keeps your environment, so it finds the running instances; a session-mode question opens its document in `before` and closes it in `after`, which always runs.
+
+| A grader or hook uses | What it gives |
+|---|---|
+| `run.check(condition, problem)` | Records a failure when the condition does not hold |
+| `run.tool(*args)` | Runs creo-cli as the grader and returns its envelope; not one of the Agent's runs |
+| `run.read(name)`, `run.documents` | A file in the documents folder, and the folder |
+| `run.calls`, `run.ran(path, turn)`, `run.write_calls(turn)` | The Agent's recorded runs; each has `args`, `exit`, `ok`, `code`, `details`, `data`, `value(flag)` and `matches(line)` |
+| `run.messages`, `run.said(*texts, turn=-1)` | What the Agent told the person in each turn; judge meaning, in English and Chinese |
+| `run.scope_changed()`, `run.notes` | Whether the scope file changed; a dict a hook fills for the grader |
+| `run.host(...)`, `run.state()`, `run.applied()`, `run.document(id)` | The fake host only |
+
+Optional `right(agent, turn)` and `wrong(agent, turn)` scripted agents use `agent.run(*args)`, `agent.line(text)`, `agent.say(text)` and `agent.calls`. `python scripts/spec.py eval --check --fake-host` shows that each grader passes `right` and fails every `wrong` on the fake host; with `--workspace-root` in place of `--fake-host`, it does so on the real Creo Parametric. The specification's own questions, in `conformance/eval/` of the release, are worked examples; `read_answer`, `scoped_change`, `knowledge_lookup` and `separate_save` grade only through what also works on the real Creo Parametric.
+
+**Maturity.** Each command declares its maturity level and the evidence behind it, and `creo-cli reference` shows both.
+
+| Level | Evidence needed |
+|---|---|
+| `draft` | None; a write command still needs its sample |
+| `verified` | A current live record in which every matrix row that applies passed, except rows marked `unrunnable` |
+| `stable` | Also a current evaluation report |
+
+Evidence counts only while its tool version has the same major and minor version as creo-cli; after a new minor or major version, a command keeps its level only with new evidence. Evidence references have the form `live:docs/evidence/<file>.json#<row>` or `eval:docs/evidence/eval-<date>.json`.
+
+## Adding or Changing a Command
+
+1. **Survey.** Find the capability in the Capabilities table of `docs/APPLICATION.md`. When it is missing, add a row with a new `CAP-nnn`. Set its disposition to `provided` once a command offers it.
+2. **Name.** Use the form `noun verb`. Take the verb from the fixed list: `list`, `get`, `search`, `check`, `create`, `update`, `delete`, `move`, `import`, `render`, `export`, `run`, `stop`. Take the noun from the terms of Creo Parametric, written as a full word. A noun never takes the name of a built-in or standard command, such as `session`, `doc` or `job`.
+3. **Register.** Register the command in `creo_cli/commands/` with its summary, effects, modes, target type, flags with their types, the unit quantity of every physical value, its secret parameters, its untrusted output fields, the adapter capabilities it calls and its capability IDs in `survey_ids`. Declare every effect. Mark a change Creo Parametric cannot take back with `irreversible: true`, and a command that only stops work with `halt: true`. Give read-back tolerances where Creo Parametric rounds or snaps values, and name related knowledge entries in `related_knowledge`.
+4. **Implement.** Write the adapter capabilities the command needs in `creo_cli/adapter/`, or in the host component in `plugin/` when the interface of Creo Parametric works only inside its process or on its main thread. Never reimplement what the driver runtime does.
+5. **Matrix.** Write the behavior matrix in `tests/matrix/`, with every row. The `normal` row of a write command is its sample.
+6. **Generate and check.** Run `python scripts/spec.py generate`, then `python scripts/spec.py check`, `python -m unittest discover -s tests` and `python scripts/spec.py suites`.
+7. **Prove it.** The command starts as `draft`. Run its matrix on the real Creo Parametric, on authorized targets, with `python scripts/spec.py matrix`, and commit the live record; the command can then be `verified`. Rerun the matrix whenever a change affects how the command talks to Creo Parametric.
+8. **Skills and knowledge.** The command maps update themselves. Add a playbook to the Skill that owns the command when its task takes several steps. When the entry Skill would grow past 150 lines, split it into domain Skills by the tasks users name, each listing its commands in `metadata.commands`. Turn the limits and errors you found into entries in `knowledge/`.
+9. **CHANGELOG.** Add an entry under `[Unreleased]`: `Added` for a new command or flag, `Changed` for new behavior, `Deprecated` before a later removal, `Removed` when it is gone, `Fixed` for a bug fix and `Security` for a vulnerability fix.
+
+## Pull Requests
+
+- One topic per pull request. The description says what changed and why, names the commands and capability IDs it touches, and links any new live record or evaluation report.
+- Every CI check passes, and generated content is regenerated, never edited by hand.
+- The English and Chinese documents change together and say the same thing.
+- No secrets, license data or files you may not share, in the code, the tests or `docs/evidence/`.
+- The reviewer checks the declared effects and the `irreversible` and `halt` marks against the capability survey, the untrusted fields, the Skill text and the reasons given for matrix rows that do not apply or cannot be run.
+- A maintainer merges. Packages are published only by the release workflow.
+
+## Security
+
+Do not report a vulnerability in a public issue or pull request. Report it privately, as `SECURITY.md` describes, through <https://github.com/fatecannotbealtered/creo-cli/security/advisories/new>.

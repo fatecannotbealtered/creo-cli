@@ -1,55 +1,32 @@
 {
   "name": "@fateforge/creo-cli",
-  "version": "1.1.0-beta.1",
-  "description": "PTC Creo Parametric for AI agents: build parts feature by feature, assemble them, make drawings and exchange files in a live Creo, through a service that runs inside it. Every write is previewed, confirmed once, read back and recorded.",
-  "keywords": [
-    "creo",
-    "creo-parametric",
-    "cad",
-    "mechanical-design",
-    "cli",
-    "agent",
-    "ai-native"
-  ],
-  "author": "Sean Guo",
-  "homepage": "https://github.com/fatecannotbealtered/creo-cli#readme",
-  "bugs": {
-    "url": "https://github.com/fatecannotbealtered/creo-cli/issues"
-  },
+  "version": "1.0.0",
+  "description": "Lets an AI Agent operate Creo Parametric safely from the command line.",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fatecannotbealtered/creo-cli.git"
   },
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
+  "homepage": "https://github.com/fatecannotbealtered/creo-cli#readme",
+  "bugs": {
+    "url": "https://github.com/fatecannotbealtered/creo-cli/issues"
   },
   "bin": {
-    "creo-cli": "scripts/run.js"
-  },
-  "scripts": {
-    "version": "node scripts/sync-version.js",
-    "check-version": "node scripts/check-version.js"
-  },
-  "optionalDependencies": {
-    "@fateforge/creo-cli-win32-x64": "1.1.0-beta.1"
+    "creo-cli": "bin/creo-cli.js"
   },
   "files": [
-    "scripts/run.js",
+    "bin/creo-cli.js",
     "skills/",
-    "README.md",
-    "README_zh.md",
-    "LICENSE",
-    "NOTICE.md",
-    "CHANGELOG.md",
-    "docs/licenses/",
-    ".agent/driver/LICENSE",
-    ".agent/driver/SDK-NOTICE.txt",
-    ".agent/driver/DISTRIBUTION.json",
-    ".agent/driver/THIRD_PARTY_NOTICES.md"
+    "NOTICE.md"
   ],
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
-  "private": true
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "optionalDependencies": {
+    "@fateforge/creo-cli-win32-x64": "1.0.0"
+  }
 }

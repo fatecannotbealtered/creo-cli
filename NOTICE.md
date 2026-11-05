@@ -1,29 +1,22 @@
-# Third-party notices
+# Notice
 
-Creo and Creo Parametric are trademarks of PTC Inc. This independent project is
-not provided, endorsed or sponsored by PTC. Project-authored CLI, service, adapters
-and Skills are MIT licensed. The source includes API identifiers and tree structures,
-not vendor documentation or SDK code. User models, supplier binaries, headers,
-libraries, license files and SDK samples are excluded from the public materials.
+creo-cli
 
-The complete package contains the project's original unlocked JAR and native DLL.
-They rely on a user's separately licensed Creo/API installation. The native DLL is
-NotSigned; ordinary unlocking does not create a Windows publisher signature, and
-Java unlocking does not remove its runtime license requirements. See
-[runtime dependencies](docs/RUNTIME-DEPENDENCIES.md) for the supplier's official guidance.
+Copyright 2026 Sean Guo
 
-The rebuilt frozen client uses a project-controlled ordinary x64 Python 3.15.2
-source build, patched XZ 5.8.4 and PyInstaller 6.22.3. This is not an unmodified
-PSF Windows binary distribution. Preserve the complete [Python license and binary-build conditions](docs/licenses/PYTHON-3.15.2-LICENSE.txt)
-and [PyInstaller COPYING and Bootloader Exception](docs/licenses/PYINSTALLER-6.22.3-COPYING.txt).
-RUNTIME-DISTRIBUTION.json binds the actual embedded components to their versions,
-sources, hashes and applicable notices in docs/licenses, including OpenSSL, SQLite,
-libffi and Microsoft runtime conditions. Project MIT does not relicense these components.
-No separate ucore68.dll, Java runtime or PTC vendor runtime is redistributed.
+Licensed under the Apache License, Version 2.0. The license text is in `LICENSE`.
 
-Driver schemas and adapted scope checks retain their original source PIN and use
-Apache-2.0 under the copyright holder's current licensing statement. See
-[driver attribution](.agent/driver/SDK-NOTICE.txt), [LICENSE](.agent/driver/LICENSE),
-[current notices](.agent/driver/THIRD_PARTY_NOTICES.md) and [asset inventory](.agent/driver/DISTRIBUTION.json).
-The inherited ai-native-cli-spec v1.6.3 baseline remains MIT; its original copyright
-and license notice is retained in the current notices and project LICENSE.
+## Trademarks
+
+creo-cli drives Creo Parametric. Creo Parametric is a trademark of its owner. creo-cli is not affiliated with, endorsed by or sponsored by the owner of Creo Parametric.
+
+## Third-party components
+
+| Component | Where | License |
+|---|---|---|
+| CPython runtime | Bundled in the native program | Python Software Foundation License |
+| PyInstaller bootloader | Bundled in the native program | GNU General Public License 2.0 or later, with an exception that allows distributing programs built with it |
+| tool-driver-cli-spec 1.0.0 | `.agent/` and `contract/driver-contract.json` | See `licenses/` |
+| Driver runtime | `creo_cli/_driver/` | See `licenses/` |
+
+{{fill: every other component the native program or the host component bundles, with its license; or delete this line when there is none}}
