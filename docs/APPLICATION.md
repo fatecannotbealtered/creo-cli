@@ -183,8 +183,8 @@ Each risk or limit found in the survey becomes an entry in `knowledge/`, or give
 - A model may use inch or other units; creo-cli converts to and from millimetres → `creo-units`. The default template deciding a new part's units is left out of 1.0.0, which creates no models.
 - Every save writes a new numbered version in the model's origin directory, not the working directory; old versions accumulate → `creo-save-versions`.
 - A freshly opened part reports unsaved changes → `creo-save-versions`. A model created from a template is written to disk at once: left out of 1.0.0, which creates no models.
-- Modal dialogs (unsigned DLL prompt, recovery dialogs at startup, license dialogs, ORDER_DEBUG, View States "Apply") block every command until a person closes them → `creo-troubleshooting`.
-- Creo asks before loading the unsigned host DLL in each session → `creo-host-component-loading`.
+- Modal dialogs (recovery dialogs at startup, license dialogs, ORDER_DEBUG, View States "Apply") block every command until a person closes them → `creo-troubleshooting`.
+- Creo asks before loading an unsigned toolkit DLL in each session. Left out of 1.0.0, whose host component is a Java application and loads no DLL.
 - A locked or minimized workstation can crash Creo (seen with the Intel OpenGL driver); headless is not available → `creo-display-requirements`.
 - Long operations: complex assembly edits 135–194 s, BOM tables up to 568 s; they cannot be cancelled. Left out of 1.0.0: none of its commands runs these operations.
 - A feature can be built but fail regeneration (wrong side, face square to the pull). Left out of 1.0.0, which creates no features.

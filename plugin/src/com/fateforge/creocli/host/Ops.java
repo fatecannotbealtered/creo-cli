@@ -209,14 +209,16 @@ final class Ops {
             BaseDimension dim = (BaseDimension) Creo.dimension(solid, path.substring("/dimensions/".length()))[0];
             Map<String, Object> out = new LinkedHashMap<>();
             double f = Units.mmPerUnit(model);
-            if (angular(dim)) {
+            boolean angle = angular(dim);
+            if (angle) {
                 out.put("value_deg", clean(dim.GetDimValue()));
             } else {
                 out.put("value_mm", clean(dim.GetDimValue() * f));
             }
-            Map<String, Object> tol = tolerance(dim, f);
+            Map<String, Object> tol = tolerance(dim, angle ? 1.0 : f, angle);
             out.put("tolerance_type", tol.get("type"));
-            for (String k : new String[] {"plus_mm", "minus_mm", "upper_mm", "lower_mm", "fit"}) {
+            for (String k : new String[] {"plus_mm", "minus_mm", "upper_mm", "lower_mm", "plus_deg", "minus_deg",
+                    "upper_deg", "lower_deg", "fit"}) {
                 if (tol.containsKey(k)) {
                     out.put(k, tol.get(k));
                 }
@@ -312,7 +314,6 @@ final class Ops {
         Double kg = Units.kgPerUnit(model);
         Double massKg = density && kg != null ? clean(mass.GetMass() * kg) : null;
         out.put("mass_kg", massKg);
-        out.put("density_kg_per_mm3", massKg != null && volume > 0 ? massKg / volume : null);
         Point3D cog = mass.GetGravityCenter();
         out.put("center_of_mass_mm", cog == null ? null : point(cog, f));
         try {
@@ -746,6 +747,7 @@ final class Ops {
         String kind = type == DimensionType._DIM_RADIAL ? "radius" : type == DimensionType._DIM_DIAMETER ? "diameter"
                 : type == DimensionType._DIM_ANGULAR ? "angle" : "linear";
         Map<String, Object> row = new LinkedHashMap<>();
+        row.put("id", dim.GetSymbol());
         row.put("name", dim.GetSymbol());
         row.put("kind", kind);
         row.put("feature_id", owner == null ? null : owner.GetId());
@@ -763,12 +765,16 @@ final class Ops {
         row.put("driven_by_relation", driven);
         boolean reference = dim instanceof com.ptc.pfc.pfcDimension.Dimension && ((com.ptc.pfc.pfcDimension.Dimension) dim).IsReference();
         row.put("reference", reference);
-        row.put("tolerance", reference ? null : tolerance(dim, f));
+        row.put("tolerance", reference ? null : tolerance(dim, "angle".equals(kind) ? 1.0 : f, "angle".equals(kind)));
         return row;
     }
 
-    /** A dimension's tolerance as a person reads it; deviations come back as Creo holds them, +upper / -lower. */
-    private static Map<String, Object> tolerance(BaseDimension base, double f) {
+    /**
+     * A dimension's tolerance as a person reads it; deviations come back as Creo holds them,
+     * +upper / -lower. An angular dimension's are in degrees ({@code _deg}) and not scaled.
+     */
+    private static Map<String, Object> tolerance(BaseDimension base, double f, boolean angle) {
+        String u = angle ? "_deg" : "_mm";
         try {
             if (!(base instanceof com.ptc.pfc.pfcDimension.Dimension)) {
                 return Json.map("type", "nominal");
@@ -789,19 +795,19 @@ final class Ops {
             DimToleranceType type = dim.GetToleranceType();
             int shown = type == null ? -1 : type.getValue();
             if (fit != null) {
-                return Json.map("type", "fit", "fit", fit, "plus_mm", clean(plus * f), "minus_mm", clean(minus * f));
+                return Json.map("type", "fit", "fit", fit, "plus" + u, clean(plus * f), "minus" + u, clean(minus * f));
             }
             if (shown == -1) {
                 return Json.map("type", "nominal");
             }
             if (shown == DimToleranceType._DIMTOL_PLUS_MINUS) {
-                return Json.map("type", "plus_minus", "plus_mm", clean(plus * f), "minus_mm", clean(minus * f));
+                return Json.map("type", "plus_minus", "plus" + u, clean(plus * f), "minus" + u, clean(minus * f));
             }
             if (shown == DimToleranceType._DIMTOL_SYMMETRIC || shown == DimToleranceType._DIMTOL_SYMMETRIC_SUPERSCRIPT) {
-                return Json.map("type", "symmetric", "plus_mm", clean(plus * f), "minus_mm", clean(plus * f));
+                return Json.map("type", "symmetric", "plus" + u, clean(plus * f), "minus" + u, clean(plus * f));
             }
             if (shown == DimToleranceType._DIMTOL_LIMITS) {
-                return Json.map("type", "limits", "upper_mm", clean((value + plus) * f), "lower_mm", clean((value - minus) * f));
+                return Json.map("type", "limits", "upper" + u, clean((value + plus) * f), "lower" + u, clean((value - minus) * f));
             }
             return Json.map("type", Creo.shortName(type, "DIMTOL_"));
         } catch (Throwable unreadable) {
@@ -1076,8 +1082,11 @@ final class Ops {
 
     private static Map<String, Object> parameterRow(Parameter p) throws jxthrowable {
         String unit = null;
+        Double mm = null;
         try {
-            unit = p.GetUnits() == null ? null : p.GetUnits().GetName();
+            com.ptc.pfc.pfcUnits.Unit own = p.GetUnits();
+            unit = own == null ? null : own.GetName();
+            mm = own == null ? null : Units.mmPer(own);
         } catch (Throwable none) {
             unit = null;
         }
@@ -1087,8 +1096,14 @@ final class Ops {
         } catch (Throwable unreadable) {
             driven = false;
         }
-        return Json.map("name", p.GetName(), "type", type(p.GetValue()), "value", plain(p.GetValue()), "unit", unit,
-                "driven_by_relation", driven);
+        Object value = plain(p.GetValue());
+        Map<String, Object> row = Json.map("id", p.GetName(), "name", p.GetName(), "type", type(p.GetValue()),
+                "value", value, "unit", unit, "driven_by_relation", driven);
+        if (mm != null && value instanceof Number) {
+            // A length parameter also in millimetres, the unit creo-cli speaks (DCLI-081).
+            row.put("value_mm", clean(((Number) value).doubleValue() * mm));
+        }
+        return row;
     }
 
     private static Parameter parameter(Model model, String name) throws jxthrowable {
@@ -1207,12 +1222,12 @@ final class Ops {
                 return Double.parseDouble(text.trim());
             } catch (NumberFormatException bad) {
                 throw new HostError(HostError.VALIDATION, "Parameter " + p.GetName() + " is a number without a unit; "
-                        + text + " is not a number.");
+                        + text + " is not a number.").with("knowledge", java.util.List.of("creo-units"));
             }
         }
         if (!withUnit.matches()) {
             throw new HostError(HostError.VALIDATION, "Parameter " + p.GetName() + " has the unit " + unitName
-                    + ": give the value with a unit, such as 12.5mm.");
+                    + ": give the value with a unit, such as 12.5mm.").with("knowledge", java.util.List.of("creo-units"));
         }
         double number = Double.parseDouble(withUnit.group(1));
         String given = withUnit.group(2);
@@ -1223,7 +1238,7 @@ final class Ops {
         Double to = Units.mmPer(p.GetUnits());
         if (from == null || to == null) {
             throw new HostError(HostError.VALIDATION, "Parameter " + p.GetName() + " is in " + unitName
-                    + "; give the value in " + unitName + ".");
+                    + "; give the value in " + unitName + ".").with("knowledge", java.util.List.of("creo-units"));
         }
         return number * from / to;
     }

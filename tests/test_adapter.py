@@ -19,6 +19,13 @@ class AdapterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.state = Path(tempfile.mkdtemp(prefix="creo-cli-adapter-"))
         self.addCleanup(shutil.rmtree, self.state, True)
+        # The host component goes to %LOCALAPPDATA%; here, to a folder of the test's own.
+        self.local = Path(tempfile.mkdtemp(prefix="creo-cli-local-"))
+        self.addCleanup(shutil.rmtree, self.local, True)
+        patcher = mock.patch.dict(os.environ, {"LOCALAPPDATA": str(self.local)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.home = creo_adapter.host_home(self.state)
         self.adapter = creo_adapter.Adapter(AdapterStore(StateDir(self.state)))
 
     def install(self) -> dict:
@@ -52,19 +59,26 @@ class AdapterTest(unittest.TestCase):
         manifest = json.loads((ROOT / "plugin" / "manifest.json").read_text(encoding="utf-8"))
         facts = self.install()
         version = manifest["version"]
-        target = self.state / "plugin" / version
+        target = self.home / version
         self.assertEqual(facts["dispatch_state"], "dispatched")
-        self.assertEqual(facts["install_path"], str(target))
+        self.assertEqual(facts["install_path"], str(self.home))
+        self.assertTrue(self.home.is_relative_to(self.local / "creo-cli" / "host"))
+        self.assertFalse((self.state / "plugin").exists(), "nothing of the host component goes into the state directory")
         for name in manifest["files"]:
             self.assertTrue((target / name).is_file(), name)
-        registry = (self.state / "plugin" / "protk.dat").read_text(encoding="utf-8")
+        registry = (self.home / "protk.dat").read_text(encoding="utf-8")
         self.assertIn("startup           otk_java", registry)
         self.assertIn("fail_tol          true", registry)
         self.assertIn(f"java_app_classpath {target / 'creo-cli-host.jar'}", registry)
         self.assertTrue((target / "creo-cli-host.jar").is_file())
-        config = json.loads((self.state / "plugin" / "creo-cli-host.json").read_text(encoding="utf-8"))
+        config = json.loads((self.home / "creo-cli-host.json").read_text(encoding="utf-8"))
         self.assertEqual(config, {"state_dir": str(self.state), "version": version,
                                   "source_sha256": creo_adapter.build.source_digest(ROOT / "plugin" / "src")})
+
+    def test_each_state_directory_has_its_own_host_folder(self) -> None:
+        other = self.state / "elsewhere"
+        self.assertNotEqual(creo_adapter.host_home(other), self.home)
+        self.assertEqual(creo_adapter.host_home(str(self.state)), self.home)
 
     def test_install_again_does_not_rebuild_the_same_sources(self) -> None:
         self.install()
@@ -78,7 +92,7 @@ class AdapterTest(unittest.TestCase):
             with self.assertRaises(creo_adapter.AdapterError):
                 self.adapter.plugin_install({"operation_id": "op_test", "state_dir": str(self.state)})
         self.assertIsNone(self.adapter.plugin_status({})["version_on_disk"])
-        self.assertFalse((self.state / "plugin" / "protk.dat").exists())
+        self.assertFalse((self.home / "protk.dat").exists())
 
     def test_install_without_creo_is_unsupported(self) -> None:
         with mock.patch.object(creo_adapter, "common_files", return_value=[]):
@@ -114,7 +128,7 @@ class AdapterTest(unittest.TestCase):
         self.install()
         facts = self.adapter.plugin_remove({"operation_id": "op_test"})
         self.assertEqual(facts["change"], "applied")
-        self.assertFalse((self.state / "plugin").exists())
+        self.assertFalse(self.home.exists())
         self.assertIsNone(self.adapter.plugin_status({})["version_on_disk"])
 
     def test_remove_without_an_install_changes_nothing(self) -> None:

@@ -17,7 +17,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-05-110602-doc-close.json#normal"
+      "evidence": "live:docs/evidence/2026-11-05-121315-doc-close.json#normal"
     },
     {
       "row": "empty",
@@ -42,7 +42,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-05-110113-doc-close.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-05-121315-doc-close.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -62,7 +62,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND"
       },
-      "evidence": "live:docs/evidence/2026-11-05-110113-doc-close.json#not_found"
+      "evidence": "live:docs/evidence/2026-11-05-121315-doc-close.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -80,7 +80,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS"
       },
-      "evidence": "live:docs/evidence/2026-11-05-114604-doc-close.json#ambiguous"
+      "evidence": "live:docs/evidence/2026-11-05-122639-doc-close.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -92,10 +92,10 @@
         "{doc}"
       ],
       "expected": {
-        "exit": 6,
-        "code": "E_CONFLICT"
-      },
-      "unrunnable": "A lock held by an operation with an unknown outcome cannot be made on demand; the runtime unit tests cover it."
+        "exit": 2,
+        "code": "E_VALIDATION",
+        "summary": "Run on plate.prt while pair.asm, which uses it, is open: the host refuses before it closes anything; the host protocol has no E_CONFLICT for close_doc (spec issue 16)."
+      }
     },
     {
       "row": "no_scope",
@@ -115,7 +115,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN"
       },
-      "evidence": "live:docs/evidence/2026-11-05-110110-doc-close.json#no_scope"
+      "evidence": "live:docs/evidence/2026-11-05-121743-doc-close.json#no_scope"
     },
     {
       "row": "busy",
@@ -135,7 +135,7 @@
         "exit": 7,
         "code": "E_BUSY"
       },
-      "evidence": "live:docs/evidence/2026-11-05-113145-doc-close.json#busy"
+      "evidence": "live:docs/evidence/2026-11-05-121837-doc-close.json#busy"
     },
     {
       "row": "dialog",
@@ -155,7 +155,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-113911-doc-close.json#dialog"
+      "evidence": "live:docs/evidence/2026-11-05-122038-doc-close.json#dialog"
     },
     {
       "row": "disconnect",
@@ -190,7 +190,7 @@
         "exit": 6,
         "code": "E_CONFLICT"
       },
-      "evidence": "live:docs/evidence/2026-11-05-104019-doc-close.json#unsaved"
+      "evidence": "live:docs/evidence/2026-11-05-121503-doc-close.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

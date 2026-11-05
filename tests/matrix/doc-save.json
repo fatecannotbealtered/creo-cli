@@ -19,7 +19,7 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-111102-doc-save.json#normal"
+      "evidence": "live:docs/evidence/2026-11-05-121639-doc-save.json#normal"
     },
     {
       "row": "empty",
@@ -39,7 +39,7 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-111105-doc-save.json#empty"
+      "evidence": "live:docs/evidence/2026-11-05-121648-doc-save.json#empty"
     },
     {
       "row": "invalid_input",
@@ -59,7 +59,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-05-111102-doc-save.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-05-121639-doc-save.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -79,7 +79,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND"
       },
-      "evidence": "live:docs/evidence/2026-11-05-111102-doc-save.json#not_found"
+      "evidence": "live:docs/evidence/2026-11-05-121639-doc-save.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -97,7 +97,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS"
       },
-      "evidence": "live:docs/evidence/2026-11-05-114618-doc-save.json#ambiguous"
+      "evidence": "live:docs/evidence/2026-11-05-122654-doc-save.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -117,7 +117,7 @@
         "exit": 6,
         "code": "E_CONFLICT"
       },
-      "evidence": "live:docs/evidence/2026-11-05-111305-doc-save.json#conflict"
+      "evidence": "live:docs/evidence/2026-11-05-121658-doc-save.json#conflict"
     },
     {
       "row": "no_scope",
@@ -137,7 +137,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN"
       },
-      "evidence": "live:docs/evidence/2026-11-05-104103-doc-save.json#no_scope"
+      "evidence": "live:docs/evidence/2026-11-05-121722-doc-save.json#no_scope"
     },
     {
       "row": "busy",
@@ -157,7 +157,7 @@
         "exit": 7,
         "code": "E_BUSY"
       },
-      "evidence": "live:docs/evidence/2026-11-05-113149-doc-save.json#busy"
+      "evidence": "live:docs/evidence/2026-11-05-121849-doc-save.json#busy"
     },
     {
       "row": "dialog",
@@ -177,7 +177,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-113914-doc-save.json#dialog"
+      "evidence": "live:docs/evidence/2026-11-05-122107-doc-save.json#dialog"
     },
     {
       "row": "disconnect",
@@ -212,12 +212,22 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-104017-doc-save.json#unsaved"
+      "evidence": "live:docs/evidence/2026-11-05-121454-doc-save.json#unsaved"
     },
     {
       "row": "read_back_mismatch",
-      "applies": false,
-      "reason": "This command is two-step: in one call it stops at its preview (exit 5), so a live run never reaches its read-back; the confirmed write is covered by the evaluation (spec issue)."
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}"
+      ],
+      "expected": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED",
+        "summary": "Prepared live: a confirmed save after which the saved values differ from the preview. The matrix runner runs one call per row and passes no confirm token, so it stops at the preview (exit 5) and never reaches this row (spec issue 14); until it can, the command stays at maturity draft."
+      }
     }
   ]
 }

@@ -1,0 +1,70 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.0.0",
+  "commit": "da5288ee322e",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-05T12:09:46Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "distance get",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--from",
+        "FRONT",
+        "--to",
+        "DTM_OFFSET"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session",
+      "envelope_sha256": "bcd61cef870f80a16e4eec80b87ef6f847945cdf9a2863f1cf47acab8408ed4c"
+    },
+    {
+      "command": "distance get",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--from",
+        "FRONT"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session",
+      "envelope_sha256": "db766333527b6501d0793f79ea0991a4c60923f8224b117f56bc5c1f358eb96a"
+    },
+    {
+      "command": "distance get",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--from",
+        "FRONT",
+        "--to",
+        "NOSUCH"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session",
+      "envelope_sha256": "e0c193f46d844e4b9536c644b099594debe13e0f7ef44589b5af0a21d72067a3"
+    }
+  ]
+}

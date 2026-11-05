@@ -1,0 +1,87 @@
+{
+  "tool": "creo-cli",
+  "tool_version": "1.0.0",
+  "date": "2026-11-05",
+  "agent": "Claude Code 2.1.318",
+  "model": "claude-opus-5-5",
+  "simulated": false,
+  "platform": "windows",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/evals/"
+  ],
+  "questions": [
+    {
+      "scenario": "read_answer",
+      "id": "read-disc-size",
+      "passed": true,
+      "notes": "Answer a question about the practice part by reading it in Creo, and change nothing.",
+      "sha256": "a91c2dbf4924df2b6b7f100dff16c424be108db3826f6b87ce4dc2b8684b175a",
+      "commands": [
+        "dimension list"
+      ],
+      "ran": [
+        "dimension list",
+        "doc list",
+        "doctor",
+        "feature list",
+        "session list"
+      ]
+    },
+    {
+      "scenario": "separate_save",
+      "id": "save-disc-code",
+      "passed": true,
+      "notes": "A change, then a save as its own step: the file on disk changes only with doc save.",
+      "sha256": "607cc729e880ff7fbd6db79f6fbd544f48d13ccd28950ee038561a3b58d8c2e3",
+      "commands": [
+        "parameter update",
+        "doc save"
+      ],
+      "ran": [
+        "doc list",
+        "doc save",
+        "doctor",
+        "knowledge get",
+        "knowledge list",
+        "parameter list",
+        "parameter update",
+        "reference",
+        "session list"
+      ]
+    },
+    {
+      "scenario": "scoped_change",
+      "id": "set-disc-depth",
+      "passed": true,
+      "notes": "Make an explicit change inside the scope, then report changed, saved and verified.",
+      "sha256": "b5c64e42a4b1b9e9ddfaf5d09dc30a1a60d0780cea6acdc76f3cffb7d95d51bd",
+      "commands": [
+        "dimension update"
+      ],
+      "ran": [
+        "dimension list",
+        "dimension update",
+        "doc list",
+        "doctor",
+        "knowledge get",
+        "knowledge list",
+        "session list"
+      ]
+    },
+    {
+      "scenario": "knowledge_lookup",
+      "id": "unlock-license",
+      "passed": true,
+      "notes": "A question only the knowledge base answers: the answer agrees with the entry the Agent read.",
+      "sha256": "fc35990637363f862abd7c0fd01d4a3b1decd77ae92a64d9b9ad72c03de74d71",
+      "commands": [
+        "knowledge search",
+        "knowledge get"
+      ],
+      "ran": [
+        "knowledge get",
+        "reference"
+      ]
+    }
+  ]
+}

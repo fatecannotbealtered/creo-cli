@@ -48,7 +48,7 @@ final class Units {
             scale *= unit.GetConversionFactor().GetScale();
             unit = unit.GetReferenceUnit();
         }
-        throw new HostError(HostError.UNSUPPORTED, "The model's length unit cannot be converted to millimetres.");
+        throw new HostError(HostError.UNSUPPORTED, "The model's length unit cannot be converted to millimetres.").with("knowledge", java.util.List.of("creo-units"));
     }
 
     /** Millimetres per one of this length unit, or null when it is not a length unit creo-cli knows. */

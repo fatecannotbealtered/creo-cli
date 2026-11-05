@@ -11,6 +11,7 @@ from pathlib import Path
 from ._driver import Tool
 from .adapter import Adapter
 from .commands import COMMANDS
+from .maturity import STANDARD
 
 # package.json, CHANGELOG.md, knowledge/, skills/ and contract/ sit at the project root; in the
 # native program they are bundled next to the code.
@@ -27,6 +28,7 @@ TOOL = Tool(
     # plugin/manifest.json records the host component's files and methods; `python scripts/spec.py
     # generate` writes all of it but `methods` (DCLI-240).
     plugin_manifest=ROOT / "plugin" / "manifest.json",
+    maturity=STANDARD,
 )
 
 

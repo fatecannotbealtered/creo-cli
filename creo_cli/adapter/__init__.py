@@ -157,7 +157,7 @@ class Adapter(BaseAdapter):
     # ------------------------------------------------------------------ the host component on disk
 
     def _plugin_dir(self, state_dir: str | os.PathLike[str] | None = None) -> Path:
-        return Path(state_dir) / "plugin" if state_dir else self._state_dir() / "plugin"
+        return host_home(state_dir if state_dir else self._state_dir())
 
     def plugin_status(self, request: dict[str, Any]) -> dict[str, Any]:
         folder = self._plugin_dir()
@@ -174,17 +174,17 @@ class Adapter(BaseAdapter):
                 loaded.append({"session": entry["_file"][:-5], "version": str(entry.get("plugin_version"))})
         return {
             "name": PLUGIN_NAME, "version_on_disk": version, "protocol_version": PROTOCOL,
-            "install_path": str(folder / version) if version else None, "loaded": loaded,
+            "install_path": str(folder) if version else None, "loaded": loaded,
         }
 
     def plugin_install(self, request: dict[str, Any]) -> dict[str, Any]:
         """Build the host component from its shipped source, unlock it with this computer's own
-        license, and install it into plugin/<version>/ of the state directory, with the registry
-        file Creo reads and the state directory beside it (DCLI-271, DSEC-050).
+        license, and install it into <version>/ of its folder (host_home), with the registry file
+        Creo reads and the state directory beside it (DCLI-271, DSEC-050).
 
-        plugin/protk.dat stays at one place across versions: the person's config.pro names it
-        once with ``toolkit_registry_file``, and an upgrade only rewrites it. A Creo already
-        running keeps the version it loaded (DSEC-052)."""
+        protk.dat in that folder stays at one place across versions: the person's config.pro
+        names it once with ``toolkit_registry_file``, and an upgrade only rewrites it. A Creo
+        already running keeps the version it loaded (DSEC-052)."""
         source = _root() / "plugin"
         manifest = json.loads((source / "manifest.json").read_text(encoding="utf-8"))
         version = str(request.get("version") or manifest["version"])
@@ -227,7 +227,7 @@ class Adapter(BaseAdapter):
             raise AdapterError("E_NATIVE_FAILURE", f"The host component could not be written: {exc}.",
                                dispatch_state="dispatched") from None
         return {"dispatch_state": "dispatched", "change": "applied", "delivery": "not_applicable",
-                "persistence": "saved", "install_path": str(target), "version": version}
+                "persistence": "saved", "install_path": str(folder), "version": version}
 
     def plugin_remove(self, request: dict[str, Any]) -> dict[str, Any]:
         folder = self._plugin_dir()
@@ -243,6 +243,18 @@ class Adapter(BaseAdapter):
                                "running Creo may hold its files; close Creo and remove it again.",
                                dispatch_state="dispatched") from None
         return {"dispatch_state": "dispatched", "change": "applied", "delivery": "not_applicable", "persistence": "saved"}
+
+
+def host_home(state_dir: str | os.PathLike[str]) -> Path:
+    """Where plugin install puts the host component of one state directory:
+    %LOCALAPPDATA%\\creo-cli\\host\\<12 hex digits of the state directory's path>.
+
+    Outside the state directory, where tool code writes nothing but discovery files (DSEC-031),
+    and one folder per state directory, so that installing for a second state directory, such
+    as one for tests, does not turn the person's host component over to it."""
+    base = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local")
+    key = hashlib.sha256(os.path.normcase(os.path.abspath(state_dir)).encode("utf-8")).hexdigest()[:12]
+    return base / "creo-cli" / "host" / key
 
 
 def _registry(jar: Path) -> str:

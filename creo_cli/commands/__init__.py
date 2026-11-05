@@ -22,12 +22,15 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..maturity import DOMAIN as MATURITY
+
 MODEL = "the model's default coordinate system; lengths in mm"
 READ = ["read"]
 WRITE = ["read", "preview", "apply", "read_back"]
 EXAMPLE = "creo-cli {path} --session creo-9184-1d9a4c2e --doc D:/work/bracket.prt"
 
-LIMIT = {"name": "--limit", "type": "integer", "summary": "At most this many items, 1 to 1000; 100 by default."}
+LIMIT = {"name": "--limit", "type": "integer",
+         "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."}
 OFFSET = {"name": "--offset", "type": "integer", "summary": "Skip this many items first."}
 
 
@@ -55,8 +58,12 @@ BOOL = {"type": "boolean"}
 
 FEATURE_ITEM = {"id": INT, "number": INT, "name": STR, "type": STR, "status": STR}
 DIMENSION_ITEM = {
-    "name": STR, "kind": STR, "feature_id": INT, "value_mm": NUM, "value_deg": NUM,
+    "id": STR, "name": STR, "kind": STR, "feature_id": INT, "value_mm": NUM, "value_deg": NUM,
     "driven_by_relation": BOOL, "tolerance": {"type": "object"},
+}
+PARAMETER_ITEM = {
+    "id": STR, "name": STR, "type": STR, "value": {}, "unit": {"type": ["string", "null"]}, "value_mm": NUM,
+    "driven_by_relation": BOOL,
 }
 
 # The first read with untrusted fields takes --id: the conformance suite checks the marking of
@@ -69,7 +76,7 @@ COMMANDS: list[dict[str, Any]] = [
         {"type": "object", "properties": {
             **FEATURE_ITEM, "dimensions": {"type": "array", "items": {"type": "object", "properties": DIMENSION_ITEM}},
             "parents": {"type": "array"}, "children": {"type": "array"}}},
-        ["CAP-011"], ["name", "parents[*].name", "children[*].name"], " --id 12", related_knowledge=["creo-localized-names"],
+        ["CAP-011"], ["name", "parents[*].name", "children[*].name", "dimensions[*].id", "dimensions[*].name"], " --id 12", related_knowledge=["creo-localized-names"],
     ),
     _read(
         "model get", "A model's summary: kind, units, material, mass properties, bounding box and feature count.",
@@ -77,13 +84,14 @@ COMMANDS: list[dict[str, Any]] = [
         {"type": "object", "properties": {
             "name": STR, "kind": STR, "units": {"type": "object"}, "material": {"type": ["string", "null"]},
             "volume_mm3": NUM, "surface_area_mm2": NUM, "mass_kg": {"type": ["number", "null"]},
-            "density_kg_per_mm3": {"type": ["number", "null"]}, "center_of_mass_mm": {"type": "array"},
+            "center_of_mass_mm": {"type": "array"},
             "bounding_box_mm": {"type": "object"}, "feature_count": INT}},
-        ["CAP-001"], ["name", "material"], output_coordinate_system=MODEL, related_knowledge=["creo-units", "creo-materials"],
+        ["CAP-001"], ["name", "material", "units"], output_coordinate_system=MODEL, related_knowledge=["creo-units", "creo-materials"],
     ),
     _read(
         "feature list", "The features of a model in regeneration order: ID, number, name, type and status.",
         "feature", [LIMIT, OFFSET], _items(FEATURE_ITEM), ["CAP-010"], ["name"], related_knowledge=["creo-localized-names"],
+        default_fields=["id", "name", "type", "status"],
     ),
     _read(
         "geometry list", "Faces, edges, axes, datum planes and coordinate systems with the references other commands take.",
@@ -92,8 +100,12 @@ COMMANDS: list[dict[str, Any]] = [
              "summary": "Only this kind: surface, edge, axis, datum-plane or coordinate-system."},
             {"name": "--feature", "type": "string", "summary": "Only the geometry this feature created: its ID or name."},
             LIMIT, OFFSET],
-        _items({"reference": STR, "kind": STR, "shape": STR, "feature_id": INT, "name": STR}),
-        ["CAP-030"], ["name"], " --kind surface", output_coordinate_system=MODEL, related_knowledge=["creo-geometry-references", "creo-units"],
+        _items({"reference": STR, "kind": STR, "shape": STR, "feature_id": INT, "name": STR, "normal": {"type": "array"},
+                "origin_mm": {"type": "array"}, "axis_direction": {"type": "array"}, "axis_origin_mm": {"type": "array"},
+                "radius_mm": NUM, "length_mm": NUM}),
+        ["CAP-030"], ["name", "reference"], " --kind surface", output_coordinate_system=MODEL,
+        related_knowledge=["creo-geometry-references", "creo-units"],
+        default_fields=["reference", "kind", "shape", "feature_id", "normal", "origin_mm", "axis_direction", "radius_mm"],
     ),
     _read(
         "distance get", "The shortest distance between two geometry references, as Creo measures it.",
@@ -108,7 +120,8 @@ COMMANDS: list[dict[str, Any]] = [
         "dimension list", "The dimensions of a model, or of one feature: name, kind, value, tolerance and owner.",
         "dimension", [{"name": "--feature", "type": "string", "summary": "Only this feature's dimensions: its ID or name."},
                       LIMIT, OFFSET],
-        _items(DIMENSION_ITEM), ["CAP-032"], [], related_knowledge=["creo-relations-and-dimensions", "creo-units"],
+        _items(DIMENSION_ITEM), ["CAP-032"], ["id", "name"], related_knowledge=["creo-relations-and-dimensions", "creo-units"],
+        default_fields=["id", "kind", "value_mm", "value_deg", "driven_by_relation", "tolerance"],
     ),
     {
         "path": "dimension update",
@@ -127,7 +140,7 @@ COMMANDS: list[dict[str, Any]] = [
             {"name": "--basic", "type": "boolean", "summary": "Make it a basic dimension, the exact value a geometric tolerance refers to."},
             {"name": "--nominal", "type": "boolean", "summary": "Remove its tolerance."},
         ],
-        "untrusted_fields": [], "adapter_capabilities": WRITE, "survey_ids": ["CAP-033", "CAP-034"],
+        "untrusted_fields": ["id", "name"], "adapter_capabilities": WRITE, "survey_ids": ["CAP-033", "CAP-034"],
         "irreversible": False, "halt": False,
         "tolerances": {"value_mm": 0.000001, "value_deg": 0.000001, "plus_mm": 0.000001, "minus_mm": 0.000001,
                        "upper_mm": 0.000001, "lower_mm": 0.000001},
@@ -140,8 +153,9 @@ COMMANDS: list[dict[str, Any]] = [
     _read(
         "parameter list", "A model's parameters: name, type, value, unit and whether a relation drives it.",
         "parameter", [LIMIT, OFFSET],
-        _items({"name": STR, "type": STR, "value": {}, "unit": {"type": ["string", "null"]}, "driven_by_relation": BOOL}),
-        ["CAP-035"], ["name", "value"], related_knowledge=["creo-relations-and-dimensions"],
+        _items(PARAMETER_ITEM), ["CAP-035"], ["id", "name", "value", "unit"],
+        related_knowledge=["creo-relations-and-dimensions", "creo-units"],
+        default_fields=["id", "type", "value", "unit", "value_mm", "driven_by_relation"],
     ),
     {
         "path": "parameter update",
@@ -152,10 +166,10 @@ COMMANDS: list[dict[str, Any]] = [
             {"name": "--value", "type": "string", "required": True,
              "summary": "The new value: 12, 4.5, true or text; 12.5mm for a parameter with a length unit."},
         ],
-        "untrusted_fields": ["name", "value"], "adapter_capabilities": WRITE, "survey_ids": ["CAP-035"],
+        "untrusted_fields": ["id", "name", "value", "unit"], "adapter_capabilities": WRITE, "survey_ids": ["CAP-035"],
         "irreversible": False, "halt": False, "tolerances": {"value": 0.000001}, "default_fields": [],
         "related_knowledge": ["creo-relations-and-dimensions", "creo-units"],
-        "output_schema": {"type": "object", "properties": {"name": STR, "type": STR, "value": {}, "unit": {"type": ["string", "null"]}}},
+        "output_schema": {"type": "object", "properties": PARAMETER_ITEM},
         "examples": [EXAMPLE.format(path="parameter update") + " --id MATERIAL_CODE --value CC-001"],
         "maturity": "draft", "evidence": [],
     },
@@ -169,12 +183,14 @@ COMMANDS: list[dict[str, Any]] = [
         "material", [{"name": "--query", "type": "string", "summary": "Only materials whose name contains this text."},
                      LIMIT, OFFSET],
         _items({"name": STR, "source": STR, "assigned": BOOL}), ["CAP-040"], ["name"], related_knowledge=["creo-materials"],
+        default_fields=["name", "source", "assigned"],
     ),
     _read(
         "component list", "The top-level components of an assembly: model, status and position.",
         "component", [LIMIT, OFFSET],
         _items({"id": INT, "model": STR, "kind": STR, "status": STR, "origin_mm": {"type": "array"}}),
-        ["CAP-050"], ["model"], output_coordinate_system="the assembly's default coordinate system; lengths in mm", related_knowledge=["creo-units"],
+        ["CAP-050"], ["model"], output_coordinate_system="the assembly's default coordinate system; lengths in mm",
+        related_knowledge=["creo-units"], default_fields=["id", "model", "kind", "status"],
     ),
     {
         "path": "feature update",
@@ -219,3 +235,6 @@ COMMANDS: list[dict[str, Any]] = [
         "maturity": "draft", "evidence": [],
     },
 ]
+
+for _reg in COMMANDS:
+    _reg.update(MATURITY.get(_reg["path"], {}))

@@ -10,7 +10,7 @@ Lets an AI Agent read Creo Parametric models and change their dimensions, parame
 ![mode](https://img.shields.io/badge/mode-session-0e8a16)
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
-![maturity](https://img.shields.io/badge/maturity-draft-8957e5)
+![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
 ![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.0-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
@@ -24,7 +24,7 @@ English | [中文](README_zh.md)
 | Modes | session |
 | Systems and CPUs | Windows (x64) |
 | Risk tier | T2 |
-| Maturity | draft: 15 draft, 0 verified, 0 stable |
+| Maturity | verified: 0 draft, 15 verified, 0 stable |
 | Specification | tool-driver-cli-spec 1.0.0 |
 | Host component | yes |
 <!-- driver:info-card:end -->
@@ -196,7 +196,7 @@ Version 1.0 does not create models or features, and does not edit assemblies or 
 
 - Installation: creo-cli looks under `C:\Program Files\PTC`, `C:\PTC`, `D:\PTC` and `E:\PTC`, up to four folders deep, for a `Common Files` folder that holds Object TOOLKIT Java (`text\java\otk.jar`). The version comes from the installation folder's name, such as `Creo 13.4.1.0`. `creo-cli doctor` shows what it found.
 - Running instances: every running `xtop.exe` is a session, with an ID made of its process ID and start time, such as `creo-9184-1d9a4c2e`. `creo-cli session list` lists them; a modal dialog open in Creo shows as `blocked`.
-- The host component: a session can be driven only while its host component is loaded. creo-cli ships it as source: `creo-cli plugin install` compiles it with a JDK 25 and unlocks it with PTC's `protk_unlock`, which needs the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license, on the license server; running it needs the Object TOOLKIT Java runtime, development or extension license. Run `creo-cli plugin install`, add one line to the `config.pro` Creo starts with, and start Creo: `toolkit_registry_file <state directory>\plugin\protk.dat`. The line stays the same across upgrades; creo-cli never changes `config.pro` itself. Creo loads the host component only at start, so after an upgrade a person restarts Creo.
+- The host component: a session can be driven only while its host component is loaded. creo-cli ships it as source: `creo-cli plugin install` compiles it with a JDK 25 and unlocks it with PTC's `protk_unlock`, which needs the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license, on the license server; running it needs the Object TOOLKIT Java runtime, development or extension license. Run `creo-cli plugin install`, add one line to the `config.pro` Creo starts with, and start Creo: `toolkit_registry_file <install_path>\protk.dat`, with the `install_path` that `creo-cli plugin get` shows, a folder under `%LOCALAPPDATA%\creo-cli\host`. The line stays the same across upgrades; creo-cli never changes `config.pro` itself. Creo loads the host component only at start, so after an upgrade a person restarts Creo.
 - `CREO_CLI_STATE_DIR` moves the state directory, and with it the place of `protk.dat` and of the discovery files the host component writes.
 
 ## Uninstall

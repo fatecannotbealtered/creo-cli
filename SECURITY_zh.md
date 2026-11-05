@@ -84,7 +84,7 @@ creo-cli 的风险等级和决定它的命令，由 `creo-cli reference` 生成�
 
 ## 宿主组件
 
-宿主组件是 Creo Parametric 的一个 Object TOOLKIT Java 应用：一个 JAR，Creo 启动时按注册文件 `protk.dat` 加载，在 Creo 主线程上运行。它在 Creo 里能做工具包允许的一切事，所以只接受宿主协议规定的方法，而且只经由一条只有当前 Windows 用户能打开的命名管道；它不开任何网络端口。它读取模型，按 creo-cli 的命令做修改，打开、保存、关闭文档，并写出要求导出的文件。`plugin install` 用用户的 JDK 25 从随包发布的源码构建它，再经 PTC 的 `protk_unlock` 用用户自己的许可解锁，放到状态目录的 `plugin\<版本>\` 下，并在 `plugin\` 下写 `protk.dat` 和 `creo-cli-host.json`；由人在 Creo 启动用的 `config.pro` 里加一行 `toolkit_registry_file <状态目录>\plugin\protk.dat`。creo-cli 从不修改 `config.pro`。安装包里不带它的二进制；这个 JAR 没有代码签名。
+宿主组件是 Creo Parametric 的一个 Object TOOLKIT Java 应用：一个 JAR，Creo 启动时按注册文件 `protk.dat` 加载，在 Creo 主线程上运行。它在 Creo 里能做工具包允许的一切事，所以只接受宿主协议规定的方法，而且只经由一条只有当前 Windows 用户能打开的命名管道；它不开任何网络端口。它读取模型，按 creo-cli 的命令做修改，打开、保存、关闭文档，并写出要求导出的文件。`plugin install` 用用户的 JDK 25 从随包发布的源码构建它，再经 PTC 的 `protk_unlock` 用用户自己的许可解锁，放到状态目录之外它自己的文件夹 `%LOCALAPPDATA%\creo-cli\host\<每个状态目录一个文件夹>`，并在那里写 `protk.dat` 和 `creo-cli-host.json`；由人在 Creo 启动用的 `config.pro` 里加一行 `toolkit_registry_file <install_path>\protk.dat`。宿主组件在状态目录里只写 `hosts\` 下的发现文件。creo-cli 从不修改 `config.pro`。安装包里不带它的二进制；这个 JAR 没有代码签名。
 
 - **安装。** 只有 `creo-cli plugin install` 能安装或升级宿主组件，只有 `creo-cli plugin remove` 能卸载它。两者都是两步确认的写操作，需要允许 `configure` 的授权范围。`update`、领域命令和 npm 安装从不安装或改动宿主组件；需要重新安装时，`update` 和 `doctor` 会给出 `plugin install` 命令。`plugin install` 会把状态目录的路径写进宿主组件的配置，所以人从桌面启动的软件也能被找到。
 - **安装前的检查。** 每个文件都必须与宿主组件清单里记录的哈希一致，否则什么都不装，返回 `E_INTEGRITY`。协议的主版本必须与 CLI 相同，否则什么都不装，返回 `E_PROTOCOL`。每个版本装在各自的目录里。

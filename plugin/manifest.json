@@ -9,10 +9,10 @@
     "src/com/fateforge/creocli/host/core/Pipe.java": "9064ace2600c2d99d2f13c8b58d50719d455019e783d0a4ad4d54c3c6bc7ef9e",
     "src/com/fateforge/creocli/host/core/Protocol.java": "22fd13d89f73041a9e9b938092a7405cd08899c1147e979eb5a9175a258dfd37",
     "src/com/fateforge/creocli/host/Creo.java": "5554b008839680614d94cd5516d72b2ab390b0ea06d9ee618c303d855b564791",
-    "src/com/fateforge/creocli/host/Docs.java": "f914feb0cfdacb00e214ff00a1df98388d185b8c1b83c36779f35e85577292cb",
-    "src/com/fateforge/creocli/host/Host.java": "08d9f3f14f9a4b7b62387f482d211d3143278cd14dd85056b1df9ac375529ef9",
-    "src/com/fateforge/creocli/host/Ops.java": "43bfc04e968abcdd1cf292c4b7a8c59af887328a0ac5d08cad4e117884b17d5f",
-    "src/com/fateforge/creocli/host/Units.java": "9fd0ffd8298a94ea8aa7e4ab5a11fd6557aa28a308eb2a38fcfbada025a820c0"
+    "src/com/fateforge/creocli/host/Docs.java": "805f9fc51cbfe713ca6a566437082a520b1b0445322c55e01b058f87232f904b",
+    "src/com/fateforge/creocli/host/Host.java": "a863cb810c6ef5e53b0da18c4a516245f10f29d7f5aabf110539fcaa1d24bb81",
+    "src/com/fateforge/creocli/host/Ops.java": "eaa3bc52fb50c5db35694663954a15a482bddb35030e390ea9c57fd7bade1f48",
+    "src/com/fateforge/creocli/host/Units.java": "67bb9d79f9bf35ac0527fffd4c17920c27cbb83e04cc5d00692b31596b1c40d4"
   },
   "methods": [
     "documents",

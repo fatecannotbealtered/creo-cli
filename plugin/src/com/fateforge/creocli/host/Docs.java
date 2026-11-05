@@ -334,7 +334,7 @@ final class Docs {
                 return facts("dispatched", "not_applicable", Json.map("document", describe(found)));
             }
             throw new HostError(HostError.VALIDATION, "A model named " + name + " from another folder ("
-                    + there + ") is already in session; Creo holds one model of a name at a time.");
+                    + there + ") is already in session; Creo holds one model of a name at a time.").with("knowledge", java.util.List.of("creo-basics"));
         }
         ModelDescriptor descriptor = pfcModel.ModelDescriptor_Create(type, base, null);
         descriptor.SetPath(plain.getParent());
@@ -403,7 +403,7 @@ final class Docs {
         List<String> users = usersOf(session, model);
         if (!users.isEmpty()) {
             throw new HostError(HostError.VALIDATION, id + " is used by " + String.join(", ", users)
-                    + ", open in Creo; close " + (users.size() == 1 ? "it" : "them") + " first.");
+                    + ", open in Creo; close " + (users.size() == 1 ? "it" : "them") + " first.").with("knowledge", java.util.List.of("creo-basics"));
         }
         Window window = null;
         try {

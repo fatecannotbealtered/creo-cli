@@ -10,7 +10,7 @@
 ![mode](https://img.shields.io/badge/mode-session-0e8a16)
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
-![maturity](https://img.shields.io/badge/maturity-draft-8957e5)
+![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
 ![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.0-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
@@ -24,7 +24,7 @@
 | 模式 | session |
 | 系统与 CPU | Windows (x64) |
 | 风险等级 | T2 |
-| 成熟度 | draft：draft 15 个，verified 0 个，stable 0 个 |
+| 成熟度 | verified：draft 0 个，verified 15 个，stable 0 个 |
 | 规范 | tool-driver-cli-spec 1.0.0 |
 | 宿主组件 | 需要 |
 <!-- driver:info-card:end -->
@@ -196,7 +196,7 @@ creo-cli model export --doc bracket.prt --output D:/work/bracket/out/bracket.stp
 
 - 安装：creo-cli 在 `C:\Program Files\PTC`、`C:\PTC`、`D:\PTC` 和 `E:\PTC` 下最多往下找四层，找含有 Object TOOLKIT Java（`text\java\otk.jar`）的 `Common Files` 文件夹。版本取自安装文件夹的名字，如 `Creo 13.4.1.0`。`creo-cli doctor` 显示找到的结果。
 - 运行中的实例：每个运行中的 `xtop.exe` 是一个会话，ID 由进程号和启动时间组成，如 `creo-9184-1d9a4c2e`。`creo-cli session list` 列出它们；Creo 里开着模态弹窗时显示为 `blocked`。
-- 宿主组件：会话只有加载了宿主组件才能驱动。creo-cli 以源码发布它：`creo-cli plugin install` 用 JDK 25 编译，再用 PTC 的 `protk_unlock` 解锁；解锁需要许可证服务器上有 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可，运行需要 Object TOOLKIT Java 的运行、开发或扩展许可。先运行 `creo-cli plugin install`，在 Creo 启动用的 `config.pro` 里加一行，再启动 Creo：`toolkit_registry_file <状态目录>\plugin\protk.dat`。升级时这一行不用改；creo-cli 自己从不修改 `config.pro`。Creo 只在启动时加载宿主组件，所以升级后要由人重启 Creo。
+- 宿主组件：会话只有加载了宿主组件才能驱动。creo-cli 以源码发布它：`creo-cli plugin install` 用 JDK 25 编译，再用 PTC 的 `protk_unlock` 解锁；解锁需要许可证服务器上有 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可，运行需要 Object TOOLKIT Java 的运行、开发或扩展许可。先运行 `creo-cli plugin install`，在 Creo 启动用的 `config.pro` 里加一行，再启动 Creo：`toolkit_registry_file <install_path>\protk.dat`，`install_path` 是 `creo-cli plugin get` 显示的文件夹，在 `%LOCALAPPDATA%\creo-cli\host` 下。升级时这一行不用改；creo-cli 自己从不修改 `config.pro`。Creo 只在启动时加载宿主组件，所以升级后要由人重启 Creo。
 - `CREO_CLI_STATE_DIR` 改变状态目录的位置，`protk.dat` 和宿主组件写的发现文件也随之移动。
 
 ## 卸载

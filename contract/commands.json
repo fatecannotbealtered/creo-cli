@@ -33,7 +33,9 @@
       "untrusted_fields": [
         "name",
         "parents[*].name",
-        "children[*].name"
+        "children[*].name",
+        "dimensions[*].id",
+        "dimensions[*].name"
       ],
       "adapter_capabilities": [
         "read"
@@ -73,7 +75,8 @@
       ],
       "untrusted_fields": [
         "name",
-        "material"
+        "material",
+        "units"
       ],
       "adapter_capabilities": [
         "read"
@@ -114,7 +117,7 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "At most this many items, 1 to 1000; 100 by default."
+          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
         },
         {
           "name": "--offset",
@@ -134,7 +137,12 @@
       "irreversible": false,
       "halt": false,
       "tolerances": {},
-      "default_fields": [],
+      "default_fields": [
+        "id",
+        "name",
+        "type",
+        "status"
+      ],
       "related_knowledge": [
         "creo-localized-names"
       ]
@@ -173,7 +181,7 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "At most this many items, 1 to 1000; 100 by default."
+          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
         },
         {
           "name": "--offset",
@@ -182,7 +190,8 @@
         }
       ],
       "untrusted_fields": [
-        "name"
+        "name",
+        "reference"
       ],
       "adapter_capabilities": [
         "read"
@@ -193,7 +202,16 @@
       "irreversible": false,
       "halt": false,
       "tolerances": {},
-      "default_fields": [],
+      "default_fields": [
+        "reference",
+        "kind",
+        "shape",
+        "feature_id",
+        "normal",
+        "origin_mm",
+        "axis_direction",
+        "radius_mm"
+      ],
       "related_knowledge": [
         "creo-geometry-references",
         "creo-units"
@@ -278,7 +296,7 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "At most this many items, 1 to 1000; 100 by default."
+          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
         },
         {
           "name": "--offset",
@@ -286,7 +304,10 @@
           "summary": "Skip this many items first."
         }
       ],
-      "untrusted_fields": [],
+      "untrusted_fields": [
+        "id",
+        "name"
+      ],
       "adapter_capabilities": [
         "read"
       ],
@@ -296,7 +317,14 @@
       "irreversible": false,
       "halt": false,
       "tolerances": {},
-      "default_fields": [],
+      "default_fields": [
+        "id",
+        "kind",
+        "value_mm",
+        "value_deg",
+        "driven_by_relation",
+        "tolerance"
+      ],
       "related_knowledge": [
         "creo-relations-and-dimensions",
         "creo-units"
@@ -392,7 +420,10 @@
           "summary": "Write the full preview, with every change, to this file."
         }
       ],
-      "untrusted_fields": [],
+      "untrusted_fields": [
+        "id",
+        "name"
+      ],
       "adapter_capabilities": [
         "read",
         "preview",
@@ -443,7 +474,7 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "At most this many items, 1 to 1000; 100 by default."
+          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
         },
         {
           "name": "--offset",
@@ -452,8 +483,10 @@
         }
       ],
       "untrusted_fields": [
+        "id",
         "name",
-        "value"
+        "value",
+        "unit"
       ],
       "adapter_capabilities": [
         "read"
@@ -464,9 +497,17 @@
       "irreversible": false,
       "halt": false,
       "tolerances": {},
-      "default_fields": [],
+      "default_fields": [
+        "id",
+        "type",
+        "value",
+        "unit",
+        "value_mm",
+        "driven_by_relation"
+      ],
       "related_knowledge": [
-        "creo-relations-and-dimensions"
+        "creo-relations-and-dimensions",
+        "creo-units"
       ]
     },
     {
@@ -509,8 +550,10 @@
         }
       ],
       "untrusted_fields": [
+        "id",
         "name",
-        "value"
+        "value",
+        "unit"
       ],
       "adapter_capabilities": [
         "read",
@@ -600,7 +643,7 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "At most this many items, 1 to 1000; 100 by default."
+          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
         },
         {
           "name": "--offset",
@@ -620,7 +663,11 @@
       "irreversible": false,
       "halt": false,
       "tolerances": {},
-      "default_fields": [],
+      "default_fields": [
+        "name",
+        "source",
+        "assigned"
+      ],
       "related_knowledge": [
         "creo-materials"
       ]
@@ -649,7 +696,7 @@
         {
           "name": "--limit",
           "type": "integer",
-          "summary": "At most this many items, 1 to 1000; 100 by default."
+          "summary": "Items per page; 20 by default, with no maximum: Creo hands over the whole list either way."
         },
         {
           "name": "--offset",
@@ -669,7 +716,12 @@
       "irreversible": false,
       "halt": false,
       "tolerances": {},
-      "default_fields": [],
+      "default_fields": [
+        "id",
+        "model",
+        "kind",
+        "status"
+      ],
       "related_knowledge": [
         "creo-units"
       ]

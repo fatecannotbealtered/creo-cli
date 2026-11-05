@@ -14,7 +14,7 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-05-111115-plugin-install.json#normal"
+      "evidence": "live:docs/evidence/2026-11-05-121148-plugin-install.json#normal"
     },
     {
       "row": "empty",
@@ -35,7 +35,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-05-111629-plugin-install.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-05-121148-plugin-install.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -70,7 +70,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN"
       },
-      "evidence": "live:docs/evidence/2026-11-05-104104-plugin-install.json#no_scope"
+      "evidence": "live:docs/evidence/2026-11-05-121728-plugin-install.json#no_scope"
     },
     {
       "row": "busy",
@@ -94,8 +94,13 @@
     },
     {
       "row": "read_back_mismatch",
-      "applies": false,
-      "reason": "This command is two-step: in one call it stops at its preview (exit 5), so a live run never reaches its read-back; the confirmed write is covered by the evaluation (spec issue)."
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED",
+        "summary": "Prepared live: a confirmed install after which plugin get reports another version on disk. The matrix runner runs one call per row and passes no confirm token, so it stops at the preview (exit 5) and never reaches this row (spec issue 14); until it can, the command stays at maturity draft."
+      }
     }
   ]
 }

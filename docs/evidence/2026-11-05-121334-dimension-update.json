@@ -1,0 +1,108 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.0.0",
+  "commit": "da5288ee322e",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-05T12:13:34Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "dimension update",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session",
+      "envelope_sha256": "e3291ac029dd0c68049c54972506401ac73e2606ac97fddb17a29f81b21fa9cc"
+    },
+    {
+      "command": "dimension update",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "empty",
+      "mode": "session",
+      "envelope_sha256": "543606ea724d3bb94c0c2a8eca6bde494b55dd18a39ee59ef667aa1659a420db"
+    },
+    {
+      "command": "dimension update",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session",
+      "envelope_sha256": "1fc4b7907277b7277efc26881b00ea25de56d9d0778d8aeb60fcd1a10dceb366"
+    },
+    {
+      "command": "dimension update",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "NOSUCH",
+        "--length",
+        "12mm"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session",
+      "envelope_sha256": "9f1d78b212664074e03446c7659b4b8309d87f61ca4e500ed13e49c459401f50"
+    },
+    {
+      "command": "dimension update",
+      "arguments": [
+        "--session",
+        "creo-45368-320fd022e",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "RADIUS",
+        "--length",
+        "3mm"
+      ],
+      "exit": 6,
+      "result": "pass",
+      "matrix_row": "conflict",
+      "mode": "session",
+      "envelope_sha256": "a23c90d6fb5decd5e4cc26fac257c48f8a7321a6cec7b8268b21fb93293ddc01"
+    }
+  ]
+}

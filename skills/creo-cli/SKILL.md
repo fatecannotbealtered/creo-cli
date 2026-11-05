@@ -110,13 +110,13 @@ Facts, rules and resources of Creo Parametric live in the knowledge base, not in
 
 ### Change a dimension and deliver the model
 
-1. Run `creo-cli dimension list --doc <doc>` and find the dimension by name. When `driven_by_relation` is true, change the dimension the relation reads instead; `relation list` shows it.
-2. Run `creo-cli dimension update --doc <doc> --id <name> --length <value with unit>`. Check that the receipt's verification passed and read back the new value.
-3. Save with `creo-cli doc save --doc <doc>` (two-step), then export with `creo-cli model export --doc <doc> --output <file>`.
+1. Run `creo-cli session list`, then `creo-cli dimension list --session <id> --doc <doc>`, and find the dimension by name. When `driven_by_relation` is true, stop: tell the person which relation drives it (`relation list` shows it) and change nothing until the person says what to change.
+2. Run `creo-cli dimension update --session <id> --doc <doc> --id <name> --length <value with unit>`. Check that the receipt's verification passed and read back the new value.
+3. Save with `creo-cli doc save --session <id> --doc <doc>` (two-step), then export with `creo-cli model export --session <id> --doc <doc> --output <file>`.
 
 ### Measure between faces
 
-Run `creo-cli geometry list --doc <doc> --kind surface`, pick the references by shape, normal and position, then `creo-cli distance get --doc <doc> --from <ref> --to <ref>`. Take references again after any change.
+Run `creo-cli geometry list --session <id> --doc <doc> --kind surface`, pick the references by shape, normal and position, then `creo-cli distance get --session <id> --doc <doc> --from <ref> --to <ref>`. Datum planes, axes and coordinate systems can be named directly, such as `--from FRONT`. Take references again after any change.
 
 ## Report
 
