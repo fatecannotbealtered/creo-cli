@@ -423,7 +423,7 @@ final class Ops {
             Features all = solid.ListFeaturesByType(Boolean.FALSE, null);
             for (int i = 0; all != null && i < all.getarraysize(); i++) {
                 if (all.get(i).GetId() != id && name.equalsIgnoreCase(String.valueOf(all.get(i).GetName()))) {
-                    plan.blocked.add("Feature " + all.get(i).GetId() + " is already named " + name + ".");
+                    plan.blocked.add("Feature " + all.get(i).GetId() + " is already named " + name);
                 }
             }
             plan.change(key, "name", feature.GetName(), name.toUpperCase(Locale.ROOT));
@@ -864,7 +864,7 @@ final class Ops {
         plan.target(key, "dimension", symbol);
         boolean isAngle = angular(dim);
         if (Boolean.TRUE.equals(before.get("reference"))) {
-            plan.blocked.add("Dimension " + symbol + " is a reference dimension: it reports geometry and cannot be changed.");
+            plan.blocked.add("Dimension " + symbol + " is a reference dimension: it reports geometry and cannot be changed");
         }
         Double newValue = null;
         if (length != null || angle != null) {
@@ -875,8 +875,8 @@ final class Ops {
                 throw new HostError(HostError.VALIDATION, "Dimension " + symbol + " is a length; give --length.");
             }
             if (Boolean.TRUE.equals(before.get("driven_by_relation"))) {
-                plan.blocked.add("Dimension " + symbol + " is driven by a relation, which sets its value at every "
-                        + "regeneration; change the relation instead.");
+                plan.blocked.add("Dimension " + symbol + " is driven by " + drivenBy(model, symbol)
+                        + ", which sets its value at every regeneration; change the relation instead");
             }
             if (isAngle) {
                 newValue = angle;
@@ -1166,8 +1166,8 @@ final class Ops {
         String key = docs.key(model) + "#/parameters/" + name;
         plan.target(key, "parameter", name);
         if (Boolean.TRUE.equals(before.get("driven_by_relation"))) {
-            plan.blocked.add("Parameter " + name + " is driven by a relation, which sets it at every regeneration; "
-                    + "change the relation instead.");
+            plan.blocked.add("Parameter " + name + " is driven by " + drivenBy(model, name)
+                    + ", which sets it at every regeneration; change the relation instead");
         }
         plan.change(key, "value", before.get("value"), after);
         plan.action = "Set parameter " + name + " of " + plan.docId + " to " + after + ".";
@@ -1211,6 +1211,23 @@ final class Ops {
                     + "; give the value in " + unitName + ".");
         }
         return number * from / to;
+    }
+
+    /** "the relation NAME = ..." when a relation of the model sets this name, else "a relation". */
+    private static String drivenBy(Model model, String name) {
+        try {
+            stringseq all = ((RelationOwner) model).GetRelations();
+            for (int i = 0; all != null && i < all.getarraysize(); i++) {
+                String line = all.get(i);
+                int equals = line == null ? -1 : line.indexOf('=');
+                if (equals > 0 && line.substring(0, equals).trim().equalsIgnoreCase(name)) {
+                    return "the relation " + line.trim();
+                }
+            }
+        } catch (Throwable unreadable) {
+            // Fall back to the general words.
+        }
+        return "a relation";
     }
 
     private List<Object> relations(Model model) throws jxthrowable {
@@ -1427,20 +1444,13 @@ final class Ops {
         } catch (Throwable none) {
             window = null;
         }
-        Window current = null;
-        try {
-            current = session.GetCurrentWindow();
-        } catch (Throwable none) {
-            current = null;
-        }
         String key = Docs.fileKey(out.getPath());
         plan.records = false;
         plan.target(key, "file", out.getPath());
         plan.change(key, "exists", out.exists(), true);
         if (window == null) {
-            plan.blocked.add(plan.docId + " has no window in Creo; render takes a picture of its window.");
-        } else if (current == null || current.GetId() != window.GetId()) {
-            plan.blocked.add("The window of " + plan.docId + " is not the active window in Creo; ask the person to activate it.");
+            plan.blocked.add(plan.docId + " has no window in Creo (it is open only as part of an assembly or drawing); render "
+                    + "takes a picture of its window: open it with doc open first");
         }
         plan.action = "Write a " + width + " x " + height + " JPEG of " + plan.docId + "'s window to " + out.getPath() + ".";
         final Window target = window;

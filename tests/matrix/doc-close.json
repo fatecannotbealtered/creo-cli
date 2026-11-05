@@ -13,7 +13,11 @@
       "expected": {
         "exit": 0,
         "summary": "Closes a document without unsaved changes."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110602-doc-close.json#normal"
     },
     {
       "row": "empty",
@@ -33,7 +37,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110113-doc-close.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -48,7 +57,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110113-doc-close.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -91,7 +105,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110110-doc-close.json#no_scope"
     },
     {
       "row": "busy",
@@ -151,7 +170,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "The document has unsaved changes and the call has no --discard."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-104019-doc-close.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

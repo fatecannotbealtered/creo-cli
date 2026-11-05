@@ -9,7 +9,12 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED",
         "summary": "Two-step (configure): the preview names the version."
-      }
+      },
+      "actual": {
+        "exit": 5,
+        "code": "E_CONFIRMATION_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111117-plugin-remove.json#normal"
     },
     {
       "row": "empty",
@@ -25,7 +30,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111632-plugin-remove.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -55,7 +65,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not grant configure."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-104107-plugin-remove.json#no_scope"
     },
     {
       "row": "busy",

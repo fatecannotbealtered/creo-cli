@@ -13,7 +13,11 @@
       "expected": {
         "exit": 0,
         "summary": "Opens a file that is not open yet."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110607-doc-open.json#normal"
     },
     {
       "row": "empty",
@@ -25,13 +29,21 @@
       "applies": true,
       "arguments": [
         "--session",
-        "{session}"
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--bogus"
       ],
       "expected": {
         "exit": 2,
         "code": "E_USAGE",
-        "summary": "--doc is missing."
-      }
+        "summary": "An unknown option."
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110607-doc-open.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -45,7 +57,12 @@
       "expected": {
         "exit": 3,
         "code": "E_NOT_FOUND"
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110115-doc-open.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -70,10 +87,15 @@
         "{doc}"
       ],
       "expected": {
-        "exit": 6,
-        "code": "E_CONFLICT",
-        "summary": "A model of the same name from another folder is already in session."
-      }
+        "exit": 2,
+        "code": "E_VALIDATION",
+        "summary": "A model of the same name from another folder is already in session; the host protocol has no E_CONFLICT for open_doc."
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_VALIDATION"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110609-doc-open.json#conflict"
     },
     {
       "row": "no_scope",
@@ -88,7 +110,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the file."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-104109-doc-open.json#no_scope"
     },
     {
       "row": "busy",

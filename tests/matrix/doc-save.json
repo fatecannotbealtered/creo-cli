@@ -14,7 +14,12 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED",
         "summary": "Two-step: the preview lists the changes since the last save."
-      }
+      },
+      "actual": {
+        "exit": 5,
+        "code": "E_CONFIRMATION_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111102-doc-save.json#normal"
     },
     {
       "row": "empty",
@@ -29,7 +34,12 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED",
         "summary": "A clean document: the preview lists no change."
-      }
+      },
+      "actual": {
+        "exit": 5,
+        "code": "E_CONFIRMATION_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111105-doc-save.json#empty"
     },
     {
       "row": "invalid_input",
@@ -44,7 +54,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111102-doc-save.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -59,7 +74,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111102-doc-save.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -87,7 +107,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "A newer version of the document's file is on disk (disk: changed)."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111305-doc-save.json#conflict"
     },
     {
       "row": "no_scope",
@@ -102,7 +127,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-104103-doc-save.json#no_scope"
     },
     {
       "row": "busy",
@@ -162,7 +192,12 @@
         "exit": 5,
         "code": "E_CONFIRMATION_REQUIRED",
         "summary": "The preview lists the unsaved changes."
-      }
+      },
+      "actual": {
+        "exit": 5,
+        "code": "E_CONFIRMATION_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-104017-doc-save.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

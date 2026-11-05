@@ -1,0 +1,106 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.0.0",
+  "commit": "9f3707ba5f10",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-05T10:38:56Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "feature update",
+      "arguments": [
+        "--session",
+        "creo-43964-320fcec0c",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "EDGE_ROUND",
+        "--status",
+        "suppressed"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session",
+      "envelope_sha256": "942813c3e0325ad418bbca17f9fde22f4b734bd3c091aa4c53e6b95877e5a743"
+    },
+    {
+      "command": "feature update",
+      "arguments": [
+        "--session",
+        "creo-43964-320fcec0c",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "EDGE_ROUND",
+        "--status",
+        "suppressed"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "empty",
+      "mode": "session",
+      "envelope_sha256": "14589d90bfcf7b803062502ae86804e2dd9254f35ac644dd87964884b4717abc"
+    },
+    {
+      "command": "feature update",
+      "arguments": [
+        "--session",
+        "creo-43964-320fcec0c",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--status",
+        "suppressed"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session",
+      "envelope_sha256": "02986c52b5e7a4197c13b4d62efe0506895563ca720cbea5425f736060cd21f0"
+    },
+    {
+      "command": "feature update",
+      "arguments": [
+        "--session",
+        "creo-43964-320fcec0c",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "99999",
+        "--status",
+        "suppressed"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session",
+      "envelope_sha256": "5cac565abb162389f8d2426f82239874846b7df435453705dab1cc6baeb483ea"
+    },
+    {
+      "command": "feature update",
+      "arguments": [
+        "--session",
+        "creo-43964-320fcec0c",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--id",
+        "EDGE_ROUND",
+        "--name",
+        "BASE"
+      ],
+      "exit": 6,
+      "result": "pass",
+      "matrix_row": "conflict",
+      "mode": "session",
+      "envelope_sha256": "bcde48862951c4e46f4a5782d30d40a2cd39af3217661423e72c5910bd19b011"
+    }
+  ]
+}

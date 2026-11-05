@@ -7,7 +7,11 @@
       "arguments": [],
       "expected": {
         "exit": 0
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-05-103758-plugin-get.json#normal"
     },
     {
       "row": "empty",
@@ -16,7 +20,11 @@
       "expected": {
         "exit": 0,
         "summary": "With a new state directory: nothing installed, version_on_disk null."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-05-111119-plugin-get.json#empty"
     },
     {
       "row": "invalid_input",
@@ -27,7 +35,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-103758-plugin-get.json#invalid_input"
     },
     {
       "row": "not_found",

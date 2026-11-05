@@ -12,7 +12,11 @@
       ],
       "expected": {
         "exit": 0
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-05-103756-doc-get.json#normal"
     },
     {
       "row": "empty",
@@ -24,13 +28,21 @@
       "applies": true,
       "arguments": [
         "--session",
-        "{session}"
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--bogus"
       ],
       "expected": {
         "exit": 2,
         "code": "E_USAGE",
-        "summary": "--doc is missing."
-      }
+        "summary": "An unknown option."
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-110611-doc-get.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -45,7 +57,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-103756-doc-get.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -97,7 +114,11 @@
       "expected": {
         "exit": 0,
         "summary": "Reported with dirty true."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-05-104013-doc-get.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

@@ -237,15 +237,34 @@ final class Docs {
         if (newest < 0) {
             return "missing";
         }
+        Integer loaded = loadedVersion(model);
+        return loaded != null && newest > loaded ? "changed" : "in_sync";
+    }
+
+    /**
+     * The number of the file version the model came from or was last saved to (bracket.prt.3
+     * is 3). Model.GetVersion is the PDM version, empty for a plain file (measured on Creo
+     * 13.4); the descriptor's file version is the one, and the origin's suffix the fallback.
+     */
+    static Integer loadedVersion(Model model) {
         try {
-            String loaded = model.GetVersion();
-            if (loaded != null && loaded.trim().matches("[0-9]+") && newest > Integer.parseInt(loaded.trim())) {
-                return "changed";
+            Integer version = model.GetDescr().GetFileVersion();
+            if (version != null && version > 0) {
+                return version;
             }
         } catch (Throwable unreadable) {
-            // Treated as in sync: the file is there.
+            // Try the origin.
         }
-        return "in_sync";
+        try {
+            String origin = model.GetOrigin();
+            java.util.regex.Matcher suffix = java.util.regex.Pattern.compile("\\.([0-9]+)$").matcher(origin == null ? "" : origin.trim());
+            if (suffix.find()) {
+                return Integer.parseInt(suffix.group(1));
+            }
+        } catch (Throwable unreadable) {
+            // Unknown: treated as in sync, since the file is there.
+        }
+        return null;
     }
 
     /** The highest version number of bracket.prt on disk (bracket.prt.3), 0 for an unnumbered file, -1 for none. */
@@ -302,6 +321,16 @@ final class Docs {
         if (found != null) {
             String there = path(found);
             if (there != null && new File(there).getAbsolutePath().equalsIgnoreCase(plain.getAbsolutePath())) {
+                // Open already; it gets a window again if it lost its own (a model an open
+                // assembly uses can be in session without one).
+                try {
+                    if (session.GetModelWindow(found) == null) {
+                        session.CreateModelWindow(found);
+                        found.Display();
+                    }
+                } catch (Throwable noWindow) {
+                    // The model is open; a window is only for the person.
+                }
                 return facts("dispatched", "not_applicable", Json.map("document", describe(found)));
             }
             throw new HostError(HostError.VALIDATION, "A model named " + name + " from another folder ("
@@ -364,6 +393,13 @@ final class Docs {
             throw new HostError(HostError.VALIDATION, id + " has unsaved changes; save it, or close it with --discard.");
         }
         Session session = Creo.session();
+        // Creo erases no model another model in session uses; refuse before the window closes,
+        // so a refused close changes nothing.
+        List<String> users = usersOf(session, model);
+        if (!users.isEmpty()) {
+            throw new HostError(HostError.VALIDATION, id + " is used by " + String.join(", ", users)
+                    + ", open in Creo; close " + (users.size() == 1 ? "it" : "them") + " first.");
+        }
         Window window = null;
         try {
             window = session.GetModelWindow(model);
@@ -379,6 +415,35 @@ final class Docs {
             return new MainThread.Later(() -> erase(id));
         }
         return erase(id);
+    }
+
+    /** The other models in session that use this one: assemblies of it, drawings of it. */
+    static List<String> usersOf(Session session, Model model) throws jxthrowable {
+        String id = Creo.fileName(model);
+        List<String> users = new ArrayList<>();
+        com.ptc.pfc.pfcModel.Models all = session.ListModels();
+        for (int i = 0; all != null && i < all.getarraysize(); i++) {
+            Model other = all.get(i);
+            String otherId = Creo.fileName(other);
+            if (otherId == null || otherId.equals(id)) {
+                continue;
+            }
+            com.ptc.pfc.pfcModel.Dependencies uses;
+            try {
+                uses = other.ListDependencies();
+            } catch (Throwable unreadable) {
+                continue;
+            }
+            for (int j = 0; uses != null && j < uses.getarraysize(); j++) {
+                ModelDescriptor used = uses.get(j).GetDepModel();
+                String name = used == null ? null : used.GetFileName();
+                if (name != null && id.equalsIgnoreCase(name.replaceFirst("<[^>]*>", ""))) {
+                    users.add(otherId);
+                    break;
+                }
+            }
+        }
+        return users;
     }
 
     private Map<String, Object> erase(String id) throws jxthrowable {

@@ -7,7 +7,11 @@
       "arguments": [],
       "expected": {
         "exit": 0
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-05-103749-session-list.json#normal"
     },
     {
       "row": "empty",
@@ -28,7 +32,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-05-103749-session-list.json#invalid_input"
     },
     {
       "row": "not_found",

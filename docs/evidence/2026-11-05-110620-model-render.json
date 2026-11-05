@@ -1,0 +1,34 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.0.0",
+  "commit": "9f3707ba5f10",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-05T11:06:20Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "model render",
+      "arguments": [
+        "--session",
+        "creo-20048-320fcf3ce",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\pair.asm",
+        "--output",
+        "D:\\driver-work\\creo-cli\\targets\\runs\\render-unsaved2/disc.jpg"
+      ],
+      "exit": 6,
+      "result": "fail",
+      "matrix_row": "unsaved",
+      "mode": "session",
+      "envelope_sha256": "35bc9928d7b7e05bfbbf33315475a81433a3c2c21c8b61d938c9537ff2ffc158"
+    }
+  ]
+}
