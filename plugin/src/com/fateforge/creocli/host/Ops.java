@@ -1,5 +1,6 @@
 package com.fateforge.creocli.host;
 
+import com.fateforge.creocli.host.core.Distance;
 import com.fateforge.creocli.host.core.HostError;
 import com.fateforge.creocli.host.core.Json;
 import com.ptc.cipjava.jxthrowable;
@@ -610,21 +611,66 @@ final class Ops {
         return feature == null ? null : feature.GetId();
     }
 
+    /**
+     * Creo's clearance for solid geometry; for datums, which it does not measure (it answers
+     * about 1e9, measured on Creo 13.4), the distance between the datums' own planes, lines
+     * and points (core.Distance).
+     */
     private Map<String, Object> distance(Solid solid, String from, String to) throws Exception {
         double f = Units.mmPerUnit((Model) solid);
-        com.ptc.pfc.pfcInterference.ClearanceData clearance;
+        ModelItem a = item(solid, from);
+        ModelItem b = item(solid, to);
+        double measured;
         try {
-            clearance = com.ptc.pfc.pfcInterference.pfcInterference.CreateSelectionEvaluator(
-                    pfcSelect.SelectionPair_Create(select(solid, from), select(solid, to))).ComputeClearance();
+            measured = com.ptc.pfc.pfcInterference.pfcInterference.CreateSelectionEvaluator(
+                    pfcSelect.SelectionPair_Create(pfcSelect.CreateModelItemSelection(a, null),
+                            pfcSelect.CreateModelItemSelection(b, null))).ComputeClearance().GetDistance();
         } catch (jxthrowable refused) {
             throw new HostError(HostError.NATIVE, "Creo could not measure from " + from + " to " + to + ".")
                     .nativeMessage(refused.toString());
         }
-        return Json.map("from", from, "to", to, "distance_mm", clean(clearance.GetDistance() * f));
+        if (!(measured < NO_CLEARANCE)) {
+            Distance.Shape first = shape(a);
+            Distance.Shape second = shape(b);
+            if (first == null || second == null) {
+                throw new HostError(HostError.UNSUPPORTED, "Creo measures no distance from " + from + " to " + to
+                        + ". Measure between faces, edges, datum planes, axes or coordinate systems.");
+            }
+            measured = Distance.between(first, second);
+        }
+        return Json.map("from", from, "to", to, "distance_mm", clean(measured * f));
     }
 
-    private static com.ptc.pfc.pfcSelect.Selection select(Solid solid, String ref) throws jxthrowable {
-        return pfcSelect.CreateModelItemSelection(item(solid, ref), null);
+    /** What Creo's clearance answers where it measured nothing, in model units. */
+    private static final double NO_CLEARANCE = 1e8;
+
+    /** A datum as core.Distance takes it: a plane, an axis as a line, a coordinate system as its origin. */
+    private static Distance.Shape shape(ModelItem item) throws jxthrowable {
+        if (item instanceof TransformedSurface
+                && ((Surface) item).GetSurfaceType().getValue() == com.ptc.pfc.pfcGeometry.SurfaceType._SURFACE_PLANE) {
+            com.ptc.pfc.pfcBase.Transform3D frame = ((TransformedSurface) item).GetCoordSys();
+            return Distance.Shape.plane(xyz(frame.GetOrigin()), xyz(frame.GetZAxis()));
+        }
+        if (item instanceof com.ptc.wfc.wfcGeometry.WAxis) {
+            com.ptc.pfc.pfcGeometry.CurveDescriptor data = ((com.ptc.wfc.wfcGeometry.WAxis) item).GetAxisData();
+            if (data instanceof com.ptc.pfc.pfcGeometry.LineDescriptor) {
+                double[] start = xyz(((com.ptc.pfc.pfcGeometry.LineDescriptor) data).GetEnd1());
+                double[] end = xyz(((com.ptc.pfc.pfcGeometry.LineDescriptor) data).GetEnd2());
+                return Distance.Shape.line(start, new double[] {end[0] - start[0], end[1] - start[1], end[2] - start[2]});
+            }
+        }
+        if (item instanceof com.ptc.pfc.pfcGeometry.CoordSystem) {
+            return Distance.Shape.point(xyz(((com.ptc.pfc.pfcGeometry.CoordSystem) item).GetCoordSys().GetOrigin()));
+        }
+        return null;
+    }
+
+    private static double[] xyz(com.ptc.pfc.pfcBase.Point3D p) throws jxthrowable {
+        return new double[] {p.get(0), p.get(1), p.get(2)};
+    }
+
+    private static double[] xyz(com.ptc.pfc.pfcBase.Vector3D v) throws jxthrowable {
+        return new double[] {v.get(0), v.get(1), v.get(2)};
     }
 
     /** surface:41, edge:57, axis:12, or the name of a datum plane, axis or coordinate system. */

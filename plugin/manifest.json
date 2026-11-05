@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "protocol_version": "1.0.0",
   "files": {
+    "src/com/fateforge/creocli/host/core/Distance.java": "99c19c71803ab7f766bacb0080c5b2361878ee4d19347549b966e3c248adce0f",
     "src/com/fateforge/creocli/host/core/HostError.java": "09456ce57f1d83f0b09f01e6b52def85601cb70f8787aa35ff3d7c0077f4e1fc",
     "src/com/fateforge/creocli/host/core/Json.java": "5416b9cc128a9fcc03cb69eabb282d5ee372d058213f1b4e408abe6e6ed22563",
     "src/com/fateforge/creocli/host/core/MainThread.java": "6bc62f2515458942293e5d5264a2320763938871df80025f994f18cbb3ecd6cb",
@@ -10,7 +11,7 @@
     "src/com/fateforge/creocli/host/Creo.java": "5554b008839680614d94cd5516d72b2ab390b0ea06d9ee618c303d855b564791",
     "src/com/fateforge/creocli/host/Docs.java": "c723e166352922d2822517f38c8189165633181f887d98ba3b3e7eea098df98f",
     "src/com/fateforge/creocli/host/Host.java": "b636f1233c78bd00b9ffe856dbc65c71c9910379460b5abfaf68f579d890b9a2",
-    "src/com/fateforge/creocli/host/Ops.java": "373211d1aea267a27369d0f98988113ddf5ace65673767d16a1b2c30c15a94ae",
+    "src/com/fateforge/creocli/host/Ops.java": "aa85158fe845cd6c6f886fdee62fde50a2d5106bb818f4e3340b1ad4f737ab28",
     "src/com/fateforge/creocli/host/Units.java": "9fd0ffd8298a94ea8aa7e4ab5a11fd6557aa28a308eb2a38fcfbada025a820c0"
   },
   "methods": [

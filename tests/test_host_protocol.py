@@ -91,6 +91,24 @@ class HostProtocolTest(unittest.TestCase):
         self.assertEqual(conn.hello["session"], {"id": "creo-1-1", "generation": 0})
         self.assertIn("read", conn.hello["methods"])
 
+    def distance(self, a: dict, b: dict) -> float:
+        return self.connect().call("distance", {"a": a, "b": b}, 3000)["distance"]
+
+    def test_datum_distances_follow_the_geometry(self) -> None:
+        front = {"kind": "plane", "at": [0, 0, 0], "direction": [0, 0, 1]}
+        offset = {"kind": "plane", "at": [5, -3, 25], "direction": [0, 0, -2]}
+        tilted = {"kind": "plane", "at": [0, 0, 25], "direction": [0, 1, 1]}
+        axis = {"kind": "line", "at": [10, 0, 7], "direction": [1, 0, 0]}
+        across = {"kind": "line", "at": [0, 4, 0], "direction": [0, 0, 1]}
+        origin = {"kind": "point", "at": [3, 4, 0]}
+        self.assertAlmostEqual(self.distance(front, offset), 25.0)
+        self.assertEqual(self.distance(front, tilted), 0.0)
+        self.assertAlmostEqual(self.distance(axis, front), 7.0)
+        self.assertEqual(self.distance(across, front), 0.0)
+        self.assertAlmostEqual(self.distance(axis, across), 4.0)
+        self.assertAlmostEqual(self.distance(origin, across), 3.0)
+        self.assertAlmostEqual(self.distance(origin, {"kind": "point", "at": [0, 0, 0]}), 5.0)
+
     def test_a_request_before_hello_is_refused(self) -> None:
         stream = _connect(self.address, 3.0)
         self.addCleanup(stream.close)
