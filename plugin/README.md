@@ -2,4 +2,11 @@
 
 The source of the code creo-cli installs into Creo Parametric (DCLI-262), in a language Creo Parametric supports. `creo-cli plugin install` installs it; it speaks the host protocol (DCLI-270 to DCLI-281) and writes its discovery file to `hosts/` in the state directory.
 
-{{fill: describe how the host component is built, which Creo Parametric API it uses and where Creo Parametric loads it from}}
+It is an Object TOOLKIT Java application (Creo's `pfc` and `wfc` APIs in `otk.jar`), class `com.fateforge.creocli.host.Host`, whose `start` and `stop` Creo calls on its main thread.
+
+- `src/com/fateforge/creocli/host/core/`: no Creo classes. The named pipe server (`Pipe`, through the Foreign Function and Memory API; only the current Windows user may connect, remote clients are refused), Content-Length framing and JSON-RPC (`Protocol`), the hand-off to Creo's main thread (`MainThread`: one request at a time, `E_BUSY` at once when busy), JSON and the host errors.
+- `src/com/fateforge/creocli/host/`: the Creo side. `Host` (start, stop, session ID, discovery file, the 100 ms timer that runs queued work on the main thread), `Docs` (documents, revisions, the changes since the last save), `Ops` (the domain commands) and `Units`.
+
+**Build.** Only source is shipped; there is no binary in this folder. `creo-cli plugin install` builds the host component on the user's computer (`creo_cli/adapter/build.py`): it compiles these sources with a JDK 25 (`CREO_CLI_JDK`, the JDK of `PRO_JAVA_COMMAND`, or `JAVA_HOME`) against that computer's Creo 13.4 `otk.jar`, packages `creo-cli-host.jar` and unlocks it with Creo's `protk_unlock.bat -java`, using that computer's license: the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license. An unlocked JAR must not change afterwards, and a second install of the same sources keeps the JAR it built.
+
+**Loading.** `creo-cli plugin install` puts the JAR and these files in `<state directory>\plugin\<version>\` and writes `<state directory>\plugin\protk.dat`, the registry file (`startup otk_java`, `fail_tol true`), and `creo-cli-host.json`, which tells the host its state directory. A person adds `toolkit_registry_file <state directory>\plugin\protk.dat` to the `config.pro` Creo starts with. Creo reads it only at start.

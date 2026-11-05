@@ -1,0 +1,78 @@
+{
+  "command": "plugin get",
+  "rows": [
+    {
+      "row": "normal",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 0
+      }
+    },
+    {
+      "row": "empty",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 0,
+        "summary": "With a new state directory: nothing installed, version_on_disk null."
+      }
+    },
+    {
+      "row": "invalid_input",
+      "applies": true,
+      "arguments": [
+        "--bogus"
+      ],
+      "expected": {
+        "exit": 2,
+        "code": "E_USAGE"
+      }
+    },
+    {
+      "row": "not_found",
+      "applies": false,
+      "reason": "plugin get names no object, so nothing can be missing."
+    },
+    {
+      "row": "ambiguous",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "conflict",
+      "applies": false,
+      "reason": "This row applies only to a command that changes something."
+    },
+    {
+      "row": "no_scope",
+      "applies": false,
+      "reason": "This row applies only to a command that changes something."
+    },
+    {
+      "row": "busy",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "dialog",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "disconnect",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "unsaved",
+      "applies": false,
+      "reason": "This row applies only to a command that acts on a document."
+    },
+    {
+      "row": "read_back_mismatch",
+      "applies": false,
+      "reason": "This row applies only to a command that changes something."
+    }
+  ]
+}

@@ -14,7 +14,7 @@
 
 真实软件运行使用这些电脑：
 
-{{fill: 真实软件运行用到的电脑、操作系统、Creo Parametric 版本和模式}}
+一台 Windows 11 x64 电脑，装有 Creo Parametric 13.4.1.0、它的 Object TOOLKIT Java 和 JDK 25，用会话模式。真实软件运行使用自己的状态目录（`CREO_CLI_STATE_DIR`）。第一次运行前，用这个状态目录运行 `creo-cli plugin install`，由人在为这次运行启动的 Creo 所用的 `config.pro` 里加一行 `toolkit_registry_file <状态目录>\plugin\protk.dat`，再启动 Creo；`creo-cli session list` 必须显示 `plugin_loaded`。
 
 在真实的 Creo Parametric 上运行行为矩阵：
 

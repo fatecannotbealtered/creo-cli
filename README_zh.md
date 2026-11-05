@@ -1,6 +1,6 @@
 # creo-cli
 
-{{fill: 一句话定位：本工具让 Agent 在 Creo Parametric 里做什么}}
+让 AI Agent 读取 Creo Parametric 的模型，修改尺寸、参数和特征，再保存和导出：每次修改都先预览、经确认，再从 Creo 读回核对。
 
 <!-- driver:badges:start -->
 ![Agent-native](https://img.shields.io/badge/🤖-Agent--native-6f42c1)
@@ -84,8 +84,8 @@
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
+- `feature`: get, list, update
 - `model`: get, export, render
-- `feature`: list, get, update
 - `geometry`: list
 - `distance`: get
 - `dimension`: list, update
@@ -140,11 +140,47 @@ creo-cli 读取不需要许可，但只写入人在授权范围文件里允许�
 
 授权范围不覆盖的写操作什么都不改，返回 `E_FORBIDDEN`，说明缺什么，并给出一段人可以直接粘贴进文件的片段。`creo-cli context` 显示当前生效的授权范围，`SECURITY_zh.md` 完整说明了授权范围。
 
-{{fill: creo-cli 的命令需要哪些效果、每种效果用于哪些命令，比如用一张效果与命令的表}}
+creo-cli 的命令需要这些效果：
+
+| 效果 | 命令 |
+|---|---|
+| `change` | `dimension update`、`parameter update`、`feature update` |
+| `artifact` | `model export`、`model render` |
+| `lifecycle` | `doc open`、`doc close` |
+| `persist` | `doc save` |
+| `configure` | `plugin install`、`plugin remove` |
+
+`doc close --discard` 会丢掉没保存的修改，属于危险级，还需要 `"dangerous": true`。在一个文件夹里修改并交付模型的授权范围大致如下：
+
+```json
+{
+  "scope_id": "bracket-rework",
+  "effects": ["change", "artifact", "lifecycle", "persist"],
+  "dangerous": false,
+  "targets": ["file:///D:/work/bracket/"],
+  "expires_at": "2026-12-31T23:59:59Z"
+}
+```
 
 ## 关于本工具
 
-{{fill: Creo Parametric 的领域特点、Agent 用 creo-cli 完成的典型任务，以及截图或简短示例}}
+Creo Parametric 是 PTC 的参数化三维 CAD 软件：零件、装配和工程图都由特征组成，特征由尺寸、参数和关系驱动。creo-cli 驱动同一台 Windows 电脑上由人启动的 Creo Parametric 会话，经由 Creo 启动时加载的一个小宿主组件。
+
+常见任务：
+
+- 回答关于模型的问题：体积、质量、大小和材料，按顺序的特征，尺寸、参数和关系，以及装配里的元件。
+- 修改设计：尺寸的值或公差、参数的值，或者隐含、恢复、改名特征。Creo 会重新生成模型，重新生成不了的值会被撤回。
+- 交付：保存模型，导出 STEP、IGES 或 STL（工程图导出 PDF），或者把模型窗口拍成 JPEG 图片。
+
+```bash
+creo-cli doc open --doc D:/work/bracket/bracket.prt
+creo-cli dimension list --doc bracket.prt
+creo-cli dimension update --doc bracket.prt --id DEPTH --length 12mm
+creo-cli doc save --doc bracket.prt                   # 两步确认：列出上次保存以来的全部修改
+creo-cli model export --doc bracket.prt --output D:/work/bracket/out/bracket.stp
+```
+
+1.0 版不新建模型和特征，也不修改装配和工程图；它读取并导出它们。
 
 ## 配置
 
@@ -153,11 +189,15 @@ creo-cli 读取不需要许可，但只写入人在授权范围文件里允许�
 | `CREO_CLI_STATE_DIR` | `~/.creo-cli` | 状态目录：操作记录、锁、更新检查的缓存和团队知识的登记 |
 | `CREO_CLI_SCOPE_FILE` | 状态目录里的 `scope.json` | 授权范围文件（见「授权」） |
 | `HTTPS_PROXY`、`HTTP_PROXY`、`NO_PROXY` | 未设置 | `update` 和 `doctor` 用的代理，只有这两个命令访问 npm 仓库 |
+| `CREO_CLI_JDK` | `PRO_JAVA_COMMAND` 所在的 JDK，否则 `JAVA_HOME` | `plugin install` 构建宿主组件用的 JDK 25 |
 | `CREO_CLI_FAKE_HOST` | 未设置 | 只用于测试：把每次调用发给模拟宿主而不是 Creo Parametric，并把每个结果标为模拟结果 |
 
 ### 怎样找到 Creo Parametric
 
-{{fill: creo-cli 怎样找到 Creo Parametric：安装位置、版本识别、运行中的实例，以及用户可以修改的设置}}
+- 安装：creo-cli 在 `C:\Program Files\PTC`、`C:\PTC`、`D:\PTC` 和 `E:\PTC` 下最多往下找四层，找含有 Object TOOLKIT Java（`text\java\otk.jar`）的 `Common Files` 文件夹。版本取自安装文件夹的名字，如 `Creo 13.4.1.0`。`creo-cli doctor` 显示找到的结果。
+- 运行中的实例：每个运行中的 `xtop.exe` 是一个会话，ID 由进程号和启动时间组成，如 `creo-9184-1d9a4c2e`。`creo-cli session list` 列出它们；Creo 里开着模态弹窗时显示为 `blocked`。
+- 宿主组件：会话只有加载了宿主组件才能驱动。creo-cli 以源码发布它：`creo-cli plugin install` 用 JDK 25 编译，再用 PTC 的 `protk_unlock` 解锁；解锁需要许可证服务器上有 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可，运行需要 Object TOOLKIT Java 的运行、开发或扩展许可。先运行 `creo-cli plugin install`，在 Creo 启动用的 `config.pro` 里加一行，再启动 Creo：`toolkit_registry_file <状态目录>\plugin\protk.dat`。升级时这一行不用改；creo-cli 自己从不修改 `config.pro`。Creo 只在启动时加载宿主组件，所以升级后要由人重启 Creo。
+- `CREO_CLI_STATE_DIR` 改变状态目录的位置，`protk.dat` 和宿主组件写的发现文件也随之移动。
 
 ## 卸载
 

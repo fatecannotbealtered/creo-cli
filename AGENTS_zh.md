@@ -33,6 +33,9 @@ creo-cli 驱动 Creo Parametric，支持的版本是 >=13.4 <13.5，模式如下
 
 适配层怎样连到 Creo Parametric：
 
-{{fill: 适配层连到 Creo Parametric 所用的自动化接口，以及编程 Agent 必须了解的相关情况}}
+- Creo 的工具包（Object TOOLKIT Java）只能在 Creo 进程里、在它的主线程上使用。所以读写模型的工作全部在宿主组件 `plugin/src/` 里完成，运行时经命名管道用宿主协议连到它。`creo_cli/adapter/` 只负责找到安装（`probe`）、列出运行中的 `xtop.exe` 进程和挡住它们的弹窗（`sessions`），以及安装宿主组件（`plugin_*`）。
+- 宿主组件里，工具包调用只能在交给 `MainThread` 的任务里执行，绝不能在管道线程上执行。不要把为 null 的 Java 字符串传给 Creo，它会崩溃。`com.fateforge.creocli.host.core` 包不能用 Creo 的类，这样它不用 Creo 也能编译和测试（`tests/test_host_protocol.py`）。
+- 宿主组件只以源码发布。`plugin install` 在用户电脑上用用户的 JDK 25、对着用户的 `otk.jar` 编译 `plugin/src/`，再用用户自己的许可解锁 JAR（`creo_cli/adapter/build.py`）；不要把 JAR 或任何二进制提交进 `plugin/`。改了 `plugin/src/` 之后，运行 `python scripts/spec.py generate` 更新 `plugin/manifest.json`，真实软件运行前再执行一次 `plugin install`。
+- Creo 只在启动时加载宿主组件。`plugin install` 之后由人重启 Creo，工具从不重启它（DSEC-052）。
 
 常用命令见 `CONTRIBUTING_zh.md` 的「常用命令」一节。真实软件测试只用 `docs/E2E.md` 里「Authorized Targets」一节的目标；本文件不列任何目标。

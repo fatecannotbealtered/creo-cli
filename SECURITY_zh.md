@@ -52,7 +52,19 @@ creo-cli 的风险等级和决定它的命令，由 `creo-cli reference` 生成�
 - **记录与设置。** `operation resolve` 需要一个授权范围，覆盖它所处理的那次操作的效果和目标。`knowledge create` 和 `knowledge delete` 只改工具自己的团队知识链接列表，不需要授权范围。
 - **局限。** 授权范围防的是 Agent 的失误，以及经不可信内容注入的指令。它拦不住无视 Skill 的 Agent，因为授权范围文件只是用户账户里的一个普通文件；要让这样的 Agent 碰不到这个文件，得靠你给 Agent 本身设定的权限。
 
-{{fill: 人通常为 creo-cli 授予的授权范围：一项常见任务需要的效果和目标，附一个授权范围文件示例}}
+一项常见任务是修改模型再交付，需要：修改用 `change`，保存用 `persist`，导出用 `artifact`，打开和关闭文档用 `lifecycle`；目标是放模型的文件夹和导出文件去的文件夹：
+
+```json
+{
+  "scope_id": "bracket-rework",
+  "effects": ["change", "persist", "artifact", "lifecycle"],
+  "dangerous": false,
+  "targets": ["file:///D:/work/bracket/"],
+  "expires_at": "2026-12-31T23:59:59Z"
+}
+```
+
+`plugin install` 和 `plugin remove` 需要 `configure`。只有 `doc close --discard` 需要 `"dangerous": true`。
 
 ## 写入确认
 
@@ -72,7 +84,7 @@ creo-cli 的风险等级和决定它的命令，由 `creo-cli reference` 生成�
 
 ## 宿主组件
 
-{{fill: 宿主组件是什么（Creo Parametric 的插件、加载项还是脚本服务）、它在 Creo Parametric 里能做什么，以及装在哪里}}
+宿主组件是 Creo Parametric 的一个 Object TOOLKIT Java 应用：一个 JAR，Creo 启动时按注册文件 `protk.dat` 加载，在 Creo 主线程上运行。它在 Creo 里能做工具包允许的一切事，所以只接受宿主协议规定的方法，而且只经由一条只有当前 Windows 用户能打开的命名管道；它不开任何网络端口。它读取模型，按 creo-cli 的命令做修改，打开、保存、关闭文档，并写出要求导出的文件。`plugin install` 用用户的 JDK 25 从随包发布的源码构建它，再经 PTC 的 `protk_unlock` 用用户自己的许可解锁，放到状态目录的 `plugin\<版本>\` 下，并在 `plugin\` 下写 `protk.dat` 和 `creo-cli-host.json`；由人在 Creo 启动用的 `config.pro` 里加一行 `toolkit_registry_file <状态目录>\plugin\protk.dat`。creo-cli 从不修改 `config.pro`。安装包里不带它的二进制；这个 JAR 没有代码签名。
 
 - **安装。** 只有 `creo-cli plugin install` 能安装或升级宿主组件，只有 `creo-cli plugin remove` 能卸载它。两者都是两步确认的写操作，需要允许 `configure` 的授权范围。`update`、领域命令和 npm 安装从不安装或改动宿主组件；需要重新安装时，`update` 和 `doctor` 会给出 `plugin install` 命令。`plugin install` 会把状态目录的路径写进宿主组件的配置，所以人从桌面启动的软件也能被找到。
 - **安装前的检查。** 每个文件都必须与宿主组件清单里记录的哈希一致，否则什么都不装，返回 `E_INTEGRITY`。协议的主版本必须与 CLI 相同，否则什么都不装，返回 `E_PROTOCOL`。每个版本装在各自的目录里。
@@ -103,9 +115,9 @@ creo-cli 把状态保存在每个用户一个的目录里：`CREO_CLI_STATE_DIR`
 - **连接。** creo-cli 只连接 npm 仓库（只有 `update` 和 `doctor` 会连），以及它驱动的 Creo Parametric 服务或设备（只由驱动它们的命令连接）。它不发送任何遥测数据。每个网络请求都遵守 `HTTPS_PROXY`、`HTTP_PROXY` 和 `NO_PROXY`，每个 TLS 连接都校验服务器证书，没有任何办法关掉这项校验。
 - **团队知识。** creo-cli 只保存已登记的团队知识的链接。它从不连接飞书，也不保存飞书账号；团队文档由 Agent 自己用 lark-cli 读取。
 
-{{fill: creo-cli 经手的机密，如许可证密钥或设备密码，以及人怎样提供它们；或者写明它不经手任何机密}}
+creo-cli 不经手任何机密：Creo Parametric 自己检查许可证，creo-cli 既看不到也不保存许可证信息。
 
-{{fill: creo-cli 连接的 Creo Parametric 服务或设备，以及它们的地址和端口；或者写明它只与同一台电脑上的 Creo Parametric 通信}}
+creo-cli 只与同一台电脑上的 Creo Parametric 通信，经由宿主组件的命名管道（`\\.\pipe\creo-cli-<会话>-<随机值>`），只有当前 Windows 用户能打开它。它不连 PTC 的任何服务，也不连许可证服务器。
 
 ## 不可信内容
 

@@ -28,7 +28,7 @@ Every interface Creo Parametric offers, and where code that calls it must run. A
 |---|---|---|
 | Object TOOLKIT Java (`pfc` and `wfc` packages in `otk.jar`), synchronous application registered in `protk.dat` (`startup otk_java`) | Only inside the process, on Creo's main thread | The `wfc` element-tree API that creates features exists only in a synchronous application; `otk.jar` has no async connection and `pfcasync.jar` has no `wfc` classes. Needs the `ObjectToolkitJava` license option. `otk.jar` of 13.4 is built for Java 25. Calls from any other thread hang or crash; the earlier service drained a queue from a `wfcSession.CreateTimer` callback every 100 ms; `InvokeLater` deadlocks (earlier creo-cli, `docs/SERVICE.md`, `service/.../Service.java`). |
 | Creo TOOLKIT C (`Pro*` functions), a DLL registered in `protk.dat` (`startup dll`) and called from Java through `Dll.ExecuteFunction` | Only inside the process, on Creo's main thread | Needed where Java has no call: `ProSectionEntityFromProjection` (multi-entity sketches), `ProDrawingDimensionMove` / `ProDimlocationTextGet`, `ProDimensionDelete` (needs the TOOLKIT for 3D Drawings license), `ProBomballoonCreate`, tolerance standard and decimals, hole thread series, component replace, section areas, ray intersection. Building needs the TOOLKIT headers and libraries and Visual Studio 2022. Creo asks the person before loading an unsigned DLL in each session unless `open_protk_unsigned_apps` says otherwise (earlier creo-cli, `service/native/creo_cli_sketch.c`, `docs/SERVICE.md`). |
-| Unlocking with `protk_unlock.bat` (`-java` for the JAR, `-c` for the DLL) | Build machine, CLI | Lets the JAR and DLL run on a seat without a TOOLKIT development license; uses the build seat's TOOLKIT license, no request to PTC. The files must not change after unlocking (earlier creo-cli, `scripts/reload_service.py`, `scripts/build_native_sketch.py`). |
+| Unlocking with `protk_unlock.bat -java` | The CLI, during `plugin install` | Lets the JAR run on a seat without a development license. Unlocking needs the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license; the unlocked file must not change afterwards (PTC, Creo Object TOOLKIT Java User's Guide, Unlocking, Running and Signing the Creo Object TOOLKIT Java Application). creo-cli runs it on the user's computer with the user's license, so no unlocked binary is distributed. |
 | J-Link / Object TOOLKIT asynchronous mode (`pfcasync`) and the VB API (COM) | The CLI (separate process) | `pfc` only, no `wfc`: cannot create features. Not used (earlier creo-cli, ADR 0002, `docs/HEADLESS-SUPPORT.md`). |
 | Creo native files (`.prt`, `.asm`, `.drw` with numbered versions `name.prt.N`) | The CLI can see names and version numbers on disk | The content is a proprietary binary format; only Creo reads and writes it. |
 | Neutral and output files (STEP, IGES, STL, Parasolid, PDF, JPEG) | Written or read by Creo; the CLI can hash them | Creo writes `__out.log` beside every export (earlier creo-cli, `docs/SERVICE.md`). |
@@ -92,7 +92,7 @@ From documents down, with the names Creo's user interface and manuals use:
 
 - Creo Parametric needs its own license (node-locked or floating through the PTC license server).
 - The host component needs the `ObjectToolkitJava` license option; without it nothing works. Deleting a drawing's own dimension (`ProDimensionDelete`) needs the TOOLKIT for 3D Drawings license.
-- Building and unlocking the host component needs the TOOLKIT development license on the build machine only.
+- `plugin install` builds the host component on the user's computer: it needs a JDK 25, and to unlock it the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license. Running the unlocked component needs one of: the Creo Object TOOLKIT Java runtime license, its development license, or its extension license with a Creo TOOLKIT license (PTC, Creo Object TOOLKIT Java User's Guide, Unlocking, Running and Signing the Creo Object TOOLKIT Java Application).
 - Creo delivered by application streaming (PTC trial) has no toolkits.
 - License dialogs at startup need a person (`activate_license`).
 
@@ -183,7 +183,7 @@ Each risk or limit found in the survey becomes an entry in `knowledge/`, or give
 - A model may use inch or other units; creo-cli converts to and from millimetres → `creo-units`. The default template deciding a new part's units is left out of 1.0.0, which creates no models.
 - Every save writes a new numbered version in the model's origin directory, not the working directory; old versions accumulate → `creo-save-versions`.
 - A freshly opened part reports unsaved changes → `creo-save-versions`. A model created from a template is written to disk at once: left out of 1.0.0, which creates no models.
-- Modal dialogs (unsigned DLL prompt, recovery dialogs at startup, license dialogs, ORDER_DEBUG, View States "Apply") block every command until a person closes them → `creo-blocking-dialogs`.
+- Modal dialogs (unsigned DLL prompt, recovery dialogs at startup, license dialogs, ORDER_DEBUG, View States "Apply") block every command until a person closes them → `creo-troubleshooting`.
 - Creo asks before loading the unsigned host DLL in each session → `creo-host-component-loading`.
 - A locked or minimized workstation can crash Creo (seen with the Intel OpenGL driver); headless is not available → `creo-display-requirements`.
 - Long operations: complex assembly edits 135–194 s, BOM tables up to 568 s; they cannot be cancelled. Left out of 1.0.0: none of its commands runs these operations.
@@ -198,6 +198,6 @@ Each risk or limit found in the survey becomes an entry in `knowledge/`, or give
 - Feature types, view names and explode state names come back localized → `creo-localized-names`.
 - Licenses: `ObjectToolkitJava` needed; TOOLKIT for 3D Drawings for deleting a drawing's own dimension; streamed Creo has no toolkits → `creo-licenses`.
 - Toolkit calls off the main thread hang or crash, and a null Java string crashes Creo: left out, a rule for the host code (`plugin/README.md`), not for an Agent.
-- The JAR and DLL must not change after unlocking: left out, a build rule (`plugin/README.md`), not for an Agent.
+- An unlocked JAR must not change: left out, `plugin install` unlocks it last and never touches it afterwards.
 - Exports write `__out.log` beside the file: left out, the host exports into a private folder and moves only the file.
 - Drawing views cannot be added in the call that creates the drawing. Left out of 1.0.0, which does not edit drawings.

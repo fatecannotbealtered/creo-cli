@@ -22,14 +22,16 @@ creo-cli and Creo Parametric always run on the same machine. The CLI talks to th
 
 | creo-cli versions | Host protocol version | Host component versions |
 |---|---|---|
-| {{fill: the tool versions}} | {{fill: the host protocol version they speak}} | {{fill: the host component versions they work with}} |
+| 1.0.x | 1.0.0 | 1.0.x |
 
 ## Host Component Versions
 
 | Host component version | Protocol version | Creo Parametric versions |
 |---|---|---|
-| {{fill: a host component version}} | {{fill: its protocol version}} | {{fill: the application versions it loads into}} |
+| 1.0.0 | 1.0.0 | Creo Parametric 13.4 (>=13.4 <13.5), on Windows x64 |
 
 ## Known Limitations
 
-{{fill: known gaps and failures, each with the tool and application versions it affects; or None known.}}
+- creo-cli 1.0, Creo Parametric 13.4: verified only on Creo Parametric 13.4.1.0 under Windows 11 x64. A locked screen or a minimized Creo window was never qualified.
+- creo-cli 1.0: `model render` takes its picture from the model's window, which must be the active window in Creo.
+- creo-cli 1.0: a running toolkit call cannot be cancelled, and Creo loads the host component only at start, so an upgrade needs a restart of Creo.

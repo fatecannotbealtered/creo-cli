@@ -33,6 +33,9 @@ Where the code lives:
 
 How the adapter reaches Creo Parametric:
 
-{{fill: the automation interfaces the adapter uses to reach Creo Parametric, and what a coding Agent must know about them}}
+- Creo's toolkit (Object TOOLKIT Java) works only inside Creo and only on its main thread. So every read and write of a model runs in the host component, `plugin/src/`, which the runtime reaches over a named pipe with the host protocol. `creo_cli/adapter/` only finds the installation (`probe`), lists the running `xtop.exe` processes and the dialogs that block them (`sessions`), and installs the host component (`plugin_*`).
+- In the host, toolkit calls run only in tasks handed to `MainThread`, never on a pipe thread. Never pass a null Java string to Creo: it crashes. The package `com.fateforge.creocli.host.core` must not use Creo's classes, so it compiles and is tested without Creo (`tests/test_host_protocol.py`).
+- The host component ships as source only. `plugin install` compiles `plugin/src/` with the user's JDK 25 against their `otk.jar` and unlocks the JAR with their own license (`creo_cli/adapter/build.py`); never commit a JAR or any other binary to `plugin/`. After changing `plugin/src/`, run `python scripts/spec.py generate` to update `plugin/manifest.json`, then `plugin install` again for live runs.
+- Creo loads the host component only at start. After `plugin install`, a person restarts Creo; the tool never does (DSEC-052).
 
 The common commands are listed in the Commands section of `CONTRIBUTING.md`. Live tests use only the targets under Authorized Targets in `docs/E2E.md`; this file lists none.

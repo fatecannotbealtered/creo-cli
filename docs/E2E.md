@@ -14,7 +14,7 @@ No target is authorized yet.
 
 Live runs are made on these machines:
 
-{{fill: the machines, operating systems, Creo Parametric versions and modes used for live runs}}
+One Windows 11 x64 computer with Creo Parametric 13.4.1.0, its Object TOOLKIT Java and a JDK 25, in session mode. Live runs use their own state directory (`CREO_CLI_STATE_DIR`). Before the first run, `creo-cli plugin install` is run with that state directory, the person adds `toolkit_registry_file <state directory>\plugin\protk.dat` to the `config.pro` of the Creo started for the run, and then starts Creo; `creo-cli session list` must show `plugin_loaded`.
 
 To run a behavior matrix on the real Creo Parametric:
 

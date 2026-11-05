@@ -5,7 +5,14 @@
       "row": "normal",
       "applies": true,
       "arguments": [
-        "{{fill: the write sample; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
         "exit": 0
@@ -15,28 +22,51 @@
       "row": "empty",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the empty situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
-        "exit": 0
+        "exit": 0,
+        "summary": "DEPTH is already 12 mm: nothing changes."
       }
     },
     {
       "row": "invalid_input",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the invalid_input situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12"
       ],
       "expected": {
         "exit": 2,
-        "code": "E_USAGE"
+        "code": "E_USAGE",
+        "summary": "A bare number: the value needs a unit."
       }
     },
     {
       "row": "not_found",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the not_found situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "NOSUCH",
+        "--length",
+        "12mm"
       ],
       "expected": {
         "exit": 3,
@@ -47,87 +77,149 @@
       "row": "ambiguous",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the ambiguous situation; name every target only with the sample placeholders}}"
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
         "exit": 2,
-        "code": "E_AMBIGUOUS"
+        "code": "E_AMBIGUOUS",
+        "summary": "Two Creo sessions are running and the call names neither."
       }
     },
     {
       "row": "conflict",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the conflict situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "HEIGHT",
+        "--length",
+        "30mm"
       ],
       "expected": {
         "exit": 6,
-        "code": "E_CONFLICT"
+        "code": "E_CONFLICT",
+        "summary": "HEIGHT is driven by the relation HEIGHT = WIDTH / 2."
       }
     },
     {
       "row": "no_scope",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the no_scope situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
         "exit": 4,
-        "code": "E_FORBIDDEN"
+        "code": "E_FORBIDDEN",
+        "summary": "Run with a scope file that does not cover the document."
       }
     },
     {
       "row": "busy",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the busy situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
         "exit": 7,
-        "code": "E_BUSY"
+        "code": "E_BUSY",
+        "summary": "Creo's main thread is running another request."
       }
     },
     {
       "row": "dialog",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the dialog situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
         "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
+        "code": "E_HUMAN_REQUIRED",
+        "summary": "A modal dialog (File > Options) is open in Creo."
       }
     },
     {
       "row": "disconnect",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the disconnect situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
         "exit": 8,
         "code": "E_OUTCOME_UNKNOWN"
-      }
+      },
+      "unrunnable": "The pipe to the host component cannot be cut on demand at the moment of a call; driver tests D06 and D21 cover this case."
     },
     {
       "row": "unsaved",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the unsaved situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--length",
+        "12mm"
       ],
       "expected": {
-        "exit": 0
+        "exit": 0,
+        "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
       }
     },
     {
       "row": "read_back_mismatch",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the read_back_mismatch situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "DEPTH",
+        "--plus",
+        "0.1mm",
+        "--minus",
+        "0.05mm"
       ],
       "expected": {
         "exit": 1,
-        "code": "E_VERIFY_FAILED"
+        "code": "E_VERIFY_FAILED",
+        "summary": "Prepared live: a situation in which Creo stores another tolerance than the one given."
       }
     }
   ]

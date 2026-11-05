@@ -28,7 +28,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 |---|---|---|
 | Object TOOLKIT Java（`otk.jar` 里的 `pfc` 和 `wfc` 包），在 `protk.dat` 里登记的同步应用（`startup otk_java`） | 只能在进程里、Creo 主线程上 | 建特征用的 `wfc` 元素树接口只在同步应用里有；`otk.jar` 没有异步连接，`pfcasync.jar` 没有 `wfc` 类。需要 `ObjectToolkitJava` 许可选项。13.4 的 `otk.jar` 按 Java 25 编译。从别的线程调用会卡死或崩溃；早期服务每 100 ms 由 `wfcSession.CreateTimer` 的回调取一次队列；`InvokeLater` 会死锁（早期 creo-cli，`docs/SERVICE.md`、`service/.../Service.java`）。 |
 | Creo TOOLKIT C（`Pro*` 函数），在 `protk.dat` 里登记的 DLL（`startup dll`），由 Java 通过 `Dll.ExecuteFunction` 调用 | 只能在进程里、Creo 主线程上 | 用在 Java 没有接口的地方：`ProSectionEntityFromProjection`（多实体草图）、`ProDrawingDimensionMove` / `ProDimlocationTextGet`、`ProDimensionDelete`（要 TOOLKIT for 3D Drawings 许可）、`ProBomballoonCreate`、公差标准和小数位、孔的螺纹系列、元件替换、剖面面积、射线求交。构建要 TOOLKIT 的头文件和库，以及 Visual Studio 2022。除非 `open_protk_unsigned_apps` 另有设置，Creo 每次会话加载未签名的 DLL 前都会问人（早期 creo-cli，`service/native/creo_cli_sketch.c`、`docs/SERVICE.md`）。 |
-| 用 `protk_unlock.bat` 解锁（JAR 用 `-java`，DLL 用 `-c`） | 构建机器，CLI | 让 JAR 和 DLL 能在没有 TOOLKIT 开发许可的电脑上运行；用的是构建机器的 TOOLKIT 许可，不用向 PTC 申请。解锁后文件不能再改（早期 creo-cli，`scripts/reload_service.py`、`scripts/build_native_sketch.py`）。 |
+| 用 `protk_unlock.bat -java` 解锁 | CLI，在 `plugin install` 时 | 让 JAR 能在没有开发许可的电脑上运行。解锁需要 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可；解锁后的文件不能再改（PTC《Creo Object TOOLKIT Java 用户指南》Unlocking, Running and Signing the Creo Object TOOLKIT Java Application）。creo-cli 在用户电脑上用用户自己的许可解锁，所以不发布任何解锁过的二进制。 |
 | J-Link / Object TOOLKIT 异步模式（`pfcasync`）和 VB API（COM） | CLI（另一个进程） | 只有 `pfc`，没有 `wfc`，建不了特征。不使用（早期 creo-cli，ADR 0002、`docs/HEADLESS-SUPPORT.md`）。 |
 | Creo 原生文件（`.prt`、`.asm`、`.drw`，带编号版本 `name.prt.N`） | CLI 能看到磁盘上的文件名和版本号 | 内容是私有二进制格式，只有 Creo 能读写。 |
 | 中性格式和输出文件（STEP、IGES、STL、Parasolid、PDF、JPEG） | 由 Creo 读写；CLI 可以算哈希 | 每次导出，Creo 都在文件旁边写一个 `__out.log`（早期 creo-cli，`docs/SERVICE.md`）。 |
@@ -92,7 +92,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 
 - Creo Parametric 本身要许可（节点锁定，或通过 PTC 许可证服务器浮动）。
 - 宿主组件要 `ObjectToolkitJava` 许可选项，没有它什么都做不了。删除工程图自己的尺寸（`ProDimensionDelete`）要 TOOLKIT for 3D Drawings 许可。
-- 只有构建机器在构建和解锁宿主组件时要 TOOLKIT 开发许可。
+- `plugin install` 在用户电脑上构建宿主组件：需要 JDK 25；解锁需要 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可。运行解锁后的组件需要以下之一：Creo Object TOOLKIT Java 运行许可、它的开发许可，或者它的扩展许可加 Creo TOOLKIT 许可（PTC《Creo Object TOOLKIT Java 用户指南》Unlocking, Running and Signing the Creo Object TOOLKIT Java Application）。
 - 以应用流方式交付的 Creo（PTC 试用版）没有工具包。
 - 启动时的许可证弹窗要人处理（`activate_license`）。
 
@@ -183,7 +183,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 - 模型可能用英制或别的单位；creo-cli 和毫米互相换算 → `creo-units`。默认模板决定新零件的单位，这一条不写进 1.0.0，因为它不新建模型。
 - 每次保存都在模型原来的目录（不是工作目录）写一个新的编号版本，旧版本越积越多 → `creo-save-versions`。
 - 刚打开的零件就显示有没保存的修改 → `creo-save-versions`。从模板新建的模型会立刻写盘：不写进 1.0.0，因为它不新建模型。
-- 模态弹窗（未签名 DLL 的提示、启动时的恢复弹窗、许可证弹窗、ORDER_DEBUG、视图状态要求“应用”）在人关掉之前挡住所有命令 → `creo-blocking-dialogs`。
+- 模态弹窗（未签名 DLL 的提示、启动时的恢复弹窗、许可证弹窗、ORDER_DEBUG、视图状态要求“应用”）在人关掉之前挡住所有命令 → `creo-troubleshooting`。
 - 每次会话 Creo 加载未签名的宿主 DLL 前都会问人 → `creo-host-component-loading`。
 - 锁屏或窗口最小化可能让 Creo 崩溃（见于 Intel OpenGL 驱动）；不能无界面运行 → `creo-display-requirements`。
 - 长操作：复杂装配改约束 135–194 秒，BOM 表最长 568 秒，都不能取消。不写进 1.0.0：它的命令都不执行这些操作。
@@ -198,6 +198,6 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 - 特征类型、视图名和分解状态名按界面语言返回 → `creo-localized-names`。
 - 许可：要 `ObjectToolkitJava`；删除工程图自己的尺寸要 TOOLKIT for 3D Drawings；以应用流方式交付的 Creo 没有工具包 → `creo-licenses`。
 - 在主线程以外调用工具包会卡死或崩溃，传给 Creo 的 Java 字符串为 null 会让 Creo 崩溃：不写成条目，这是宿主代码的规则（`plugin/README.md`），不是给 Agent 的。
-- JAR 和 DLL 解锁后不能再改：不写成条目，这是构建规则（`plugin/README.md`），不是给 Agent 的。
+- 解锁后的 JAR 不能再改：不写成条目，`plugin install` 最后才解锁，之后不再动它。
 - 导出时会在文件旁边写 `__out.log`：不写成条目，宿主组件导出到一个私有目录，只把文件移过去。
 - 不能在新建工程图的同一次调用里加视图。不写进 1.0.0，因为它不改工程图。

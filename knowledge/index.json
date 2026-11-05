@@ -5,7 +5,9 @@
       "title": "Key operating points of Creo Parametric",
       "kind": "guide",
       "applies_to": [
-        "context"
+        "context",
+        "session list",
+        "doc open"
       ],
       "tags": [
         "basics"
@@ -14,11 +16,133 @@
       "file": "creo-basics.md"
     },
     {
+      "id": "creo-display-requirements",
+      "title": "Creo needs a visible desktop",
+      "kind": "rule",
+      "applies_to": [
+        "model render",
+        "session list"
+      ],
+      "tags": [
+        "display"
+      ],
+      "lang": "en",
+      "file": "creo-display-requirements.md"
+    },
+    {
+      "id": "creo-geometry-references",
+      "title": "Geometry references change when the model changes",
+      "kind": "guide",
+      "applies_to": [
+        "geometry list",
+        "distance get"
+      ],
+      "tags": [
+        "geometry",
+        "references"
+      ],
+      "lang": "en",
+      "file": "creo-geometry-references.md"
+    },
+    {
+      "id": "creo-host-component-loading",
+      "title": "How Creo loads the host component",
+      "kind": "guide",
+      "applies_to": [
+        "plugin install",
+        "plugin get",
+        "session list"
+      ],
+      "tags": [
+        "install",
+        "host-component"
+      ],
+      "lang": "en",
+      "file": "creo-host-component-loading.md"
+    },
+    {
+      "id": "creo-licenses",
+      "title": "Licenses creo-cli needs",
+      "kind": "rule",
+      "applies_to": [
+        "doctor",
+        "plugin install"
+      ],
+      "tags": [
+        "license"
+      ],
+      "lang": "en",
+      "file": "creo-licenses.md"
+    },
+    {
+      "id": "creo-localized-names",
+      "title": "Names Creo gives in the session language",
+      "kind": "concept",
+      "applies_to": [
+        "feature list",
+        "feature get"
+      ],
+      "tags": [
+        "language"
+      ],
+      "lang": "en",
+      "file": "creo-localized-names.md"
+    },
+    {
+      "id": "creo-materials",
+      "title": "Where Creo finds materials",
+      "kind": "concept",
+      "applies_to": [
+        "material list",
+        "model get"
+      ],
+      "tags": [
+        "materials"
+      ],
+      "lang": "en",
+      "file": "creo-materials.md"
+    },
+    {
+      "id": "creo-relations-and-dimensions",
+      "title": "Relations drive dimensions and parameters",
+      "kind": "concept",
+      "applies_to": [
+        "dimension update",
+        "parameter update",
+        "relation list",
+        "dimension list",
+        "parameter list"
+      ],
+      "tags": [
+        "relations"
+      ],
+      "lang": "en",
+      "file": "creo-relations-and-dimensions.md"
+    },
+    {
+      "id": "creo-save-versions",
+      "title": "How Creo saves: numbered versions in the origin folder",
+      "kind": "concept",
+      "applies_to": [
+        "doc save",
+        "doc get",
+        "doc list"
+      ],
+      "tags": [
+        "save",
+        "versions"
+      ],
+      "lang": "en",
+      "file": "creo-save-versions.md"
+    },
+    {
       "id": "creo-troubleshooting",
       "title": "Common Creo Parametric dialogs and errors",
       "kind": "troubleshooting",
       "applies_to": [
-        "doctor"
+        "doctor",
+        "session list",
+        "session get"
       ],
       "tags": [
         "dialog",
@@ -26,6 +150,24 @@
       ],
       "lang": "en",
       "file": "creo-troubleshooting.md"
+    },
+    {
+      "id": "creo-units",
+      "title": "Model units and the millimetres creo-cli speaks",
+      "kind": "concept",
+      "applies_to": [
+        "dimension list",
+        "dimension update",
+        "model get",
+        "geometry list",
+        "distance get",
+        "parameter update"
+      ],
+      "tags": [
+        "units"
+      ],
+      "lang": "en",
+      "file": "creo-units.md"
     }
   ]
 }

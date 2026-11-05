@@ -52,7 +52,19 @@ A person grants writes in a scope file, a JSON file with the fields `scope_id`, 
 - **Records and settings.** `operation resolve` needs a scope that covers the effects and targets of the operation it settles. `knowledge create` and `knowledge delete` change only the tool's own list of team knowledge links and need no scope.
 - **Limits.** The scope guards against mistakes by the Agent and against instructions injected through untrusted content. It cannot stop an Agent that ignores its Skills, because the scope file is an ordinary file in the user's account; keep such an Agent away from the file through the permissions you give the Agent itself.
 
-{{fill: the scope a person typically grants for creo-cli: the effects and targets of a common task, with an example scope file}}
+A common task, changing a model and delivering it, needs `change` for the edits, `persist` to save, `artifact` to export, and `lifecycle` to open and close documents, on the folder that holds the model and the folder the exports go to:
+
+```json
+{
+  "scope_id": "bracket-rework",
+  "effects": ["change", "persist", "artifact", "lifecycle"],
+  "dangerous": false,
+  "targets": ["file:///D:/work/bracket/"],
+  "expires_at": "2026-12-31T23:59:59Z"
+}
+```
+
+`plugin install` and `plugin remove` need `configure`. Only `doc close --discard` needs `"dangerous": true`.
 
 ## Write Confirmation
 
@@ -72,7 +84,7 @@ A direct write whose preview touches objects beyond those its inputs name is con
 
 ## Host Component
 
-{{fill: what the host component is (a plugin, add-in or script service of Creo Parametric), what it can do inside Creo Parametric, and where it is installed}}
+The host component is an Object TOOLKIT Java application of Creo Parametric: a JAR that Creo loads at start from the registry file `protk.dat` and runs on its main thread. Inside Creo it can do everything the toolkit allows, so it accepts only the methods of the host protocol, and only over a named pipe that the current Windows user alone may open; it opens no network port. It reads models, makes the changes creo-cli's commands describe, opens, saves and closes documents, and writes the export files it is asked for. `plugin install` builds it from its shipped source with the user's JDK 25, unlocks it with the user's own license through PTC's `protk_unlock`, puts it in `plugin\<version>\` in the state directory and writes `plugin\protk.dat` and `plugin\creo-cli-host.json` there; a person adds `toolkit_registry_file <state directory>\plugin\protk.dat` to the `config.pro` Creo starts with. creo-cli never edits `config.pro`. The package carries no binary of it; the JAR is not code-signed.
 
 - **Installing.** Only `creo-cli plugin install` installs or upgrades the host component, and only `creo-cli plugin remove` removes it. Both are two-step writes that need a scope allowing `configure`. `update`, domain commands and the npm installation never install or change it; when it needs installing again, `update` and `doctor` give the `plugin install` command. `plugin install` writes the path of the state directory into the host component's configuration, so a host started from the desktop is found too.
 - **Checks before install.** Every file must match the hash in the host component's manifest; otherwise nothing is installed and the result is `E_INTEGRITY`. The protocol major version must equal the CLI's; otherwise nothing is installed and the result is `E_PROTOCOL`. Each version goes into its own directory.
@@ -103,9 +115,9 @@ Only the writer named in the table writes an entry. Only the current user may re
 - **Connections.** creo-cli connects only to the npm registry, from `update` and `doctor`, and to the Creo Parametric services or devices it drives, from the commands that drive them. It sends no telemetry. Every request honors `HTTPS_PROXY`, `HTTP_PROXY` and `NO_PROXY`, and every TLS connection verifies the server certificate; nothing turns that check off.
 - **Team knowledge.** creo-cli stores only the links of registered team knowledge. It never connects to Feishu and keeps no Feishu account; the Agent reads team documents itself with lark-cli.
 
-{{fill: the secrets creo-cli handles, such as license keys or device passwords, and how a person supplies them; or that it handles none}}
+creo-cli handles no secrets: Creo Parametric checks its own license, and creo-cli never sees or stores license data.
 
-{{fill: the Creo Parametric services or devices creo-cli connects to, with their addresses and ports; or that it talks only to Creo Parametric on the same machine}}
+creo-cli talks only to Creo Parametric on the same computer, through the named pipe of the host component (`\\.\pipe\creo-cli-<session>-<random>`), which only the current Windows user may open. It contacts no PTC service and no license server.
 
 ## Untrusted Content
 

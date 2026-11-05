@@ -37,7 +37,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NO_WINDOW = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 # The representative key operation, without the tool name. It must work on a clean machine;
 # with --fake-host the fake host stands in for the application.
-# {{fill: pick the key operation of creo-cli, such as ["context"] or a read of a sample document}}
+# context: works without Creo, and shows the installation, sessions, scope and knowledge.
 KEY_OPERATION = ["context"]
 
 

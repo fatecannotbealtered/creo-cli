@@ -1,0 +1,86 @@
+{
+  "command": "plugin remove",
+  "rows": [
+    {
+      "row": "normal",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 5,
+        "code": "E_CONFIRMATION_REQUIRED",
+        "summary": "Two-step (configure): the preview names the version."
+      }
+    },
+    {
+      "row": "empty",
+      "applies": false,
+      "reason": "The command always acts on the host component."
+    },
+    {
+      "row": "invalid_input",
+      "applies": true,
+      "arguments": [
+        "--bogus"
+      ],
+      "expected": {
+        "exit": 2,
+        "code": "E_USAGE"
+      }
+    },
+    {
+      "row": "not_found",
+      "applies": false,
+      "reason": "The command names no object, so nothing can be missing."
+    },
+    {
+      "row": "ambiguous",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "conflict",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "unrunnable": "A lock held by an operation with an unknown outcome cannot be made on demand; the runtime unit tests cover it."
+    },
+    {
+      "row": "no_scope",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 4,
+        "code": "E_FORBIDDEN",
+        "summary": "Run with a scope file that does not grant configure."
+      }
+    },
+    {
+      "row": "busy",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "dialog",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "disconnect",
+      "applies": false,
+      "reason": "This command works on the host component's files and involves no Creo instance."
+    },
+    {
+      "row": "unsaved",
+      "applies": false,
+      "reason": "This row applies only to a command that acts on a document."
+    },
+    {
+      "row": "read_back_mismatch",
+      "applies": false,
+      "reason": "This command is two-step: in one call it stops at its preview (exit 5), so a live run never reaches its read-back; the confirmed write is covered by the evaluation (spec issue)."
+    }
+  ]
+}

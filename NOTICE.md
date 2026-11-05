@@ -19,4 +19,4 @@ creo-cli drives Creo Parametric. Creo Parametric is a trademark of its owner. cr
 | tool-driver-cli-spec 1.0.0 | `.agent/` and `contract/driver-contract.json` | See `licenses/` |
 | Driver runtime | `creo_cli/_driver/` | See `licenses/` |
 
-{{fill: every other component the native program or the host component bundles, with its license; or delete this line when there is none}}
+The host component bundles no third-party code. It calls Creo Parametric's Object TOOLKIT Java (`otk.jar`), which Creo provides and which is not bundled.

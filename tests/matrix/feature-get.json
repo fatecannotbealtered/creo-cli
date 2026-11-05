@@ -5,7 +5,12 @@
       "row": "normal",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the normal situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "BASE"
       ],
       "expected": {
         "exit": 0
@@ -13,30 +18,34 @@
     },
     {
       "row": "empty",
-      "applies": true,
-      "arguments": [
-        "{{fill: the arguments of the empty situation; name every target only with the sample placeholders}}"
-      ],
-      "expected": {
-        "exit": 0
-      }
+      "applies": false,
+      "reason": "One feature is one object; a missing one is the not_found row."
     },
     {
       "row": "invalid_input",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the invalid_input situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}"
       ],
       "expected": {
         "exit": 2,
-        "code": "E_USAGE"
+        "code": "E_USAGE",
+        "summary": "--id is missing."
       }
     },
     {
       "row": "not_found",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the not_found situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "99999"
       ],
       "expected": {
         "exit": 3,
@@ -47,11 +56,13 @@
       "row": "ambiguous",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the ambiguous situation; name every target only with the sample placeholders}}"
+        "--id",
+        "BASE"
       ],
       "expected": {
         "exit": 2,
-        "code": "E_AMBIGUOUS"
+        "code": "E_AMBIGUOUS",
+        "summary": "Two Creo sessions are running and the call names neither."
       }
     },
     {
@@ -68,43 +79,67 @@
       "row": "busy",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the busy situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "BASE"
       ],
       "expected": {
         "exit": 7,
-        "code": "E_BUSY"
+        "code": "E_BUSY",
+        "summary": "Creo's main thread is running another request."
       }
     },
     {
       "row": "dialog",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the dialog situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "BASE"
       ],
       "expected": {
         "exit": 9,
-        "code": "E_HUMAN_REQUIRED"
+        "code": "E_HUMAN_REQUIRED",
+        "summary": "A modal dialog (File > Options) is open in Creo."
       }
     },
     {
       "row": "disconnect",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the disconnect situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "BASE"
       ],
       "expected": {
         "exit": 4,
         "code": "E_BACKEND_UNAVAILABLE"
-      }
+      },
+      "unrunnable": "The pipe to the host component cannot be cut on demand at the moment of a call; driver tests D06 and D21 cover this case."
     },
     {
       "row": "unsaved",
       "applies": true,
       "arguments": [
-        "{{fill: the arguments of the unsaved situation; name every target only with the sample placeholders}}"
+        "--session",
+        "{session}",
+        "--doc",
+        "{doc}",
+        "--id",
+        "BASE"
       ],
       "expected": {
-        "exit": 0
+        "exit": 0,
+        "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
       }
     },
     {

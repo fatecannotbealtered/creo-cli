@@ -1,6 +1,6 @@
 # creo-cli
 
-{{fill: one-line pitch: what the tool lets an Agent do in Creo Parametric}}
+Lets an AI Agent read Creo Parametric models and change their dimensions, parameters and features, then save and export them: every change is previewed, confirmed and read back from Creo.
 
 <!-- driver:badges:start -->
 ![Agent-native](https://img.shields.io/badge/🤖-Agent--native-6f42c1)
@@ -84,8 +84,8 @@ Every command of creo-cli, generated from its command registration; `(dangerous)
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
+- `feature`: get, list, update
 - `model`: get, export, render
-- `feature`: list, get, update
 - `geometry`: list
 - `distance`: get
 - `dimension`: list, update
@@ -140,11 +140,47 @@ creo-cli reads without asking, but it writes only what a person has granted in a
 
 A write the scope does not cover changes nothing and returns `E_FORBIDDEN`, with what is missing and a snippet the person can paste into the file. `creo-cli context` shows the scope in force, and `SECURITY.md` describes the scope in full.
 
-{{fill: the effects the commands of creo-cli need, and which commands need each, for example as a table of effect and commands}}
+The commands of creo-cli need these effects:
+
+| Effect | Commands |
+|---|---|
+| `change` | `dimension update`, `parameter update`, `feature update` |
+| `artifact` | `model export`, `model render` |
+| `lifecycle` | `doc open`, `doc close` |
+| `persist` | `doc save` |
+| `configure` | `plugin install`, `plugin remove` |
+
+`doc close --discard` throws unsaved changes away and is in the dangerous tier: it also needs `"dangerous": true`. A scope for changing and delivering models in one folder looks like this:
+
+```json
+{
+  "scope_id": "bracket-rework",
+  "effects": ["change", "artifact", "lifecycle", "persist"],
+  "dangerous": false,
+  "targets": ["file:///D:/work/bracket/"],
+  "expires_at": "2026-12-31T23:59:59Z"
+}
+```
 
 ## About This Tool
 
-{{fill: the domain of Creo Parametric, the typical tasks an Agent does with creo-cli, and screenshots or short examples}}
+Creo Parametric is PTC's parametric 3D CAD system: parts, assemblies and drawings, each built from features driven by dimensions, parameters and relations. creo-cli drives a Creo Parametric session that a person started on the same Windows computer, through a small host component Creo loads when it starts.
+
+Typical tasks:
+
+- Answer questions about a model: its volume, mass, size and material, its features in order, its dimensions, parameters and relations, and the components of an assembly.
+- Change a design: a dimension's value or tolerance, a parameter's value, or suppress, resume or rename a feature. Creo regenerates the model, and a value it cannot regenerate with is taken back.
+- Deliver: save the model, export it to STEP, IGES or STL (a drawing to PDF), or take a JPEG of its window.
+
+```bash
+creo-cli doc open --doc D:/work/bracket/bracket.prt
+creo-cli dimension list --doc bracket.prt
+creo-cli dimension update --doc bracket.prt --id DEPTH --length 12mm
+creo-cli doc save --doc bracket.prt                   # two-step: shows every change since the last save
+creo-cli model export --doc bracket.prt --output D:/work/bracket/out/bracket.stp
+```
+
+Version 1.0 does not create models or features, and does not edit assemblies or drawings; it reads them and exports them.
 
 ## Configuration
 
@@ -153,11 +189,15 @@ A write the scope does not cover changes nothing and returns `E_FORBIDDEN`, with
 | `CREO_CLI_STATE_DIR` | `~/.creo-cli` | The state directory: operation records, locks, the update cache and team knowledge registrations |
 | `CREO_CLI_SCOPE_FILE` | `scope.json` in the state directory | The scope file (see Authorization) |
 | `HTTPS_PROXY`, `HTTP_PROXY`, `NO_PROXY` | not set | Proxies for `update` and `doctor`, the only commands that contact the npm registry |
+| `CREO_CLI_JDK` | the JDK of `PRO_JAVA_COMMAND`, else `JAVA_HOME` | The JDK 25 `plugin install` builds the host component with |
 | `CREO_CLI_FAKE_HOST` | not set | For tests only: sends every call to the fake host instead of Creo Parametric and marks every result as simulated |
 
 ### Finding Creo Parametric
 
-{{fill: how creo-cli finds Creo Parametric: install location, version detection, running instances, and any setting the user can change}}
+- Installation: creo-cli looks under `C:\Program Files\PTC`, `C:\PTC`, `D:\PTC` and `E:\PTC`, up to four folders deep, for a `Common Files` folder that holds Object TOOLKIT Java (`text\java\otk.jar`). The version comes from the installation folder's name, such as `Creo 13.4.1.0`. `creo-cli doctor` shows what it found.
+- Running instances: every running `xtop.exe` is a session, with an ID made of its process ID and start time, such as `creo-9184-1d9a4c2e`. `creo-cli session list` lists them; a modal dialog open in Creo shows as `blocked`.
+- The host component: a session can be driven only while its host component is loaded. creo-cli ships it as source: `creo-cli plugin install` compiles it with a JDK 25 and unlocks it with PTC's `protk_unlock`, which needs the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license, on the license server; running it needs the Object TOOLKIT Java runtime, development or extension license. Run `creo-cli plugin install`, add one line to the `config.pro` Creo starts with, and start Creo: `toolkit_registry_file <state directory>\plugin\protk.dat`. The line stays the same across upgrades; creo-cli never changes `config.pro` itself. Creo loads the host component only at start, so after an upgrade a person restarts Creo.
+- `CREO_CLI_STATE_DIR` moves the state directory, and with it the place of `protk.dat` and of the discovery files the host component writes.
 
 ## Uninstall
 

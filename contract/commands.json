@@ -3,6 +3,53 @@
   "version": "1.0.0",
   "commands": [
     {
+      "path": "feature get",
+      "summary": "One feature: its dimensions, parents and children.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--id",
+          "type": "string",
+          "summary": "The feature's ID, such as 12, or its name.",
+          "required": true
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "parents[*].name",
+        "children[*].name"
+      ],
+      "adapter_capabilities": [
+        "read"
+      ],
+      "survey_ids": [
+        "CAP-011"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-localized-names"
+      ]
+    },
+    {
       "path": "model get",
       "summary": "A model's summary: kind, units, material, mass properties, bounding box and feature count.",
       "effects": [
@@ -38,7 +85,10 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-units",
+        "creo-materials"
+      ]
     },
     {
       "path": "feature list",
@@ -85,52 +135,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
-    },
-    {
-      "path": "feature get",
-      "summary": "One feature: its dimensions, parents and children.",
-      "effects": [
-        "observe"
-      ],
-      "modes": [
-        "session"
-      ],
-      "target_kind": "feature",
-      "flags": [
-        {
-          "name": "--session",
-          "type": "string",
-          "summary": "The session ID of the instance (DCLI-202)."
-        },
-        {
-          "name": "--doc",
-          "type": "string",
-          "summary": "The document: its ID or path; in file mode, the file path."
-        },
-        {
-          "name": "--id",
-          "type": "string",
-          "summary": "The feature's ID, such as 12, or its name.",
-          "required": true
-        }
-      ],
-      "untrusted_fields": [
-        "name",
-        "parents[*].name",
-        "children[*].name"
-      ],
-      "adapter_capabilities": [
-        "read"
-      ],
-      "survey_ids": [
-        "CAP-011"
-      ],
-      "irreversible": false,
-      "halt": false,
-      "tolerances": {},
-      "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-localized-names"
+      ]
     },
     {
       "path": "geometry list",
@@ -187,7 +194,10 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ]
     },
     {
       "path": "distance get",
@@ -234,7 +244,10 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ]
     },
     {
       "path": "dimension list",
@@ -284,7 +297,10 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-relations-and-dimensions",
+        "creo-units"
+      ]
     },
     {
       "path": "dimension update",
@@ -398,7 +414,10 @@
         "lower_mm": 1e-06
       },
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-relations-and-dimensions",
+        "creo-units"
+      ]
     },
     {
       "path": "parameter list",
@@ -446,7 +465,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-relations-and-dimensions"
+      ]
     },
     {
       "path": "parameter update",
@@ -506,7 +527,10 @@
         "value": 1e-06
       },
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-relations-and-dimensions",
+        "creo-units"
+      ]
     },
     {
       "path": "relation list",
@@ -543,7 +567,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-relations-and-dimensions"
+      ]
     },
     {
       "path": "material list",
@@ -595,7 +621,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-materials"
+      ]
     },
     {
       "path": "component list",
@@ -642,7 +670,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-units"
+      ]
     },
     {
       "path": "feature update",
@@ -703,7 +733,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-localized-names"
+      ]
     },
     {
       "path": "model export",
@@ -748,7 +780,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-save-versions"
+      ]
     },
     {
       "path": "model render",
@@ -803,7 +837,9 @@
       "halt": false,
       "tolerances": {},
       "default_fields": [],
-      "related_knowledge": []
+      "related_knowledge": [
+        "creo-display-requirements"
+      ]
     }
   ]
 }
