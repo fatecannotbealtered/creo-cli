@@ -4,6 +4,8 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-06
+
 ### Added
 
 - The creo-cli project, built on tool-driver-cli-spec 1.0.5.
