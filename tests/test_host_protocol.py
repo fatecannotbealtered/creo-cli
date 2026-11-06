@@ -132,7 +132,18 @@ class HostProtocolTest(unittest.TestCase):
         self.assertEqual(caught.exception.code, "E_NOT_FOUND")
         self.assertEqual(caught.exception.data["native_message"], "Creo says: not here")
 
-    def test_a_second_request_while_one_runs_is_busy_and_not_sent(self) -> None:
+    def test_short_requests_that_meet_take_turns(self) -> None:
+        results = []
+        first = threading.Thread(target=lambda: results.append(
+            self.connect().call("apply", {"command": "x", "inputs": {"sleep_ms": 150}}, 3000)))
+        first.start()
+        time.sleep(0.05)
+        second = self.connect().call("read", {"command": "x", "inputs": {}}, 3000)
+        first.join()
+        self.assertEqual(second["result"], {"text": "ok"})
+        self.assertEqual(len(results), 1)
+
+    def test_a_request_while_a_long_one_runs_is_busy_and_not_sent(self) -> None:
         first = threading.Thread(target=lambda: self.connect().call("apply", {"command": "x", "inputs": {"sleep_ms": 1500}}, 5000))
         first.start()
         time.sleep(0.4)

@@ -10,10 +10,11 @@ import java.util.concurrent.TimeoutException;
  *
  * <p>Pipe threads never call the application. They hand one task at a time to this class;
  * the application's timer calls {@link #pump()} on the main thread, which runs it. Only one
- * task exists at a time: a request that arrives while another is queued or running is
- * answered {@code E_BUSY} at once, and a request the main thread does not take within its
- * pickup time is withdrawn and answered {@code E_BUSY} too -- in both cases nothing was
- * dispatched. A task can ask to continue on a later tick, for work Creo allows only after
+ * task exists at a time: a request that arrives while another is queued or running waits for
+ * it, so short requests that meet, such as a job's worker and the poll of that job, take
+ * turns. A request that cannot start within its pickup time, because another request holds
+ * the main thread or the main thread takes nothing, is withdrawn and answered {@code E_BUSY}
+ * -- nothing was dispatched. A task can ask to continue on a later tick, for work Creo allows only after
  * control went back to it (closing a window before erasing its model).
  */
 public final class MainThread {
@@ -72,13 +73,22 @@ public final class MainThread {
         long start = System.nanoTime();
         Entry entry = new Entry();
         entry.task = task;
+        long pickup = Math.max(1, Math.min(pickupMs, deadlineMs - 100));
         synchronized (lock) {
-            if (current != null) {
-                throw HostError.busy("Creo is running another request from creo-cli; nothing was sent.", RETRY_AFTER_MS);
+            while (current != null) {
+                long waited = (System.nanoTime() - start) / 1_000_000;
+                if (waited >= pickup) {
+                    throw HostError.busy("Creo is running another request from creo-cli; nothing was sent.", RETRY_AFTER_MS);
+                }
+                try {
+                    lock.wait(Math.min(20, pickup - waited));
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    throw HostError.busy("The request was interrupted before it started.", RETRY_AFTER_MS);
+                }
             }
             current = entry;
         }
-        long pickup = Math.max(1, Math.min(pickupMs, deadlineMs - 100));
         while (true) {
             synchronized (lock) {
                 if (entry.started) {
@@ -88,6 +98,7 @@ public final class MainThread {
                 if (waited >= pickup) {
                     entry.withdrawn = true;
                     current = null;
+                    lock.notifyAll();
                     throw HostError.busy("Creo's main thread did not take the request within " + pickup
                             + " ms; it is busy or a dialog is open. Nothing was sent.", RETRY_AFTER_MS);
                 }
@@ -97,6 +108,7 @@ public final class MainThread {
                     Thread.currentThread().interrupt();
                     entry.withdrawn = true;
                     current = null;
+                    lock.notifyAll();
                     throw HostError.busy("The request was interrupted before it started.", RETRY_AFTER_MS);
                 }
             }
@@ -153,6 +165,7 @@ public final class MainThread {
         synchronized (lock) {
             if (current == entry) {
                 current = null;
+                lock.notifyAll();
             }
         }
         if (failure != null) {
