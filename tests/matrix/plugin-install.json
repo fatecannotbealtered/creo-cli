@@ -8,7 +8,11 @@
       "expected": {
         "exit": 0,
         "summary": "Two-step (configure), confirmed with its token: builds and installs the host component; plugin get reports the version on disk."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162822-plugin-install.json#normal"
     },
     {
       "row": "empty",
@@ -24,7 +28,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162822-plugin-install.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -54,7 +63,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not grant configure."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163023-plugin-install.json#no_scope"
     },
     {
       "row": "busy",
@@ -84,7 +98,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper deletes protk.dat from the install folder, so plugin get finds no version on disk."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162826-plugin-install.json#read_back_mismatch"
     }
   ]
 }

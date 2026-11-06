@@ -13,7 +13,11 @@
       "expected": {
         "exit": 0,
         "summary": "Opens a file that is not open yet."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162713-doc-open.json#normal"
     },
     {
       "row": "empty",
@@ -31,7 +35,12 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "--doc is missing."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162834-doc-open.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -45,7 +54,12 @@
       "expected": {
         "exit": 3,
         "code": "E_NOT_FOUND"
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162834-doc-open.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -58,7 +72,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163231-doc-open.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -73,7 +92,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "A model of the same name from another folder is already in session, and Creo holds one model of a name: conflict application_state."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162836-doc-open.json#conflict"
     },
     {
       "row": "no_scope",
@@ -88,7 +112,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the file."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163025-doc-open.json#no_scope"
     },
     {
       "row": "busy",
@@ -103,7 +132,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163107-doc-open.json#busy"
     },
     {
       "row": "dialog",
@@ -118,7 +152,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163145-doc-open.json#dialog"
     },
     {
       "row": "disconnect",
@@ -153,7 +192,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper closes the model in Creo."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162742-doc-open.json#read_back_mismatch"
     }
   ]
 }

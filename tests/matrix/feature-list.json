@@ -12,7 +12,11 @@
       ],
       "expected": {
         "exit": 0
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162752-feature-list.json#normal"
     },
     {
       "row": "empty",
@@ -28,7 +32,11 @@
       "expected": {
         "exit": 0,
         "summary": "Past the last feature: no items."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162718-feature-list.json#empty"
     },
     {
       "row": "invalid_input",
@@ -45,7 +53,12 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "--limit above its maximum of 100."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162718-feature-list.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -60,7 +73,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162718-feature-list.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -70,7 +88,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163235-feature-list.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -95,7 +118,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163115-feature-list.json#busy"
     },
     {
       "row": "dialog",
@@ -110,7 +138,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163148-feature-list.json#dialog"
     },
     {
       "row": "disconnect",
@@ -139,7 +172,11 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes: run after any unsaved change to the document."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162936-feature-list.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

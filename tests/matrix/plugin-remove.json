@@ -8,7 +8,11 @@
       "expected": {
         "exit": 0,
         "summary": "Two-step (configure), confirmed with its token: removes the host component; plugin get reports no version on disk."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162828-plugin-remove.json#normal"
     },
     {
       "row": "empty",
@@ -24,7 +28,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162828-plugin-remove.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -54,7 +63,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not grant configure."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163024-plugin-remove.json#no_scope"
     },
     {
       "row": "busy",
@@ -84,7 +98,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper puts the removed host component back."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162830-plugin-remove.json#read_back_mismatch"
     }
   ]
 }

@@ -13,7 +13,11 @@
       "expected": {
         "exit": 0,
         "summary": "Two-step, confirmed with its token: saves the changes since the last save, and the read-back finds them with `saved: true`."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163004-doc-save.json#normal"
     },
     {
       "row": "empty",
@@ -27,7 +31,11 @@
       "expected": {
         "exit": 0,
         "summary": "A clean document, confirmed with its token: Creo writes a new version; the preview lists no change."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163009-doc-save.json#empty"
     },
     {
       "row": "invalid_input",
@@ -42,7 +50,12 @@
       "expected": {
         "exit": 2,
         "code": "E_USAGE"
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163004-doc-save.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -57,7 +70,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document not-open is open in the session."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163004-doc-save.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -70,7 +88,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163232-doc-save.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -85,7 +108,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "A newer version of the document's file is on disk (disk: changed)."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163011-doc-save.json#conflict"
     },
     {
       "row": "no_scope",
@@ -100,7 +128,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163022-doc-save.json#no_scope"
     },
     {
       "row": "busy",
@@ -115,7 +148,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163109-doc-save.json#busy"
     },
     {
       "row": "dialog",
@@ -130,7 +168,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163146-doc-save.json#dialog"
     },
     {
       "row": "disconnect",
@@ -159,7 +202,11 @@
       "expected": {
         "exit": 0,
         "summary": "Confirmed with its token: saves the unsaved changes the preview lists."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-06-162957-doc-save.json#unsaved"
     },
     {
       "row": "read_back_mismatch",
@@ -174,7 +221,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "After an unsaved dimension change: while the tool waits before its read-back, --tamper deletes the version file the save wrote, so `saved` is false."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-06-163047-doc-save.json#read_back_mismatch"
     }
   ]
 }

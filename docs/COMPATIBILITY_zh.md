@@ -11,7 +11,7 @@ Creo Parametric 版本、操作系统和模式的每种组合占一行，由 `py
 <!-- driver:support-matrix:start -->
 | 软件版本 | 操作系统 | 模式 | 状态 |
 |---|---|---|---|
-| >=13.4 <13.5 | Windows | session | ⏳ untested |
+| 13.4 | Windows | session | ✅ verified |
 | >=13.4 <13.5 | macOS | session | ⛔ unsupported |
 | >=13.4 <13.5 | Linux | session | ⛔ unsupported |
 <!-- driver:support-matrix:end -->
