@@ -6,7 +6,7 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ### Added
 
-- The creo-cli project, built on tool-driver-cli-spec 1.0.4.
+- The creo-cli project, built on tool-driver-cli-spec 1.0.5.
 - Read commands: `model get`, `feature list`, `feature get`, `geometry list`, `distance get`, `dimension list`, `parameter list`, `relation list`, `material list` and `component list`. Every list pages with `--limit` (at most 100) and `--offset`. The feature, dimension, geometry and distance commands take parts and assemblies, `component list` takes assemblies, and `reference` shows it; other documents are refused before Creo is asked.
 - Write commands: `dimension update` (value and tolerance), `parameter update`, `feature update` (suppress, resume, rename), `model export` (STEP, IGES, STL, PDF), which runs as a long job, and `model render` (JPEG).
 - The session and document commands `session list`, `session get`, `doc list`, `doc get`, `doc open`, `doc save` and `doc close`, and `plugin get`, `plugin install` and `plugin remove`. `session list` asks every running Creo at the same time, each within its own limit, so one that hangs does not hold up the others, and looks for a blocking dialog on every call. Documents report their kind (part, assembly or drawing). `doc open` and `doc save` run as long jobs, since a large assembly can take Creo more than a minute; `doc save` checks that the save wrote a new version file. Opening a model while another of that name is open, or closing one another open model uses, is refused with `E_CONFLICT` and the conflict `application_state`.
