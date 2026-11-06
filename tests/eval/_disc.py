@@ -39,6 +39,16 @@ def close_disc(run):
         raise RuntimeError(f"disc.prt did not close in Creo: {reply.get('error')}")
 
 
+def save_disc(agent):
+    """What an Agent does to save disc.prt: confirm the save, then follow its long job to the end."""
+    out = agent.run("doc", "save", "--doc", "disc.prt")
+    done = agent.run("doc", "save", "--doc", "disc.prt", "--confirm", out.details["confirm_token"])
+    job = ((done.data or {}).get("result") or {}).get("job") or {}
+    view = {"state": job.get("state")}
+    while job.get("poll") and view.get("state") in ("queued", "running"):
+        view = agent.line(job["poll"]).data or {}
+
+
 def dimensions(run):
     reply = run.tool("dimension", "list", "--doc", path(run))
     return {d["name"]: d["value_mm"] for d in reply["data"]["items"]}

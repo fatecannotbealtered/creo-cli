@@ -9,6 +9,8 @@ registration that breaks a rule, so a mistake shows up at once. A command needs:
 - ``modes``, ``target_kind``, ``flags`` (with a unit for every physical quantity), ``untrusted_fields``
 - ``irreversible``, ``halt``, ``tolerances``, ``default_fields``, ``related_knowledge``
 - ``output_schema``, ``examples``, ``maturity`` and ``evidence``
+- ``doc_kinds`` when it works on only some kinds of model, and ``long`` when it can take Creo
+  more than a minute
 
 The runtime derives the adapter capabilities from the effects (DCLI-260), and adds ``--limit``
 and ``--offset`` to every list command (DCLI-026). The capabilities a command offers are marked
@@ -28,6 +30,8 @@ from ..maturity import DOMAIN as MATURITY
 
 MODEL = "the model's default coordinate system; lengths in mm"
 EXAMPLE = "creo-cli {path} --session creo-9184-1d9a4c2e --doc D:/work/bracket.prt"
+# Features, dimensions and geometry belong to parts and assemblies; a drawing has none of its own.
+SOLID = ["part", "assembly"]
 
 
 def _items(item: dict[str, Any]) -> dict[str, Any]:
@@ -71,6 +75,7 @@ COMMANDS: list[dict[str, Any]] = [
             **FEATURE_ITEM, "dimensions": {"type": "array", "items": {"type": "object", "properties": DIMENSION_ITEM}},
             "parents": {"type": "array"}, "children": {"type": "array"}}},
         ["name", "parents[*].name", "children[*].name", "dimensions[*].id", "dimensions[*].name"], " --id 12", related_knowledge=["creo-localized-names"],
+        doc_kinds=SOLID,
     ),
     _read(
         "model get", "A model's summary: kind, units, material, mass properties, bounding box and feature count.",
@@ -85,7 +90,7 @@ COMMANDS: list[dict[str, Any]] = [
     _read(
         "feature list", "The features of a model in regeneration order: ID, number, name, type and status.",
         "feature", [], _items(FEATURE_ITEM), ["name"], related_knowledge=["creo-localized-names"],
-        default_fields=["id", "name", "type", "status"],
+        default_fields=["id", "name", "type", "status"], doc_kinds=SOLID,
     ),
     _read(
         "geometry list", "Faces, edges, axes, datum planes and coordinate systems with the references other commands take.",
@@ -99,6 +104,7 @@ COMMANDS: list[dict[str, Any]] = [
         ["reference", "name"], " --kind surface", output_coordinate_system=MODEL,
         related_knowledge=["creo-geometry-references", "creo-units"],
         default_fields=["reference", "kind", "shape", "feature_id", "normal", "origin_mm", "axis_direction", "radius_mm"],
+        doc_kinds=SOLID,
     ),
     _read(
         "distance get", "The shortest distance between two geometry references, as Creo measures it.",
@@ -107,13 +113,13 @@ COMMANDS: list[dict[str, Any]] = [
              "summary": "A reference from geometry list, such as surface:41, or a datum name such as FRONT."},
             {"name": "--to", "type": "string", "required": True, "summary": "A second reference, as --from."}],
         {"type": "object", "properties": {"from": STR, "to": STR, "distance_mm": NUM}},
-        [], " --from FRONT --to surface:41", related_knowledge=["creo-geometry-references", "creo-units"],
+        [], " --from FRONT --to surface:41", related_knowledge=["creo-geometry-references", "creo-units"], doc_kinds=SOLID,
     ),
     _read(
         "dimension list", "The dimensions of a model, or of one feature: name, kind, value, tolerance and owner.",
         "dimension", [{"name": "--feature", "type": "string", "summary": "Only this feature's dimensions: its ID or name."}],
         _items(DIMENSION_ITEM), ["id", "name"], related_knowledge=["creo-relations-and-dimensions", "creo-units"],
-        default_fields=["id", "kind", "value_mm", "value_deg", "driven_by_relation", "tolerance"],
+        default_fields=["id", "kind", "value_mm", "value_deg", "driven_by_relation", "tolerance"], doc_kinds=SOLID,
     ),
     {
         "path": "dimension update",
@@ -137,7 +143,7 @@ COMMANDS: list[dict[str, Any]] = [
         "tolerances": {"value_mm": 0.000001, "value_deg": 0.000001, "plus_mm": 0.000001, "minus_mm": 0.000001,
                        "upper_mm": 0.000001, "lower_mm": 0.000001},
         "default_fields": [], "related_knowledge": ["creo-relations-and-dimensions", "creo-units"],
-        "output_schema": {"type": "object", "properties": DIMENSION_ITEM},
+        "output_schema": {"type": "object", "properties": DIMENSION_ITEM}, "doc_kinds": SOLID,
         "examples": [EXAMPLE.format(path="dimension update") + " --id d12 --length 25mm",
                      EXAMPLE.format(path="dimension update") + " --id d12 --plus 0.1mm --minus 0.05mm"],
         "maturity": "draft", "evidence": [],
@@ -181,7 +187,7 @@ COMMANDS: list[dict[str, Any]] = [
         "component", [],
         _items({"id": INT, "model": STR, "kind": STR, "status": STR, "origin_mm": {"type": "array"}}),
         ["model"], output_coordinate_system="the assembly's default coordinate system; lengths in mm",
-        related_knowledge=["creo-units"], default_fields=["id", "model", "kind", "status"],
+        related_knowledge=["creo-units"], default_fields=["id", "model", "kind", "status"], doc_kinds=["assembly"],
     ),
     {
         "path": "feature update",
@@ -194,7 +200,7 @@ COMMANDS: list[dict[str, Any]] = [
         ],
         "untrusted_fields": ["name"],
         "irreversible": False, "halt": False, "tolerances": {}, "default_fields": [], "related_knowledge": ["creo-localized-names"],
-        "output_schema": {"type": "object", "properties": FEATURE_ITEM},
+        "output_schema": {"type": "object", "properties": FEATURE_ITEM}, "doc_kinds": SOLID,
         "examples": [EXAMPLE.format(path="feature update") + " --id 12 --status suppressed"],
         "maturity": "draft", "evidence": [],
     },
@@ -207,6 +213,8 @@ COMMANDS: list[dict[str, Any]] = [
         "untrusted_fields": [],
         "irreversible": False, "halt": False, "tolerances": {}, "default_fields": [], "related_knowledge": ["creo-save-versions"],
         "output_schema": {"type": "object", "properties": {"path": STR, "format": STR, "bytes": INT}},
+        # A large assembly's STEP export takes Creo minutes, so the runtime runs it as a long job.
+        "long": True,
         "examples": [EXAMPLE.format(path="model export") + " --output D:/work/out/bracket.stp"],
         "maturity": "draft", "evidence": [],
     },
@@ -222,6 +230,7 @@ COMMANDS: list[dict[str, Any]] = [
         "untrusted_fields": [],
         "irreversible": False, "halt": False, "tolerances": {}, "default_fields": [], "related_knowledge": ["creo-display-requirements"],
         "output_schema": {"type": "object", "properties": {"path": STR, "width": INT, "height": INT, "bytes": INT}},
+        "doc_kinds": SOLID,
         "examples": [EXAMPLE.format(path="model render") + " --output D:/work/out/bracket.jpg"],
         "maturity": "draft", "evidence": [],
     },

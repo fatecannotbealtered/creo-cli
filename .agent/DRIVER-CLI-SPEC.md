@@ -2,7 +2,7 @@
 
 English | [中文](DRIVER-CLI-SPEC_zh.md)
 
-> Version 1.0.2 · Clauses DCLI-001 to DCLI-281
+> Version 1.0.3 · Clauses DCLI-001 to DCLI-281
 
 ## How to Read
 
@@ -137,7 +137,7 @@ Check: 🤖 General conformance test R04.
 - `notices`: a list of `{type, severity, message}`, where `severity` is `info` or `warning`. The update notice (DCLI-079) is one example. Omitted when empty.
 - `untrusted`: a list of JSON paths in the envelope that hold untrusted content (DSEC-021). Omitted when empty.
 
-`untrusted` MUST also list every text the runtime writes that embeds an untrusted value, such as a `message`, the `action` or a `label` of a preview, or a generated command (DCLI-011) that contains a name taken from a document.
+`untrusted` MUST also list every text the runtime writes that embeds an untrusted value, such as a `message`, the `action` or a `label` of a preview, or a generated command (DCLI-011) that contains a name taken from a document. A notice the adapter adds (DCLI-260) has the type `application`, and its `message` is listed in `untrusted`.
 
 Why: The Agent finds notices and untrusted markers in the same place in every tool, and a document's text cannot slip in through a sentence the tool wrote.
 Check: 🤖 General conformance test R04.
@@ -155,7 +155,7 @@ Check: 🤖 General conformance test R04.
 
 ### DCLI-006 Lists
 
-A command that returns a list MUST return `items`, `count` (the number of items in this page) and `has_more`. It MUST add `total` when the total is known, and `next_offset` when `has_more` is `true`. When nothing matches, it MUST return an empty `items` with `ok: true`, never `E_NOT_FOUND`.
+A command that returns a list MUST return `items`, `count` (the number of items in this page) and `has_more`. It MUST add `total` when the total is known, and `next_offset` when `has_more` is `true`. When nothing matches, it MUST return an empty `items` with `ok: true`, never `E_NOT_FOUND`. `--limit` and `--offset` page the `items` (DCLI-026), so the runtime MUST refuse an adapter result of a `list` command that has no `items` list, with `E_PROTOCOL`.
 
 Why: The Agent pages every list the same way and can tell "nothing matches" from "wrong target".
 Check: 🤖 General conformance test R04 checks the list keys; the "empty" row of the behavior matrix (DVER-030) covers the empty case.
@@ -206,7 +206,7 @@ These codes and cases MUST carry these fields in `details`:
 |---|---|---|
 | `E_USAGE` | `problem`, `parameter` | What is wrong, and with which parameter; for a number without a unit, `problem` lists the accepted units (DCLI-082) |
 | `E_AMBIGUOUS` | `candidates` | The objects or instances that match; an instance carries the session summary of DCLI-202. The Agent picks one only when the user named it |
-| `E_CONFLICT` | `conflict` | Which precondition failed, one of the contract's `conflict_values` (DCLI-056, DCLI-201, DCLI-206, DCLI-211, DCLI-212) |
+| `E_CONFLICT` | `conflict` | Which precondition failed, one of the contract's `conflict_values` (DCLI-056, DCLI-201, DCLI-206, DCLI-211, DCLI-212). A conflict inside the application, such as another model of that name already open or a model another one uses, is `application_state`, and `message` says what stands in the way; it is for a capability that has no preview of its own, such as `open_doc` or `close_doc`, or a dispatch the state changed under. A domain command's preview reports such a conflict as `can_apply: false` with `blocked_by` (DCLI-054) |
 | `E_FORBIDDEN` | `scope` | `{missing, snippet}`: `missing` is `{effects, targets, dangerous}`, what the scope lacks; `snippet` is a scope fragment the person can paste into the scope file (DSEC-015) |
 | `E_OUTCOME_UNKNOWN` | `lookup` | The exact command that settles the outcome (DCLI-063) |
 | `E_BUSY` | `retry_after_ms` | How long to wait before trying again |
@@ -589,6 +589,7 @@ Every command MUST declare its effects. The effect sets the default confirmation
 
 - A command that declares several effects MUST take the strictest confirmation tier among them.
 - A command that creates a new file as well as changing a document, such as one that adds a board to a project, declares `artifact` with its other effects.
+- An `artifact` command whose file the application names itself has no `output` flag; its preview MUST name as a target the file or the document it goes into, so the scope covers it, and its apply reports the file in `files` (DCLI-260).
 - Whatever the effect, these operations MUST be dangerous: an irreversible change, discarding unsaved changes, and closing an instance the tool did not start. A change is irreversible when no command of the application or of the tool can set the earlier state back: a delete without undo is irreversible, in file mode too, while a move or a field change, which another call can set back, is not. Such a command MUST declare `irreversible: true` in its registration (DCLI-029); the runtime then makes it dangerous and never guesses.
 - Halt commands declare `lifecycle` and are always direct (DSEC-018).
 
@@ -1151,7 +1152,7 @@ When a command supports both file and session mode, the runtime MUST choose the 
 - session mode when `--session` is given, or when exactly one running instance has the document open; that instance is then selected (DCLI-202);
 - file mode when no running instance has the file open.
 
-A write in file mode that changes or saves a file that a running instance has open MUST be refused with `E_CONFLICT` and `conflict` `file_open_in_session`. A tool that runs only in file mode, and so lists no instances, lets the adapter report this conflict (DCLI-279). A write that only makes other files from the document, such as an export, MAY go ahead; when the instance may have unsaved changes, the response MUST carry a notice that it used the file on disk. `reference` shows the tier of each mode (DCLI-031).
+A write in file mode that changes or saves a file that a running instance has open MUST be refused with `E_CONFLICT` and `conflict` `file_open_in_session`. A tool that runs only in file mode, and so lists no instances, lets the adapter report this conflict (DCLI-279). A write that only makes other files from the document, such as an export, MAY go ahead; when the instance may have unsaved changes, the response MUST carry a notice that it used the file on disk. A tool that runs only in file mode lets its adapter add this notice (DCLI-260). `reference` shows the tier of each mode (DCLI-031).
 
 Why: The mode decides where the truth lives and what saving means, so every write knows where to read back; two writers on one file, one in memory and one on disk, would undo each other.
 Check: 🤖 General conformance test R01 checks the mode declarations in `reference`; driver conformance test D03 checks `file_open_in_session`.
@@ -1278,14 +1279,14 @@ Removed: its rules are part of DCLI-201 and DCLI-210.
 
 ### DCLI-220 Job object and commands
 
-A job MUST have at least these fields: `id`, `operation_id` (`null` for a read job, DCLI-065), `state`, `cancel_requested`, `started_at` and `finished_at` (`null` until the job ends). When the application reports progress, the job MUST also have `progress` `{done, total, unit}`; `total` is `null` when unknown.
+A job MUST have at least these fields: `id`, `operation_id` (`null` for a read job, DCLI-065), `state`, `cancel_requested`, `started_at`, and `finished_at` once the job has ended. When the application reports progress, the job MUST also have `progress` `{done, total, unit}`; `total` is `null` when unknown.
 
-`state` is one of `planned`, `running`, `blocked`, `completed`, `failed`, `partial`, `unknown` and `cancelled`. A `blocked` job also carries `action`: what a person must do before it can go on (DCLI-066). When the job is in a final state (`completed`, `failed`, `partial`, `unknown` or `cancelled`), `job get` MUST also return its `receipt`, its `result`, and `ok`, derived from the receipt as DCLI-062 sets, with the error code in `code` when `ok` is `false` (DCLI-065). A read job has no receipt: it returns `ok`, the read's `result` when `ok` is `true`, and `code` and `message` when it is `false`. These are fields of `data`: `job get` itself succeeds, and the `error.details.receipt` of DCLI-062 belongs to the write, not to `job get`.
+`state` is one of `planned`, `running`, `blocked`, `completed`, `failed`, `partial`, `unknown` and `cancelled`. A `blocked` job also carries `action`: what a person must do before it can go on (DCLI-066). A job the runtime runs (DCLI-065) MUST show as `blocked` while a dialog holds its session, with `action`, and `knowledge` when the adapter names entries, taken from the session's `blocker` (DCLI-202); once the person has dealt with the dialog it shows as `running` again. When the job is in a final state (`completed`, `failed`, `partial`, `unknown` or `cancelled`), `job get` MUST also return its `receipt`, its `result`, and `ok`, derived from the receipt as DCLI-062 sets, with the error code in `code` when `ok` is `false` (DCLI-065). A read job has no receipt: it returns `ok`, the read's `result` when `ok` is `true`, and `code` and `message` when it is `false`. These are fields of `data`: `job get` itself succeeds, and the `error.details.receipt` of DCLI-062 belongs to the write, not to `job get`.
 
-`job list` lists the long jobs of every session. `job get --job <id> --wait <duration>` MUST return when the job ends or the time runs out, whichever comes first. `--wait` MAY be up to 600 seconds, because waiting is not work (DCLI-065); a longer value returns `E_USAGE`. `job get` MUST return `poll_after_ms`, the time after which asking again is useful.
+`job list` lists the long jobs of every session, a blocked one as `blocked`. `job get --job <id> --wait <duration>` MUST return when the job ends, becomes blocked, or the time runs out, whichever comes first. `--wait` MAY be up to 600 seconds, because waiting is not work (DCLI-065); a longer value returns `E_USAGE`. `job get` MUST return `poll_after_ms`, the time after which asking again is useful.
 
-Why: The Agent waits for long work in bounded calls instead of one call that hangs, and reads the job's real outcome in the same shape as that of any write.
-Check: 🤖 Driver conformance tests D11 and D26.
+Why: The Agent waits for long work in bounded calls instead of one call that hangs, and reads the job's real outcome in the same shape as that of any write. A job stuck behind a dialog says so, so the Agent asks the person instead of waiting.
+Check: 🤖 Driver conformance tests D11 and D26; runtime unit tests for a blocked job.
 
 ### DCLI-221 Cancelling a job
 
@@ -1362,6 +1363,7 @@ Besides the domain commands, the tool author writes only the adapter capabilitie
 - CLI-side capabilities run in the CLI process. Instance-side capabilities run in the adapter or, as host methods, in a host component (DCLI-262, DCLI-274).
 - `contract/schemas/adapter.schema.json` defines the request and the result of every capability. The in-process adapter interface and the host methods MUST use the same definitions.
 - A capability reports facts: the dispatch state, the change, the delivery, the persistence and the observed values. The runtime compares the read-back with the preview and derives the receipt (DCLI-057, DCLI-062).
+- A read result and the facts of a write MAY carry `notices`, each `{severity, message}`, for what the Agent should know, such as the notice of DCLI-201. The runtime puts them in `meta.notices` (DCLI-004).
 - Each CLI call is a separate process. What an adapter must remember between calls, such as the instances the tool started or, without a host component, the changes since the last save (DCLI-277), MUST be kept in the adapter state store that the runtime provides under `adapter/` in the state directory (DSEC-031).
 
 Why: The author writes only what is specific to the application; everything shared, including the judgment of success, comes from the runtime.
@@ -1491,7 +1493,7 @@ The host MUST return only these error codes:
 | `E_NOT_FOUND` | The object or document does not exist |
 | `E_AMBIGUOUS` | A name matches several objects, such as two parts with the same reference; with `candidates` |
 | `E_VALIDATION` | The application rejected the content |
-| `E_CONFLICT` | A precondition does not hold, such as a file another program has open; with `conflict`, a value of DCLI-012 |
+| `E_CONFLICT` | A precondition does not hold, such as a file another program has open; with `conflict`, a value of DCLI-012, `application_state` for a conflict inside the application |
 | `E_UNSUPPORTED` | The application cannot do this |
 | `E_BACKEND_UNAVAILABLE` | The application is not installed, has no license or cannot be reached; nothing was sent |
 | `E_TIMEOUT` | A read took too long; nothing was changed |

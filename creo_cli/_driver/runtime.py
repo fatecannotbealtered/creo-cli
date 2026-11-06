@@ -132,7 +132,7 @@ class Run:
         if not self.backend.has(cap, session):
             raise DriverError("E_UNSUPPORTED", f"This tool's adapter has no {cap} capability, so it cannot do this.")
         try:
-            return self.backend.call(cap, request, deadline_ms or self.read_deadline_ms)
+            reply = self.backend.call(cap, request, deadline_ms or self.read_deadline_ms)
         except CapabilityError as exc:
             raise self.host_error(exc, "not_started") from None
         except BadReply as exc:
@@ -148,6 +148,22 @@ class Run:
             raise DriverError("E_BACKEND_UNAVAILABLE", f"{exc}; the session is lost.") from None
         except BadProtocol as exc:
             raise DriverError("E_PROTOCOL", f"The host component cannot be used: {exc}. Nothing was sent.") from None
+        self.take_notices(reply)
+        return reply
+
+    def take_notices(self, reply: Any) -> None:
+        """Notices the adapter adds to a reply go to ``meta.notices``, their text marked
+        untrusted because it may quote the application (DCLI-004, DCLI-260)."""
+        notices = reply.get("notices") if isinstance(reply, dict) else None
+        for notice in notices if isinstance(notices, list) else []:
+            if isinstance(notice, dict) and notice.get("severity") in ("info", "warning") \
+                    and isinstance(notice.get("message"), str) and notice["message"]:
+                entry = {"type": "application", "severity": notice["severity"], "message": notice["message"][:300],
+                         "_untrusted": True}
+                kept = [n for n in self.notices if n.get("type") == "application"]
+                # Each item of a batch may say the same: one copy, and a few notices at most.
+                if entry not in kept and len(kept) < 5:
+                    self.notices.append(entry)
 
     def host_error(self, exc: CapabilityError, dispatch_state: str, write: bool = False) -> DriverError:
         """Turn an error the adapter or a host reported into the runtime's error (DCLI-279)."""

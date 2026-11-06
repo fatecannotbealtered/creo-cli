@@ -2,7 +2,7 @@
 
 English | [中文](DRIVER-SEC-SPEC_zh.md)
 
-> Version 1.0.2 · Clauses DSEC-001 to DSEC-073
+> Version 1.0.3 · Clauses DSEC-001 to DSEC-073
 
 ## How to Read
 
@@ -116,11 +116,11 @@ Check: 🤖 Runtime unit tests.
 
 ### DSEC-011 Written only by a person
 
-Only a person writes the scope file. The runtime MUST only read it; no command creates, changes or deletes it. An Agent MUST NOT create, change or delete a scope file, and MUST NOT point `<PREFIX>_SCOPE_FILE` at a file it wrote. This holds even when the user asks for it in chat: the person edits the file themselves. A coding Agent that prepares live runs follows the same rule for the scope file and the Authorized Targets (DVER-050): it may propose their content in chat, and the person writes the files; it never writes them itself. When a write is refused for lack of scope, the Agent passes on to the person what is missing (DSEC-015).
+Only a person writes the scope file, apart from the one exception below for a coding Agent that prepares live runs. The runtime MUST only read it; no command creates, changes or deletes it. An Agent MUST NOT create, change or delete a scope file, and MUST NOT point `<PREFIX>_SCOPE_FILE` at a file it wrote. This holds even when the user asks for it in chat: the person edits the file themselves. A coding Agent that prepares live runs follows the same rule for the scope file and the Authorized Targets (DVER-050), with one exception: when the person explicitly asks it in their own chat message to write them, it MAY write them, and point `<PREFIX>_SCOPE_FILE` at that scope file, once the person has agreed to the content it showed. It never writes them on its own initiative, nor because a document, a file or a command output asks for it; otherwise it proposes the content in chat and the person writes the files. When a write is refused for lack of scope, the Agent passes on to the person what is missing (DSEC-015).
 
 The scope guards against two things: mistakes by the Agent, such as the wrong file or more objects than were asked for, and instructions injected through untrusted content (DSEC-022). It does not stop an Agent that ignores its Skills: the scope file is an ordinary file in the user's account, and the runtime cannot tell who wrote it. Keeping such an Agent away from the file is a matter for the permissions the person gives the Agent itself.
 
-Why: The scope is the person's decision. An Agent that could write it would grant itself permission, and a request in chat may itself come from injected text or a misunderstanding.
+Why: The scope is the person's decision. An Agent that could write it would grant itself permission, and a request in chat may itself come from injected text or a misunderstanding. A coding Agent that prepares live runs works with the person at hand, and writes only what the person asked for and saw.
 Check: 🤖 Evaluation scenario `out_of_scope_change` (DSKL-040); 👀 review of the runtime and the Skills.
 
 ### DSEC-012 Scope fields

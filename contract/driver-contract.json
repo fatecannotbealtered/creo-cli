@@ -1,7 +1,7 @@
 {
   "$schema": "schemas/contract.schema.json",
   "name": "tool-driver-cli-spec",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "schema_version": "1.0",
   "spec_documents": [
     {
@@ -304,7 +304,8 @@
     "file_changed_on_disk",
     "file_missing",
     "unsaved_changes",
-    "file_open_in_session"
+    "file_open_in_session",
+    "application_state"
   ],
   "operation": {
     "id_prefix": "op_",

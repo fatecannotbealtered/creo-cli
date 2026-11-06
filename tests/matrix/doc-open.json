@@ -70,9 +70,9 @@
         "{doc}"
       ],
       "expected": {
-        "exit": 2,
-        "code": "E_VALIDATION",
-        "summary": "A model of the same name from another folder is already in session, and Creo holds one model of a name; the contract has no conflict value for it, so the host refuses with E_VALIDATION."
+        "exit": 6,
+        "code": "E_CONFLICT",
+        "summary": "A model of the same name from another folder is already in session, and Creo holds one model of a name: conflict application_state."
       }
     },
     {

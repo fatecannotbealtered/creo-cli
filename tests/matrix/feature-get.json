@@ -10,7 +10,7 @@
         "--doc",
         "{doc}",
         "--id",
-        "BASE"
+        "DTM_OFFSET"
       ],
       "expected": {
         "exit": 0

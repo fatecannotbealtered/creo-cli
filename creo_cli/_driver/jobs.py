@@ -167,9 +167,15 @@ def run_read(run: Run, job: dict[str, Any]) -> None:
     job = latest
     try:
         result = run.capability("read", job["_request"], worker_deadline_ms(run)).get("result")
+        if str(job.get("command", "")).split(" ")[-1] == "list" and not (isinstance(result, dict) and isinstance(result.get("items"), list)):
+            raise DriverError("E_PROTOCOL", f"{job['command']} is a list, but the adapter returned no items list; "
+                                            "a list returns its entries in items.")
         job.update(state="completed", ok=True, code=None, result=result)
     except DriverError as exc:
         job.update(state="failed", ok=False, code=exc.code, message=exc.message)
+    kept = [n for n in run.notices if n.get("type") == "application"]
+    if kept:
+        job["notices"] = kept  # job get shows what the adapter said in the worker (DCLI-260)
     job["finished_at"] = utc_now()
     with run.mutex.hold():
         latest = store.load(job["id"]) or job
@@ -196,9 +202,9 @@ def settle_dead_read(run: Run, job: dict[str, Any]) -> dict[str, Any]:
 
 def read_view(job: dict[str, Any]) -> dict[str, Any]:
     out: dict[str, Any] = {"id": job["id"], "operation_id": None, "state": job["state"],
-                           "cancel_requested": job.get("cancel_requested", False), "started_at": job["started_at"],
-                           "finished_at": job.get("finished_at") if job["state"] in FINAL else None}
+                           "cancel_requested": job.get("cancel_requested", False), "started_at": job["started_at"]}
     if job["state"] in FINAL:
+        out["finished_at"] = job.get("finished_at") or utc_now()
         out["ok"] = bool(job.get("ok"))
         if job.get("code"):
             out["code"] = job["code"]

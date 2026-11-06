@@ -14,6 +14,7 @@ public final class HostError extends RuntimeException {
     public static final String NOT_FOUND = "E_NOT_FOUND";
     public static final String VALIDATION = "E_VALIDATION";
     public static final String UNSUPPORTED = "E_UNSUPPORTED";
+    public static final String CONFLICT = "E_CONFLICT";
 
     public final String code;
     public final String dispatchState;
@@ -40,6 +41,11 @@ public final class HostError extends RuntimeException {
     public HostError with(String key, Object value) {
         extra.put(key, value);
         return this;
+    }
+
+    /** A precondition that does not hold; {@code conflict} is one of the contract's conflict values (DCLI-012). */
+    public static HostError conflict(String conflict, String message) {
+        return new HostError(CONFLICT, message).with("conflict", conflict);
     }
 
     public static HostError busy(String message, long retryAfterMs) {

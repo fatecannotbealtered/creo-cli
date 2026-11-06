@@ -10,7 +10,7 @@
         "--doc",
         "{doc}",
         "--id",
-        "EDGE_ROUND",
+        "DTM_OFFSET",
         "--status",
         "suppressed"
       ],
@@ -27,13 +27,13 @@
         "--doc",
         "{doc}",
         "--id",
-        "EDGE_ROUND",
+        "DTM_OFFSET",
         "--status",
         "suppressed"
       ],
       "expected": {
         "exit": 0,
-        "summary": "EDGE_ROUND is already suppressed: nothing changes."
+        "summary": "DTM_OFFSET is already suppressed: nothing changes."
       }
     },
     {

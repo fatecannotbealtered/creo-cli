@@ -242,7 +242,9 @@ def dispatch(run: Run, cap: str, request: dict[str, Any]) -> dict[str, Any]:
     """Call a write capability; errors keep their dispatch state for the receipt."""
     if not run.backend.has(cap, request.get("session")):
         raise DriverError("E_UNSUPPORTED", f"This tool's adapter has no {cap} capability, so it cannot do this.")
-    return run.backend.call(cap, request, run.write_deadline_ms)
+    reply = run.backend.call(cap, request, run.write_deadline_ms)
+    run.take_notices(reply)
+    return reply
 
 
 def read_back(run: Run, request: dict[str, Any], changes: list[dict[str, Any]], tolerances: dict[str, float]) -> Verification:

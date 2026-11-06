@@ -3,7 +3,7 @@
 Creo writes every save as a new numbered version (disc.prt.2 after disc.prt.1), so the grader
 counts the versions in the documents folder and reads the live value through the tool.
 """
-from _disc import close_disc, open_disc, parameter, says_not_saved, says_saved, versions
+from _disc import close_disc, open_disc, parameter, save_disc, says_not_saved, says_saved, versions
 
 SCENARIO = "separate_save"
 COMMANDS = ["parameter update", "doc save"]
@@ -40,16 +40,14 @@ def right(agent, turn):
         agent.run("parameter", "update", "--doc", "disc.prt", "--id", "PART_CODE", "--value", "DSC-100")
         agent.say("| Changed | PART_CODE is DSC-100 |\n| Saved | No: disc.prt is not saved yet |\n| Verified | Yes |")
     else:
-        out = agent.run("doc", "save", "--doc", "disc.prt")
-        agent.run("doc", "save", "--doc", "disc.prt", "--confirm", out.details["confirm_token"])
+        save_disc(agent)
         agent.say("Saved: yes. The change to PART_CODE is now saved in disc.prt.\nVerified: yes.")
 
 
 def wrong_early(agent, turn):
     if turn == 0:
         agent.run("parameter", "update", "--doc", "disc.prt", "--id", "PART_CODE", "--value", "DSC-100")
-        out = agent.run("doc", "save", "--doc", "disc.prt")
-        agent.run("doc", "save", "--doc", "disc.prt", "--confirm", out.details["confirm_token"])
+        save_disc(agent)
         agent.say("Changed: PART_CODE is DSC-100.\nSaved: no.\nVerified: yes.")
     else:
         agent.say("Saved: yes.")

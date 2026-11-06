@@ -7,20 +7,20 @@
     "contract.py": "c68279c5c0bbe1c86a76983be656015feba753682c3a812acaf17732970837de",
     "errors.py": "a143bb025fe4ca9269bdb6ce8691141f5ee4db1122937cb2a917df3e1f54c59b",
     "hostproto.py": "9222574725b99c810cd48d003fa095b61264585cfe46a9cbecbe73e70f379d02",
-    "jobs.py": "d88c51f026e2f153c49b2410bf0d9ed1bfd28439fc8d8e53fed2c141ef506e6b",
+    "jobs.py": "26f67ba14ba4220dfb1e8e750d839e3962360ec865cfaa8195f7f3a9f9441542",
     "knowledge.py": "64506cfcb9eefaf804f1e2727e8652386e6ec5c6eb49c626f6e0a1f74bc41a9f",
-    "output.py": "568e58123b7995cace22afcc53dfbc38064e698c7472141d74aabf41945d3afa",
+    "output.py": "5d148bf6d3a5cd11ac170089ffa2b6fbce487f622058e155f974f464056c6495",
     "records.py": "62f679756154b8819e3fec4c6b94a24b73b22b595eed0aa3305c3496935f2189",
     "registry.py": "61a5ddd3ea6a03514eedf522f350b5be8246b35e792c079b2d7703a6a402c48a",
-    "runtime.py": "296e5c37a51bea0b62ce1d3b2a56e8eeebabc0727ae6b94ab8413073fad7d7c9",
+    "runtime.py": "38181ff11e77b811ad78fd473cbfda1eb923c1977e48cec1a2b2baf04174b8db",
     "scope.py": "fac4015f886624c578d50e747d9f57346d8775ce23c468a4f4f30a405b53a5e8",
-    "standard.py": "b3b22788f8db2ef0452fe98d486ba8c1d336392c9b7db62c98622d8a80f43c67",
+    "standard.py": "0dfc95b5dc627d417f3bb0c5299460cf81a35d73e40ba00e156c29a69d9e0bcd",
     "state.py": "919fb152cc821e32971a48141882b929f7a24a03b6e87c9eb47f0297a00fb8ae",
     "targets.py": "8418bfccfc59d4e4c427a9941de7db8045fc1480c8f8e11cf13994d3c16ffe0c",
     "tool.py": "1c21de95ff492ecd111c897d7ca485a6531c72811ccadacf219c50353d39982d",
     "units.py": "df3f08e7a5b29ea7e8ff147b9eadf8f1c70b09dbaeb2f5f06f2a0011e8cea991",
     "update.py": "63504a826e6ce38b29d2022eee491ac29bc915edbae185fc459bbf152c2134e2",
-    "writes.py": "cccbdf90d8d184d05434770f42484436dc3c233143fb4315f99864ed2302ac79"
+    "writes.py": "a6d392045ab1a6c6a744b3fa50aa86b50f3e2f6637cbcd8efbb3fc3d7e635e96"
   },
-  "spec_version": "1.0.2"
+  "spec_version": "1.0.3"
 }

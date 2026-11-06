@@ -334,7 +334,7 @@ final class Docs {
                 }
                 return facts("dispatched", "not_applicable", Json.map("document", describe(found)));
             }
-            throw new HostError(HostError.VALIDATION, "A model named " + name + " from another folder ("
+            throw HostError.conflict("application_state", "A model named " + name + " from another folder ("
                     + there + ") is already in session; Creo holds one model of a name at a time.").with("knowledge", java.util.List.of("creo-basics"));
         }
         ModelDescriptor descriptor = pfcModel.ModelDescriptor_Create(type, base, null);
@@ -421,14 +421,14 @@ final class Docs {
             modified = true;
         }
         if (modified && !discard) {
-            throw new HostError(HostError.VALIDATION, id + " has unsaved changes; save it, or close it with --discard.");
+            throw HostError.conflict("unsaved_changes", id + " has unsaved changes; save it, or close it with --discard.");
         }
         Session session = Creo.session();
         // Creo erases no model another model in session uses; refuse before the window closes,
         // so a refused close changes nothing.
         List<String> users = usersOf(session, model);
         if (!users.isEmpty()) {
-            throw new HostError(HostError.VALIDATION, id + " is used by " + String.join(", ", users)
+            throw HostError.conflict("application_state", id + " is used by " + String.join(", ", users)
                     + ", open in Creo; close " + (users.size() == 1 ? "it" : "them") + " first.").with("knowledge", java.util.List.of("creo-basics"));
         }
         Window window = null;

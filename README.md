@@ -11,7 +11,7 @@ Lets an AI Agent read Creo Parametric models and change their dimensions, parame
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
 ![maturity](https://img.shields.io/badge/maturity-draft-8957e5)
-![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.2-0969da)
+![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.3-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
 
@@ -25,7 +25,7 @@ English | [中文](README_zh.md)
 | Systems and CPUs | Windows (x64) |
 | Risk tier | T2 |
 | Maturity | draft: 15 draft, 0 verified, 0 stable |
-| Specification | tool-driver-cli-spec 1.0.2 |
+| Specification | tool-driver-cli-spec 1.0.3 |
 | Host component | yes |
 <!-- driver:info-card:end -->
 

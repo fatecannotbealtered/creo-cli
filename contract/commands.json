@@ -43,6 +43,10 @@
       "default_fields": [],
       "related_knowledge": [
         "creo-localized-names"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {
@@ -127,6 +131,10 @@
       ],
       "related_knowledge": [
         "creo-localized-names"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {
@@ -191,6 +199,10 @@
       "related_knowledge": [
         "creo-geometry-references",
         "creo-units"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {
@@ -235,6 +247,10 @@
       "related_knowledge": [
         "creo-geometry-references",
         "creo-units"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {
@@ -292,6 +308,10 @@
       "related_knowledge": [
         "creo-relations-and-dimensions",
         "creo-units"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {
@@ -402,6 +422,10 @@
       "related_knowledge": [
         "creo-relations-and-dimensions",
         "creo-units"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {
@@ -655,6 +679,9 @@
       ],
       "related_knowledge": [
         "creo-units"
+      ],
+      "doc_kinds": [
+        "assembly"
       ]
     },
     {
@@ -709,6 +736,10 @@
       "default_fields": [],
       "related_knowledge": [
         "creo-localized-names"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {
@@ -747,7 +778,8 @@
       "default_fields": [],
       "related_knowledge": [
         "creo-save-versions"
-      ]
+      ],
+      "long": true
     },
     {
       "path": "model render",
@@ -795,6 +827,10 @@
       "default_fields": [],
       "related_knowledge": [
         "creo-display-requirements"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     }
   ]

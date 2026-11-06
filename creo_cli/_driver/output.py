@@ -73,12 +73,15 @@ class Envelopes:
         """``{"meta": {...}}`` with what is not empty, or nothing (DCLI-004)."""
         meta: dict[str, Any] = {}
         if notices:
-            meta["notices"] = notices
+            meta["notices"] = [{k: v for k, v in n.items() if k != "_untrusted"} for n in notices]
+            untrusted = untrusted + [f"$.meta.notices[{i}].message" for i, n in enumerate(notices) if n.get("_untrusted")]
         if untrusted:
             meta["untrusted"] = sorted(set(untrusted))
         return {"meta": meta} if meta else {}
 
     def _shrink_success(self, env: dict[str, Any], result: Result) -> dict[str, Any]:
+        if _drop_application_notices(env) and len(dumps(env)) <= self.limits["success_chars"]:
+            return env
         data = env["data"]
         if isinstance(data, dict) and isinstance(data.get("items"), list) and result.offset is not None:
             while data["items"] and len(dumps(env)) > self.limits["success_chars"]:
@@ -130,6 +133,23 @@ def _shrink_error(env: dict[str, Any], limit: int) -> None:
             details["candidates"].pop()
     if not fits() and len(error["message"]) > 300:
         error["message"] = error["message"][:300] + "…"
+    if not fits():
+        _drop_application_notices(env)
+
+
+def _drop_application_notices(env: dict[str, Any]) -> bool:
+    """Leave out the adapter's notices, the first thing to go when an envelope is too long."""
+    meta = env.get("meta") or {}
+    notices = meta.get("notices") or []
+    kept = [n for n in notices if n.get("type") != "application"]
+    if len(kept) == len(notices):
+        return False
+    if kept:
+        meta["notices"] = kept
+    else:
+        meta.pop("notices", None)
+    _resolve_untrusted(env)
+    return True
 
 
 _STEP = re.compile(r"\.([a-z0-9_]+)|\[([0-9]+|\*)\]")

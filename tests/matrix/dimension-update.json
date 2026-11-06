@@ -10,9 +10,9 @@
         "--doc",
         "{doc}",
         "--id",
-        "DEPTH",
+        "OFFSET",
         "--length",
-        "12mm"
+        "30mm"
       ],
       "expected": {
         "exit": 0
@@ -27,13 +27,13 @@
         "--doc",
         "{doc}",
         "--id",
-        "DEPTH",
+        "OFFSET",
         "--length",
-        "12mm"
+        "30mm"
       ],
       "expected": {
         "exit": 0,
-        "summary": "DEPTH is already 12 mm: nothing changes."
+        "summary": "OFFSET is already 30 mm: nothing changes."
       }
     },
     {
