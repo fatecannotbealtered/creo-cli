@@ -1562,7 +1562,9 @@ final class Ops {
                     "dispatched");
         }
         result.put("bytes", out.length());
+        // A write that creates files reports change not_applicable and persistence saved (DCLI-058).
         Map<String, Object> facts = Docs.facts("dispatched", "not_applicable", Json.map("result", result));
+        facts.put("persistence", "saved");
         List<Object> files = new ArrayList<>();
         files.add(Json.map("path", out.getPath(), "bytes", out.length(), "sha256", Docs.sha256(out)));
         facts.put("files", files);

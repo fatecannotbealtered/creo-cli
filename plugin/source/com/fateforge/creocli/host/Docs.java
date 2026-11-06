@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The documents of the session (DCLI-210, DCLI-211, DCLI-277): every part, assembly and
@@ -118,9 +119,28 @@ final class Docs {
         toolWriting = on;
     }
 
+    /**
+     * Keep one entry per field since the last save: its value at the save, and the newest one.
+     * A field set twice, such as a feature suppressed and resumed again, goes to disk with its
+     * last value only, and the save's read-back looks for that one (DCLI-057, DCLI-058).
+     */
     synchronized void recordToolChanges(String id, List<Map<String, Object>> changes) {
         revisions.merge(id, 1L, Long::sum);
-        toolChanges.computeIfAbsent(id, k -> new ArrayList<>()).addAll(changes);
+        List<Map<String, Object>> kept = toolChanges.computeIfAbsent(id, k -> new ArrayList<>());
+        for (Map<String, Object> change : changes) {
+            Map<String, Object> same = null;
+            for (Map<String, Object> earlier : kept) {
+                if (Objects.equals(earlier.get("target"), change.get("target"))
+                        && Objects.equals(earlier.get("field"), change.get("field"))) {
+                    same = earlier;
+                }
+            }
+            if (same == null) {
+                kept.add(new LinkedHashMap<>(change));
+            } else {
+                same.put("after", change.get("after"));
+            }
+        }
     }
 
     synchronized List<Map<String, Object>> toolChangesSinceSave(String id) {
