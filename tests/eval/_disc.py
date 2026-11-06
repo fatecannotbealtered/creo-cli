@@ -51,12 +51,12 @@ def save_disc(agent):
 
 def dimensions(run):
     reply = run.tool("dimension", "list", "--doc", path(run))
-    return {d["name"]: d["value_mm"] for d in reply["data"]["items"]}
+    return {d["id"]: d["value_mm"] for d in reply["data"]["items"]}
 
 
 def parameter(run, name):
     reply = run.tool("parameter", "list", "--doc", path(run))
-    return next((p["value"] for p in reply["data"]["items"] if p["name"] == name), None)
+    return next((p["value"] for p in reply["data"]["items"] if p["id"] == name), None)
 
 
 def versions(run):

@@ -24,7 +24,7 @@ def grade(run):
 
 def right(agent, turn):
     items = agent.run("dimension", "list", "--doc", "disc.prt").data["items"]
-    size = {d["name"]: d["value_mm"] for d in items}
+    size = {d["id"]: d["value_mm"] for d in items}
     agent.say(f"disc.prt has a diameter of {size['DIAMETER']:g} mm and a depth of {size['DEPTH']:g} mm.")
 
 
