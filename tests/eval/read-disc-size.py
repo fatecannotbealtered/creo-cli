@@ -5,6 +5,8 @@ SCENARIO = "read_answer"
 COMMANDS = ["dimension list"]
 TURNS = ["disc.prt is open in Creo. What are its diameter and its depth?"]
 FILES = "disc"
+# Only on the real Creo: the sizes come from what Creo reads in disc.prt.
+FAKE_HOST = None
 
 
 def before(run, turn):

@@ -19,6 +19,8 @@ import os
 import re
 import shutil
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
@@ -38,7 +40,10 @@ APP_CLASS = "com.fateforge.creocli.host.Host"
 JAR = "creo-cli-host.jar"
 CONFIG = "creo-cli-host.json"
 VERSION_IN_PATH = re.compile(r"Creo (\d+\.\d+\.\d+\.\d+)", re.IGNORECASE)
-SESSION_CALL_MS = 1600
+# The whole answer of one instance, within the 2 s of DCLI-205. Connecting and the hello, each
+# given HELLO_LIMIT_MS, are answered by the host's pipe thread; the document list gets the rest.
+SESSION_LIMIT_MS = 1800
+HELLO_LIMIT_MS = 500
 
 
 def _root() -> Path:
@@ -102,6 +107,7 @@ class Adapter(BaseAdapter):
     def sessions(self, request: dict[str, Any]) -> dict[str, Any]:
         hosts = {e["pid"]: e for e in read_discovery(str(self._state_dir() / "hosts")) if pid_alive(e["pid"])}
         items = []
+        asks = []
         for pid in windows.processes("xtop.exe"):
             sid = session_id("creo", pid)
             version = version_of(windows.image_path(pid)) or "unknown"
@@ -109,6 +115,7 @@ class Adapter(BaseAdapter):
                 "id": sid, "application": {"name": "Creo Parametric", "version": version}, "pid": pid,
                 "owned": False, "generation": 0, "state": "ready", "documents": [], "plugin_loaded": None,
             }
+            # Looked for on every call: Creo keeps answering its toolkit while a modal dialog is open (DCLI-204).
             title = windows.blocker(pid)
             if title is not None:
                 item["state"] = "blocked"
@@ -116,27 +123,37 @@ class Adapter(BaseAdapter):
             entry = hosts.get(pid)
             if entry is not None:
                 item["plugin_loaded"] = str(entry.get("plugin_version"))
-                self._ask_host(entry, sid, item, documents=title is None)
+                asks.append((entry, item, title is None))
             items.append(item)
+        if asks:
+            # Each instance answers on its own thread within its own limit, so one that hangs
+            # costs the others nothing and the call keeps the session read limits (DCLI-205).
+            with ThreadPoolExecutor(max_workers=len(asks)) as pool:
+                read = list(pool.map(lambda ask: self._ask_host(*ask), asks))
+            for (_, item, _), documents in zip(asks, read):
+                if documents is not None:
+                    self._remember(f"documents-{item['id']}", documents)
         return {"items": items, "complete": True}
 
-    def _ask_host(self, entry: dict[str, Any], sid: str, item: dict[str, Any], documents: bool) -> None:
-        """The generation and the open documents, from the host. A host that cannot be reached
-        is reported by the runtime, which probes every host itself (DCLI-205, DCLI-278)."""
+    def _ask_host(self, entry: dict[str, Any], item: dict[str, Any], documents: bool) -> list[dict[str, Any]] | None:
+        """Fill in the generation and the open documents from the host; return the document list
+        it read, to keep. A host that cannot be reached is reported by the runtime, which probes
+        every host itself (DCLI-205, DCLI-278)."""
         conn = Connection(entry["address"], _cli_version(), PROTOCOL)
-        remembered = f"documents-{sid}"
+        remembered = f"documents-{item['id']}"
+        ends = time.monotonic() + SESSION_LIMIT_MS / 1000
         try:
-            hello = conn.open(SESSION_CALL_MS)
+            hello = conn.open(HELLO_LIMIT_MS)
             item["generation"] = int((hello.get("session") or {}).get("generation", 0))
             if documents:
-                docs = conn.call("documents", {"session": sid}, SESSION_CALL_MS).get("items", [])
+                left = int((ends - time.monotonic()) * 1000)
+                docs = conn.call("documents", {"session": item["id"]}, left).get("items", [])
                 item["documents"] = [{"id": d["id"], "path": d.get("path"), "dirty": bool(d.get("dirty"))} for d in docs]
-                self._remember(remembered, item["documents"])
-            else:
-                # Blocked by a dialog: Creo is not asked. The runtime finds --doc among a
-                # blocked or busy session's documents before it refuses the call, so the last
-                # list read stands in for the one not asked for.
-                item["documents"] = self.store.get(remembered, [])
+                return item["documents"]
+            # Blocked by a dialog: Creo is not asked. The runtime finds --doc
+            # among a blocked or busy session's documents before it refuses the call, so the
+            # last list read stands in for the one not asked for.
+            item["documents"] = self.store.get(remembered, [])
         except HostReplyError as exc:
             if exc.code == "E_BUSY":
                 item["state"] = "busy"
@@ -145,6 +162,7 @@ class Adapter(BaseAdapter):
             pass
         finally:
             conn.close()
+        return None
 
     def _remember(self, key: str, documents: list[dict[str, Any]]) -> None:
         """Keep the document list for when the host is busy; a list that cannot be kept only costs that."""

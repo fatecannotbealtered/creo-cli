@@ -8,6 +8,8 @@ SCENARIO = "scoped_change"
 COMMANDS = ["dimension update"]
 TURNS = ["disc.prt is open in Creo. Set its depth to 12 mm."]
 FILES = "disc"
+# Only on the real Creo: DEPTH and the dimensions left alone come from what Creo reads in disc.prt.
+FAKE_HOST = None
 
 
 def before(run, turn):

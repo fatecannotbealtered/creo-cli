@@ -5,8 +5,10 @@ import json
 import os
 import shutil
 import tempfile
+import threading
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 from creo_cli import adapter as creo_adapter
@@ -192,6 +194,43 @@ class AdapterTest(unittest.TestCase):
         item = listed()
         self.assertEqual(item["state"], "busy")
         self.assertEqual(item["documents"], docs)
+
+    def test_each_instance_answers_at_once_within_its_own_limit(self) -> None:
+        hosts = self.state / "hosts"
+        hosts.mkdir()
+        for pid in (4242, 4343):
+            (hosts / f"creo-{pid}-1.json").write_text(json.dumps({"address": rf"\\.\pipe\{pid}", "pid": pid}),
+                                                      encoding="utf-8")
+        # Both hellos must be waiting at the same time: asked one after the other, the barrier breaks.
+        together = threading.Barrier(2, timeout=5)
+        # Each thread's own clock, where opening takes the longest it may: connecting, then the hello.
+        clock: dict[int, float] = {}
+        taken: list[float] = []
+
+        def now() -> float:
+            return clock.get(threading.get_ident(), 0.0)
+
+        class Host:
+            def __init__(self, *args: object) -> None:
+                pass
+
+            def open(self, deadline_ms: int) -> dict:
+                together.wait()
+                clock[threading.get_ident()] = now() + 2 * deadline_ms / 1000
+                return {"session": {"generation": 1}}
+
+            def call(self, method: str, params: dict, deadline_ms: int) -> dict:
+                taken.append(now() + deadline_ms / 1000)
+                return {"items": []}
+
+            def close(self) -> None:
+                pass
+
+        with mock.patch.object(creo_adapter.windows, "processes", return_value=[4242, 4343]),                 mock.patch.object(creo_adapter.windows, "image_path", return_value=None),                 mock.patch.object(creo_adapter.windows, "blocker", return_value=None),                 mock.patch.object(creo_adapter, "pid_alive", return_value=True),                 mock.patch.object(creo_adapter, "session_id", side_effect=lambda app, pid: f"creo-{pid}-1"),                 mock.patch.object(creo_adapter, "time", SimpleNamespace(monotonic=now)),                 mock.patch.object(creo_adapter, "Connection", Host):
+            items = self.adapter.sessions({})["items"]
+        self.assertEqual([i["generation"] for i in items], [1, 1])
+        self.assertEqual(len(taken), 2)
+        self.assertTrue(all(seconds <= 2.0 for seconds in taken), taken)
 
     def test_main_windows_are_told_from_dialogs_by_title(self) -> None:
         for title in ("DISC - Creo Parametric 13", "Creo Parametric 13", "PAIR (Active) - Creo Parametric 13.4"):

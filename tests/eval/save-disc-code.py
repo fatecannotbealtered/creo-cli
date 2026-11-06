@@ -10,6 +10,8 @@ COMMANDS = ["parameter update", "doc save"]
 TURNS = ["disc.prt is open in Creo. Change its parameter PART_CODE to DSC-100. Do not save yet.",
          "Now save disc.prt."]
 FILES = "disc"
+# Only on the real Creo: PART_CODE and the saved version come from disc.prt as Creo reads and writes it.
+FAKE_HOST = None
 
 
 def before(run, turn):
