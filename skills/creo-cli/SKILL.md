@@ -52,6 +52,7 @@ Check `ok`; on failure, read `error.details.next_action`.
 - `relation`: list
 - `material`: list
 - `component`: list
+- `extrude`: create
 <!-- driver:command-map:end -->
 
 ## Write recipe

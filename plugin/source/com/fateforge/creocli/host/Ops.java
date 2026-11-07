@@ -71,17 +71,19 @@ final class Ops {
     private static final double DPI = 100.0;
 
     private final Docs docs;
+    private final Modeling modeling;
 
     Ops(Docs docs) {
         this.docs = docs;
+        this.modeling = new Modeling(docs);
     }
 
     /** One write, as preview shows it and apply does it. */
-    private interface Work {
+    interface Work {
         Map<String, Object> run() throws Exception;
     }
 
-    private static final class Plan {
+    static final class Plan {
         String action;
         final List<Map<String, Object>> targets = new ArrayList<>();
         final List<Map<String, Object>> changes = new ArrayList<>();
@@ -290,6 +292,7 @@ final class Ops {
             case "feature update": featureUpdate(plan, model, in); break;
             case "model export": export(plan, model, in); break;
             case "model render": render(plan, model, in); break;
+            case "extrude create": modeling.extrudeCreate(plan, model, in); break;
             default: throw new HostError(HostError.UNSUPPORTED, "The host has no write for " + command + ".");
         }
         return plan;
@@ -1600,7 +1603,7 @@ final class Ops {
         return Arrays.asList(clean(v.get(0)), clean(v.get(1)), clean(v.get(2)));
     }
 
-    private static void repaint() {
+    static void repaint() {
         try {
             Window window = Creo.session().GetCurrentWindow();
             if (window != null) {

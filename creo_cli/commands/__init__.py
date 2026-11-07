@@ -66,6 +66,35 @@ PARAMETER_ITEM = {
     "driven_by_relation": BOOL,
 }
 
+XY = {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+SKETCH_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "required": ["plane", "x_axis", "entities"],
+    "properties": {
+        "plane": {"type": "string", "description": "The sketch plane: a datum such as TOP, a face such as BASE/end, or surface:<id>."},
+        "x_axis": {"type": "string", "enum": ["+x", "-x", "+y", "-y", "+z", "-z"],
+                   "description": "The model axis the sketch's x runs along; it must lie in the plane. y is the plane's normal crossed with x."},
+        "references": {"type": "array", "items": {"type": "string"},
+                       "description": "Datum planes or planar faces across the sketch plane, projected to dimension and constrain to."},
+        "entities": {"type": "array", "items": {"type": "object", "required": ["id", "type"], "properties": {
+            "id": {"type": "string"},
+            "type": {"type": "string", "enum": ["rectangle", "circle", "line", "arc", "centerline", "point"]},
+            "width_mm": {"type": "number"}, "height_mm": {"type": "number"}, "corner_radius_mm": {"type": "number"},
+            "center_mm": XY, "diameter_mm": {"type": "number"}, "radius_mm": {"type": "number"},
+            "start_mm": XY, "end_mm": XY, "start_deg": {"type": "number"}, "end_deg": {"type": "number"}, "at_mm": XY}}},
+        "constraints": {"type": "array", "items": {"type": "object", "required": ["type"], "properties": {
+            "type": {"type": "string", "enum": ["symmetric", "horizontal", "vertical", "coincident", "on", "tangent", "parallel",
+                                                "perpendicular", "equal"]},
+            "entity": {"type": "string"}, "about": {"type": "string"}, "a": {"type": "string"}, "b": {"type": "string"},
+            "point": {"type": "string"}}}},
+        "dimensions": {"type": "array", "items": {"type": "object", "properties": {
+            "name": {"type": "string", "description": "The dimension's name in Creo; dimension update takes it."},
+            "measure": {"type": "string", "description": "An entity's own size: body.width, body.height, body.corner_radius, hole.diameter, rim.length."},
+            "from": {"type": "string"}, "to": {"type": "string"},
+            "value_mm": {"type": "number", "description": "For from and to: the distance, its sign the side of from along the sketch axis."}}}},
+    },
+}
+
 COMMANDS: list[dict[str, Any]] = [
     _read(
         "feature get", "One feature: its dimensions, parents and children.",
@@ -202,6 +231,33 @@ COMMANDS: list[dict[str, Any]] = [
         "irreversible": False, "halt": False, "tolerances": {}, "default_fields": [], "related_knowledge": ["creo-localized-names"],
         "output_schema": {"type": "object", "properties": FEATURE_ITEM}, "doc_kinds": SOLID,
         "examples": [EXAMPLE.format(path="feature update") + " --id 12 --status suppressed"],
+        "maturity": "draft", "evidence": [],
+    },
+    {
+        "path": "extrude create",
+        "summary": "Extrude a sketch into one feature, adding or removing material, and regenerate; a sketch that is not fully defined is refused.",
+        "effects": ["change"], "modes": ["session"], "target_kind": "feature",
+        "flags": [
+            {"name": "--name", "type": "string", "required": True,
+             "summary": "The new feature's name: a letter, then letters, digits or _, 31 at most."},
+            {"name": "--sketch", "type": "json", "required": True, "schema": SKETCH_SCHEMA,
+             "summary": "The sketch: plane, x_axis, references, entities, constraints and named dimensions, inline or a file."},
+            {"name": "--depth", "type": "quantity", "quantity": "length", "summary": "How far to extrude; with --symmetric, split to both sides."},
+            {"name": "--through-all", "type": "boolean", "summary": "Through the whole part, for a cut."},
+            {"name": "--to", "type": "string", "summary": "Up to this plane or face: a datum name, a face such as BASE/end, or surface:<id>."},
+            {"name": "--symmetric", "type": "boolean", "summary": "Extrude half of --depth to each side of the sketch plane."},
+            {"name": "--direction", "type": "string", "summary": "The model axis to extrude along, such as +z; the plane's normal by default."},
+            {"name": "--remove", "type": "boolean", "summary": "Remove material (a cut) instead of adding it."},
+        ],
+        "untrusted_fields": ["name", "dimensions[*].id"],
+        "irreversible": False, "halt": False, "tolerances": {"value_mm": 0.000001}, "default_fields": [],
+        "related_knowledge": ["creo-sketches", "creo-geometry-references", "creo-units"],
+        "output_schema": {"type": "object", "properties": {
+            **FEATURE_ITEM, "dimensions": {"type": "array", "items": {"type": "object"}}, "volume_mm3": NUM,
+            "volume_change_mm3": NUM, "bounding_box_mm": {"type": ["object", "null"]}, "faces": {"type": "object"}}},
+        "output_coordinate_system": MODEL, "doc_kinds": ["part"],
+        "examples": [EXAMPLE.format(path="extrude create") + " --name BASE --depth 22mm --sketch body.json",
+                     EXAMPLE.format(path="extrude create") + " --name SOCKET_CUT --remove --through-all --sketch socket.json"],
         "maturity": "draft", "evidence": [],
     },
     {

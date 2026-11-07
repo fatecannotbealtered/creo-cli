@@ -743,6 +743,273 @@
       ]
     },
     {
+      "path": "extrude create",
+      "summary": "Extrude a sketch into one feature, adding or removing material, and regenerate; a sketch that is not fully defined is refused.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name: a letter, then letters, digits or _, 31 at most.",
+          "required": true
+        },
+        {
+          "name": "--sketch",
+          "type": "json",
+          "summary": "The sketch: plane, x_axis, references, entities, constraints and named dimensions, inline or a file.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": [
+              "plane",
+              "x_axis",
+              "entities"
+            ],
+            "properties": {
+              "plane": {
+                "type": "string",
+                "description": "The sketch plane: a datum such as TOP, a face such as BASE/end, or surface:<id>."
+              },
+              "x_axis": {
+                "type": "string",
+                "enum": [
+                  "+x",
+                  "-x",
+                  "+y",
+                  "-y",
+                  "+z",
+                  "-z"
+                ],
+                "description": "The model axis the sketch's x runs along; it must lie in the plane. y is the plane's normal crossed with x."
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Datum planes or planar faces across the sketch plane, projected to dimension and constrain to."
+              },
+              "entities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "rectangle",
+                        "circle",
+                        "line",
+                        "arc",
+                        "centerline",
+                        "point"
+                      ]
+                    },
+                    "width_mm": {
+                      "type": "number"
+                    },
+                    "height_mm": {
+                      "type": "number"
+                    },
+                    "corner_radius_mm": {
+                      "type": "number"
+                    },
+                    "center_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "diameter_mm": {
+                      "type": "number"
+                    },
+                    "radius_mm": {
+                      "type": "number"
+                    },
+                    "start_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "end_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "start_deg": {
+                      "type": "number"
+                    },
+                    "end_deg": {
+                      "type": "number"
+                    },
+                    "at_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                }
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "symmetric",
+                        "horizontal",
+                        "vertical",
+                        "coincident",
+                        "on",
+                        "tangent",
+                        "parallel",
+                        "perpendicular",
+                        "equal"
+                      ]
+                    },
+                    "entity": {
+                      "type": "string"
+                    },
+                    "about": {
+                      "type": "string"
+                    },
+                    "a": {
+                      "type": "string"
+                    },
+                    "b": {
+                      "type": "string"
+                    },
+                    "point": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "dimensions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The dimension's name in Creo; dimension update takes it."
+                    },
+                    "measure": {
+                      "type": "string",
+                      "description": "An entity's own size: body.width, body.height, body.corner_radius, hole.diameter, rim.length."
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    },
+                    "value_mm": {
+                      "type": "number",
+                      "description": "For from and to: the distance, its sign the side of from along the sketch axis."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "--depth",
+          "type": "quantity",
+          "summary": "How far to extrude; with --symmetric, split to both sides.",
+          "quantity": "length"
+        },
+        {
+          "name": "--through-all",
+          "type": "boolean",
+          "summary": "Through the whole part, for a cut."
+        },
+        {
+          "name": "--to",
+          "type": "string",
+          "summary": "Up to this plane or face: a datum name, a face such as BASE/end, or surface:<id>."
+        },
+        {
+          "name": "--symmetric",
+          "type": "boolean",
+          "summary": "Extrude half of --depth to each side of the sketch plane."
+        },
+        {
+          "name": "--direction",
+          "type": "string",
+          "summary": "The model axis to extrude along, such as +z; the plane's normal by default."
+        },
+        {
+          "name": "--remove",
+          "type": "boolean",
+          "summary": "Remove material (a cut) instead of adding it."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-sketches",
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
       "path": "model export",
       "summary": "Write a part or assembly to STEP, IGES or STL, or a drawing to PDF; the file extension picks the format.",
       "effects": [

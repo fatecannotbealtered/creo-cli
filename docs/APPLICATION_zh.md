@@ -60,6 +60,8 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 
 - 在 Java 宿主的调用里调用 `ProEngineerEnd` 会让 Creo 崩溃；调用返回后由 Creo 主线程上的 Windows 定时器调用它，Creo 在 3 到 10 秒内正常退出，并调用每个应用的结束函数（在 Creo 13.4.1.0 上实测）。
 - 被强行结束的 Creo，下次启动时会弹出模态的“未正常关闭”对话框（检索），直到有一次正常退出（在 Creo 13.4.1.0 上实测）。
+- 通过 TOOLKIT C 在意图管理器模式下建的草图没有隐含约束：每条线、每段弧、每个连接点的约束都要写明（端点重合、相切、水平、竖直、等半径），否则 Creo 每留一个自由度就加一个弱尺寸；全部写明后只剩给定的尺寸，改其中一个，约束照样成立，比如对称的矩形改长度后仍然对称（在 Creo 13.4.1.0 上实测）。不用意图管理器时，Creo 自动标注的尺寸标到最近的边上，不是设计里命名的尺寸。
+- `PRO_E_STD_DIRECTION` 选的哪一侧，是相对 Creo 自己给草绘平面定的方向，基准平面和实体面不一样；creo-cli 从新拉伸特征的面判断它朝哪边去了，反了就翻过来。
 - 工具包的每次调用都必须在 Creo 主线程上执行；同步应用通过定时器回调进入主线程。Creo 13.4 打开模态弹窗时定时器照常触发，主窗口也不会被禁用（用“文件 > 选项”和工具包的消息框实测）；CLI 按窗口标题认出弹窗，人关掉弹窗之前一律拒绝调用。
 - 见过的挡住自动化的弹窗：加载未签名工具包 DLL 时的提示（每次会话）、启动时的“检索”“恢复”弹窗、ORDER_DEBUG、视图状态要求“应用”、许可证弹窗，以及锁屏时出现的崩溃弹窗（Intel OpenGL 驱动）（早期 creo-cli，`docs/SERVICE.md`、`examples/engineering/RecoveryIsolation.ps1`、`docs/ASSEMBLY-INSTRUCTIONS-WORKFLOW.md`）。
 - 重新生成和长操作期间 Creo 是忙的；实测：复杂装配改约束 135–194 秒，族表预览约 76 秒，BOM 表确认 568 秒（早期 creo-cli，`docs/ASSEMBLY-CONSTRAINTS.md`、`docs/FAMILY-TABLES.md`、`docs/WORKFLOW-BUDGET.md`）。
@@ -122,7 +124,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 | CAP-046 | 描述特征草图里的图元 | TOOLKIT C | deferred | 以后的版本；每次读都要用 C 库 |
 | CAP-012 | 隐含、恢复特征，或给特征改名 | OTK Java | provided | - |
 | CAP-013 | 删除特征，连同依赖它的特征 | OTK Java `DeleteFeatures` | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-014 | 拉伸一个封闭的草绘轮廓，加材料或去材料 | OTK Java 元素树；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-014 | 拉伸一个封闭的草绘轮廓，加材料或去材料 | OTK Java 元素树；TOOLKIT C 草图 | provided | - |
 | CAP-015 | 把一个封闭的草绘轮廓旋转 360 度 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-016 | 从平面或平的面偏移出基准平面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-017 | 建基准轴：两平面相交、过一条边或一个圆柱面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
