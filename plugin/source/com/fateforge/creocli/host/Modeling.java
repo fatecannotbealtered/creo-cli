@@ -32,6 +32,11 @@ import com.ptc.pfc.pfcSolid.Solid;
 import com.ptc.pfc.pfcSolid.SolidBody;
 import com.ptc.wfc.wfcCollection.CurveCollectionInstrType;
 import com.ptc.wfc.wfcCollection.CurveCollectionInstructions;
+import com.ptc.wfc.wfcCollection.SurfaceCollectionInstrType;
+import com.ptc.wfc.wfcCollection.SurfaceCollectionInstructions;
+import com.ptc.wfc.wfcCollection.SurfaceCollectionRefType;
+import com.ptc.wfc.wfcCollection.SurfaceCollectionReferences;
+import com.ptc.wfc.wfcCollection.SurfaceCollectionRules;
 import com.ptc.wfc.wfcCollection.wfcCollection;
 import com.ptc.wfc.wfcElementTree.Element;
 import com.ptc.wfc.wfcElementTree.ElementTree;
@@ -99,6 +104,13 @@ final class Modeling {
             PRO_FEAT_DATUM = 923, PRO_DTMPLN_THRU = 0, PRO_DTMPLN_OFFS = 3, PRO_DTMPLN_ANG = 4,
             PRO_E_DTMAXIS_CONSTRAINTS = 2015, PRO_E_DTMAXIS_CONSTRAINT = 2016, PRO_E_DTMAXIS_CONSTR_TYPE = 2017,
             PRO_E_DTMAXIS_CONSTR_REF = 2018, PRO_FEAT_DATUM_AXIS = 926, PRO_DTMAXIS_CONSTR_TYPE_THRU = 1;
+    private static final int PRO_FEAT_CHAMFER = 914, PRO_E_RNDCH_DIMENSIONAL_SCHEMA = 2103, PRO_E_RNDCH_CHAMFER_SHAPE = 3184,
+            PRO_CHM_D_X_D = 602, PRO_CHM_TANGENT_LEGS = 0;
+    private static final int PRO_FEAT_DRAFT = 927, PRO_E_DRAFT_SPLIT = 2154, PRO_E_STD_SURF_COLLECTION_APPL = 2213,
+            PRO_E_DRAFT_CONSTANT_OR_VARIABLE = 2150, PRO_E_DRAFT_INCLUDE_TANGENT = 3177, PRO_E_DRAFT_SIDE_1 = 2164,
+            PRO_E_DRAFT_NEUTRAL_OBJECT_TYPE_1 = 2167, PRO_E_DRAFT_NEUTRAL_PLANE_1 = 2169, PRO_E_DRAFT_DEPENDENT_1 = 2171,
+            PRO_E_DRAFT_ANGLE_1 = 2168, PRO_DRAFT_UI_SPLIT_NONE = 0, PRO_DRAFT_UI_CONSTANT = 1, PRO_DRAFT_UI_INC_TANG = 1,
+            PRO_DRAFT_UI_PLANE = 1, PRO_DRAFT_UI_INDEPENDENT = 0;
 
     private final Docs docs;
 
@@ -347,6 +359,181 @@ final class Modeling {
             nameOnly(made, dimName);
             return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
         };
+    }
+
+    // ------------------------------------------------------------------ chamfer create
+
+    void chamferCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        Double distance = Json.number(in, "distance_mm");
+        if (distance == null || distance <= 0) {
+            throw new HostError(HostError.VALIDATION, "--distance is required and greater than 0: the leg on each face.");
+        }
+        String edgesText = Json.string(in, "edges", null);
+        if (edgesText == null) {
+            throw new HostError(HostError.VALIDATION, "--edges is required: such as BASE/end:outer-edges or edge:57; several separated by ;.");
+        }
+        List<Edge> edges = edges(solid, edgesText);
+        String dimName = dimensionName(in, "distance_name");
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        if (dimName != null) {
+            plan.change(docKey + "#/dimensions/" + dimName, "value_mm", null, Ops.clean(distance));
+        }
+        plan.action = "Chamfer " + edges.size() + " edges (" + edgesText + ") " + Ops.clean(distance) + " x " + Ops.clean(distance)
+                + " mm as " + name + "; then regenerate.";
+        plan.work = () -> {
+            double before = volume(solid, f);
+            Elements elements = Elements.create();
+            add(elements, PRO_E_FEATURE_TREE, null, 0);
+            add(elements, PRO_E_FEATURE_TYPE, integer(PRO_FEAT_CHAMFER), 1);
+            add(elements, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+            add(elements, PRO_E_RNDCH_SETS, null, 1);
+            add(elements, PRO_E_RNDCH_SET, null, 2);
+            add(elements, PRO_E_RNDCH_DIMENSIONAL_SCHEMA, integer(PRO_CHM_D_X_D), 3);
+            add(elements, PRO_E_RNDCH_CHAMFER_SHAPE, integer(PRO_CHM_TANGENT_LEGS), 3);
+            add(elements, PRO_E_RNDCH_REFERENCES, null, 3);
+            add(elements, PRO_E_RNDCH_REFERENCE_TYPE, integer(PRO_ROUND_REF_EDGE), 4);
+            add(elements, PRO_E_STD_CURVE_COLLECTION_APPL, null, 4).SetElemCollection(curves(edges));
+            add(elements, PRO_E_RNDCH_RADII, null, 3);
+            add(elements, PRO_E_RNDCH_RADIUS, null, 4);
+            add(elements, PRO_E_RNDCH_LEG1, null, 5);
+            add(elements, PRO_E_RNDCH_LEG_TYPE, integer(PRO_ROUND_RADIUS_TYPE_VALUE), 6);
+            add(elements, PRO_E_RNDCH_LEG_VALUE, pfcArgument.CreateDoubleArgValue(distance / f), 6);
+            Feature made = complete(solid, elements, name, f, before, null);
+            nameOnly(made, dimName);
+            return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
+        };
+    }
+
+    private static com.ptc.wfc.wfcCollection.Collection curves(List<Edge> edges) throws jxthrowable {
+        CurveCollectionInstructions instructions = CurveCollectionInstructions.create();
+        for (Edge edge : edges) {
+            Selections one = Selections.create();
+            one.append(pfcSelect.CreateModelItemSelection(edge, null));
+            instructions.append(wfcCollection.CurveCollectionInstruction_Create(CurveCollectionInstrType.CURVCOLL_ADD_ONE_INSTR, one));
+        }
+        com.ptc.wfc.wfcCollection.Collection collection = wfcCollection.Collection_Create();
+        collection.SetCrvCollection(wfcCollection.CurveCollection_Create(instructions));
+        return collection;
+    }
+
+    // ------------------------------------------------------------------ draft create
+
+    void draftCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        String facesText = Json.string(in, "faces", null);
+        String hingeText = Json.string(in, "hinge", null);
+        double[] pull = Sketch.axis(Json.string(in, "pull", null));
+        Double angle = Json.number(in, "angle_deg");
+        if (facesText == null || hingeText == null || pull == null || angle == null) {
+            throw new HostError(HostError.VALIDATION, "Give --faces (the faces to draft), --hinge (the plane they turn about), --pull "
+                    + "(the model axis the mold opens along, such as +y) and --angle.");
+        }
+        if (angle <= 0 || angle >= 30) {
+            throw new HostError(HostError.VALIDATION, "--angle is greater than 0 and less than 30 degrees; the faces always narrow "
+                    + "toward --pull.");
+        }
+        List<Surface> drafted = new ArrayList<>();
+        for (String one : facesText.split(";")) {
+            drafted.addAll(faces(solid, one.trim(), false));
+        }
+        for (Surface s : drafted) {
+            if (Math.abs(Sketch.dot(Sketch.unit(pointAndNormal(s)[1]), pull)) > 1 - EPS) {
+                throw new HostError(HostError.VALIDATION, "surface:" + s.GetId() + " faces along --pull; a draft turns faces that run along it.");
+            }
+        }
+        Sketch.Plane hinge = planes(solid).find(hingeText);
+        Sketch.Plane pullPlane = axisPlane(solid, pull);
+        if (pullPlane == null) {
+            plan.block("No datum plane of the model is normal to --pull; Creo takes the pull direction from one", null);
+        }
+        String dimName = dimensionName(in, "angle_name");
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        if (dimName != null) {
+            plan.change(docKey + "#/dimensions/" + dimName, "value_deg", null, Ops.clean(angle));
+        }
+        plan.action = "Draft " + drafted.size() + " faces (" + facesText + ") " + Ops.clean(angle) + " deg about " + hingeText
+                + ", narrowing toward " + axisName(pull) + ", as " + name + "; then regenerate.";
+        plan.work = () -> {
+            double before = volume(solid, f);
+            Feature made = draft(solid, name, drafted, hinge, pullPlane, angle, f, before);
+            // The sign of a draft angle turns the faces one way or the other; check the faces narrow toward the pull.
+            if (tilt(made, pull) < 0) {
+                takeOut(solid, made.GetId());
+                made = draft(solid, name, drafted, hinge, pullPlane, -angle, f, before);
+                if (tilt(made, pull) < 0) {
+                    takeOut(solid, made.GetId());
+                    throw new HostError(HostError.NATIVE, "Creo did not draft " + name + " to narrow toward " + axisName(pull)
+                            + "; the model is as it was.");
+                }
+            }
+            if (dimName != null) {
+                ModelItems dims = made.ListSubItems(ModelItemType.ITEM_DIMENSION);
+                for (int i = 0; dims != null && i < dims.getarraysize(); i++) {
+                    Dimension d = (Dimension) dims.get(i);
+                    if (Math.abs(Math.abs(d.GetDimValue()) - angle) < 1e-9) {
+                        d.SetName(dimName);
+                    }
+                }
+            }
+            return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
+        };
+    }
+
+    private static Feature draft(Solid solid, String name, List<Surface> drafted, Sketch.Plane hinge, Sketch.Plane pullPlane,
+                                 double angle, double f, double before) throws Exception {
+        SurfaceCollectionInstructions instructions = SurfaceCollectionInstructions.create();
+        for (Surface s : drafted) {
+            SurfaceCollectionReferences refs = SurfaceCollectionReferences.create();
+            refs.append(wfcCollection.SurfaceCollectionReference_Create(SurfaceCollectionRefType.SURFCOLL_REF_SINGLE,
+                    pfcSelect.CreateModelItemSelection(s, null)));
+            instructions.append(wfcCollection.SurfaceCollectionInstruction_Create(SurfaceCollectionInstrType.SURFCOLL_SINGLE_SURF, true,
+                    refs, SurfaceCollectionRules.create()));
+        }
+        com.ptc.wfc.wfcCollection.Collection collection = wfcCollection.Collection_Create();
+        collection.SetSurfCollection(wfcCollection.SurfaceCollection_Create(instructions));
+        Elements e = Elements.create();
+        add(e, PRO_E_FEATURE_TREE, null, 0);
+        add(e, PRO_E_FEATURE_TYPE, integer(PRO_FEAT_DRAFT), 1);
+        add(e, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+        add(e, PRO_E_DRAFT_SPLIT, integer(PRO_DRAFT_UI_SPLIT_NONE), 1);
+        add(e, PRO_E_STD_SURF_COLLECTION_APPL, null, 1).SetElemCollection(collection);
+        add(e, PRO_E_DIRECTION_COMPOUND, null, 1);
+        add(e, PRO_E_DIRECTION_REFERENCE, select(solid, pullPlane.surfaceId), 2);
+        add(e, PRO_E_DIRECTION_FLIP, integer(0), 2);
+        add(e, PRO_E_DRAFT_CONSTANT_OR_VARIABLE, integer(PRO_DRAFT_UI_CONSTANT), 1);
+        add(e, PRO_E_DRAFT_INCLUDE_TANGENT, integer(PRO_DRAFT_UI_INC_TANG), 1);
+        add(e, PRO_E_DRAFT_SIDE_1, null, 1);
+        add(e, PRO_E_DRAFT_NEUTRAL_OBJECT_TYPE_1, integer(PRO_DRAFT_UI_PLANE), 2);
+        add(e, PRO_E_DRAFT_NEUTRAL_PLANE_1, select(solid, hinge.surfaceId), 2);
+        add(e, PRO_E_DRAFT_DEPENDENT_1, integer(PRO_DRAFT_UI_INDEPENDENT), 2);
+        add(e, PRO_E_DRAFT_ANGLE_1, pfcArgument.CreateDoubleArgValue(angle), 2);
+        return complete(solid, e, name, f, before, null);
+    }
+
+    /** How the drafted faces lean: their mean normal along the pull, outward; positive when they narrow toward it. */
+    private static double tilt(Feature draft, double[] pull) throws jxthrowable {
+        ModelItems items = draft.ListSubItems(ModelItemType.ITEM_SURFACE);
+        double sum = 0;
+        for (int i = 0; items != null && i < items.getarraysize(); i++) {
+            Surface s = (Surface) items.get(i);
+            double[] n = Sketch.unit(pointAndNormal(s)[1]);
+            if (s.GetOrientation() == com.ptc.pfc.pfcGeometry.SurfaceOrientation.SURFACEORIENT_INWARD) {
+                n = new double[] {-n[0], -n[1], -n[2]};
+            }
+            sum += Sketch.dot(n, pull);
+        }
+        return sum;
     }
 
     // ------------------------------------------------------------------ plane create

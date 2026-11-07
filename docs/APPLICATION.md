@@ -131,11 +131,11 @@ Each capability has one row with an ID `CAP-nnn`, unique in this survey, and one
 | CAP-016 | Create a datum plane offset from a plane or planar face | OTK Java | provided | - |
 | CAP-017 | Create a datum axis through two planes, an edge or a cylinder | OTK Java | provided | Through two planes or a cylinder; through an edge later |
 | CAP-018 | Round edges to a constant radius | OTK Java | provided | - |
-| CAP-019 | Chamfer edges by an equal distance | OTK Java | deferred | Later version; not in the 1.0.0 scope |
+| CAP-019 | Chamfer edges by an equal distance | OTK Java | provided | - |
 | CAP-020 | Place a simple or standard hole on a planar face (linear, radial or coaxial) | OTK Java; TOOLKIT C for thread series | deferred | Later version; not in the 1.0.0 scope |
 | CAP-021 | Add a cosmetic thread to a cylindrical surface | OTK Java | deferred | Later version; not in the 1.0.0 scope |
 | CAP-022 | Shell a part inward, removing faces | OTK Java | provided | - |
-| CAP-023 | Draft faces about a hinge plane | OTK Java | deferred | Later version; not in the 1.0.0 scope |
+| CAP-023 | Draft faces about a hinge plane | OTK Java | provided | - |
 | CAP-024 | Add a profile rib | OTK Java; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
 | CAP-025 | Sweep a closed section along a sketched path | OTK Java; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
 | CAP-026 | Pattern a feature along a direction or about an axis | OTK Java `CreatePattern` | provided | Along a direction; about an axis later |

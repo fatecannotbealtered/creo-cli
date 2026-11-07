@@ -58,6 +58,8 @@ Check `ok`; on failure, read `error.details.next_action`.
 - `pattern`: create
 - `plane`: create
 - `axis`: create
+- `chamfer`: create
+- `draft`: create
 <!-- driver:command-map:end -->
 
 ## Write recipe

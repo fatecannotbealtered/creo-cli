@@ -24,7 +24,7 @@
 | 模式 | session |
 | 系统与 CPU | Windows (x64) |
 | 风险等级 | T2 |
-| 成熟度 | draft：draft 6 个，verified 12 个，stable 3 个 |
+| 成熟度 | draft：draft 8 个，verified 12 个，stable 3 个 |
 | 规范 | tool-driver-cli-spec 1.0.6 |
 | 宿主组件 | 需要 |
 <!-- driver:info-card:end -->
@@ -99,6 +99,8 @@
 - `pattern`: create
 - `plane`: create
 - `axis`: create
+- `chamfer`: create
+- `draft`: create
 <!-- driver:command-map:end -->
 
 ## 工作方式
