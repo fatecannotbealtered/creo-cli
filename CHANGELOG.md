@@ -4,6 +4,8 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-07
+
 ### Added
 
 - The host component's C library, for what only Creo TOOLKIT can do. `plugin install` compiles it with Visual Studio's x64 C compiler against the Creo TOOLKIT component of the user's Creo and unlocks it with a Creo TOOLKIT development license; without them it installs the Java part alone, records why, and the commands that need the library are refused with `E_UNSUPPORTED` naming the reason. `CREO_CLI_VCVARS` names the compiler's `vcvars64.bat`.
@@ -20,6 +22,8 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - `geometry list --feature` gives each face its place in the feature (start, end, side), and `--role` and `--facing` filter by place and normal; `distance get` takes faces by place, such as `--from BASE/start --to BASE/end`.
 - `revolve create` revolves a sketch about the entity of type `axis` in it, 360 degrees or less, adding or removing material.
 - `doc create --kind part --path <file>` creates a part from Creo's metric part template, with the parameters PART_NO and DESCRIPTION, or from `--template`, writes it at once and shows it in a window. `doc save-as --output <file>` writes a copy under another name, or the model into another folder.
+- Evaluation questions that build a four-way power strip's top housing and its switch cap from the requirement text, each in an empty part, and apply a change order to the housing through its relations; the graders read the geometry Creo built.
+- The sketch knowledge says that the bounding box is Creo's outline, which around rounds on drafted walls can be a few hundredths of a millimetre larger than the part, and that `distance get` measures an exact size.
 
 ### Changed
 
@@ -39,6 +43,7 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - After a change, the windows of the models that changed are repainted, not only the current window.
 - `plugin install` shows the Java compiler's errors in English and readable on a Windows set to another language. A fault of the host component itself is written to its `host.log` with where it happened, since a write whose outcome is unknown carries no message.
 - Creo no longer waits to exit while a creo-cli call still holds a connection to the host component.
+- The practice part of the evaluation questions no longer carries, in its history, the login and computer name of the person who made it.
 
 ## [1.0.0] - 2026-11-06
 

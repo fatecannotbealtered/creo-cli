@@ -14,7 +14,7 @@ description: >-
   不能修改装配或工程图、操作 Windchill。
   用 creo-cli 命令行操作 Creo Parametric：检查安装、读取、预览确认后修改，并汇报改了什么、存了没有、验证了没有。
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # creo-cli

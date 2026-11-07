@@ -21,7 +21,11 @@
       "expected": {
         "exit": 0,
         "summary": "On a part with the extrude BASE: chamfers the outer edges of BASE's end face 0.5 x 0.5 mm; the distance is named CHM."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-212746-chamfer-create.json#normal"
     },
     {
       "row": "empty",
@@ -47,7 +51,12 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "A bare number: the distance needs a unit."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-212746-chamfer-create.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -68,7 +77,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "The model has no edge 999999."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-212746-chamfer-create.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -87,7 +101,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213920-chamfer-create.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -110,7 +129,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "A feature named TOP_CHAMFER exists: the preview blocks it."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-212746-chamfer-create.json#conflict"
     },
     {
       "row": "no_scope",
@@ -133,7 +157,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-212741-chamfer-create.json#no_scope"
     },
     {
       "row": "busy",
@@ -156,7 +185,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191306-chamfer-create.json#busy"
     },
     {
       "row": "dialog",
@@ -179,7 +213,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191412-chamfer-create.json#dialog"
     },
     {
       "row": "disconnect",
@@ -224,7 +263,11 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes; the new feature stays unsaved until doc save."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-212753-chamfer-create.json#unsaved"
     },
     {
       "row": "read_back_mismatch",
@@ -247,7 +290,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper sets CHM to another value in Creo."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-212805-chamfer-create.json#read_back_mismatch"
     }
   ]
 }

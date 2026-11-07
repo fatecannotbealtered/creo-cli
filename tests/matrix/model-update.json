@@ -17,7 +17,11 @@
       "expected": {
         "exit": 0,
         "summary": "Assigns ABS from Creo's material library and sets the common name PS4 TOP."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213406-model-update.json#normal"
     },
     {
       "row": "empty",
@@ -34,10 +38,15 @@
         "{doc}"
       ],
       "expected": {
-        "exit": 3,
-        "code": "E_VALIDATION",
-        "summary": "Neither --material nor --common-name is given."
-      }
+        "exit": 2,
+        "code": "E_USAGE",
+        "summary": "Neither --material nor --common-name: nothing to change."
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213406-model-update.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -54,7 +63,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No material NOSUCH is in the part or the library."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213406-model-update.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -69,7 +83,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213950-model-update.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -108,7 +127,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213401-model-update.json#no_scope"
     },
     {
       "row": "busy",
@@ -127,7 +151,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191329-model-update.json#busy"
     },
     {
       "row": "dialog",
@@ -146,7 +175,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191424-model-update.json#dialog"
     },
     {
       "row": "disconnect",
@@ -183,7 +217,11 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes; the change stays unsaved until doc save."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213414-model-update.json#unsaved"
     },
     {
       "row": "read_back_mismatch",
@@ -202,7 +240,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper assigns another material in Creo."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213426-model-update.json#read_back_mismatch"
     }
   ]
 }

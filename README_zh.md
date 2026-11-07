@@ -10,7 +10,7 @@
 ![mode](https://img.shields.io/badge/mode-session-0e8a16)
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
-![maturity](https://img.shields.io/badge/maturity-draft-8957e5)
+![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
 ![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.6-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
@@ -24,7 +24,7 @@
 | 模式 | session |
 | 系统与 CPU | Windows (x64) |
 | 风险等级 | T2 |
-| 成熟度 | draft：draft 14 个，verified 12 个，stable 3 个 |
+| 成熟度 | verified：draft 0 个，verified 16 个，stable 13 个 |
 | 规范 | tool-driver-cli-spec 1.0.6 |
 | 宿主组件 | 需要 |
 <!-- driver:info-card:end -->

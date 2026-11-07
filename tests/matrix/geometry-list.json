@@ -18,7 +18,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162753-geometry-list.json#normal"
+      "evidence": "live:docs/evidence/2026-11-07-190804-geometry-list.json#normal"
     },
     {
       "row": "empty",
@@ -40,7 +40,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162721-geometry-list.json#empty"
+      "evidence": "live:docs/evidence/2026-11-07-190731-geometry-list.json#empty"
     },
     {
       "row": "invalid_input",
@@ -62,7 +62,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162721-geometry-list.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-07-190731-geometry-list.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -83,7 +83,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162721-geometry-list.json#not_found"
+      "evidence": "live:docs/evidence/2026-11-07-190731-geometry-list.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -101,7 +101,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163237-geometry-list.json#ambiguous"
+      "evidence": "live:docs/evidence/2026-11-07-213942-geometry-list.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -133,7 +133,7 @@
         "exit": 7,
         "code": "E_BUSY"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163120-geometry-list.json#busy"
+      "evidence": "live:docs/evidence/2026-11-07-191229-geometry-list.json#busy"
     },
     {
       "row": "dialog",
@@ -155,7 +155,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163151-geometry-list.json#dialog"
+      "evidence": "live:docs/evidence/2026-11-07-191353-geometry-list.json#dialog"
     },
     {
       "row": "disconnect",
@@ -192,7 +192,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162939-geometry-list.json#unsaved"
+      "evidence": "live:docs/evidence/2026-11-07-191015-geometry-list.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

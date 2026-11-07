@@ -34,7 +34,7 @@
         "{dir}/copy.asm"
       ],
       "expected": {
-        "exit": 3,
+        "exit": 2,
         "code": "E_VALIDATION",
         "summary": "--output changes the model's type."
       }

@@ -15,7 +15,11 @@
       "expected": {
         "exit": 0,
         "summary": "Dangerous, confirmed with its token and --dangerous: deletes SOCKET_CUT and the pattern built on it; the read-back finds none of them."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-223045-feature-delete.json#normal"
     },
     {
       "row": "empty",
@@ -35,7 +39,12 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "--id is missing."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213503-feature-delete.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -52,7 +61,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No feature has that ID or name."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213503-feature-delete.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -65,7 +79,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213937-feature-delete.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -87,7 +106,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not allow dangerous operations."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213457-feature-delete.json#no_scope"
     },
     {
       "row": "busy",
@@ -104,7 +128,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191332-feature-delete.json#busy"
     },
     {
       "row": "dialog",
@@ -121,7 +150,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191426-feature-delete.json#dialog"
     },
     {
       "row": "disconnect",
@@ -154,7 +188,11 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes; the deletion stays unsaved until doc save."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213510-feature-delete.json#unsaved"
     },
     {
       "row": "read_back_mismatch",
@@ -171,7 +209,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper closes the model without saving and opens it again, so SOCKET_CUT is back."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213525-feature-delete.json#read_back_mismatch"
     }
   ]
 }

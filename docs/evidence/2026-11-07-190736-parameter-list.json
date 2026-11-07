@@ -1,0 +1,74 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.1.0",
+  "commit": "0b3582874cf6",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-07T19:07:36Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "parameter list",
+      "arguments": [
+        "--session",
+        "creo-40772-3210004ea",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session"
+    },
+    {
+      "command": "parameter list",
+      "arguments": [
+        "--session",
+        "creo-40772-3210004ea",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--offset",
+        "1000"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "empty",
+      "mode": "session"
+    },
+    {
+      "command": "parameter list",
+      "arguments": [
+        "--session",
+        "creo-40772-3210004ea",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\disc.prt",
+        "--limit",
+        "101"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session"
+    },
+    {
+      "command": "parameter list",
+      "arguments": [
+        "--session",
+        "creo-40772-3210004ea",
+        "--doc",
+        "not-open"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session"
+    }
+  ]
+}

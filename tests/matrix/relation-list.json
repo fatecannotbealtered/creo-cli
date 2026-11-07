@@ -16,7 +16,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162738-relation-list.json#normal"
+      "evidence": "live:docs/evidence/2026-11-07-190746-relation-list.json#normal"
     },
     {
       "row": "empty",
@@ -34,7 +34,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162808-relation-list.json#empty"
+      "evidence": "live:docs/evidence/2026-11-07-190820-relation-list.json#empty"
     },
     {
       "row": "invalid_input",
@@ -54,7 +54,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162738-relation-list.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-07-190746-relation-list.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -74,7 +74,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162738-relation-list.json#not_found"
+      "evidence": "live:docs/evidence/2026-11-07-190746-relation-list.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -89,7 +89,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163246-relation-list.json#ambiguous"
+      "evidence": "live:docs/evidence/2026-11-07-213959-relation-list.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -119,7 +119,7 @@
         "exit": 7,
         "code": "E_BUSY"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163137-relation-list.json#busy"
+      "evidence": "live:docs/evidence/2026-11-07-191250-relation-list.json#busy"
     },
     {
       "row": "dialog",
@@ -139,7 +139,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163159-relation-list.json#dialog"
+      "evidence": "live:docs/evidence/2026-11-07-191404-relation-list.json#dialog"
     },
     {
       "row": "disconnect",
@@ -172,7 +172,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162947-relation-list.json#unsaved"
+      "evidence": "live:docs/evidence/2026-11-07-191024-relation-list.json#unsaved"
     },
     {
       "row": "read_back_mismatch",

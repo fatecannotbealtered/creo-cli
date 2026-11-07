@@ -19,7 +19,11 @@
       "expected": {
         "exit": 0,
         "summary": "Creates the integer parameter POSITIONS = 4."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213214-parameter-create.json#normal"
     },
     {
       "row": "empty",
@@ -42,10 +46,15 @@
         "four"
       ],
       "expected": {
-        "exit": 3,
+        "exit": 2,
         "code": "E_VALIDATION",
         "summary": "four is not an integer."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_VALIDATION"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213214-parameter-create.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -54,7 +63,7 @@
         "--session",
         "{session}",
         "--doc",
-        "missing.prt",
+        "not-open",
         "--name",
         "POSITIONS",
         "--value",
@@ -64,7 +73,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document of that name is open."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213214-parameter-create.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -81,7 +95,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213952-parameter-create.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -102,7 +121,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "A parameter named POSITIONS exists: the preview blocks it."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213214-parameter-create.json#conflict"
     },
     {
       "row": "no_scope",
@@ -123,7 +147,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the document."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213208-parameter-create.json#no_scope"
     },
     {
       "row": "busy",
@@ -144,7 +173,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191322-parameter-create.json#busy"
     },
     {
       "row": "dialog",
@@ -165,7 +199,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-191421-parameter-create.json#dialog"
     },
     {
       "row": "disconnect",
@@ -206,7 +245,11 @@
       "expected": {
         "exit": 0,
         "summary": "Works the same on a document with unsaved changes; the change stays unsaved until doc save."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213220-parameter-create.json#unsaved"
     },
     {
       "row": "read_back_mismatch",
@@ -227,7 +270,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper sets POSITIONS to another value in Creo."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-07-213231-parameter-create.json#read_back_mismatch"
     }
   ]
 }

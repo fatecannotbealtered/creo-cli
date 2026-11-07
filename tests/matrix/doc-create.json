@@ -34,7 +34,7 @@
         "{dir}/cover.txt"
       ],
       "expected": {
-        "exit": 3,
+        "exit": 2,
         "code": "E_VALIDATION",
         "summary": "--path does not name a .prt file."
       }
