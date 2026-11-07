@@ -34,6 +34,8 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - A face name that fits several faces is refused with `E_AMBIGUOUS` and the candidates, each with its surface ID, a point and its normal; the host component sent bare IDs, which the CLI turned into `E_PROTOCOL`.
 - `relation update` no longer leaves an unknown outcome when the model does not regenerate with the old relations either; it reports the old relations back and that the model fails with any value.
 - The host component reports the version `plugin install` built it as, which the build writes into its JAR; it reported 1.0.0 whatever was installed, so after an upgrade every command was refused as if Creo still had the old host component.
+- A surface, edge or axis named by an ID the model does not have, such as `edge:999999`, is refused with `E_NOT_FOUND`; Creo's own error made it `E_NATIVE_FAILURE`.
+- A feature, dimension or parameter a write made or set that is gone at the read-back, such as a new feature someone renamed, reads back as a mismatch (`E_VERIFY_FAILED`), not as unread.
 - After a change, the windows of the models that changed are repainted, not only the current window.
 - `plugin install` shows the Java compiler's errors in English and readable on a Windows set to another language. A fault of the host component itself is written to its `host.log` with where it happened, since a write whose outcome is unknown carries no message.
 - Creo no longer waits to exit while a creo-cli call still holds a connection to the host component.

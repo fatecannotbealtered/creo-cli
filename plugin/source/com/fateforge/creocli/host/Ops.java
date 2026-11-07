@@ -216,12 +216,30 @@ final class Ops {
             try {
                 observed.put(key, readObject(model, path));
             } catch (HostError gone) {
-                observed.put(key, Json.map("exists", false));
+                observed.put(key, gone(path));
             }
         }
         Map<String, Object> out = Json.map("observed", observed);
         if (!unreadable.isEmpty()) {
             out.put("unreadable", unreadable);
+        }
+        return out;
+    }
+
+    /**
+     * An object that is not there: each field it would have is empty, so a change that made or set it
+     * reads back as a mismatch, and one that removed it as done.
+     */
+    private static Map<String, Object> gone(String path) {
+        Map<String, Object> out = Json.map("exists", false);
+        if (path.startsWith("/features/")) {
+            out.put("status", null);
+            out.put("name", null);
+        } else if (path.startsWith("/dimensions/")) {
+            out.put("value_mm", null);
+            out.put("value_deg", null);
+        } else if (path.startsWith("/parameters/")) {
+            out.put("value", null);
         }
         return out;
     }

@@ -769,10 +769,19 @@ final class Modeling {
         return (Surface) items.get(0);
     }
 
+    /** An item by its ID, or null: Creo throws for an ID the model does not have. */
+    private static ModelItem byId(Solid solid, ModelItemType type, int id) {
+        try {
+            return solid.GetItemById(type, id);
+        } catch (Throwable absent) {
+            return null;
+        }
+    }
+
     /** A datum axis by name, or axis:<id>. */
     private static ModelItem axisItem(Solid solid, String text) throws jxthrowable {
         Matcher id = Pattern.compile("axis:([0-9]+)").matcher(text);
-        ModelItem item = id.matches() ? solid.GetItemById(ModelItemType.ITEM_AXIS, Integer.parseInt(id.group(1)))
+        ModelItem item = id.matches() ? byId(solid, ModelItemType.ITEM_AXIS, Integer.parseInt(id.group(1)))
                 : solid.GetItemByName(ModelItemType.ITEM_AXIS, text);
         if (item == null) {
             throw new HostError(HostError.NOT_FOUND, "The model has no datum axis " + text + "; geometry list --kind axis shows them.");
@@ -1076,7 +1085,7 @@ final class Modeling {
     List<Surface> faces(Solid solid, String text, boolean one) throws Exception {
         Matcher id = SURFACE_ID.matcher(text);
         if (id.matches()) {
-            ModelItem item = solid.GetItemById(ModelItemType.ITEM_SURFACE, Integer.parseInt(id.group(1)));
+            ModelItem item = byId(solid, ModelItemType.ITEM_SURFACE, Integer.parseInt(id.group(1)));
             if (!(item instanceof Surface)) {
                 throw new HostError(HostError.NOT_FOUND, "The model has no surface " + id.group(1) + "; geometry list shows them.");
             }
@@ -1127,7 +1136,7 @@ final class Modeling {
             Matcher of = EDGE_OF.matcher(one);
             Matcher all = EDGES_OF.matcher(one);
             if (id.matches()) {
-                ModelItem item = solid.GetItemById(ModelItemType.ITEM_EDGE, Integer.parseInt(id.group(1)));
+                ModelItem item = byId(solid, ModelItemType.ITEM_EDGE, Integer.parseInt(id.group(1)));
                 if (!(item instanceof Edge)) {
                     throw new HostError(HostError.NOT_FOUND, "The model has no edge " + id.group(1) + "; geometry list shows them.");
                 }
