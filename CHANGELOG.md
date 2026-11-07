@@ -14,6 +14,8 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - `plane create` makes a datum plane at a distance from a plane or face toward a model axis, or through an axis at an angle; `axis create` a datum axis where two planes cross or through a cylindrical face.
 - `chamfer create` chamfers edges by one distance; `draft create` drafts faces by one angle about a hinge plane so that they narrow toward the pull direction, turning the angle's sign when Creo leaned them the other way.
 - The domain Skill `creo-feature` for modeling parts feature by feature; the entry Skill `creo-cli` routes feature work to it.
+- `feature delete` deletes a feature with the features that depend on it, dangerous, with all of them in the preview. `parameter create` creates a parameter; `relation update` replaces the relations, blocking a line Creo cannot evaluate and putting the old relations back when the model does not regenerate; `model update` assigns a material from the part or Creo's material library and sets the common name.
+- `model check` runs Creo's ModelCHECK read-only, with its report beside the host component, and creo-cli's checks: failed, suppressed and default-named features.
 - `doc create --kind part --path <file>` creates a part from Creo's metric part template, with the parameters PART_NO and DESCRIPTION, or from `--template`, writes it at once and shows it in a window. `doc save-as --output <file>` writes a copy under another name, or the model into another folder.
 
 ### Changed

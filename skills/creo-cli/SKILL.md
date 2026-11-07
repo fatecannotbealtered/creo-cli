@@ -43,12 +43,12 @@ Check `ok`; on failure, read `error.details.next_action`.
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
-- `model`: get, export, render
+- `model`: get, update, export, render
 - `geometry`: list
 - `distance`: get
 - `dimension`: list, update
-- `parameter`: list, update
-- `relation`: list
+- `parameter`: list, update, create
+- `relation`: list, update
 - `material`: list
 - `component`: list
 <!-- driver:command-map:end -->

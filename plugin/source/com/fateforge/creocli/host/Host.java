@@ -89,6 +89,7 @@ public final class Host {
             String id = sessionId(pid);
             String version = String.valueOf(pfcGlobal.GetProEVersion());
             Host host = new Host(state, home, pid, id, version);
+            Modeling.reportFolder(home.resolve("modelcheck"));
             Path folder = jarFolder(home);
             if (folder != null) {
                 Native.load(session, folder, recordedNative(folder));

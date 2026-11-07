@@ -132,6 +132,7 @@ final class Ops {
             case "relation list": result = items(relations(model)); break;
             case "material list": result = items(materials(model, Json.string(in, "query", null))); break;
             case "component list": result = items(components(model)); break;
+            case "model check": result = modeling.modelCheck(model); break;
             default: throw new HostError(HostError.UNSUPPORTED, "The host has no read for " + command + ".");
         }
         return Json.map("result", result);
@@ -253,7 +254,26 @@ final class Ops {
         }
         if (path.startsWith("/features/")) {
             Feature f = Creo.feature(Creo.solid(model), path.substring("/features/".length()));
-            return Json.map("status", Creo.shortName(f.GetStatus(), "FEAT_"), "name", f.GetName());
+            return Json.map("status", Creo.shortName(f.GetStatus(), "FEAT_"), "name", f.GetName(), "exists", true);
+        }
+        if (path.equals("/relations")) {
+            List<Object> lines = new ArrayList<>();
+            for (Map<String, Object> r : relations(model)) {
+                lines.add(r.get("text"));
+            }
+            return Json.map("lines", lines);
+        }
+        if (path.equals("/model")) {
+            String material = null;
+            if (model instanceof Part) {
+                try {
+                    Material m = ((Part) model).GetCurrentMaterial();
+                    material = m == null ? null : m.GetName();
+                } catch (Throwable none) {
+                    material = null;
+                }
+            }
+            return Json.map("material", material, "common_name", model.GetCommonName());
         }
         throw new HostError(HostError.NOT_FOUND, "Nothing at " + path + ".");
     }
@@ -292,6 +312,10 @@ final class Ops {
             case "feature update": featureUpdate(plan, model, in); break;
             case "model export": export(plan, model, in); break;
             case "model render": render(plan, model, in); break;
+            case "parameter create": parameterCreate(plan, model, in); break;
+            case "relation update": relationUpdate(plan, model, in); break;
+            case "model update": modelUpdate(plan, model, in); break;
+            case "feature delete": modeling.featureDelete(plan, model, in); break;
             case "extrude create": modeling.extrudeCreate(plan, model, in); break;
             case "shell create": modeling.shellCreate(plan, model, in); break;
             case "round create": modeling.roundCreate(plan, model, in); break;
@@ -1298,6 +1322,199 @@ final class Ops {
     }
 
     /** The relations, one item per line in Creo's order, numbered from 1 as Tools > Relations shows them. */
+    private static final java.util.regex.Pattern PARAMETER_NAME = java.util.regex.Pattern.compile("[A-Za-z][A-Za-z0-9_]{0,31}");
+
+    private void parameterCreate(Plan plan, Model model, Map<String, Object> in) throws Exception {
+        String name = required(in, "name").toUpperCase(Locale.ROOT);
+        if (!PARAMETER_NAME.matcher(name).matches()) {
+            throw new HostError(HostError.VALIDATION, "A parameter name is a letter, then letters, digits or _, 32 at most.");
+        }
+        String type = Json.string(in, "type", "string");
+        String text = required(in, "value");
+        ParamValue value;
+        Object plainValue;
+        try {
+            switch (type) {
+                case "string": value = pfcModelItem.CreateStringParamValue(text); plainValue = text; break;
+                case "integer": value = pfcModelItem.CreateIntParamValue(Integer.parseInt(text.trim())); plainValue = Long.parseLong(text.trim()); break;
+                case "real": value = pfcModelItem.CreateDoubleParamValue(Double.parseDouble(text.trim())); plainValue = clean(Double.parseDouble(text.trim())); break;
+                case "boolean":
+                    if (!text.trim().equalsIgnoreCase("true") && !text.trim().equalsIgnoreCase("false")) {
+                        throw new NumberFormatException(text);
+                    }
+                    value = pfcModelItem.CreateBoolParamValue(Boolean.parseBoolean(text.trim()));
+                    plainValue = Boolean.parseBoolean(text.trim());
+                    break;
+                default:
+                    throw new HostError(HostError.VALIDATION, "--type is string, integer, real or boolean.");
+            }
+        } catch (NumberFormatException wrong) {
+            throw new HostError(HostError.VALIDATION, "--value " + text + " is not a " + type + ".");
+        }
+        if (model.GetParam(name) != null) {
+            plan.block("A parameter named " + name + " exists; parameter update changes its value", "creo-relations-and-dimensions");
+        }
+        String key = docs.key(model) + "#/parameters/" + name;
+        plan.target(key, "parameter", name);
+        plan.change(key, "value", null, plainValue);
+        plan.action = "Create the " + type + " parameter " + name + " = " + text + " in " + plan.docId + ".";
+        final ParamValue created = value;
+        plan.work = () -> {
+            try {
+                model.CreateParam(name, created);
+            } catch (jxthrowable refused) {
+                throw new HostError(HostError.NATIVE, "Creo did not create the parameter " + name + ".").nativeMessage(refused.toString());
+            }
+            return Docs.facts("dispatched", "applied", Json.map("result", parameterRow(model.GetParam(name))));
+        };
+    }
+
+    private void relationUpdate(Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Object given = in.get("relations");
+        if (!(given instanceof List)) {
+            throw new HostError(HostError.VALIDATION, "--relations is a JSON array of lines, such as [\"BODY_LENGTH = POSITIONS * OUTLET_PITCH + 32\"].");
+        }
+        List<Object> lines = new ArrayList<>();
+        for (Object line : (List<?>) given) {
+            if (!(line instanceof String)) {
+                throw new HostError(HostError.VALIDATION, "Each relation is a string.");
+            }
+            lines.add(line);
+        }
+        // Creo keeps a relation it cannot evaluate and only flags it (ModelCHECK reports RELATION_ERRS),
+        // so each assignment's right-hand side is evaluated first.
+        for (int i = 0; i < lines.size(); i++) {
+            String line = ((String) lines.get(i)).trim();
+            int eq = line.indexOf('=');
+            if (line.isEmpty() || line.startsWith("/*") || eq < 0 || line.toUpperCase(Locale.ROOT).startsWith("IF ")
+                    || line.charAt(Math.max(0, eq - 1)) == '<' || line.charAt(Math.max(0, eq - 1)) == '>'
+                    || line.charAt(Math.max(0, eq - 1)) == '!' || (eq + 1 < line.length() && line.charAt(eq + 1) == '=')) {
+                continue;
+            }
+            String right = line.substring(eq + 1).trim();
+            try {
+                ((RelationOwner) model).EvaluateExpression(right);
+            } catch (jxthrowable unknown) {
+                plan.block("Line " + (i + 1) + ", " + line + ": Creo cannot evaluate " + right + ", for example a name the model "
+                        + "does not have", "creo-relations-and-dimensions");
+            }
+        }
+        List<Object> before = new ArrayList<>();
+        for (Map<String, Object> r : relations(model)) {
+            before.add(r.get("text"));
+        }
+        String key = docs.key(model) + "#/relations";
+        plan.target(key, "relations", plan.docId);
+        plan.change(key, "lines", before, lines);
+        plan.action = "Replace the " + before.size() + " relations of " + plan.docId + " with " + lines.size()
+                + " lines, then regenerate; the old relations come back when the model does not regenerate.";
+        plan.work = () -> {
+            stringseq old = ((RelationOwner) model).GetRelations();
+            stringseq next = stringseq.create();
+            for (Object line : lines) {
+                next.append((String) line);
+            }
+            String failure = null;
+            try {
+                ((RelationOwner) model).SetRelations(next);
+                if (model instanceof Solid) {
+                    ((Solid) model).Regenerate(com.ptc.pfc.pfcSolid.pfcSolid.RegenInstructions_Create(false, false, null));
+                    List<Integer> failed = failedFeatures((Solid) model);
+                    if (!failed.isEmpty()) {
+                        failure = "the model did not regenerate: features " + failed + " failed";
+                    }
+                }
+            } catch (jxthrowable refused) {
+                failure = "Creo refused them: " + refused;
+            }
+            if (failure != null) {
+                ((RelationOwner) model).SetRelations(old == null ? stringseq.create() : old);
+                if (model instanceof Solid) {
+                    ((Solid) model).Regenerate(com.ptc.pfc.pfcSolid.pfcSolid.RegenInstructions_Create(false, false, null));
+                }
+                throw new HostError(HostError.VALIDATION, "The relations were not kept: " + failure + ". The old relations are back.")
+                        .with("knowledge", java.util.List.of("creo-relations-and-dimensions"));
+            }
+            repaint();
+            return Docs.facts("dispatched", "applied", Json.map("result", items(relations(model))));
+        };
+    }
+
+    private void modelUpdate(Plan plan, Model model, Map<String, Object> in) throws Exception {
+        String material = Json.string(in, "material", null);
+        String commonName = Json.string(in, "common_name", null);
+        if (material == null && commonName == null) {
+            throw new HostError(HostError.VALIDATION, "Give --material, --common-name or both.");
+        }
+        String key = docs.key(model) + "#/model";
+        plan.target(key, "model", plan.docId);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> now = readObject(model, "/model");
+        File materialFile = null;
+        if (material != null) {
+            if (!(model instanceof Part)) {
+                throw new HostError(HostError.VALIDATION, "Only a part has a material.");
+            }
+            Materials own = ((Part) model).ListMaterials();
+            boolean inModel = false;
+            for (int i = 0; own != null && i < own.getarraysize(); i++) {
+                inModel |= own.get(i).GetName().equalsIgnoreCase(material);
+            }
+            if (!inModel) {
+                List<File> files = new ArrayList<>();
+                walk(library(Creo.session()), files, 0);
+                for (File file : files) {
+                    if (file.getName().equalsIgnoreCase(material + ".mtl")) {
+                        materialFile = file;
+                    }
+                }
+                if (materialFile == null) {
+                    throw new HostError(HostError.NOT_FOUND, "No material " + material + " is in the part or in Creo's material library; "
+                            + "material list shows them.").with("knowledge", java.util.List.of("creo-materials"));
+                }
+            }
+            plan.change(key, "material", now.get("material"), material.toUpperCase(Locale.ROOT));
+        }
+        if (commonName != null) {
+            if (!model.IsCommonNameModifiable()) {
+                plan.block("The common name of " + plan.docId + " cannot be changed here, for example because a PDM system manages it", null);
+            }
+            plan.change(key, "common_name", now.get("common_name"), commonName);
+        }
+        plan.action = "Update " + plan.docId + ":" + (material != null ? " material " + material : "")
+                + (commonName != null ? (material != null ? ";" : "") + " common name " + commonName : "") + ".";
+        final File libraryFile = materialFile;
+        plan.work = () -> {
+            if (material != null) {
+                Part part = (Part) model;
+                Material m = part.GetMaterial(material);
+                if (m == null && libraryFile != null) {
+                    // RetrieveMaterial takes a name, not a path, and reads the .mtl file from Creo's
+                    // current directory; the library keeps its materials in folders by family.
+                    Session session = Creo.session();
+                    String home = session.GetCurrentDirectory();
+                    session.ChangeDirectory(libraryFile.getParent());
+                    try {
+                        m = part.RetrieveMaterial(material);
+                    } catch (jxthrowable refused) {
+                        throw new HostError(HostError.NATIVE, "Creo did not load the material " + material + " from "
+                                + libraryFile + ".").nativeMessage(refused.toString());
+                    } finally {
+                        session.ChangeDirectory(home);
+                    }
+                }
+                if (m == null) {
+                    throw new HostError(HostError.NATIVE, "Creo did not load the material " + material + ".");
+                }
+                part.SetCurrentMaterial(m);
+            }
+            if (commonName != null) {
+                model.SetCommonName(commonName);
+            }
+            return Docs.facts("dispatched", "applied", Json.map("result", readObject(model, "/model")));
+        };
+    }
+
     private List<Map<String, Object>> relations(Model model) throws jxthrowable {
         List<Map<String, Object>> out = new ArrayList<>();
         stringseq all = ((RelationOwner) model).GetRelations();

@@ -24,7 +24,7 @@
 | 模式 | session |
 | 系统与 CPU | Windows (x64) |
 | 风险等级 | T2 |
-| 成熟度 | draft：draft 8 个，verified 12 个，stable 3 个 |
+| 成熟度 | draft：draft 13 个，verified 12 个，stable 3 个 |
 | 规范 | tool-driver-cli-spec 1.0.6 |
 | 宿主组件 | 需要 |
 <!-- driver:info-card:end -->
@@ -84,13 +84,13 @@
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
-- `feature`: get, list, update
-- `model`: get, export, render
+- `feature`: get, list, update, delete (dangerous)
+- `model`: get, check, update, export, render
 - `geometry`: list
 - `distance`: get
 - `dimension`: list, update
-- `parameter`: list, update
-- `relation`: list
+- `parameter`: list, update, create
+- `relation`: list, update
 - `material`: list
 - `component`: list
 - `extrude`: create

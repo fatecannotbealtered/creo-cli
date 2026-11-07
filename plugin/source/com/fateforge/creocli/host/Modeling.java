@@ -257,6 +257,139 @@ final class Modeling {
         };
     }
 
+    // ------------------------------------------------------------------ feature delete
+
+    void featureDelete(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        String wanted = Json.string(in, "id", null);
+        if (wanted == null) {
+            throw new HostError(HostError.VALIDATION, "--id is required: the feature's ID or name.");
+        }
+        Feature feature = Creo.feature(solid, wanted);
+        Map<Integer, Feature> going = new LinkedHashMap<>();
+        children(feature, going);
+        String docKey = docs.key(model);
+        List<String> names = new ArrayList<>();
+        for (Feature f : going.values()) {
+            String key = docKey + "#/features/" + f.GetId();
+            plan.target(key, "feature", f.GetName() == null ? String.valueOf(f.GetId()) : f.GetName());
+            plan.change(key, "exists", true, false);
+            names.add(f.GetName() == null ? String.valueOf(f.GetId()) : f.GetName() + " (" + f.GetId() + ")");
+        }
+        plan.action = "Delete " + String.join(", ", names) + (going.size() > 1 ? ": the feature and the features that depend on it" : "")
+                + " from " + plan.docId + "; nothing in Creo can bring them back but closing without saving.";
+        plan.work = () -> {
+            com.ptc.cipjava.intseq ids = com.ptc.cipjava.intseq.create();
+            for (Integer id : going.keySet()) {
+                ids.append(id);
+            }
+            com.ptc.wfc.wfcFeatureInstructions.FeatSuppressOrDeleteOptions options =
+                    com.ptc.wfc.wfcFeatureInstructions.FeatSuppressOrDeleteOptions.create();
+            options.append(com.ptc.wfc.wfcFeatureInstructions.FeatSuppressOrDeleteOption.FEAT_SUPP_OR_DEL_NO_OPTS);
+            try {
+                ((WSolid) solid).DeleteFeatures(ids, options, wfcSolidInstructions.WRegenInstructions_Create());
+            } catch (jxthrowable refused) {
+                throw new HostError(HostError.NATIVE, "Creo did not delete " + String.join(", ", names) + ".", "unknown")
+                        .nativeMessage(refused.toString());
+            }
+            Ops.repaint();
+            return Docs.facts("dispatched", "applied", Json.map("result", Json.map("deleted", names)));
+        };
+    }
+
+    private static void children(Feature feature, Map<Integer, Feature> into) throws jxthrowable {
+        if (into.containsKey(feature.GetId())) {
+            return;
+        }
+        into.put(feature.GetId(), feature);
+        com.ptc.pfc.pfcFeature.Features kids = feature.ListChildren();
+        for (int i = 0; kids != null && i < kids.getarraysize(); i++) {
+            children(kids.get(i), into);
+        }
+    }
+
+    // ------------------------------------------------------------------ model check
+
+    private static java.nio.file.Path reports;
+
+    /** Where ModelCHECK writes its reports: a folder beside the host component, never the user's folders. */
+    static void reportFolder(java.nio.file.Path folder) {
+        reports = folder;
+    }
+
+    private static final Pattern DEFAULT_NAME = Pattern.compile("(EXTRUDE|REVOLVE|PROTRUSION|CUT|ROUND|CHAMFER|SHELL|DRAFT|PATTERN|"
+            + "HOLE|RIB|DTM|A_|ADTM)[_]?[0-9]+");
+
+    /**
+     * Creo's ModelCHECK and creo-cli's own checks of a part: failed or suppressed features, and
+     * features left with Creo's default names. ModelCHECK runs in read-only mode with its
+     * report in the host's folder; a run that saved the model is reported as an error.
+     */
+    Map<String, Object> modelCheck(Model model) throws Exception {
+        Solid solid = Creo.solid(model);
+        List<Object> items = new ArrayList<>();
+        Map<String, Object> mc = new LinkedHashMap<>();
+        boolean modifiedBefore = model.GetIsModified();
+        try {
+            java.nio.file.Path out = (reports != null ? reports : java.nio.file.Paths.get(System.getProperty("java.io.tmpdir"), "creo-cli-modelcheck"))
+                    .resolve(base(model).toLowerCase(Locale.ROOT));
+            deleteTree(out.toFile());
+            java.nio.file.Files.createDirectories(out);
+            com.ptc.pfc.pfcModelCheck.ModelCheckInstructions instructions = com.ptc.pfc.pfcModelCheck.pfcModelCheck.ModelCheckInstructions_Create();
+            instructions.SetOutputDir(out.toString());
+            instructions.SetShowInBrowser(Boolean.FALSE);
+            com.ptc.pfc.pfcModelCheck.ModelCheckResults r = Creo.session().ExecuteModelCheck(model, instructions);
+            mc.put("ran", true);
+            mc.put("errors", r.GetNumberOfErrors());
+            mc.put("warnings", r.GetNumberOfWarnings());
+            mc.put("saved", r.GetWasModelSaved());
+            mc.put("report", out.toString());
+            if (r.GetWasModelSaved()) {
+                items.add(Json.map("rule", "modelcheck_saved", "object", base(model), "severity", "error",
+                        "message", "ModelCHECK saved the model; its configuration allows saving."));
+            }
+        } catch (Throwable notRun) {
+            mc.put("ran", false);
+            mc.put("reason", String.valueOf(notRun));
+        }
+        if (!modifiedBefore && model.GetIsModified()) {
+            items.add(Json.map("rule", "modelcheck_changed", "object", base(model), "severity", "error",
+                    "message", "The model shows changes after ModelCHECK ran; its configuration may change models."));
+        }
+        com.ptc.pfc.pfcFeature.Features all = solid.ListFeaturesByType(Boolean.TRUE, null);
+        for (int i = 0; all != null && i < all.getarraysize(); i++) {
+            Feature f = all.get(i);
+            String status = Creo.shortName(f.GetStatus(), "FEAT_");
+            String label = f.GetName() == null ? String.valueOf(f.GetId()) : f.GetName();
+            if ("failed".equals(status) || "unregenerated".equals(status)) {
+                items.add(Json.map("rule", "feature_failed", "object", label, "severity", "error", "message", "The feature does not regenerate."));
+            } else if ("suppressed".equals(status)) {
+                items.add(Json.map("rule", "feature_suppressed", "object", label, "severity", "warning", "message",
+                        "The feature is suppressed; delete it or resume it before handing the model over."));
+            }
+            String type = Creo.shortName(f.GetFeatType(), "FEATTYPE_");
+            boolean datumOfTemplate = f.GetId() <= 7 && ("datum_plane".equals(type) || "coord_sys".equals(type));
+            if (!datumOfTemplate && f.GetName() != null && DEFAULT_NAME.matcher(f.GetName()).matches()) {
+                items.add(Json.map("rule", "feature_unnamed", "object", label, "severity", "warning", "message",
+                        "The feature keeps Creo's default name; give it a name that says what it is."));
+            }
+        }
+        long errors = items.stream().filter(x -> "error".equals(((Map<?, ?>) x).get("severity"))).count()
+                + (Boolean.TRUE.equals(mc.get("ran")) ? ((Number) mc.get("errors")).longValue() : 0);
+        return Json.map("modelcheck", mc, "findings", items, "errors", errors, "passed", errors == 0 && Boolean.TRUE.equals(mc.get("ran")));
+    }
+
+    private static void deleteTree(java.io.File dir) {
+        java.io.File[] files = dir.listFiles();
+        for (int i = 0; files != null && i < files.length; i++) {
+            if (files[i].isDirectory()) {
+                deleteTree(files[i]);
+            }
+            files[i].delete();
+        }
+        dir.delete();
+    }
+
     // ------------------------------------------------------------------ shell create
 
     void shellCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {

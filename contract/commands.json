@@ -634,6 +634,44 @@
       ]
     },
     {
+      "path": "model check",
+      "summary": "Run Creo's ModelCHECK and creo-cli's checks on a part: failed, suppressed and unnamed features.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "model",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        }
+      ],
+      "untrusted_fields": [
+        "findings[*].object",
+        "modelcheck.report",
+        "modelcheck.reason"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-localized-names"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
       "path": "component list",
       "summary": "The top-level components of an assembly: model, status and position.",
       "effects": [
@@ -1527,6 +1565,212 @@
       ],
       "doc_kinds": [
         "part"
+      ]
+    },
+    {
+      "path": "parameter create",
+      "summary": "Create a model parameter of a type, with its value.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "parameter",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The parameter's name, such as POSITIONS.",
+          "required": true
+        },
+        {
+          "name": "--type",
+          "type": "string",
+          "summary": "string (the default), integer, real or boolean."
+        },
+        {
+          "name": "--value",
+          "type": "string",
+          "summary": "The value: text, 4, 2.5, true or false.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "id",
+        "name",
+        "value"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-relations-and-dimensions"
+      ]
+    },
+    {
+      "path": "relation update",
+      "summary": "Replace a model's relations and regenerate; the old relations come back when the model does not regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "relation",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--relations",
+          "type": "json",
+          "summary": "Every relation line, as a JSON array of strings, inline or a file; an empty array removes them all.",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "items[*].text"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-relations-and-dimensions"
+      ]
+    },
+    {
+      "path": "model update",
+      "summary": "Assign a part's material from the part or Creo's material library, or change a model's common name.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "model",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--material",
+          "type": "string",
+          "summary": "A material's name, as material list shows it, such as ABS."
+        },
+        {
+          "name": "--common-name",
+          "type": "string",
+          "summary": "The model's common name."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "material",
+        "common_name"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-materials"
+      ]
+    },
+    {
+      "path": "feature delete",
+      "summary": "Delete a feature with the features that depend on it; the preview lists them all. Nothing brings them back but closing without saving.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--id",
+          "type": "string",
+          "summary": "The feature's ID or name.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "deleted[*]"
+      ],
+      "irreversible": true,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-localized-names"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
       ]
     },
     {

@@ -10,7 +10,7 @@ description: >-
   use creo-cli for those. 不负责读改尺寸、参数、材料，会话、保存和导出；这些请用 creo-cli。
 metadata:
   version: 1.0.0
-  commands: [extrude create, shell create, round create, chamfer create, draft create, pattern create, plane create, axis create, feature list, feature get, feature update]
+  commands: [extrude create, shell create, round create, chamfer create, draft create, pattern create, plane create, axis create, feature list, feature get, feature update, feature delete, model check]
 ---
 
 Read the entry Skill `creo-cli` first: it holds the install check, the write recipe, the STOP checkpoints, saving and the report. If it is not installed, stop and ask the user to reinstall creo-cli's Skills.
@@ -26,7 +26,8 @@ Read the entry Skill `creo-cli` first: it holds the install check, the write rec
 - `pattern`: create
 - `plane`: create
 - `axis`: create
-- `feature`: list, get, update
+- `feature`: list, get, update, delete (dangerous)
+- `model`: check
 <!-- driver:command-map:end -->
 
 ## Knowledge
