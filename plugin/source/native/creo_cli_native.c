@@ -345,19 +345,31 @@ static ProError sketch_section(ProArgument *in, ProMdl *model, ProFeature *featu
 {
     ProElement sketcher;
     ProElempath path;
-    ProElempathItem items[2];
+    ProElempathItem items[3];
     ProError status = named_model(in, model);
     if (status != PRO_TK_NO_ERROR) return status;
     status = ProFeatureInit((ProSolid)*model, input_int(in, "feature", -1), feature);
     if (status != PRO_TK_NO_ERROR) return status;
     status = ProFeatureElemtreeExtract(feature, NULL, PRO_FEAT_EXTRACT_NO_OPTS, tree);
     if (status != PRO_TK_NO_ERROR) return status;
-    items[0].type = PRO_ELEM_PATH_ITEM_TYPE_ID;
-    items[0].path_item.elem_id = PRO_E_STD_SECTION;
-    items[1].type = PRO_ELEM_PATH_ITEM_TYPE_ID;
-    items[1].path_item.elem_id = PRO_E_SKETCHER;
-    ProElempathAlloc(&path);
-    ProElempathDataSet(path, items, 2);
+    /* The sketcher element under PRO_E_STD_SECTION; a rib keeps its section one level lower,
+       under PRO_E_RIB_SECTION_COMP ("container" names that element's ID). */
+    {
+        int depth = 0, container = input_int(in, "container", 0);
+        if (container > 0) {
+            items[depth].type = PRO_ELEM_PATH_ITEM_TYPE_ID;
+            items[depth].path_item.elem_id = container;
+            depth++;
+        }
+        items[depth].type = PRO_ELEM_PATH_ITEM_TYPE_ID;
+        items[depth].path_item.elem_id = PRO_E_STD_SECTION;
+        depth++;
+        items[depth].type = PRO_ELEM_PATH_ITEM_TYPE_ID;
+        items[depth].path_item.elem_id = PRO_E_SKETCHER;
+        depth++;
+        ProElempathAlloc(&path);
+        ProElempathDataSet(path, items, depth);
+    }
     status = ProElemtreeElementGet(*tree, path, &sketcher);
     ProElempathFree(&path);
     if (status != PRO_TK_NO_ERROR) return status;

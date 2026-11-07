@@ -55,11 +55,11 @@ class SketchTest(unittest.TestCase):
     def test_a_symmetric_rounded_rectangle_is_fully_defined(self) -> None:
         lines = self.lines(BODY)
         self.assertEqual(lines[0], "frame 0.000000000 0.000000000 0.000000000 1.000000000 0.000000000 0.000000000 0.000000000 0.000000000 -1.000000000")
-        self.assertIn("ref RIGHT 1", lines)
-        self.assertIn("ref FRONT 3", lines)
+        self.assertIn("ref R_RIGHT 1", lines)
+        self.assertIn("ref R_FRONT 3", lines)
         self.assertIn("line body.bottom -132.0000000 -27.50000000 132.0000000 -27.50000000", lines)
-        self.assertIn("con 9 body.vaxis RIGHT", lines)
-        self.assertIn("con 9 body.haxis FRONT", lines)
+        self.assertIn("con 9 body.vaxis R_RIGHT", lines)
+        self.assertIn("con 9 body.haxis R_FRONT", lines)
         self.assertEqual(sum(1 for line in lines if line.startswith("con 4 ")), 8, "a tangency at each corner's two ends")
         self.assertTrue(any(line.startswith("dim BODY_LENGTH 5 280.0000000 ") and line.endswith(" body.left body.right") for line in lines))
         self.assertTrue(any(line.startswith("dim CORNER_R 3 8.000000000 ") and line.endswith(" body.c2") for line in lines))
@@ -86,7 +86,7 @@ class SketchTest(unittest.TestCase):
         self.assertTrue(lines[0].startswith("frame 0.000000000 22.00000000 0.000000000 "), "the frame sits on the plane, over the origin")
         self.assertIn("line socket.bottom -117.0000000 -18.00000000 -87.00000000 -18.00000000", lines)
         self.assertIn("con 8 socket.left socket.bottom", lines, "equal sides make it a square")
-        self.assertTrue(any(line.startswith("dim SOCKET_X 5 102.0000000 ") and line.endswith(" RIGHT socket.vaxis") for line in lines))
+        self.assertTrue(any(line.startswith("dim SOCKET_X 5 102.0000000 ") and line.endswith(" R_RIGHT socket.vaxis") for line in lines))
         self.assertTrue(any(line.startswith("dim - 3 3.000000000 ") for line in lines), "an unnamed dimension keeps Creo's name")
 
     def test_a_circle_is_placed_by_its_center(self) -> None:
@@ -99,7 +99,7 @@ class SketchTest(unittest.TestCase):
         }
         lines = self.lines(boss)
         self.assertIn("circle boss 132.0000000 -19.50000000 3.000000000", lines)
-        self.assertTrue(any(line.startswith("dim - 2 132.0000000 ") and line.endswith(" RIGHT boss:center") for line in lines))
+        self.assertTrue(any(line.startswith("dim - 2 132.0000000 ") and line.endswith(" R_RIGHT boss:center") for line in lines))
 
     def test_an_x_axis_out_of_the_plane_is_refused(self) -> None:
         out = self.check(dict(BODY, x_axis="+y"))
@@ -123,6 +123,16 @@ class SketchTest(unittest.TestCase):
         wide["entities"][0]["corner_radius_mm"] = 30
         self.assertTrue(any("less than half its shorter side" in p for p in self.check(wide)["problems"]))
 
+    def test_references_with_punctuation_get_program_names(self) -> None:
+        rib = {
+            "plane": "TOP", "x_axis": "+x", "references": ["RIGHT", "TOP_22"],
+            "entities": [{"id": "edge", "type": "line", "start_mm": [-20, 5], "end_mm": [20, 5]}],
+            "constraints": [{"type": "on", "point": "edge.start", "entity": "RIGHT"}],
+            "dimensions": [],
+        }
+        out = self.check(rib)
+        self.assertIn("ref R_RIGHT 1", out["program"])
+
     def test_raw_entities_are_written_as_given(self) -> None:
         cap = {
             "plane": "FRONT", "x_axis": "+x", "references": ["RIGHT", "TOP"],
@@ -133,7 +143,7 @@ class SketchTest(unittest.TestCase):
         }
         lines = self.lines(cap)
         self.assertIn("line floor -9.300000000 0.000000000 9.300000000 0.000000000", lines)
-        self.assertIn("con 3 floor:start TOP", lines)
+        self.assertIn("con 3 floor:start R_TOP", lines)
         self.assertTrue(any(line.startswith("arc roof 0.000000000 -22.00000000 30.00000000 1.256637") for line in lines))
 
 

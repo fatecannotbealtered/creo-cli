@@ -221,7 +221,7 @@ public final class Sketch {
             return;
         }
         references.put(name, p);
-        program.add("ref " + name + " " + p.surfaceId);
+        program.add("ref " + token(name) + " " + p.surfaceId);
         double[] rel = minus(p.point, origin);
         if (Math.abs(Math.abs(dot(n, x)) - 1) < EPS) {
             traces.put(name, new Object[] {'x', dot(rel, x) * mmPerUnit});
@@ -517,16 +517,16 @@ public final class Sketch {
         }
         if ("rectangle".equals(kind)) {
             if ((char) trace[0] == 'x') {
-                program.add("con " + COLLINEAR + " " + entity + ".vaxis " + about);
+                program.add("con " + COLLINEAR + " " + entity + ".vaxis " + token(about));
                 fixed.get(entity).add("x position");
             } else if ((char) trace[0] == 'y') {
-                program.add("con " + COLLINEAR + " " + entity + ".haxis " + about);
+                program.add("con " + COLLINEAR + " " + entity + ".haxis " + token(about));
                 fixed.get(entity).add("y position");
             } else {
                 problems.add(about + " runs along neither sketch axis; a rectangle is symmetric only about a reference along one.");
             }
         } else if ("circle".equals(kind)) {
-            program.add("con " + POINT_ON + " " + entity + ":center " + about);
+            program.add("con " + POINT_ON + " " + entity + ":center " + token(about));
             if ((char) trace[0] == 'x') {
                 fixed.get(entity).add("x position");
             } else if ((char) trace[0] == 'y') {
@@ -546,7 +546,7 @@ public final class Sketch {
         if (trace == null) {
             return null;
         }
-        String axis = name + ".axis";
+        String axis = token(name) + ".axis";
         if (axesMade.add(axis)) {
             double c = (double) trace[1];
             if ((char) trace[0] == 'x') {
@@ -554,7 +554,7 @@ public final class Sketch {
             } else {
                 program.add("cline " + axis + " -10 " + u(c) + " 10 " + u(c));
             }
-            program.add("con " + COLLINEAR + " " + axis + " " + name);
+            program.add("con " + COLLINEAR + " " + axis + " " + token(name));
         }
         return axis;
     }
@@ -693,7 +693,7 @@ public final class Sketch {
     /** One end of a distance: a reference or line as a whole, a point, or a profile's center or side. */
     private String distanceEnd(String end, String other) {
         if (traces.containsKey(end)) {
-            return end;
+            return token(end);
         }
         String[] p = split(end);
         String kind = kinds.get(p[0]);
@@ -754,6 +754,14 @@ public final class Sketch {
 
     // ------------------------------------------------------------------ helpers
 
+    /**
+     * A reference's name in the program: the program separates an entity from its point with a
+     * colon, so surface:41 or BASE/side[+x] is written with letters, digits and _ only.
+     */
+    private static String token(String reference) {
+        return "R_" + reference.replaceAll("[^A-Za-z0-9_]", "_");
+    }
+
     /** "id.part" into id and part; "id" into id and "". */
     private static String[] split(String text) {
         int dot = text.indexOf('.');
@@ -799,7 +807,7 @@ public final class Sketch {
             return null;
         }
         if (traces.containsKey(text)) {
-            return text;
+            return token(text);
         }
         String[] p = split(text);
         if ("rectangle".equals(kinds.get(p[0])) && RECTANGLE_PARTS.contains(p[1])) {
