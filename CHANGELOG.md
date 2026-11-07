@@ -4,9 +4,19 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ## [Unreleased]
 
+### Added
+
+- The host component's C library, for what only Creo TOOLKIT can do. `plugin install` compiles it with Visual Studio's x64 C compiler against the Creo TOOLKIT component of the user's Creo and unlocks it with a Creo TOOLKIT development license; without them it installs the Java part alone, records why, and the commands that need the library are refused with `E_UNSUPPORTED` naming the reason. `CREO_CLI_VCVARS` names the compiler's `vcvars64.bat`.
+- `session open` starts a Creo of creo-cli's own from a start folder beside the host component, as a long job, and `session close` ends a Creo as File > Exit does, refusing while a model has unsaved changes; closing a Creo creo-cli did not start is dangerous.
+- `doc create --kind part --path <file>` creates a part from Creo's metric part template, with the parameters PART_NO and DESCRIPTION, or from `--template`, writes it at once and shows it in a window. `doc save-as --output <file>` writes a copy under another name, or the model into another folder.
+
 ### Changed
 
 - Built on tool-driver-cli-spec 1.0.6. A long job's worker retries a busy answer from Creo for up to 10 s before it sends the work, `session list` allows 2.5 s to find the running Creo processes and their dialogs, and long jobs are verified on the same terms as calls. `docs/E2E.md` starts with the fixed Authorization Rules, and Authorized Targets holds only the list.
+
+### Fixed
+
+- Creo no longer waits to exit while a creo-cli call still holds a connection to the host component.
 
 ## [1.0.0] - 2026-11-06
 

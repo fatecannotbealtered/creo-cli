@@ -58,6 +58,8 @@ From documents down, with the names Creo's user interface and manuals use:
 
 ## Threading and Blocking
 
+- `ProEngineerEnd` called within a call from the Java host crashes Creo; called from a Windows timer on Creo's main thread after the call has returned, Creo ends normally in 3 to 10 s and calls every application's stop function (measured on Creo 13.4.1.0).
+- A Creo that ended by force shows a modal "not closed normally" dialog (检索) at its next start, until one ends normally (measured on Creo 13.4.1.0).
 - Every toolkit call must run on Creo's main thread; a synchronous application gets there from a timer callback. Creo 13.4 keeps firing the timer while a modal dialog is open (measured with File > Options and a toolkit message dialog), and it leaves its main window enabled; the CLI finds the dialog by its window title and refuses every call until a person closes it.
 - Dialogs seen blocking automation: the unsigned toolkit DLL prompt at load (each session), the "Retrieval"/"检索"/"恢复" recovery dialogs at startup, ORDER_DEBUG, a View States "Apply" request, license dialogs, and a crash dialog when the workstation was locked (Intel OpenGL driver) (earlier creo-cli, `docs/SERVICE.md`, `examples/engineering/RecoveryIsolation.ps1`, `docs/ASSEMBLY-INSTRUCTIONS-WORKFLOW.md`).
 - Creo is busy during regeneration and long operations; measured: complex assembly constraint edits 135–194 s, a family table preview about 76 s, a BOM table confirmation 568 s (earlier creo-cli, `docs/ASSEMBLY-CONSTRAINTS.md`, `docs/FAMILY-TABLES.md`, `docs/WORKFLOW-BUDGET.md`).
@@ -77,7 +79,9 @@ From documents down, with the names Creo's user interface and manuals use:
 ## Save and Undo
 
 - Save writes a new numbered version (`name.prt.3` after `.2`) into the directory the model came from, not the working directory, even when nothing changed. Old versions stay on disk.
-- A model created from a template with `CopyAndRetrieve` is written to disk at once as `name.prt.1`, unlike File > New.
+- A model created from a template with `CopyAndRetrieve` is written to disk at once as `name.prt.1`, unlike File > New, into Creo's current directory (measured on Creo 13.4.1.0); creo-cli changes that directory for the moment of the copy and puts it back.
+- `Copy` writes a copy under a new name into Creo's current directory and leaves the model in session as it was. `Backup` writes the model under its own name into another folder, given with a closing separator, and the model in session then belongs to that folder: its next save goes there (measured on Creo 13.4.1.0).
+- Neither an older numbered version nor a path with a version number opens that version: Creo opens the newest, and a model opened that way fails to save (measured on Creo 13.4.1.0).
 - Unsaved changes show as the model's modified flag; a freshly opened part already reports modified, and a common-name change can report unmodified.
 - Save a Copy exists (`save_doc_as`); erasing a model from session discards its unsaved changes.
 - There is no undo in the toolkit; only a failed regeneration can be undone (`SetUndoIfFail`). creo-cli therefore does not offer `doc undo` (DCLI-067).
@@ -94,6 +98,7 @@ From documents down, with the names Creo's user interface and manuals use:
 - The host component needs the `ObjectToolkitJava` license option; without it nothing works. Deleting a drawing's own dimension (`ProDimensionDelete`) needs the TOOLKIT for 3D Drawings license.
 - `plugin install` builds the host component on the user's computer: it needs a JDK 25, and to unlock it the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license. Running the unlocked component needs one of: the Creo Object TOOLKIT Java runtime license, its development license, or its extension license with a Creo TOOLKIT license (PTC, Creo Object TOOLKIT Java User's Guide, Unlocking, Running and Signing the Creo Object TOOLKIT Java Application).
 - Creo delivered by application streaming (PTC trial) has no toolkits.
+- The host component's C library is compiled on the user's computer with Visual Studio's x64 C compiler against the Creo TOOLKIT component and unlocked with `protk_unlock`, which needs a Creo TOOLKIT development license; unlocked, it runs without one (PTC, Creo TOOLKIT User's Guide, Unlocking the Application).
 - License dialogs at startup need a person (`activate_license`).
 
 ## Capabilities
@@ -107,6 +112,10 @@ Each capability has one row with an ID `CAP-nnn`, unique in this survey, and one
 | CAP-003 | Export a part or assembly to STEP, IGES or STL, or a drawing to PDF | OTK Java | provided | - |
 | CAP-004 | Render a JPEG image of a part or assembly | OTK Java `ExportRasterImage` | provided | - |
 | CAP-005 | Set Creo's working directory, where new models are written | OTK Java `ChangeDirectory` | deferred | Later version; not in the 1.0.0 scope |
+| CAP-007 | Start a Creo of the tool's own that loads the host component | `parametric.exe` from a start folder with its own `config.pro` | provided | - |
+| CAP-008 | End Creo as File > Exit does, unsaved changes refused | TOOLKIT C `ProEngineerEnd` from a Windows timer | provided | - |
+| CAP-009 | Create a part from a start part, written at once to a path | OTK Java `CopyAndRetrieve` | provided | - |
+| CAP-047 | Write a copy of a model under another name, or the model into another folder | OTK Java `Copy`, `Backup` | provided | - |
 | CAP-006 | Regenerate a model on request | OTK Java | deferred | Every write already regenerates; never run live |
 | CAP-010 | List the features in regeneration order with type and status | OTK Java | provided | - |
 | CAP-011 | Read one feature: dimensions, parents, children | OTK Java | provided | - |

@@ -3,9 +3,12 @@
   "protocol_version": "1.2.0",
   "files": {},
   "methods": [
+    "close_session",
     "documents",
+    "create_doc",
     "open_doc",
     "save_doc",
+    "save_doc_as",
     "close_doc",
     "read",
     "preview",

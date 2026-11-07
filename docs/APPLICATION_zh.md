@@ -58,6 +58,8 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 
 ## 线程与阻塞
 
+- 在 Java 宿主的调用里调用 `ProEngineerEnd` 会让 Creo 崩溃；调用返回后由 Creo 主线程上的 Windows 定时器调用它，Creo 在 3 到 10 秒内正常退出，并调用每个应用的结束函数（在 Creo 13.4.1.0 上实测）。
+- 被强行结束的 Creo，下次启动时会弹出模态的“未正常关闭”对话框（检索），直到有一次正常退出（在 Creo 13.4.1.0 上实测）。
 - 工具包的每次调用都必须在 Creo 主线程上执行；同步应用通过定时器回调进入主线程。Creo 13.4 打开模态弹窗时定时器照常触发，主窗口也不会被禁用（用“文件 > 选项”和工具包的消息框实测）；CLI 按窗口标题认出弹窗，人关掉弹窗之前一律拒绝调用。
 - 见过的挡住自动化的弹窗：加载未签名工具包 DLL 时的提示（每次会话）、启动时的“检索”“恢复”弹窗、ORDER_DEBUG、视图状态要求“应用”、许可证弹窗，以及锁屏时出现的崩溃弹窗（Intel OpenGL 驱动）（早期 creo-cli，`docs/SERVICE.md`、`examples/engineering/RecoveryIsolation.ps1`、`docs/ASSEMBLY-INSTRUCTIONS-WORKFLOW.md`）。
 - 重新生成和长操作期间 Creo 是忙的；实测：复杂装配改约束 135–194 秒，族表预览约 76 秒，BOM 表确认 568 秒（早期 creo-cli，`docs/ASSEMBLY-CONSTRAINTS.md`、`docs/FAMILY-TABLES.md`、`docs/WORKFLOW-BUDGET.md`）。
@@ -77,7 +79,9 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 ## 保存与撤销
 
 - 保存会在模型原来所在的目录（不是工作目录）写一个新的编号版本（`.2` 之后是 `name.prt.3`），没改动也照样写。旧版本留在磁盘上。
-- 用 `CopyAndRetrieve` 从模板新建的模型，会立刻以 `name.prt.1` 写到磁盘上，和“文件 > 新建”不同。
+- 用 `CopyAndRetrieve` 从模板新建的模型，会立刻以 `name.prt.1` 写到磁盘上，和“文件 > 新建”不同，写在 Creo 的当前目录里（在 Creo 13.4.1.0 上实测）；creo-cli 在复制的那一刻换到目标目录，复制完再换回来。
+- `Copy` 用新名字把副本写到 Creo 的当前目录，会话里的模型不变。`Backup` 用原名把模型写到另一个文件夹（路径要以分隔符结尾），之后会话里的模型就属于那个文件夹，下次保存写到那里（在 Creo 13.4.1.0 上实测）。
+- 打不开旧的编号版本：指定版本号或带版本号的路径，Creo 打开的都是最新版本，这样打开的模型还存不了盘（在 Creo 13.4.1.0 上实测）。
 - 有没有保存的修改，看模型的“已修改”标记；刚打开的零件就显示已修改，改通用名称后可能又显示未修改。
 - 有“保存副本”（`save_doc_as`）；把模型从会话里拭除，会丢掉它没保存的修改。
 - 工具包没有撤销，只能撤销失败的重新生成（`SetUndoIfFail`）。所以 creo-cli 不提供 `doc undo`（DCLI-067）。
@@ -94,6 +98,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 - 宿主组件要 `ObjectToolkitJava` 许可选项，没有它什么都做不了。删除工程图自己的尺寸（`ProDimensionDelete`）要 TOOLKIT for 3D Drawings 许可。
 - `plugin install` 在用户电脑上构建宿主组件：需要 JDK 25；解锁需要 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可。运行解锁后的组件需要以下之一：Creo Object TOOLKIT Java 运行许可、它的开发许可，或者它的扩展许可加 Creo TOOLKIT 许可（PTC《Creo Object TOOLKIT Java 用户指南》Unlocking, Running and Signing the Creo Object TOOLKIT Java Application）。
 - 以应用流方式交付的 Creo（PTC 试用版）没有工具包。
+- 宿主组件的 C 库在用户电脑上用 Visual Studio 的 x64 C 编译器对着 Creo TOOLKIT 组件编译，再用 `protk_unlock` 解锁，解锁要 Creo TOOLKIT 开发许可；解锁后运行不需要这个许可（PTC，Creo TOOLKIT User's Guide，Unlocking the Application）。
 - 启动时的许可证弹窗要人处理（`activate_license`）。
 
 ## 能力
@@ -107,6 +112,10 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 | CAP-003 | 把零件或装配导出为 STEP、IGES 或 STL，把工程图导出为 PDF | OTK Java | provided | - |
 | CAP-004 | 出零件或装配的 JPEG 图片 | OTK Java `ExportRasterImage` | provided | - |
 | CAP-005 | 设 Creo 的工作目录，新模型写在这里 | OTK Java `ChangeDirectory` | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-007 | 启动一个工具自己的 Creo，加载宿主组件 | 从带自己 `config.pro` 的启动目录运行 `parametric.exe` | provided | - |
+| CAP-008 | 像“文件 > 退出”那样关闭 Creo，有未保存的修改时拒绝 | TOOLKIT C `ProEngineerEnd`，由 Windows 定时器调用 | provided | - |
+| CAP-009 | 从起始零件新建零件，立刻写到指定路径 | OTK Java `CopyAndRetrieve` | provided | - |
+| CAP-047 | 用另一个名字写出模型的副本，或把模型写到另一个文件夹 | OTK Java `Copy`、`Backup` | provided | - |
 | CAP-006 | 按要求重新生成模型 | OTK Java | deferred | 每次写操作都已经重新生成；从没在真机上运行过 |
 | CAP-010 | 按重新生成的顺序列出特征，带类型和状态 | OTK Java | provided | - |
 | CAP-011 | 读一个特征：尺寸、父特征、子特征 | OTK Java | provided | - |

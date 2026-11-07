@@ -1,0 +1,104 @@
+{
+  "command": "session open",
+  "rows": [
+    {
+      "row": "normal",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 0,
+        "summary": "Starts a Creo of its own with the host component, as a long job; job get returns the new session, owned: true."
+      }
+    },
+    {
+      "row": "empty",
+      "applies": false,
+      "reason": "Starting an instance always gives one session."
+    },
+    {
+      "row": "invalid_input",
+      "applies": true,
+      "arguments": [
+        "--kind"
+      ],
+      "expected": {
+        "exit": 2,
+        "code": "E_USAGE",
+        "summary": "--kind has no value."
+      }
+    },
+    {
+      "row": "not_found",
+      "applies": true,
+      "arguments": [
+        "--doc",
+        "{dir}/missing.prt"
+      ],
+      "expected": {
+        "exit": 3,
+        "code": "E_NOT_FOUND",
+        "summary": "The file to open does not exist; no Creo is started."
+      }
+    },
+    {
+      "row": "ambiguous",
+      "applies": false,
+      "reason": "The command names no existing instance."
+    },
+    {
+      "row": "conflict",
+      "applies": false,
+      "reason": "Starting a new instance conflicts with nothing; every start is a new process."
+    },
+    {
+      "row": "no_scope",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 4,
+        "code": "E_FORBIDDEN",
+        "summary": "Run with a scope file without the lifecycle effect."
+      }
+    },
+    {
+      "row": "busy",
+      "applies": false,
+      "reason": "No instance exists before the call, so none can be busy."
+    },
+    {
+      "row": "dialog",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED",
+        "summary": "The Creo that starts shows a modal dialog before its host component answers, such as Creo's \"not closed normally\" dialog after a Creo the tool started was ended by force; job get reports it."
+      }
+    },
+    {
+      "row": "disconnect",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 8,
+        "code": "E_OUTCOME_UNKNOWN"
+      },
+      "unrunnable": "A start cannot be cut on demand between the call and the host's first answer; driver test D06 covers this case."
+    },
+    {
+      "row": "unsaved",
+      "applies": false,
+      "reason": "This row applies only to a command that acts on a document."
+    },
+    {
+      "row": "read_back_mismatch",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED",
+        "summary": "While the tool waits before its read-back, --tamper ends the Creo that just started, so the session list no longer has it."
+      }
+    }
+  ]
+}
