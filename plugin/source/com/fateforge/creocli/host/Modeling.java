@@ -39,6 +39,7 @@ import com.ptc.wfc.wfcElementTree.ElementTree;
 import com.ptc.wfc.wfcElementTree.Elements;
 import com.ptc.wfc.wfcElementTree.wfcElementTree;
 import com.ptc.wfc.wfcFeature.FeatureElemTreeExtractOptions;
+import com.ptc.wfc.wfcFeature.PatternType;
 import com.ptc.wfc.wfcFeature.WFeature;
 import com.ptc.wfc.wfcFeatureInstructions.FeatCreateOption;
 import com.ptc.wfc.wfcFeatureInstructions.FeatCreateOptions;
@@ -89,6 +90,11 @@ final class Modeling {
             PRO_EXT_DEPTH_TO_ALL = 1 << 20, PRO_EXT_DEPTH_TO_REF = 1 << 22, PRO_EXT_DEPTH_SYMMETRIC = 1 << 28,
             PRO_FEAT_SHELL = 928, PRO_SHELL_INSIDE = 1, PRO_FEAT_ROUND = 913, PRO_ROUND_TYPE_CONSTANT = 0,
             PRO_ROUND_CONIC_DISABLE = 2, PRO_ROUND_REF_EDGE = 1, PRO_ROUND_RADIUS_TYPE_VALUE = 1, PRO_ROUND_ATTACHED = 0;
+    private static final int PRO_E_PATTERN_ROOT = 604, PRO_E_GENPAT_TYPE = 3124, PRO_E_GENPAT_REGEN_METHOD = 3131,
+            PRO_E_GENPAT_DIR = 3129, PRO_E_DIR_PAT_DIR1_OPT = 4026, PRO_E_GENPAT_DIR1 = 3291, PRO_E_DIRECTION_COMPOUND = 3252,
+            PRO_E_DIRECTION_REFERENCE = 3253, PRO_E_DIRECTION_FLIP = 3254, PRO_E_DIR_PAT_DIR1_FLIP = 3307,
+            PRO_E_GENPAT_DIR1_INC = 3274, PRO_E_GENPAT_DIM_FIRST_DIR_NUM_INST = 3134, PRO_E_GENPAT_DIM_SECOND_DIR_NUM_INST = 3136,
+            PRO_GENPAT_DIR_DRIVEN = 5, PRO_PAT_GENERAL = 4, PRO_GENPAT_TRANSLATIONAL = -1;
 
     private final Docs docs;
 
@@ -337,6 +343,162 @@ final class Modeling {
             nameOnly(made, dimName);
             return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
         };
+    }
+
+    // ------------------------------------------------------------------ pattern create
+
+    void patternCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        String leaderName = Json.string(in, "feature", null);
+        if (leaderName == null) {
+            throw new HostError(HostError.VALIDATION, "--feature is required: the feature to repeat, by name or ID.");
+        }
+        Feature leader = Creo.feature(solid, leaderName);
+        double[] along = Sketch.axis(Json.string(in, "along", null));
+        if (along == null) {
+            throw new HostError(HostError.VALIDATION, "--along is required: the model axis the copies step along, such as +x.");
+        }
+        Long count = Json.integer(in, "count");
+        if (count == null || count < 2) {
+            throw new HostError(HostError.VALIDATION, "--count is required: how many in all, the original included, 2 or more.");
+        }
+        Double spacing = Json.number(in, "spacing_mm");
+        if (spacing == null || spacing <= 0) {
+            throw new HostError(HostError.VALIDATION, "--spacing is required and greater than 0: the step from one copy to the next.");
+        }
+        try {
+            if (leader.GetPattern() != null || leader.GetGroupPattern() != null) {
+                plan.block(leaderName + " is already in a pattern", null);
+            }
+        } catch (jxthrowable unknown) {
+            // Not in a pattern.
+        }
+        Sketch.Plane direction = axisPlane(solid, along);
+        if (direction == null) {
+            plan.block("No datum plane of the model is normal to " + Json.string(in, "along", null) + "; Creo takes a pattern's direction from one", null);
+        }
+        String spacingName = dimensionName(in, "spacing_name");
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        if (spacingName != null) {
+            plan.change(docKey + "#/dimensions/" + spacingName, "value_mm", null, Ops.clean(spacing));
+        }
+        plan.action = "Repeat " + leaderName + " " + count + " times in all along " + Json.string(in, "along", null) + ", "
+                + Ops.clean(spacing) + " mm apart, as the pattern " + name + "; then regenerate.";
+        plan.work = () -> {
+            double before = volume(solid, f);
+            boolean flip = Sketch.dot(Sketch.unit(direction.normal), along) < 0;
+            pattern((WFeature) leader, name, direction, flip, count, spacing / f);
+            // CreatePattern answers a member; the pattern itself is the header named in the tree.
+            Feature done = Creo.feature(solid, name);
+            double[] step = step(leader);
+            if (step != null && Sketch.dot(step, along) < 0) {
+                setInt((WFeature) done, PRO_E_DIR_PAT_DIR1_FLIP, flip ? 0 : 1);
+                done = Creo.feature(solid, name);
+                step = step(leader);
+            }
+            if (done.GetStatus() != FeatureStatus.FEAT_ACTIVE || (step != null && Sketch.dot(step, along) < 0)) {
+                takeOut(solid, done.GetId());
+                throw new HostError(HostError.NATIVE, "Creo created " + name + " but could not regenerate it toward "
+                        + Json.string(in, "along", null) + ", for example copies that run off the part; the model is as it was.");
+            }
+            if (spacingName != null) {
+                nameValue(done, spacing / f, spacingName);
+            }
+            Ops.repaint();
+            Map<String, Object> result = created(solid, done, before, f);
+            result.put("count", count);
+            return Docs.facts("dispatched", "applied", Json.map("result", result));
+        };
+    }
+
+    private static WFeature pattern(WFeature leader, String name, Sketch.Plane direction, boolean flip, long count, double spacing) throws Exception {
+        Solid solid = (Solid) leader.GetDBParent();
+        Elements elements = Elements.create();
+        add(elements, PRO_E_PATTERN_ROOT, null, 0);
+        add(elements, PRO_E_GENPAT_TYPE, integer(PRO_GENPAT_DIR_DRIVEN), 1);
+        add(elements, PRO_E_GENPAT_REGEN_METHOD, integer(PRO_PAT_GENERAL), 1);
+        add(elements, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+        add(elements, PRO_E_GENPAT_DIR, null, 1);
+        add(elements, PRO_E_DIR_PAT_DIR1_OPT, integer(PRO_GENPAT_TRANSLATIONAL), 2);
+        add(elements, PRO_E_GENPAT_DIR1, null, 2);
+        add(elements, PRO_E_DIRECTION_COMPOUND, null, 3);
+        add(elements, PRO_E_DIRECTION_REFERENCE, select(solid, direction.surfaceId), 4);
+        add(elements, PRO_E_DIRECTION_FLIP, integer(0), 4);
+        add(elements, PRO_E_DIR_PAT_DIR1_FLIP, integer(flip ? 1 : 0), 2);
+        add(elements, PRO_E_GENPAT_DIR1_INC, pfcArgument.CreateDoubleArgValue(spacing), 2);
+        add(elements, PRO_E_GENPAT_DIM_FIRST_DIR_NUM_INST, integer((int) count), 2);
+        add(elements, PRO_E_GENPAT_DIM_SECOND_DIR_NUM_INST, integer(0), 2);
+        try {
+            return leader.CreatePattern(((WSession) Creo.session()).CreateElementTree(elements), PatternType.FEAT_PATTERN);
+        } catch (jxthrowable refused) {
+            throw new HostError(HostError.NATIVE, "Creo did not create the pattern " + name + "; the model is as it was.")
+                    .nativeMessage(refused.toString());
+        }
+    }
+
+    /** Sets one integer element of a feature's tree and redefines it. */
+    private static void setInt(WFeature feature, int id, int value) throws jxthrowable {
+        ElementTree tree = feature.GetElementTree(null, FeatureElemTreeExtractOptions.FEAT_EXTRACT_NO_OPTS);
+        Elements all = tree.ListTreeElements();
+        for (int i = 0; all != null && i < all.getarraysize(); i++) {
+            if (all.get(i).GetId() == id) {
+                all.get(i).SetValue(integer(value));
+            }
+        }
+        feature.RedefineFeature(null, ((WSession) Creo.session()).CreateElementTree(all), options(FeatCreateOption.FEAT_CR_NO_OPTS),
+                wfcSolidInstructions.WRegenInstructions_Create());
+    }
+
+    /** The step from the leader to the next member, from their faces' mean points; null when unknown. */
+    private static double[] step(Feature leader) {
+        try {
+            com.ptc.pfc.pfcFeature.FeaturePattern fp = leader.GetPattern();
+            com.ptc.pfc.pfcFeature.Features members = fp == null ? null : fp.ListMembers();
+            if (members == null || members.getarraysize() < 2) {
+                return null;
+            }
+            double[] a = mean(leader);
+            double[] b = mean(members.get(1));
+            return a == null || b == null ? null : Sketch.minus(b, a);
+        } catch (Throwable unknown) {
+            return null;
+        }
+    }
+
+    private static double[] mean(Feature feature) throws jxthrowable {
+        ModelItems items = feature.ListSubItems(ModelItemType.ITEM_SURFACE);
+        if (items == null || items.getarraysize() == 0) {
+            return null;
+        }
+        double[] sum = new double[3];
+        for (int i = 0; i < items.getarraysize(); i++) {
+            double[] p = pointAndNormal((Surface) items.get(i))[0];
+            sum[0] += p[0];
+            sum[1] += p[1];
+            sum[2] += p[2];
+        }
+        int n = items.getarraysize();
+        return new double[] {sum[0] / n, sum[1] / n, sum[2] / n};
+    }
+
+    /** A datum plane normal to a model axis, to take a direction from. */
+    private Sketch.Plane axisPlane(Solid solid, double[] axis) throws Exception {
+        for (String n : new String[] {"RIGHT", "TOP", "FRONT"}) {
+            try {
+                Sketch.Plane p = planes(solid).find(n);
+                if (Math.abs(Math.abs(Sketch.dot(Sketch.unit(p.normal), axis)) - 1) < EPS) {
+                    return p;
+                }
+            } catch (HostError absent) {
+                // Not in this model.
+            }
+        }
+        return null;
     }
 
     /**
@@ -642,7 +804,11 @@ final class Modeling {
                 continue;
             }
             boolean angle = d.GetDimType() == com.ptc.pfc.pfcDimension.DimensionType.DIM_ANGULAR;
-            dims.add(angle ? Json.map("id", d.GetSymbol(), "value_deg", Ops.clean(v)) : Json.map("id", d.GetSymbol(), "value_mm", Ops.clean(v * f)));
+            if (d.GetSymbol().matches("p[0-9]+")) {
+                dims.add(Json.map("id", d.GetSymbol(), "value", (long) Math.round(v)));  // a pattern's count
+            } else {
+                dims.add(angle ? Json.map("id", d.GetSymbol(), "value_deg", Ops.clean(v)) : Json.map("id", d.GetSymbol(), "value_mm", Ops.clean(v * f)));
+            }
         }
         out.put("dimensions", dims);
         double after = volume(solid, f);

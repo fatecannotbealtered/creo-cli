@@ -1152,6 +1152,87 @@
       ]
     },
     {
+      "path": "pattern create",
+      "summary": "Repeat one feature in a row along a model axis, as one pattern feature, and regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The pattern's name, such as SOCKET_ROW.",
+          "required": true
+        },
+        {
+          "name": "--feature",
+          "type": "string",
+          "summary": "The feature to repeat, by name or ID.",
+          "required": true
+        },
+        {
+          "name": "--along",
+          "type": "string",
+          "summary": "The model axis the copies step along, such as +x.",
+          "required": true
+        },
+        {
+          "name": "--count",
+          "type": "integer",
+          "summary": "How many in all, the original included; 2 or more.",
+          "required": true
+        },
+        {
+          "name": "--spacing",
+          "type": "quantity",
+          "summary": "The step from one copy to the next.",
+          "required": true,
+          "quantity": "length"
+        },
+        {
+          "name": "--spacing-name",
+          "type": "string",
+          "summary": "A name for the spacing dimension, such as OUTLET_PITCH."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
       "path": "model export",
       "summary": "Write a part or assembly to STEP, IGES or STL, or a drawing to PDF; the file extension picks the format.",
       "effects": [

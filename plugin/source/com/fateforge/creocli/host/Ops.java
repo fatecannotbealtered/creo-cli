@@ -295,6 +295,7 @@ final class Ops {
             case "extrude create": modeling.extrudeCreate(plan, model, in); break;
             case "shell create": modeling.shellCreate(plan, model, in); break;
             case "round create": modeling.roundCreate(plan, model, in); break;
+            case "pattern create": modeling.patternCreate(plan, model, in); break;
             default: throw new HostError(HostError.UNSUPPORTED, "The host has no write for " + command + ".");
         }
         return plan;

@@ -304,6 +304,28 @@ COMMANDS: list[dict[str, Any]] = [
         "maturity": "draft", "evidence": [],
     },
     {
+        "path": "pattern create",
+        "summary": "Repeat one feature in a row along a model axis, as one pattern feature, and regenerate.",
+        "effects": ["change"], "modes": ["session"], "target_kind": "feature",
+        "flags": [
+            {"name": "--name", "type": "string", "required": True, "summary": "The pattern's name, such as SOCKET_ROW."},
+            {"name": "--feature", "type": "string", "required": True, "summary": "The feature to repeat, by name or ID."},
+            {"name": "--along", "type": "string", "required": True, "summary": "The model axis the copies step along, such as +x."},
+            {"name": "--count", "type": "integer", "required": True, "summary": "How many in all, the original included; 2 or more."},
+            {"name": "--spacing", "type": "quantity", "quantity": "length", "required": True, "summary": "The step from one copy to the next."},
+            {"name": "--spacing-name", "type": "string", "summary": "A name for the spacing dimension, such as OUTLET_PITCH."},
+        ],
+        "untrusted_fields": ["name", "dimensions[*].id"],
+        "irreversible": False, "halt": False, "tolerances": {"value_mm": 0.000001}, "default_fields": [],
+        "related_knowledge": ["creo-geometry-references", "creo-units"],
+        "output_schema": {"type": "object", "properties": {
+            **FEATURE_ITEM, "count": INT, "dimensions": {"type": "array", "items": {"type": "object"}}, "volume_mm3": NUM,
+            "volume_change_mm3": NUM, "bounding_box_mm": {"type": ["object", "null"]}, "faces": {"type": "object"}}},
+        "output_coordinate_system": MODEL, "doc_kinds": ["part"],
+        "examples": [EXAMPLE.format(path="pattern create") + " --name SOCKET_ROW --feature SOCKET_CUT --along +x --count 4 --spacing 62mm --spacing-name OUTLET_PITCH"],
+        "maturity": "draft", "evidence": [],
+    },
+    {
         "path": "model export",
         "summary": "Write a part or assembly to STEP, IGES or STL, or a drawing to PDF; the file extension picks the format.",
         "effects": ["artifact"], "modes": ["session"], "target_kind": "file",

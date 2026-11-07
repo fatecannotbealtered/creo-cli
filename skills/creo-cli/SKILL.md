@@ -55,6 +55,7 @@ Check `ok`; on failure, read `error.details.next_action`.
 - `extrude`: create
 - `shell`: create
 - `round`: create
+- `pattern`: create
 <!-- driver:command-map:end -->
 
 ## Write recipe
