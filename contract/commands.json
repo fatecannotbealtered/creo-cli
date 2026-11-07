@@ -1815,7 +1815,7 @@
     },
     {
       "path": "model render",
-      "summary": "Write a JPEG image of a part or assembly as its window shows it.",
+      "summary": "Write a JPEG image of a part or assembly as its window shows it, or in a named view, putting the window's view back after.",
       "effects": [
         "artifact"
       ],
@@ -1850,6 +1850,11 @@
           "name": "--height",
           "type": "integer",
           "summary": "Image height in pixels, 1 to 4096; 768 by default."
+        },
+        {
+          "name": "--view",
+          "type": "string",
+          "summary": "A view of the model: FRONT, TOP, RIGHT, DEFAULT or one saved in the model."
         }
       ],
       "untrusted_fields": [],

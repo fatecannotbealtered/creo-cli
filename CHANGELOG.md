@@ -16,6 +16,7 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - The domain Skill `creo-feature` for modeling parts feature by feature; the entry Skill `creo-cli` routes feature work to it.
 - `feature delete` deletes a feature with the features that depend on it, dangerous, with all of them in the preview. `parameter create` creates a parameter; `relation update` replaces the relations, blocking a line Creo cannot evaluate and putting the old relations back when the model does not regenerate; `model update` assigns a material from the part or Creo's material library and sets the common name.
 - `model check` runs Creo's ModelCHECK read-only, with its report beside the host component, and creo-cli's checks: failed, suppressed and default-named features.
+- `model render --view` takes the picture in a named view (FRONT, TOP, RIGHT, DEFAULT or one saved in the model) and puts the person's view back; Creo then shows the model as modified, which the result reports.
 - `doc create --kind part --path <file>` creates a part from Creo's metric part template, with the parameters PART_NO and DESCRIPTION, or from `--template`, writes it at once and shows it in a window. `doc save-as --output <file>` writes a copy under another name, or the model into another folder.
 
 ### Changed
@@ -24,6 +25,7 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ### Fixed
 
+- After a change, the windows of the models that changed are repainted, not only the current window.
 - Creo no longer waits to exit while a creo-cli call still holds a connection to the host component.
 
 ## [1.0.0] - 2026-11-06

@@ -64,6 +64,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 - 基准轴要用 `ProDtmAxis.h` 的约束写法（`PRO_E_DTMAXIS_CONSTRAINTS`）建；旧写法（`PRO_E_DTMAXIS_TYPE`、`PRO_E_DTMAXIS_PLANE1`）会被拒绝。用 `Solid.ExecuteFeatureOps` 加删除操作撤回的特征可能还留在模型里；`WSolid.DeleteFeatures` 能删掉（在 Creo 13.4.1.0 上实测）。
 - `SetRelations` 会保留 Creo 求不出值的关系，只做标记（ModelCHECK 报 `RELATION_ERRS`）；对它的右边调用 `EvaluateExpression` 会抛错。`Part.RetrieveMaterial` 收的是名字不是路径，并从 Creo 的当前目录读 `.mtl` 文件（在 Creo 13.4.1.0 上实测）。
 - 通过 `ExecuteModelCheck` 跑 ModelCHECK，小零件一秒内跑完，在给定的文件夹里写出 XML、HTML、JS 报告和图片，用默认配置既不存盘也不改模型（在 Creo 13.4.1.0 上实测）。
+- 把当前视角存成命名视图（`ProViewStore`），`ProViewRetrieve` 之后再删掉，方向能完全恢复，但 Creo 把这算作模型的修改：先存过盘的模型之后显示为已修改（在 Creo 13.4.1.0 上实测）。
 - `WFeature.CreatePattern` 返回的是新阵列里的一个成员，不是阵列特征本身；阵列特征按元素树里给的名字找。`PRO_E_DIR_PAT_DIR1_FLIP` 朝哪边走，取决于方向参考自己的朝向；creo-cli 从第一个副本读出步进方向，反了就翻过来（在 Creo 13.4.1.0 上实测）。
 - `PRO_E_STD_DIRECTION` 选的哪一侧，是相对 Creo 自己给草绘平面定的方向，基准平面和实体面不一样；creo-cli 从新拉伸特征的面判断它朝哪边去了，反了就翻过来。
 - 工具包的每次调用都必须在 Creo 主线程上执行；同步应用通过定时器回调进入主线程。Creo 13.4 打开模态弹窗时定时器照常触发，主窗口也不会被禁用（用“文件 > 选项”和工具包的消息框实测）；CLI 按窗口标题认出弹窗，人关掉弹窗之前一律拒绝调用。

@@ -1729,6 +1729,22 @@ final class Ops {
         } catch (Throwable none) {
             window = null;
         }
+        String view = Json.string(in, "view", null);
+        if (view != null) {
+            boolean named = false;
+            com.ptc.pfc.pfcView.Views views = model.ListViews();
+            for (int i = 0; views != null && i < views.getarraysize(); i++) {
+                named |= views.get(i).GetName().equalsIgnoreCase(view);
+            }
+            if (!named) {
+                throw new HostError(HostError.NOT_FOUND, "The model has no view named " + view + "; FRONT, TOP, RIGHT, DEFAULT and the "
+                        + "views saved in the model are offered.");
+            }
+            if (!Native.available()) {
+                plan.block("--view turns the window and puts it back through creo-cli's C library, which this Creo has not loaded: "
+                        + Native.missing(), "creo-host-component-loading");
+            }
+        }
         String key = Docs.fileKey(out.getPath());
         plan.records = false;
         plan.target(key, "file", out.getPath());
@@ -1737,11 +1753,23 @@ final class Ops {
             plan.block(plan.docId + " has no window in Creo (it is open only as part of an assembly or drawing); render "
                     + "takes a picture of its window: open it with doc open first", "creo-display-requirements");
         }
-        plan.action = "Write a " + width + " x " + height + " JPEG of " + plan.docId + "'s window to " + out.getPath() + ".";
+        plan.action = "Write a " + width + " x " + height + " JPEG of " + plan.docId + "'s window" + (view != null ? " in the view "
+                + view.toUpperCase(Locale.ROOT) + ", then put the window's view back," : "") + " to " + out.getPath() + ".";
         final Window target = window;
         plan.work = () -> {
             Path temp = Files.createTempDirectory("creo-cli-render");
+            String base = Creo.fileName(model);
+            Map<String, Object> named = Json.map("model", base.substring(0, base.lastIndexOf('.')), "kind", Creo.kind(model));
+            boolean kept = false;
+            boolean cleanBefore = !model.GetIsModified();
             try {
+                if (view != null) {
+                    // The person's view is kept as a named view and put back after the picture.
+                    Native.call("ccn_view_keep", named);
+                    kept = true;
+                    model.RetrieveView(view);
+                    target.Refresh();
+                }
                 File file = new File(temp.toFile(), "render." + ext);
                 com.ptc.pfc.pfcWindow.JPEGImageExportInstructions jpeg =
                         com.ptc.pfc.pfcWindow.pfcWindow.JPEGImageExportInstructions_Create(width / DPI, height / DPI);
@@ -1756,8 +1784,29 @@ final class Ops {
                 if (produced == null) {
                     throw new HostError(HostError.NATIVE, "Creo reported the image done but wrote no file.", "dispatched");
                 }
-                return moved(produced, out, Json.map("path", out.getPath(), "width", width, "height", height));
+                Map<String, Object> result = Json.map("path", out.getPath(), "width", width, "height", height);
+                if (view != null) {
+                    result.put("view", view.toUpperCase(Locale.ROOT));
+                }
+                Map<String, Object> done = moved(produced, out, result);
+                if (view != null && cleanBefore) {
+                    // Creo counts keeping and deleting the person's view as a change of the model.
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> r = (Map<String, Object>) done.get("result");
+                    if (r != null) {
+                        r.put("model_marked_modified", true);
+                    }
+                }
+                return done;
             } finally {
+                if (kept) {
+                    try {
+                        Native.call("ccn_view_restore", named);
+                        target.Refresh();
+                    } catch (Throwable notBack) {
+                        // The picture is written; the window shows the asked view until the person turns it.
+                    }
+                }
                 deleteTree(temp.toFile());
             }
         };
@@ -1827,11 +1876,25 @@ final class Ops {
         return Arrays.asList(clean(v.get(0)), clean(v.get(1)), clean(v.get(2)));
     }
 
+    /**
+     * Shows a change in the windows of the models that changed. Creo repaints only the current
+     * window by itself, so a model open in another window would look unchanged to the person
+     * until they clicked it.
+     */
     static void repaint() {
         try {
-            Window window = Creo.session().GetCurrentWindow();
-            if (window != null) {
-                window.Repaint();
+            Session session = Creo.session();
+            com.ptc.pfc.pfcWindow.Windows windows = session.ListWindows();
+            for (int i = 0; windows != null && i < windows.getarraysize(); i++) {
+                Window window = windows.get(i);
+                Model shown = window.GetModel();
+                if (shown != null && shown.GetIsModified()) {
+                    window.Repaint();
+                }
+            }
+            Window current = session.GetCurrentWindow();
+            if (current != null) {
+                current.Repaint();
             }
         } catch (Throwable ignored) {
             // Cosmetic; the model is already correct.
