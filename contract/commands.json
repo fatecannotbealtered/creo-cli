@@ -960,6 +960,11 @@
           "quantity": "length"
         },
         {
+          "name": "--depth-name",
+          "type": "string",
+          "summary": "A name for the depth dimension, such as BODY_HEIGHT."
+        },
+        {
           "name": "--through-all",
           "type": "boolean",
           "summary": "Through the whole part, for a cut."
@@ -1002,6 +1007,143 @@
       "default_fields": [],
       "related_knowledge": [
         "creo-sketches",
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "shell create",
+      "summary": "Hollow the part into one shell feature with walls of one thickness, open at the faces named; regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as SHELL.",
+          "required": true
+        },
+        {
+          "name": "--thickness",
+          "type": "quantity",
+          "summary": "The wall thickness, measured inward.",
+          "required": true,
+          "quantity": "length"
+        },
+        {
+          "name": "--thickness-name",
+          "type": "string",
+          "summary": "A name for the thickness dimension, such as WALL."
+        },
+        {
+          "name": "--remove",
+          "type": "string",
+          "summary": "The faces left open, separated by ;: such as BASE/start, BASE/side[+x] or surface:41. Without it the shell is closed."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "round create",
+      "summary": "Round edges to one constant radius as one feature, and regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as TOP_ROUND.",
+          "required": true
+        },
+        {
+          "name": "--radius",
+          "type": "quantity",
+          "summary": "The radius.",
+          "required": true,
+          "quantity": "length"
+        },
+        {
+          "name": "--radius-name",
+          "type": "string",
+          "summary": "A name for the radius dimension, such as TOP_R."
+        },
+        {
+          "name": "--edges",
+          "type": "string",
+          "summary": "The edges, separated by ;: edge(BASE/end, BASE/side[+x]), BASE/end:outer-edges, BASE/end:edges, SOCKET:edges or edge:57.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
         "creo-geometry-references",
         "creo-units"
       ],

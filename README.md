@@ -24,7 +24,7 @@ English | [中文](README_zh.md)
 | Modes | session |
 | Systems and CPUs | Windows (x64) |
 | Risk tier | T2 |
-| Maturity | draft: 1 draft, 12 verified, 3 stable |
+| Maturity | draft: 3 draft, 12 verified, 3 stable |
 | Specification | tool-driver-cli-spec 1.0.6 |
 | Host component | yes |
 <!-- driver:info-card:end -->
@@ -94,6 +94,8 @@ Every command of creo-cli, generated from its command registration; `(dangerous)
 - `material`: list
 - `component`: list
 - `extrude`: create
+- `shell`: create
+- `round`: create
 <!-- driver:command-map:end -->
 
 ## How It Works

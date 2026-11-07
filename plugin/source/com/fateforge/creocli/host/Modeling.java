@@ -14,6 +14,11 @@ import com.ptc.pfc.pfcDimension.Dimension;
 import com.ptc.pfc.pfcFeature.Feature;
 import com.ptc.pfc.pfcFeature.FeatureOperations;
 import com.ptc.pfc.pfcFeature.FeatureStatus;
+import com.ptc.pfc.pfcGeometry.Contour;
+import com.ptc.pfc.pfcGeometry.ContourTraversal;
+import com.ptc.pfc.pfcGeometry.Contours;
+import com.ptc.pfc.pfcGeometry.Edge;
+import com.ptc.pfc.pfcGeometry.Edges;
 import com.ptc.pfc.pfcGeometry.Surface;
 import com.ptc.pfc.pfcGeometry.SurfXYZData;
 import com.ptc.pfc.pfcGeometry.SurfaceType;
@@ -22,9 +27,13 @@ import com.ptc.pfc.pfcModelItem.ModelItem;
 import com.ptc.pfc.pfcModelItem.ModelItemType;
 import com.ptc.pfc.pfcModelItem.ModelItems;
 import com.ptc.pfc.pfcSelect.Selection;
+import com.ptc.pfc.pfcSelect.Selections;
 import com.ptc.pfc.pfcSelect.pfcSelect;
 import com.ptc.pfc.pfcSolid.Solid;
 import com.ptc.pfc.pfcSolid.SolidBody;
+import com.ptc.wfc.wfcCollection.CurveCollectionInstrType;
+import com.ptc.wfc.wfcCollection.CurveCollectionInstructions;
+import com.ptc.wfc.wfcCollection.wfcCollection;
 import com.ptc.wfc.wfcElementTree.Element;
 import com.ptc.wfc.wfcElementTree.ElementTree;
 import com.ptc.wfc.wfcElementTree.Elements;
@@ -67,13 +76,19 @@ final class Modeling {
             PRO_E_STD_SEC_PLANE_ORIENT_REF = 455, PRO_E_STD_DIRECTION = 436, PRO_E_STD_MATRLSIDE = 499,
             PRO_E_STD_EXT_DEPTH = 515, PRO_E_EXT_DEPTH_TO = 429, PRO_E_EXT_DEPTH_TO_TYPE = 433,
             PRO_E_EXT_DEPTH_TO_VALUE = 434, PRO_E_EXT_DEPTH_TO_REF = 435, PRO_E_BODY = 6314, PRO_E_BODY_USE = 6315,
-            PRO_E_BODY_SELECT = 6316;
+            PRO_E_BODY_SELECT = 6316, PRO_E_SHELL_SRF = 73, PRO_E_SHELL_THICK = 74, PRO_E_SHELL_FLIP = 2194,
+            PRO_E_RNDCH_SETS = 2101, PRO_E_RNDCH_SET = 2102, PRO_E_RNDCH_SHAPE_OPTIONS = 2178, PRO_E_RNDCH_COMPOUND_CONIC = 2177,
+            PRO_E_RNDCH_CONIC_TYPE = 2119, PRO_E_RNDCH_REFERENCES = 2121, PRO_E_RNDCH_REFERENCE_TYPE = 2179,
+            PRO_E_STD_CURVE_COLLECTION_APPL = 2124, PRO_E_RNDCH_RADII = 2123, PRO_E_RNDCH_RADIUS = 2122, PRO_E_RNDCH_LEG1 = 2106,
+            PRO_E_RNDCH_LEG_TYPE = 2108, PRO_E_RNDCH_LEG_VALUE = 2109, PRO_E_RNDCH_ATTACH_TYPE = 3042;
     private static final int PRO_FEAT_PROTRUSION = 917, PRO_FEAT_CUT = 916, PRO_EXTRUDE = 1, PRO_EXT_FEAT_TYPE_SOLID = 917,
             PRO_EXT_MATERIAL_ADD = -1, PRO_EXT_MATERIAL_REMOVE = 916, PRO_EXT_FEAT_FORM_NO_THIN = 0,
             PRO_SEC_VIEW_DIR_SIDE_ONE = 1, PRO_SEC_ORIENT_DIR_LEFT = 3, PRO_SEC_ORIENT_DIR_RIGHT = 4,
             PRO_EXT_CR_IN_SIDE_ONE = -1, PRO_EXT_CR_IN_SIDE_TWO = 1, PRO_EXT_MATERIAL_SIDE_ONE = 1,
             PRO_BODY_USE_NEW = 0, PRO_BODY_USE_SELECTED = 2, PRO_EXT_DEPTH_TO_BLIND = 1 << 18,
-            PRO_EXT_DEPTH_TO_ALL = 1 << 20, PRO_EXT_DEPTH_TO_REF = 1 << 22, PRO_EXT_DEPTH_SYMMETRIC = 1 << 28;
+            PRO_EXT_DEPTH_TO_ALL = 1 << 20, PRO_EXT_DEPTH_TO_REF = 1 << 22, PRO_EXT_DEPTH_SYMMETRIC = 1 << 28,
+            PRO_FEAT_SHELL = 928, PRO_SHELL_INSIDE = 1, PRO_FEAT_ROUND = 913, PRO_ROUND_TYPE_CONSTANT = 0,
+            PRO_ROUND_CONIC_DISABLE = 2, PRO_ROUND_REF_EDGE = 1, PRO_ROUND_RADIUS_TYPE_VALUE = 1, PRO_ROUND_ATTACHED = 0;
 
     private final Docs docs;
 
@@ -106,6 +121,10 @@ final class Modeling {
         if (symmetric && depth == null) {
             throw new HostError(HostError.VALIDATION, "--symmetric splits --depth to both sides of the sketch; give --depth.");
         }
+        String depthName = dimensionName(in, "depth_name");
+        if (depthName != null && depth == null) {
+            throw new HostError(HostError.VALIDATION, "--depth-name names the --depth dimension; give --depth.");
+        }
         String directionText = Json.string(in, "direction", null);
         double[] direction = directionText == null ? sketch.normal : Sketch.axis(directionText);
         if (direction == null || Math.abs(Math.abs(Sketch.dot(direction, sketch.normal)) - 1) > EPS) {
@@ -124,6 +143,9 @@ final class Modeling {
         plan.change(key, "status", null, "active");
         for (Map.Entry<String, Double> d : sketch.namedValues.entrySet()) {
             plan.change(docKey + "#/dimensions/" + d.getKey(), "value_mm", null, Ops.clean(d.getValue()));
+        }
+        if (depthName != null) {
+            plan.change(docKey + "#/dimensions/" + depthName, "value_mm", null, Ops.clean(depth));
         }
         String how = throughAll ? "through all" : to != null ? "up to " + to : (symmetric ? Ops.clean(depth) + " mm split to both sides"
                 : Ops.clean(depth) + " mm toward " + axisName(direction));
@@ -200,6 +222,9 @@ final class Modeling {
                             .with("knowledge", KNOWLEDGE);
                 }
                 rename(made, built);
+                if (depthName != null) {
+                    nameValue(made, depth / f, depthName);
+                }
             } catch (Throwable failed) {
                 takeOut(solid, id);
                 throw failed;
@@ -208,6 +233,312 @@ final class Modeling {
             Feature made = solid.GetFeatureById(id);
             return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
         };
+    }
+
+    // ------------------------------------------------------------------ shell create
+
+    void shellCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        Double thickness = Json.number(in, "thickness_mm");
+        if (thickness == null || thickness <= 0) {
+            throw new HostError(HostError.VALIDATION, "--thickness is required and greater than 0: the wall left, measured inward.");
+        }
+        List<Surface> removed = new ArrayList<>();
+        String removeText = Json.string(in, "remove", null);
+        if (removeText != null) {
+            for (String one : removeText.split(";")) {
+                removed.addAll(faces(solid, one.trim(), false));
+            }
+        }
+        String dimName = dimensionName(in, "thickness_name");
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        if (dimName != null) {
+            plan.change(docKey + "#/dimensions/" + dimName, "value_mm", null, Ops.clean(thickness));
+        }
+        plan.action = "Shell the part into " + name + " with " + Ops.clean(thickness) + " mm walls"
+                + (removed.isEmpty() ? ", closed" : ", open at " + removeText) + "; then regenerate.";
+        plan.work = () -> {
+            double before = volume(solid, f);
+            Elements elements = Elements.create();
+            add(elements, PRO_E_FEATURE_TREE, null, 0);
+            add(elements, PRO_E_FEATURE_TYPE, integer(PRO_FEAT_SHELL), 1);
+            add(elements, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+            body(solid, elements);
+            for (Surface s : removed) {
+                add(elements, PRO_E_SHELL_SRF, pfcArgument.CreateSelectionArgValue(pfcSelect.CreateModelItemSelection(s, null)), 1);
+            }
+            add(elements, PRO_E_SHELL_THICK, pfcArgument.CreateDoubleArgValue(thickness / f), 1);
+            add(elements, PRO_E_SHELL_FLIP, integer(PRO_SHELL_INSIDE), 1);
+            Feature made = complete(solid, elements, name, f, before, false);
+            nameOnly(made, dimName);
+            return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
+        };
+    }
+
+    // ------------------------------------------------------------------ round create
+
+    void roundCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        Double radius = Json.number(in, "radius_mm");
+        if (radius == null || radius <= 0) {
+            throw new HostError(HostError.VALIDATION, "--radius is required and greater than 0.");
+        }
+        String edgesText = Json.string(in, "edges", null);
+        if (edgesText == null) {
+            throw new HostError(HostError.VALIDATION, "--edges is required: such as BASE/end:outer-edges, edge(BASE/end, BASE/side[+x]) "
+                    + "or edge:57; several separated by ;.");
+        }
+        List<Edge> edges = edges(solid, edgesText);
+        String dimName = dimensionName(in, "radius_name");
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        if (dimName != null) {
+            plan.change(docKey + "#/dimensions/" + dimName, "value_mm", null, Ops.clean(radius));
+        }
+        plan.action = "Round " + edges.size() + " edges (" + edgesText + ") to R" + Ops.clean(radius) + " as " + name + "; then regenerate.";
+        plan.work = () -> {
+            double before = volume(solid, f);
+            CurveCollectionInstructions instructions = CurveCollectionInstructions.create();
+            for (Edge edge : edges) {
+                Selections one = Selections.create();
+                one.append(pfcSelect.CreateModelItemSelection(edge, null));
+                instructions.append(wfcCollection.CurveCollectionInstruction_Create(CurveCollectionInstrType.CURVCOLL_ADD_ONE_INSTR, one));
+            }
+            com.ptc.wfc.wfcCollection.Collection collection = wfcCollection.Collection_Create();
+            collection.SetCrvCollection(wfcCollection.CurveCollection_Create(instructions));
+            Elements elements = Elements.create();
+            add(elements, PRO_E_FEATURE_TREE, null, 0);
+            add(elements, PRO_E_FEATURE_TYPE, integer(PRO_FEAT_ROUND), 1);
+            add(elements, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+            add(elements, PRO_E_RNDCH_SETS, null, 1);
+            add(elements, PRO_E_RNDCH_SET, null, 2);
+            add(elements, PRO_E_RNDCH_SHAPE_OPTIONS, integer(PRO_ROUND_TYPE_CONSTANT), 3);
+            add(elements, PRO_E_RNDCH_COMPOUND_CONIC, null, 3);
+            add(elements, PRO_E_RNDCH_CONIC_TYPE, integer(PRO_ROUND_CONIC_DISABLE), 4);
+            add(elements, PRO_E_RNDCH_REFERENCES, null, 3);
+            add(elements, PRO_E_RNDCH_REFERENCE_TYPE, integer(PRO_ROUND_REF_EDGE), 4);
+            add(elements, PRO_E_STD_CURVE_COLLECTION_APPL, null, 4).SetElemCollection(collection);
+            add(elements, PRO_E_RNDCH_RADII, null, 3);
+            add(elements, PRO_E_RNDCH_RADIUS, null, 4);
+            add(elements, PRO_E_RNDCH_LEG1, null, 5);
+            add(elements, PRO_E_RNDCH_LEG_TYPE, integer(PRO_ROUND_RADIUS_TYPE_VALUE), 6);
+            add(elements, PRO_E_RNDCH_LEG_VALUE, pfcArgument.CreateDoubleArgValue(radius / f), 6);
+            add(elements, PRO_E_RNDCH_ATTACH_TYPE, integer(PRO_ROUND_ATTACHED), 1);
+            Feature made = complete(solid, elements, name, f, before, null);
+            nameOnly(made, dimName);
+            return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
+        };
+    }
+
+    /**
+     * Creates a feature from a complete element tree and checks it: active after regeneration,
+     * and, when {@code adds} is not null, the volume grew (true) or shrank (false). Otherwise the
+     * feature is taken back out and the call fails.
+     */
+    private static Feature complete(Solid solid, Elements elements, String name, double f, double before, Boolean adds) throws Exception {
+        WFeature feature;
+        try {
+            feature = ((WSolid) solid).WCreateFeature(((WSession) Creo.session()).CreateElementTree(elements),
+                    options(FeatCreateOption.FEAT_CR_NO_OPTS), wfcSolidInstructions.WRegenInstructions_Create());
+        } catch (jxthrowable refused) {
+            Feature left = null;
+            try {
+                left = Creo.feature(solid, name);
+            } catch (HostError none) {
+                // Nothing was left behind.
+            }
+            if (left != null) {
+                takeOut(solid, left.GetId());
+            }
+            throw new HostError(HostError.NATIVE, "Creo did not create " + name + ", for example a wall too thick for the part or "
+                    + "a radius larger than the faces it joins; the model is as it was.").nativeMessage(refused.toString());
+        }
+        int id = feature.GetId();
+        Feature made = solid.GetFeatureById(id);
+        if (made == null || made.GetStatus() != FeatureStatus.FEAT_ACTIVE) {
+            takeOut(solid, id);
+            throw new HostError(HostError.NATIVE, "Creo created " + name + " but could not regenerate it; the model is as it was.");
+        }
+        if (adds != null) {
+            double change = volume(solid, f) - before;
+            if (adds ? !(change > 0) : !(change < 0)) {
+                takeOut(solid, id);
+                throw new HostError(HostError.VALIDATION, name + " changed no material; the model is as it was.");
+            }
+        }
+        Ops.repaint();
+        return solid.GetFeatureById(id);
+    }
+
+    /** Names a feature's one key dimension, such as a shell's thickness. */
+    private static void nameOnly(Feature feature, String name) throws jxthrowable {
+        if (name == null) {
+            return;
+        }
+        ModelItems dims = feature.ListSubItems(ModelItemType.ITEM_DIMENSION);
+        for (int i = 0; dims != null && i < dims.getarraysize(); i++) {
+            Dimension d = (Dimension) dims.get(i);
+            if (d.GetDimValue() != 0) {
+                d.SetName(name);
+                return;
+            }
+        }
+    }
+
+    /** Names the dimension of a feature that still has Creo's name and holds this value. */
+    private static void nameValue(Feature feature, double value, String name) throws jxthrowable {
+        ModelItems dims = feature.ListSubItems(ModelItemType.ITEM_DIMENSION);
+        for (int i = 0; dims != null && i < dims.getarraysize(); i++) {
+            Dimension d = (Dimension) dims.get(i);
+            if (Math.abs(d.GetDimValue() - value) < 1e-9 && d.GetSymbol().matches("d[0-9]+")) {
+                d.SetName(name);
+                return;
+            }
+        }
+    }
+
+    private static String dimensionName(Map<String, Object> in, String key) {
+        String name = Json.string(in, key, null);
+        if (name != null && !NAME.matcher(name).matches()) {
+            throw new HostError(HostError.VALIDATION, "--" + key.replace('_', '-') + " must be a letter, then letters, digits or _, 31 at most.");
+        }
+        return name;
+    }
+
+    // ------------------------------------------------------------------ faces and edges by name
+
+    /** One or more faces: a datum name, surface:<id>, or a feature's faces by place such as BASE/start. */
+    List<Surface> faces(Solid solid, String text, boolean one) throws Exception {
+        Matcher id = SURFACE_ID.matcher(text);
+        if (id.matches()) {
+            ModelItem item = solid.GetItemById(ModelItemType.ITEM_SURFACE, Integer.parseInt(id.group(1)));
+            if (!(item instanceof Surface)) {
+                throw new HostError(HostError.NOT_FOUND, "The model has no surface " + id.group(1) + "; geometry list shows them.");
+            }
+            return new ArrayList<>(Arrays.asList((Surface) item));
+        }
+        Matcher m = ROLE.matcher(text);
+        if (m.matches()) {
+            Feature feature = Creo.feature(solid, m.group(1));
+            List<Surface> found = role(solid, feature, m.group(2), m.group(3));
+            if (found.isEmpty()) {
+                throw new HostError(HostError.NOT_FOUND, "Feature " + m.group(1) + " has no " + m.group(2) + " face"
+                        + (m.group(3) == null ? "" : " facing " + m.group(3)) + ".").with("knowledge", Arrays.asList("creo-geometry-references"));
+            }
+            if (one && found.size() > 1) {
+                List<Object> candidates = new ArrayList<>();
+                for (Surface s : found) {
+                    candidates.add("surface:" + s.GetId());
+                }
+                throw new HostError("E_AMBIGUOUS", text + " is " + found.size() + " faces; add a normal filter such as [+x], "
+                        + "or name one by its surface ID.").with("candidates", candidates);
+            }
+            return found;
+        }
+        ModelItem item = solid.GetItemByName(ModelItemType.ITEM_SURFACE, text);
+        if (!(item instanceof Surface)) {
+            throw new HostError(HostError.NOT_FOUND, "Nothing in the model is named " + text + "; faces are written as BASE/end, "
+                    + "BASE/side[+x] or surface:<id>.").with("knowledge", Arrays.asList("creo-geometry-references"));
+        }
+        return new ArrayList<>(Arrays.asList((Surface) item));
+    }
+
+    private static final Pattern EDGE_ID = Pattern.compile("edge:([0-9]+)");
+    private static final Pattern EDGE_OF = Pattern.compile("edge\\((.+),(.+)\\)");
+    private static final Pattern EDGES_OF = Pattern.compile("(.+):(outer-edges|edges)");
+
+    /** Edges, separated by ;: edge:<id>, edge(face, face), face:edges, face:outer-edges or FEATURE:edges. */
+    List<Edge> edges(Solid solid, String text) throws Exception {
+        Map<Integer, Edge> out = new LinkedHashMap<>();
+        for (String raw : text.split(";")) {
+            String one = raw.trim();
+            Matcher id = EDGE_ID.matcher(one);
+            Matcher of = EDGE_OF.matcher(one);
+            Matcher all = EDGES_OF.matcher(one);
+            if (id.matches()) {
+                ModelItem item = solid.GetItemById(ModelItemType.ITEM_EDGE, Integer.parseInt(id.group(1)));
+                if (!(item instanceof Edge)) {
+                    throw new HostError(HostError.NOT_FOUND, "The model has no edge " + id.group(1) + "; geometry list shows them.");
+                }
+                out.put(item.GetId(), (Edge) item);
+            } else if (of.matches()) {
+                Surface a = faces(solid, of.group(1).trim(), true).get(0);
+                Surface b = faces(solid, of.group(2).trim(), true).get(0);
+                int before = out.size();
+                for (Edge e : edgesOf(a, false)) {
+                    if (touches(e, b)) {
+                        out.put(e.GetId(), e);
+                    }
+                }
+                if (out.size() == before) {
+                    throw new HostError(HostError.NOT_FOUND, of.group(1).trim() + " and " + of.group(2).trim() + " share no edge.");
+                }
+            } else if (all.matches()) {
+                String what = all.group(1).trim();
+                boolean outer = "outer-edges".equals(all.group(2));
+                List<Surface> surfaces;
+                if (NAME.matcher(what).matches() && !isDatum(solid, what)) {
+                    surfaces = new ArrayList<>();
+                    ModelItems items = Creo.feature(solid, what).ListSubItems(ModelItemType.ITEM_SURFACE);
+                    for (int i = 0; items != null && i < items.getarraysize(); i++) {
+                        surfaces.add((Surface) items.get(i));
+                    }
+                } else {
+                    surfaces = faces(solid, what, false);
+                }
+                for (Surface s : surfaces) {
+                    for (Edge e : edgesOf(s, outer)) {
+                        out.put(e.GetId(), e);
+                    }
+                }
+            } else {
+                throw new HostError(HostError.VALIDATION, "Edges are written edge:<id>, edge(face, face), face:edges, face:outer-edges "
+                        + "or FEATURE:edges, separated by ;. " + one + " is none of them.").with("knowledge", Arrays.asList("creo-geometry-references"));
+            }
+        }
+        if (out.isEmpty()) {
+            throw new HostError(HostError.NOT_FOUND, text + " names no edge.");
+        }
+        return new ArrayList<>(out.values());
+    }
+
+    private static boolean isDatum(Solid solid, String name) {
+        try {
+            return solid.GetItemByName(ModelItemType.ITEM_SURFACE, name) != null;
+        } catch (Throwable none) {
+            return false;
+        }
+    }
+
+    private static List<Edge> edgesOf(Surface s, boolean outerOnly) throws jxthrowable {
+        List<Edge> out = new ArrayList<>();
+        Contours contours = s.ListContours();
+        for (int c = 0; contours != null && c < contours.getarraysize(); c++) {
+            Contour contour = contours.get(c);
+            if (outerOnly && contour.GetInternalTraversal() != ContourTraversal.CONTOUR_TRAV_EXTERNAL) {
+                continue;
+            }
+            Edges edges = contour.ListElements();
+            for (int e = 0; edges != null && e < edges.getarraysize(); e++) {
+                out.add(edges.get(e));
+            }
+        }
+        return out;
+    }
+
+    private static boolean touches(Edge e, Surface s) throws jxthrowable {
+        Surface a = e.GetSurface1();
+        Surface b = e.GetSurface2();
+        return (a != null && a.GetId() == s.GetId()) || (b != null && b.GetId() == s.GetId());
     }
 
     /** What ccn_sketch answered, as an error when the sketch was not taken. */
@@ -351,40 +682,7 @@ final class Modeling {
     /** Planes by datum name, by surface:<id>, or a feature's face by its place: BASE/end, BASE/side[+x]. */
     Sketch.Planes planes(Solid solid) {
         return name -> {
-            Matcher id = SURFACE_ID.matcher(name);
-            Surface surface;
-            if (id.matches()) {
-                ModelItem item = solid.GetItemById(ModelItemType.ITEM_SURFACE, Integer.parseInt(id.group(1)));
-                if (!(item instanceof Surface)) {
-                    throw new HostError(HostError.NOT_FOUND, "The model has no surface " + id.group(1) + "; geometry list shows them.");
-                }
-                surface = (Surface) item;
-            } else if (ROLE.matcher(name).matches()) {
-                Matcher m = ROLE.matcher(name);
-                m.matches();
-                Feature feature = Creo.feature(solid, m.group(1));
-                List<Surface> found = role(solid, feature, m.group(2), m.group(3));
-                if (found.isEmpty()) {
-                    throw new HostError(HostError.NOT_FOUND, "Feature " + m.group(1) + " has no " + m.group(2) + " face"
-                            + (m.group(3) == null ? "" : " facing " + m.group(3)) + ".").with("knowledge", Arrays.asList("creo-geometry-references"));
-                }
-                if (found.size() > 1) {
-                    List<Object> candidates = new ArrayList<>();
-                    for (Surface s : found) {
-                        candidates.add("surface:" + s.GetId());
-                    }
-                    throw new HostError("E_AMBIGUOUS", name + " is " + found.size() + " faces; add a normal filter such as [+x], "
-                            + "or name one by its surface ID.").with("candidates", candidates);
-                }
-                surface = found.get(0);
-            } else {
-                ModelItem item = solid.GetItemByName(ModelItemType.ITEM_SURFACE, name);
-                if (!(item instanceof Surface)) {
-                    throw new HostError(HostError.NOT_FOUND, "The model has no datum plane " + name + "; geometry list --kind "
-                            + "datum-plane shows them.").with("knowledge", Arrays.asList("creo-geometry-references"));
-                }
-                surface = (Surface) item;
-            }
+            Surface surface = faces(solid, name, true).get(0);
             if (surface.GetSurfaceType() != SurfaceType.SURFACE_PLANE) {
                 throw new HostError(HostError.VALIDATION, name + " is not planar; a sketch and its references need planes.");
             }

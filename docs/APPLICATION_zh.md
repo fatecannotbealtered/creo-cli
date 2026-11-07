@@ -128,11 +128,11 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 | CAP-015 | 把一个封闭的草绘轮廓旋转 360 度 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-016 | 从平面或平的面偏移出基准平面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-017 | 建基准轴：两平面相交、过一条边或一个圆柱面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-018 | 等半径倒圆角 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-018 | 等半径倒圆角 | OTK Java | provided | - |
 | CAP-019 | 等距倒角 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-020 | 在平面上放简单孔或标准孔（线性、径向或同轴定位） | OTK Java；螺纹系列用 TOOLKIT C | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-021 | 在圆柱面上加修饰螺纹 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-022 | 向内抽壳，去掉指定的面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-022 | 向内抽壳，去掉指定的面 | OTK Java | provided | - |
 | CAP-023 | 绕枢轴平面拔模 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-024 | 加轮廓筋 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-025 | 封闭截面沿草绘轨迹扫描 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
