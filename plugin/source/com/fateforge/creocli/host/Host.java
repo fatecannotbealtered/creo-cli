@@ -164,6 +164,13 @@ public final class Host {
                 throw new HostError(HostError.NATIVE, "Creo refused " + method + ".", write ? "unknown" : "not_started")
                         .nativeMessage(refused.toString());
             } catch (RuntimeException failure) {
+                // A fault of the host itself: where it happened goes to host.log, since an unknown outcome carries no message.
+                StringBuilder where = new StringBuilder("failed in " + method + ": " + failure);
+                StackTraceElement[] frames = failure.getStackTrace();
+                for (int i = 0; i < Math.min(6, frames.length); i++) {
+                    where.append(" | at ").append(frames[i]);
+                }
+                log(home, where.toString());
                 throw new HostError(HostError.NATIVE, "The host failed in " + method + ": " + failure,
                         write ? "unknown" : "not_started");
             }

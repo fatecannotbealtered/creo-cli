@@ -658,17 +658,19 @@ final class Modeling {
         return complete(solid, e, name, f, before, null);
     }
 
-    /** How the drafted faces lean: their mean normal along the pull, outward; positive when they narrow toward it. */
+    /**
+     * How the drafted faces lean: the sum of their normals out of the material along the pull, positive
+     * when they narrow toward it. Faces across the pull do not lean and are left out: right after the
+     * draft Creo lists faces at the hinge too, facing against the pull.
+     */
     private static double tilt(Feature draft, double[] pull) throws jxthrowable {
         ModelItems items = draft.ListSubItems(ModelItemType.ITEM_SURFACE);
         double sum = 0;
         for (int i = 0; items != null && i < items.getarraysize(); i++) {
-            Surface s = (Surface) items.get(i);
-            double[] n = Sketch.unit(pointAndNormal(s)[1]);
-            if (s.GetOrientation() == com.ptc.pfc.pfcGeometry.SurfaceOrientation.SURFACEORIENT_INWARD) {
-                n = new double[] {-n[0], -n[1], -n[2]};
+            double along = Sketch.dot(Sketch.unit(pointAndNormal((Surface) items.get(i))[1]), pull);
+            if (Math.abs(along) < 1 - EPS) {
+                sum += along;
             }
-            sum += Sketch.dot(n, pull);
         }
         return sum;
     }
@@ -1089,9 +1091,15 @@ final class Modeling {
                         + (m.group(3) == null ? "" : " facing " + m.group(3)) + ".").with("knowledge", Arrays.asList("creo-geometry-references"));
             }
             if (one && found.size() > 1) {
+                // Each candidate with where it is and which way it faces, to pick one by.
+                double f = Units.mmPerUnit((Model) solid);
                 List<Object> candidates = new ArrayList<>();
                 for (Surface s : found) {
-                    candidates.add("surface:" + s.GetId());
+                    double[][] pn = pointAndNormal(s);
+                    double[] n = Sketch.unit(pn[1]);
+                    candidates.add(Json.map("reference", "surface:" + s.GetId(),
+                            "point_mm", Arrays.asList(Ops.clean(pn[0][0] * f), Ops.clean(pn[0][1] * f), Ops.clean(pn[0][2] * f)),
+                            "normal", Arrays.asList(Ops.clean(n[0]), Ops.clean(n[1]), Ops.clean(n[2]))));
                 }
                 throw new HostError("E_AMBIGUOUS", text + " is " + found.size() + " faces; add a normal filter such as [+x], "
                         + "or name one by its surface ID.").with("candidates", candidates);
@@ -1546,7 +1554,10 @@ final class Modeling {
         return null;
     }
 
-    /** A point in the middle of a surface's parameter range and the normal there, in model units. */
+    /**
+     * A point in the middle of a surface's parameter range and the normal there, in model units.
+     * A face's normal points out of the material; a datum plane's is its own.
+     */
     static double[][] pointAndNormal(Surface s) throws jxthrowable {
         UVOutline uv = s.GetUVExtents();
         UVParams mid = UVParams.create();
@@ -1554,6 +1565,8 @@ final class Modeling {
         mid.set(1, (uv.get(0).get(1) + uv.get(1).get(1)) / 2);
         SurfXYZData data = s.Eval3DData(mid);
         Point3D p = data.GetPoint();
+        // Measured on Creo 13.4: this normal points out of the material, whatever the surface's orientation;
+        // the axis of a plane's coordinate system does not.
         Vector3D n = data.GetNormal();
         return new double[][] {{p.get(0), p.get(1), p.get(2)}, {n.get(0), n.get(1), n.get(2)}};
     }

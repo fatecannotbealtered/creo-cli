@@ -39,6 +39,8 @@ def _said(raw: bytes) -> str:
         return raw.decode("utf-8")
     except UnicodeDecodeError:
         return raw.decode(CONSOLE, errors="replace")
+
+
 SOURCE_SUFFIXES = (".java", ".c", ".h")
 CRLF = chr(13) + chr(10)  # cmd.exe reads a batch file by CRLF lines
 
@@ -93,7 +95,7 @@ def build(sources: Path, common_files: Path, jar: Path) -> None:
         classes = Path(work) / "classes"
         built = Path(work) / jar.name
         files = sorted(str(p) for p in sources.rglob("*.java"))
-        _run([str(jdk / "bin" / "javac.exe"), "--release", "25", "-encoding", "UTF-8", "-cp", str(otk),
+        _run([str(jdk / "bin" / "javac.exe"), "-J-Duser.language=en", "--release", "25", "-encoding", "UTF-8", "-cp", str(otk),
               "-d", str(classes), *files], "compiling the host component")
         _run([str(jdk / "bin" / "jar.exe"), "--create", "--file", str(built), "-C", str(classes), "."],
              "packaging the host component")
@@ -122,13 +124,13 @@ def _unlocked(jar: Path) -> bool:
 
 def _run(command: list[str], what: str, cwd: Path | None = None, env: dict[str, str] | None = None) -> None:
     try:
-        out = subprocess.run(command, cwd=str(cwd) if cwd else None, env=env, capture_output=True, text=True,
-                             encoding="utf-8", errors="replace", timeout=UNLOCK_TIMEOUT_S, creationflags=NO_WINDOW)
+        out = subprocess.run(command, cwd=str(cwd) if cwd else None, env=env, capture_output=True,
+                             timeout=UNLOCK_TIMEOUT_S, creationflags=NO_WINDOW)
     except (OSError, subprocess.SubprocessError) as exc:
         raise AdapterError("E_NATIVE_FAILURE", f"Failed {what}: {exc}.", dispatch_state="not_started") from None
     if out.returncode != 0:
         raise AdapterError("E_NATIVE_FAILURE", f"Failed {what}.", dispatch_state="not_started",
-                           native_message=(out.stdout + out.stderr).strip()[-2000:])
+                           native_message=_said(out.stdout + out.stderr).strip()[-2000:])
 
 
 def find_vcvars() -> Path | None:

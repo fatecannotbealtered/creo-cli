@@ -655,7 +655,8 @@ final class Ops {
             com.ptc.pfc.pfcBase.Transform3D frame = ((TransformedSurface) s).GetCoordSys();
             int type = s.GetSurfaceType().getValue();
             if (type == com.ptc.pfc.pfcGeometry.SurfaceType._SURFACE_PLANE) {
-                row.put("normal", vector(frame.GetZAxis()));
+                double[] n = com.fateforge.creocli.host.core.Sketch.unit(Modeling.pointAndNormal(s)[1]);  // out of the material
+                row.put("normal", Arrays.asList(clean(n[0]), clean(n[1]), clean(n[2])));
                 row.put("origin_mm", point(frame.GetOrigin(), f));
             } else if (type == com.ptc.pfc.pfcGeometry.SurfaceType._SURFACE_CYLINDER
                     && s instanceof com.ptc.pfc.pfcGeometry.Cylinder) {

@@ -29,8 +29,12 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ### Fixed
 
+- `geometry list` reports a planar face's `normal` pointing out of the material, as `--facing` and filters such as `BASE/side[+x]` take it; it reported the axis of the plane's coordinate system, which can point into the material.
+- `draft create` checks the lean on the drafted faces alone, and turns the angle when they widen toward the pull; the faces Creo lists at the hinge made every draft pass the check.
+- A face name that fits several faces is refused with `E_AMBIGUOUS` and the candidates, each with its surface ID, a point and its normal; the host component sent bare IDs, which the CLI turned into `E_PROTOCOL`.
 - `relation update` no longer leaves an unknown outcome when the model does not regenerate with the old relations either; it reports the old relations back and that the model fails with any value.
 - After a change, the windows of the models that changed are repainted, not only the current window.
+- `plugin install` shows the Java compiler's errors in English and readable on a Windows set to another language. A fault of the host component itself is written to its `host.log` with where it happened, since a write whose outcome is unknown carries no message.
 - Creo no longer waits to exit while a creo-cli call still holds a connection to the host component.
 
 ## [1.0.0] - 2026-11-06
