@@ -656,6 +656,7 @@
         }
       ],
       "untrusted_fields": [
+        "model",
         "findings[*].object",
         "modelcheck.report",
         "modelcheck.reason"

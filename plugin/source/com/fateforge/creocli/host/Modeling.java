@@ -376,7 +376,8 @@ final class Modeling {
         }
         long errors = items.stream().filter(x -> "error".equals(((Map<?, ?>) x).get("severity"))).count()
                 + (Boolean.TRUE.equals(mc.get("ran")) ? ((Number) mc.get("errors")).longValue() : 0);
-        return Json.map("modelcheck", mc, "findings", items, "errors", errors, "passed", errors == 0 && Boolean.TRUE.equals(mc.get("ran")));
+        return Json.map("model", Creo.fileName(model), "modelcheck", mc, "findings", items, "errors", errors,
+                "passed", errors == 0 && Boolean.TRUE.equals(mc.get("ran")));
     }
 
     private static void deleteTree(java.io.File dir) {

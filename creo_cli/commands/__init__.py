@@ -215,10 +215,10 @@ COMMANDS: list[dict[str, Any]] = [
         "model check", "Run Creo's ModelCHECK and creo-cli's checks on a part: failed, suppressed and unnamed features.",
         "model", [],
         {"type": "object", "properties": {
-            "modelcheck": {"type": "object"}, "errors": INT, "passed": BOOL,
+            "model": STR, "modelcheck": {"type": "object"}, "errors": INT, "passed": BOOL,
             "findings": {"type": "array", "items": {"type": "object", "properties": {
                 "rule": STR, "object": STR, "severity": STR, "message": STR}}}}},
-        ["findings[*].object", "modelcheck.report", "modelcheck.reason"], related_knowledge=["creo-localized-names"], doc_kinds=["part"],
+        ["model", "findings[*].object", "modelcheck.report", "modelcheck.reason"], related_knowledge=["creo-localized-names"], doc_kinds=["part"],
     ),
     _read(
         "component list", "The top-level components of an assembly: model, status and position.",
