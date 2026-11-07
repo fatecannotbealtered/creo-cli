@@ -42,6 +42,7 @@ def _said(raw: bytes) -> str:
 
 
 SOURCE_SUFFIXES = (".java", ".c", ".h")
+HOST_PACKAGE = Path("com", "fateforge", "creocli", "host")
 CRLF = chr(13) + chr(10)  # cmd.exe reads a batch file by CRLF lines
 
 
@@ -78,9 +79,9 @@ def find_jdk() -> Path | None:
     return None
 
 
-def build(sources: Path, common_files: Path, jar: Path) -> None:
-    """Compile ``sources``, package them and unlock the JAR, then put it at ``jar``. On any
-    failure nothing is written at ``jar``."""
+def build(sources: Path, common_files: Path, jar: Path, version: str) -> None:
+    """Compile ``sources``, package them with the ``version`` they are built as, and unlock the
+    JAR, then put it at ``jar``. On any failure nothing is written at ``jar``."""
     jdk = find_jdk()
     if jdk is None:
         raise AdapterError("E_UNSUPPORTED", "plugin install builds the host component with a JDK 25, and none was found. "
@@ -97,6 +98,8 @@ def build(sources: Path, common_files: Path, jar: Path) -> None:
         files = sorted(str(p) for p in sources.rglob("*.java"))
         _run([str(jdk / "bin" / "javac.exe"), "-J-Duser.language=en", "--release", "25", "-encoding", "UTF-8", "-cp", str(otk),
               "-d", str(classes), *files], "compiling the host component")
+        # The host reports this version to the CLI, which tells a JAR Creo loaded earlier from the installed one.
+        (classes / HOST_PACKAGE / "version").write_bytes(version.encode("utf-8"))
         _run([str(jdk / "bin" / "jar.exe"), "--create", "--file", str(built), "-C", str(classes), "."],
              "packaging the host component")
         environment = dict(os.environ)

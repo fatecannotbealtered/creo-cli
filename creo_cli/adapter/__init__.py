@@ -332,7 +332,7 @@ class Adapter(BaseAdapter):
         if not (jar.is_file() and _installed_digest(target) == digest and native is not None):
             fresh = folder / f".{JAR}.{os.getpid()}.new"
             fresh_dll = folder / f".{build.NATIVE_DLL}.{os.getpid()}.new"
-            build.build(source / "source", found[0], fresh)
+            build.build(source / "source", found[0], fresh, version)
             # The C library is built after the JAR: a computer that cannot build it still gets
             # the Java host, and the commands that need the library say why it is missing.
             reason = build.build_native(source / "source" / "native", found[0], fresh_dll)

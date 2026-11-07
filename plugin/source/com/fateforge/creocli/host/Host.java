@@ -39,7 +39,8 @@ import java.util.Optional;
  * reach (DCLI-270) and writes its discovery file to hosts/ (DCLI-271).
  */
 public final class Host {
-    public static final String PLUGIN_VERSION = "1.0.0";
+    /** The version plugin install built this JAR as; it writes the version into the JAR. */
+    public static final String PLUGIN_VERSION = builtVersion();
     public static final String PROTOCOL_VERSION = "1.2.0";
     static final String CONFIG_FILE = "creo-cli-host.json";
     private static final int PUMP_MICROSECONDS = 100_000;
@@ -220,6 +221,14 @@ public final class Host {
         }
         Native.call("ccn_end_later", Json.map("delay_ms", 1000));
         return Docs.facts("dispatched", "applied", Json.map());
+    }
+
+    private static String builtVersion() {
+        try (java.io.InputStream in = Host.class.getResourceAsStream("version")) {
+            return in == null ? "unknown" : new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
+        } catch (java.io.IOException unreadable) {
+            return "unknown";
+        }
     }
 
     private static String required(Map<String, Object> params, String key) {

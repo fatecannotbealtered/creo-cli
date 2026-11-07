@@ -34,8 +34,9 @@ class AdapterTest(unittest.TestCase):
         """Install, with the builds replaced: they need Creo, a JDK 25, a C compiler and TOOLKIT licenses."""
         self.builds = getattr(self, "builds", 0)
 
-        def fake_build(sources: Path, common: Path, jar: Path) -> None:
+        def fake_build(sources: Path, common: Path, jar: Path, version: str) -> None:
             self.builds += 1
+            self.built_version = version
             jar.parent.mkdir(parents=True, exist_ok=True)
             jar.write_bytes(b"jar")
 
@@ -62,6 +63,11 @@ class AdapterTest(unittest.TestCase):
         with mock.patch.object(creo_adapter, "common_files", return_value=[found]):
             out = self.adapter.probe({})
         self.assertEqual(out, {"found": True, "path": str(found.parent), "license": "unknown", "version": "13.4.1.0"})
+
+    def test_the_jar_is_built_as_the_manifest_version(self) -> None:
+        manifest = json.loads((ROOT / "plugin" / "manifest.json").read_text(encoding="utf-8"))
+        self.install()
+        self.assertEqual(self.built_version, manifest["version"], "the host reports the version written into its JAR")
 
     def test_install_copies_every_manifest_file_and_writes_the_registry(self) -> None:
         manifest = json.loads((ROOT / "plugin" / "manifest.json").read_text(encoding="utf-8"))
