@@ -125,7 +125,8 @@ final class Ops {
             case "model get": result = modelGet(model); break;
             case "feature list": result = items(featureList(Creo.solid(model))); break;
             case "feature get": result = featureGet(Creo.solid(model), required(in, "id")); break;
-            case "geometry list": result = items(geometryList(Creo.solid(model), Json.string(in, "kind", null), Json.string(in, "feature", null))); break;
+            case "geometry list": result = items(geometryList(Creo.solid(model), Json.string(in, "kind", null), Json.string(in, "feature", null),
+                    Json.string(in, "role", null), Json.string(in, "facing", null))); break;
             case "distance get": result = distance(Creo.solid(model), required(in, "from"), required(in, "to")); break;
             case "dimension list": result = items(dimensionList(Creo.solid(model), Json.string(in, "feature", null))); break;
             case "parameter list": result = items(parameterList(model)); break;
@@ -538,19 +539,58 @@ final class Ops {
 
     // ------------------------------------------------------------------ geometry
 
-    private List<Map<String, Object>> geometryList(Solid solid, String kind, String featureRef) throws Exception {
+    private List<Map<String, Object>> geometryList(Solid solid, String kind, String featureRef, String role, String facing) throws Exception {
         if (kind != null && !Arrays.asList("surface", "edge", "axis", "datum-plane", "coordinate-system").contains(kind)) {
             throw new HostError(HostError.VALIDATION, "--kind is surface, edge, axis, datum-plane or coordinate-system, not " + kind + ".");
         }
-        Integer only = featureRef == null ? null : Creo.feature(solid, featureRef).GetId();
+        if (role != null && !Arrays.asList("start", "end", "side").contains(role)) {
+            throw new HostError(HostError.VALIDATION, "--role is start, end or side.");
+        }
+        double[] wanted = facing == null ? null : com.fateforge.creocli.host.core.Sketch.axis(facing);
+        if (facing != null && wanted == null) {
+            throw new HostError(HostError.VALIDATION, "--facing is a model axis such as +x.");
+        }
+        if ((role != null || facing != null) && featureRef == null) {
+            throw new HostError(HostError.VALIDATION, "--role and --facing sort the faces of one feature; give --feature.");
+        }
+        Feature feature = featureRef == null ? null : Creo.feature(solid, featureRef);
+        Integer only = feature == null ? null : feature.GetId();
         double f = Units.mmPerUnit((Model) solid);
         List<Map<String, Object>> items = new ArrayList<>();
         List<Surface> surfaces = surfaces(solid);
-        if (kind == null || "surface".equals(kind)) {
-            for (Surface s : surfaces) {
-                if (owned(s.GetFeature(), only)) {
-                    items.add(surface(s, "surface", "surface:" + s.GetId(), f));
+        // The place of each face in its feature (start, end, side), as the create commands name faces.
+        Map<Integer, String> places = new java.util.HashMap<>();
+        if (feature != null) {
+            for (String r : new String[] {"start", "end", "side"}) {
+                for (Surface s : Modeling.role(solid, feature, r, null)) {
+                    places.put(s.GetId(), r);
                 }
+            }
+        }
+        if (kind == null || "surface".equals(kind) || role != null || facing != null) {
+            for (Surface s : surfaces) {
+                if (!owned(s.GetFeature(), only)) {
+                    continue;
+                }
+                String place = places.get(s.GetId());
+                if (role != null && !role.equals(place)) {
+                    continue;
+                }
+                if (wanted != null) {
+                    double[] n = com.fateforge.creocli.host.core.Sketch.unit(Modeling.pointAndNormal(s)[1]);
+                    if (com.fateforge.creocli.host.core.Sketch.dot(n, wanted) < 1 - 1e-6) {
+                        continue;
+                    }
+                }
+                Map<String, Object> row = surface(s, "surface", "surface:" + s.GetId(), f);
+                if (place != null) {
+                    row.put("role", place);
+                    row.put("name", feature.GetName() + "/" + place);
+                }
+                items.add(row);
+            }
+            if (role != null || facing != null) {
+                return items;
             }
         }
         if (kind == null || "datum-plane".equals(kind)) {
@@ -729,7 +769,10 @@ final class Ops {
     }
 
     /** surface:41, edge:57, axis:12, or the name of a datum plane, axis or coordinate system. */
-    private static ModelItem item(Solid solid, String ref) throws jxthrowable {
+    private ModelItem item(Solid solid, String ref) throws Exception {
+        if (ref.contains("/")) {
+            return modeling.faces(solid, ref, true).get(0);  // a feature's face by its place: BASE/end, BASE/side[+x]
+        }
         Matcher typed = Pattern.compile("^(surface|edge|axis):([0-9]+)$").matcher(ref.toLowerCase(Locale.ROOT));
         if (typed.matches()) {
             ModelItemType type = "surface".equals(typed.group(1)) ? ModelItemType.ITEM_SURFACE

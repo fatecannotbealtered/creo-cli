@@ -169,6 +169,16 @@
           "summary": "Only the geometry this feature created: its ID or name."
         },
         {
+          "name": "--role",
+          "type": "string",
+          "summary": "With --feature: only its start, end or side faces."
+        },
+        {
+          "name": "--facing",
+          "type": "string",
+          "summary": "With --feature: only its faces whose normal points along this model axis, such as +x."
+        },
+        {
           "name": "--limit",
           "type": "integer",
           "summary": "Items per page; default 20, at most 100."
@@ -191,6 +201,7 @@
         "kind",
         "shape",
         "feature_id",
+        "role",
         "normal",
         "origin_mm",
         "axis_direction",
@@ -229,7 +240,7 @@
         {
           "name": "--from",
           "type": "string",
-          "summary": "A reference from geometry list, such as surface:41, or a datum name such as FRONT.",
+          "summary": "A reference from geometry list, such as surface:41, a datum name such as FRONT, or a feature's face such as BASE/end.",
           "required": true
         },
         {
