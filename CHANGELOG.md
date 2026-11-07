@@ -13,6 +13,7 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - `pattern create` repeats one feature in a row along a model axis, with a count and a spacing that `--spacing-name` names.
 - `plane create` makes a datum plane at a distance from a plane or face toward a model axis, or through an axis at an angle; `axis create` a datum axis where two planes cross or through a cylindrical face.
 - `chamfer create` chamfers edges by one distance; `draft create` drafts faces by one angle about a hinge plane so that they narrow toward the pull direction, turning the angle's sign when Creo leaned them the other way.
+- The domain Skill `creo-feature` for modeling parts feature by feature; the entry Skill `creo-cli` routes feature work to it.
 - `doc create --kind part --path <file>` creates a part from Creo's metric part template, with the parameters PART_NO and DESCRIPTION, or from `--template`, writes it at once and shows it in a window. `doc save-as --output <file>` writes a copy under another name, or the model into another folder.
 
 ### Changed
