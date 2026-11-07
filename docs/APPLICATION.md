@@ -61,6 +61,7 @@ From documents down, with the names Creo's user interface and manuals use:
 - `ProEngineerEnd` called within a call from the Java host crashes Creo; called from a Windows timer on Creo's main thread after the call has returned, Creo ends normally in 3 to 10 s and calls every application's stop function (measured on Creo 13.4.1.0).
 - A Creo that ended by force shows a modal "not closed normally" dialog (检索) at its next start, until one ends normally (measured on Creo 13.4.1.0).
 - A sketch built through TOOLKIT C in intent manager mode gets no implicit constraints: each line, arc and junction needs its constraints stated (coincident ends, tangency, horizontal, vertical, equal radii), or Creo adds a weak dimension per open freedom; stated in full, only the dimensions given remain, and changing one keeps the constraints, such as a symmetric rectangle staying symmetric (measured on Creo 13.4.1.0). Without the intent manager, Creo's automatic dimensions go to the nearest edges, not to the dimensions a design names.
+- A datum axis is built from the constraints form of `ProDtmAxis.h` (`PRO_E_DTMAXIS_CONSTRAINTS`); the legacy elements (`PRO_E_DTMAXIS_TYPE`, `PRO_E_DTMAXIS_PLANE1`) are refused. A feature taken back through `Solid.ExecuteFeatureOps` with a delete operation can stay in the model; `WSolid.DeleteFeatures` removes it (measured on Creo 13.4.1.0).
 - `WFeature.CreatePattern` answers a member of the new pattern, not the pattern header; the header is found by the name given in the tree. Which way `PRO_E_DIR_PAT_DIR1_FLIP` steps depends on the direction reference's own orientation; creo-cli reads the step from the first copy and flips it when it went the other way (measured on Creo 13.4.1.0).
 - `PRO_E_STD_DIRECTION` picks a side relative to Creo's own orientation of the sketch plane, which differs between a datum plane and a face; creo-cli reads which side a new extrude went to from its faces and turns it when it went the other way.
 - Every toolkit call must run on Creo's main thread; a synchronous application gets there from a timer callback. Creo 13.4 keeps firing the timer while a modal dialog is open (measured with File > Options and a toolkit message dialog), and it leaves its main window enabled; the CLI finds the dialog by its window title and refuses every call until a person closes it.
@@ -127,8 +128,8 @@ Each capability has one row with an ID `CAP-nnn`, unique in this survey, and one
 | CAP-013 | Delete a feature with the features that depend on it | OTK Java `DeleteFeatures` | deferred | Later version; not in the 1.0.0 scope |
 | CAP-014 | Extrude a sketched closed profile, adding or removing material | OTK Java element trees; TOOLKIT C sketch | provided | - |
 | CAP-015 | Revolve a sketched closed profile through 360 degrees | OTK Java; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
-| CAP-016 | Create a datum plane offset from a plane or planar face | OTK Java | deferred | Later version; not in the 1.0.0 scope |
-| CAP-017 | Create a datum axis through two planes, an edge or a cylinder | OTK Java | deferred | Later version; not in the 1.0.0 scope |
+| CAP-016 | Create a datum plane offset from a plane or planar face | OTK Java | provided | - |
+| CAP-017 | Create a datum axis through two planes, an edge or a cylinder | OTK Java | provided | Through two planes or a cylinder; through an edge later |
 | CAP-018 | Round edges to a constant radius | OTK Java | provided | - |
 | CAP-019 | Chamfer edges by an equal distance | OTK Java | deferred | Later version; not in the 1.0.0 scope |
 | CAP-020 | Place a simple or standard hole on a planar face (linear, radial or coaxial) | OTK Java; TOOLKIT C for thread series | deferred | Later version; not in the 1.0.0 scope |

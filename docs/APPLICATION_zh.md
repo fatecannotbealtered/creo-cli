@@ -61,6 +61,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 - 在 Java 宿主的调用里调用 `ProEngineerEnd` 会让 Creo 崩溃；调用返回后由 Creo 主线程上的 Windows 定时器调用它，Creo 在 3 到 10 秒内正常退出，并调用每个应用的结束函数（在 Creo 13.4.1.0 上实测）。
 - 被强行结束的 Creo，下次启动时会弹出模态的“未正常关闭”对话框（检索），直到有一次正常退出（在 Creo 13.4.1.0 上实测）。
 - 通过 TOOLKIT C 在意图管理器模式下建的草图没有隐含约束：每条线、每段弧、每个连接点的约束都要写明（端点重合、相切、水平、竖直、等半径），否则 Creo 每留一个自由度就加一个弱尺寸；全部写明后只剩给定的尺寸，改其中一个，约束照样成立，比如对称的矩形改长度后仍然对称（在 Creo 13.4.1.0 上实测）。不用意图管理器时，Creo 自动标注的尺寸标到最近的边上，不是设计里命名的尺寸。
+- 基准轴要用 `ProDtmAxis.h` 的约束写法（`PRO_E_DTMAXIS_CONSTRAINTS`）建；旧写法（`PRO_E_DTMAXIS_TYPE`、`PRO_E_DTMAXIS_PLANE1`）会被拒绝。用 `Solid.ExecuteFeatureOps` 加删除操作撤回的特征可能还留在模型里；`WSolid.DeleteFeatures` 能删掉（在 Creo 13.4.1.0 上实测）。
 - `WFeature.CreatePattern` 返回的是新阵列里的一个成员，不是阵列特征本身；阵列特征按元素树里给的名字找。`PRO_E_DIR_PAT_DIR1_FLIP` 朝哪边走，取决于方向参考自己的朝向；creo-cli 从第一个副本读出步进方向，反了就翻过来（在 Creo 13.4.1.0 上实测）。
 - `PRO_E_STD_DIRECTION` 选的哪一侧，是相对 Creo 自己给草绘平面定的方向，基准平面和实体面不一样；creo-cli 从新拉伸特征的面判断它朝哪边去了，反了就翻过来。
 - 工具包的每次调用都必须在 Creo 主线程上执行；同步应用通过定时器回调进入主线程。Creo 13.4 打开模态弹窗时定时器照常触发，主窗口也不会被禁用（用“文件 > 选项”和工具包的消息框实测）；CLI 按窗口标题认出弹窗，人关掉弹窗之前一律拒绝调用。
@@ -127,8 +128,8 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 | CAP-013 | 删除特征，连同依赖它的特征 | OTK Java `DeleteFeatures` | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-014 | 拉伸一个封闭的草绘轮廓，加材料或去材料 | OTK Java 元素树；TOOLKIT C 草图 | provided | - |
 | CAP-015 | 把一个封闭的草绘轮廓旋转 360 度 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-016 | 从平面或平的面偏移出基准平面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-017 | 建基准轴：两平面相交、过一条边或一个圆柱面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-016 | 从平面或平的面偏移出基准平面 | OTK Java | provided | - |
+| CAP-017 | 建基准轴：两平面相交、过一条边或一个圆柱面 | OTK Java | provided | 两个平面相交，或过圆柱面；过边以后再做 |
 | CAP-018 | 等半径倒圆角 | OTK Java | provided | - |
 | CAP-019 | 等距倒角 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-020 | 在平面上放简单孔或标准孔（线性、径向或同轴定位） | OTK Java；螺纹系列用 TOOLKIT C | deferred | 以后的版本；不在 1.0.0 的范围里 |

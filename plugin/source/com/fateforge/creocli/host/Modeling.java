@@ -12,7 +12,6 @@ import com.ptc.pfc.pfcBase.UVParams;
 import com.ptc.pfc.pfcBase.Vector3D;
 import com.ptc.pfc.pfcDimension.Dimension;
 import com.ptc.pfc.pfcFeature.Feature;
-import com.ptc.pfc.pfcFeature.FeatureOperations;
 import com.ptc.pfc.pfcFeature.FeatureStatus;
 import com.ptc.pfc.pfcGeometry.Contour;
 import com.ptc.pfc.pfcGeometry.ContourTraversal;
@@ -95,6 +94,11 @@ final class Modeling {
             PRO_E_DIRECTION_REFERENCE = 3253, PRO_E_DIRECTION_FLIP = 3254, PRO_E_DIR_PAT_DIR1_FLIP = 3307,
             PRO_E_GENPAT_DIR1_INC = 3274, PRO_E_GENPAT_DIM_FIRST_DIR_NUM_INST = 3134, PRO_E_GENPAT_DIM_SECOND_DIR_NUM_INST = 3136,
             PRO_GENPAT_DIR_DRIVEN = 5, PRO_PAT_GENERAL = 4, PRO_GENPAT_TRANSLATIONAL = -1;
+    private static final int PRO_E_DTMPLN_CONSTRAINTS = 410, PRO_E_DTMPLN_CONSTRAINT = 411, PRO_E_DTMPLN_CONSTR_TYPE = 412,
+            PRO_E_DTMPLN_CONSTR_REF = 413, PRO_E_DTMPLN_CONSTR_REF_OFFSET = 414, PRO_E_DTMPLN_CONSTR_REF_ANGLE = 415,
+            PRO_FEAT_DATUM = 923, PRO_DTMPLN_THRU = 0, PRO_DTMPLN_OFFS = 3, PRO_DTMPLN_ANG = 4,
+            PRO_E_DTMAXIS_CONSTRAINTS = 2015, PRO_E_DTMAXIS_CONSTRAINT = 2016, PRO_E_DTMAXIS_CONSTR_TYPE = 2017,
+            PRO_E_DTMAXIS_CONSTR_REF = 2018, PRO_FEAT_DATUM_AXIS = 926, PRO_DTMAXIS_CONSTR_TYPE_THRU = 1;
 
     private final Docs docs;
 
@@ -342,6 +346,166 @@ final class Modeling {
             Feature made = complete(solid, elements, name, f, before, null);
             nameOnly(made, dimName);
             return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, before, f)));
+        };
+    }
+
+    // ------------------------------------------------------------------ plane create
+
+    void planeCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        String fromText = Json.string(in, "from", null);
+        if (fromText == null) {
+            throw new HostError(HostError.VALIDATION, "--from is required: the plane or planar face to offset from, or to measure "
+                    + "the angle from with --through.");
+        }
+        Sketch.Plane from = planes(solid).find(fromText);
+        Double offset = Json.number(in, "distance_mm");
+        Double angle = Json.number(in, "angle_deg");
+        String through = Json.string(in, "through", null);
+        if ((offset == null) == (angle == null)) {
+            throw new HostError(HostError.VALIDATION, "Give --distance, or --through with --angle.");
+        }
+        if (angle != null && through == null) {
+            throw new HostError(HostError.VALIDATION, "--angle needs --through: the axis the plane turns about.");
+        }
+        if (offset != null && offset <= 0) {
+            throw new HostError(HostError.VALIDATION, "--distance must be greater than 0; --direction says which side.");
+        }
+        ModelItem axis = through == null ? null : axisItem(solid, through);
+        double[] direction = from.normal;
+        String directionText = Json.string(in, "direction", null);
+        if (directionText != null) {
+            direction = Sketch.axis(directionText);
+            if (direction == null || Math.abs(Math.abs(Sketch.dot(direction, Sketch.unit(from.normal))) - 1) > EPS) {
+                throw new HostError(HostError.VALIDATION, "--direction must be a model axis across " + fromText + ".");
+            }
+        }
+        String dimName = dimensionName(in, offset != null ? "distance_name" : "angle_name");
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        if (dimName != null && offset != null) {
+            plan.change(docKey + "#/dimensions/" + dimName, "value_mm", null, Ops.clean(offset));
+        } else if (dimName != null) {
+            plan.change(docKey + "#/dimensions/" + dimName, "value_deg", null, Ops.clean(angle));
+        }
+        plan.action = offset != null
+                ? "Create the datum plane " + name + " " + Ops.clean(offset) + " mm from " + fromText + " toward " + axisName(Sketch.unit(direction)) + "."
+                : "Create the datum plane " + name + " through " + through + " at " + Ops.clean(angle) + " deg from " + fromText + ".";
+        final double[] toward = Sketch.unit(direction);
+        plan.work = () -> {
+            Feature made = datumPlane(solid, name, from, offset == null ? null : offset / f, axis, angle, f);
+            if (offset != null) {
+                double[][] pn = pointAndNormal(datumSurface(made));
+                if (Sketch.dot(Sketch.minus(pn[0], from.point), toward) < 0) {
+                    takeOut(solid, made.GetId());
+                    made = datumPlane(solid, name, from, -offset / f, axis, angle, f);
+                }
+            }
+            if (dimName != null) {
+                nameOnly(made, dimName);
+            }
+            return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, volume(solid, f), f)));
+        };
+    }
+
+    private Feature datumPlane(Solid solid, String name, Sketch.Plane from, Double offset, ModelItem axis, Double angle, double f) throws Exception {
+        Elements e = Elements.create();
+        add(e, PRO_E_FEATURE_TREE, null, 0);
+        add(e, PRO_E_FEATURE_TYPE, integer(PRO_FEAT_DATUM), 1);
+        add(e, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+        add(e, PRO_E_DTMPLN_CONSTRAINTS, null, 1);
+        if (offset != null) {
+            add(e, PRO_E_DTMPLN_CONSTRAINT, null, 2);
+            add(e, PRO_E_DTMPLN_CONSTR_TYPE, integer(PRO_DTMPLN_OFFS), 3);
+            add(e, PRO_E_DTMPLN_CONSTR_REF, select(solid, from.surfaceId), 3);
+            add(e, PRO_E_DTMPLN_CONSTR_REF_OFFSET, pfcArgument.CreateDoubleArgValue(offset), 3);
+        } else {
+            add(e, PRO_E_DTMPLN_CONSTRAINT, null, 2);
+            add(e, PRO_E_DTMPLN_CONSTR_TYPE, integer(PRO_DTMPLN_THRU), 3);
+            add(e, PRO_E_DTMPLN_CONSTR_REF, pfcArgument.CreateSelectionArgValue(pfcSelect.CreateModelItemSelection(axis, null)), 3);
+            add(e, PRO_E_DTMPLN_CONSTRAINT, null, 2);
+            add(e, PRO_E_DTMPLN_CONSTR_TYPE, integer(PRO_DTMPLN_ANG), 3);
+            add(e, PRO_E_DTMPLN_CONSTR_REF, select(solid, from.surfaceId), 3);
+            add(e, PRO_E_DTMPLN_CONSTR_REF_ANGLE, pfcArgument.CreateDoubleArgValue(angle), 3);
+        }
+        return complete(solid, e, name, f, 0, null);
+    }
+
+    private static Surface datumSurface(Feature datum) throws jxthrowable {
+        ModelItems items = datum.ListSubItems(ModelItemType.ITEM_SURFACE);
+        if (items == null || items.getarraysize() == 0) {
+            throw new HostError(HostError.NATIVE, "The datum plane " + datum.GetName() + " has no plane.");
+        }
+        return (Surface) items.get(0);
+    }
+
+    /** A datum axis by name, or axis:<id>. */
+    private static ModelItem axisItem(Solid solid, String text) throws jxthrowable {
+        Matcher id = Pattern.compile("axis:([0-9]+)").matcher(text);
+        ModelItem item = id.matches() ? solid.GetItemById(ModelItemType.ITEM_AXIS, Integer.parseInt(id.group(1)))
+                : solid.GetItemByName(ModelItemType.ITEM_AXIS, text);
+        if (item == null) {
+            throw new HostError(HostError.NOT_FOUND, "The model has no datum axis " + text + "; geometry list --kind axis shows them.");
+        }
+        return item;
+    }
+
+    // ------------------------------------------------------------------ axis create
+
+    void axisCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        String planesText = Json.string(in, "planes", null);
+        String through = Json.string(in, "through", null);
+        if ((planesText == null) == (through == null)) {
+            throw new HostError(HostError.VALIDATION, "Give --planes A;B (where two planes cross) or --through <cylindrical face>.");
+        }
+        List<Surface> refs = new ArrayList<>();
+        if (planesText != null) {
+            String[] two = planesText.split(";");
+            if (two.length != 2) {
+                throw new HostError(HostError.VALIDATION, "--planes names two planes separated by ;, such as RIGHT;FRONT.");
+            }
+            for (String one : two) {
+                refs.add(faces(solid, one.trim(), true).get(0));
+            }
+            double[] a = Sketch.unit(pointAndNormal(refs.get(0))[1]);
+            double[] b = Sketch.unit(pointAndNormal(refs.get(1))[1]);
+            if (Math.abs(Math.abs(Sketch.dot(a, b)) - 1) < EPS) {
+                throw new HostError(HostError.VALIDATION, "The two planes are parallel and do not cross.");
+            }
+        } else {
+            Surface s = faces(solid, through, true).get(0);
+            if (s.GetSurfaceType() != SurfaceType.SURFACE_CYLINDER) {
+                throw new HostError(HostError.VALIDATION, through + " is not cylindrical; --through takes a cylindrical face.");
+            }
+            refs.add(s);
+        }
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        plan.action = "Create the datum axis " + name + (planesText != null ? " where " + planesText.replace(";", " and ") + " cross."
+                : " through the axis of " + through + ".");
+        plan.work = () -> {
+            Elements e = Elements.create();
+            add(e, PRO_E_FEATURE_TREE, null, 0);
+            add(e, PRO_E_FEATURE_TYPE, integer(PRO_FEAT_DATUM_AXIS), 1);
+            add(e, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+            // The constraints form of ProDtmAxis.h: two planes, or a cylinder, each passed through.
+            add(e, PRO_E_DTMAXIS_CONSTRAINTS, null, 1);
+            for (Surface ref : refs) {
+                add(e, PRO_E_DTMAXIS_CONSTRAINT, null, 2);
+                add(e, PRO_E_DTMAXIS_CONSTR_TYPE, integer(PRO_DTMAXIS_CONSTR_TYPE_THRU), 3);
+                add(e, PRO_E_DTMAXIS_CONSTR_REF, pfcArgument.CreateSelectionArgValue(pfcSelect.CreateModelItemSelection(ref, null)), 3);
+            }
+            Feature made = complete(solid, e, name, f, 0, null);
+            return Docs.facts("dispatched", "applied", Json.map("result", created(solid, made, volume(solid, f), f)));
         };
     }
 
@@ -778,17 +942,23 @@ final class Modeling {
                 wfcSolidInstructions.WRegenInstructions_Create());
     }
 
-    /** Takes a feature that did not come out right back out of the model. */
+    /**
+     * Takes a feature that did not come out right back out of the model. A feature just made has
+     * no children, so it goes alone (WSolid.DeleteFeatures without clip); FeatureOperations
+     * through Solid.ExecuteFeatureOps leaves a datum plane in place (measured on Creo 13.4.1.0).
+     */
     private static void takeOut(Solid solid, int id) {
         try {
-            Feature f = solid.GetFeatureById(id);
-            if (f != null) {
-                FeatureOperations ops = FeatureOperations.create();
-                ops.append(f.CreateDeleteOp());
-                solid.ExecuteFeatureOps(ops, null);
-            }
+            com.ptc.cipjava.intseq ids = com.ptc.cipjava.intseq.create();
+            ids.append(id);
+            com.ptc.wfc.wfcFeatureInstructions.FeatSuppressOrDeleteOptions options =
+                    com.ptc.wfc.wfcFeatureInstructions.FeatSuppressOrDeleteOptions.create();
+            options.append(com.ptc.wfc.wfcFeatureInstructions.FeatSuppressOrDeleteOption.FEAT_SUPP_OR_DEL_NO_OPTS);
+            ((WSolid) solid).DeleteFeatures(ids, options, wfcSolidInstructions.WRegenInstructions_Create());
         } catch (Throwable stays) {
-            // Reported by the read-back: the feature list still has it.
+            throw new HostError(HostError.NATIVE, "Creo did not take feature " + id + " back out after it failed; feature list shows "
+                    + "it, and suppressing it (feature update --status suppressed) puts the model back as it was.", "dispatched")
+                    .nativeMessage(stays.toString());
         }
     }
 

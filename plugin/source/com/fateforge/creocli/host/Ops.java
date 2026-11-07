@@ -296,6 +296,8 @@ final class Ops {
             case "shell create": modeling.shellCreate(plan, model, in); break;
             case "round create": modeling.roundCreate(plan, model, in); break;
             case "pattern create": modeling.patternCreate(plan, model, in); break;
+            case "plane create": modeling.planeCreate(plan, model, in); break;
+            case "axis create": modeling.axisCreate(plan, model, in); break;
             default: throw new HostError(HostError.UNSUPPORTED, "The host has no write for " + command + ".");
         }
         return plan;

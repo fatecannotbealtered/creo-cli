@@ -56,6 +56,8 @@ Check `ok`; on failure, read `error.details.next_action`.
 - `shell`: create
 - `round`: create
 - `pattern`: create
+- `plane`: create
+- `axis`: create
 <!-- driver:command-map:end -->
 
 ## Write recipe
