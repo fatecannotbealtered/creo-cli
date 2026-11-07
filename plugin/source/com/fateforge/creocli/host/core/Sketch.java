@@ -2,6 +2,7 @@ package com.fateforge.creocli.host.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -78,6 +79,12 @@ public final class Sketch {
     private final Set<String> axesMade = new LinkedHashSet<>();
     private final Map<String, double[]> centers = new LinkedHashMap<>();
     private final Map<String, Set<String>> fixed = new LinkedHashMap<>();
+    /** The sketch axes ('x', 'y') on which each profile's center is placed by center_mm, a constraint or a dimension. */
+    private final Map<String, Set<Character>> placed = new LinkedHashMap<>();
+    /** Profiles whose centers mirror each other about a reference or centerline: {a, b, about}. */
+    private final List<String[]> mirrors = new ArrayList<>();
+    /** Circles made equal: {a, b}; one's size fixes the other's. */
+    private final List<String[]> sameSize = new ArrayList<>();
     /** How many geometry centerlines (type axis) the sketch has: a revolve needs exactly one. */
     public int axes;
 
@@ -166,6 +173,7 @@ public final class Sketch {
         for (Map<String, Object> d : dimensions) {
             placeByDimension(d);
         }
+        placeMirrors();
         for (Map.Entry<String, Map<String, Object>> e : entities.entrySet()) {
             write(e.getKey(), kinds.get(e.getKey()), e.getValue());
         }
@@ -175,6 +183,7 @@ public final class Sketch {
         for (Map<String, Object> d : dimensions) {
             dimension(d);
         }
+        passFreedoms();
         for (Map.Entry<String, Set<String>> e : fixed.entrySet()) {
             if (e.getValue().remove("square")) {
                 e.getValue().add(e.getValue().contains("width") ? "height" : "width");
@@ -237,11 +246,28 @@ public final class Sketch {
     // ------------------------------------------------------------------ placing profiles
 
     private void place(Map<String, Object> c) {
-        if (!"symmetric".equals(Json.string(c, "type", null))) {
+        String type = Json.string(c, "type", null);
+        if ("equal".equals(type)) {
+            String a = Json.string(c, "a", null);
+            String b = Json.string(c, "b", null);
+            if ("circle".equals(kinds.get(a)) && "circle".equals(kinds.get(b))) {
+                sameSize.add(new String[] {a, b});
+            }
+            return;
+        }
+        if (!"symmetric".equals(type)) {
             return;
         }
         String entity = Json.string(c, "entity", null);
         String about = Json.string(c, "about", null);
+        if (entity == null && about != null) {
+            String[] a = split(String.valueOf(Json.string(c, "a", null)));
+            String[] b = split(String.valueOf(Json.string(c, "b", null)));
+            if (isProfile(a[0]) && isProfile(b[0]) && "center".equals(a[1]) && "center".equals(b[1])) {
+                mirrors.add(new String[] {a[0], b[0], about});
+            }
+            return;
+        }
         if (entity == null || about == null || !traces.containsKey(about) || !isProfile(entity)) {
             return;
         }
@@ -249,8 +275,79 @@ public final class Sketch {
         double[] center = centers.computeIfAbsent(entity, k -> initialCenter(k));
         if ((char) trace[0] == 'x') {
             center[0] = (double) trace[1];
+            placedOn(entity, 'x');
         } else if ((char) trace[0] == 'y') {
             center[1] = (double) trace[1];
+            placedOn(entity, 'y');
+        }
+    }
+
+    private void placedOn(String id, char axis) {
+        placed.computeIfAbsent(id, k -> new LinkedHashSet<>()).add(axis);
+    }
+
+    /** A center mirrored from its partner's, for each pair where only one is placed. */
+    private void placeMirrors() {
+        for (String id : entities.keySet()) {
+            if (isProfile(id)) {
+                centers.computeIfAbsent(id, k -> initialCenter(k));  // marks centers given by center_mm as placed
+            }
+        }
+        for (int pass = 0; pass <= mirrors.size(); pass++) {
+            for (String[] m : mirrors) {
+                Object[] trace = traces.get(m[2]);
+                if (trace == null || (char) trace[0] == '?') {
+                    continue;
+                }
+                boolean aKnown = placed.getOrDefault(m[0], Collections.emptySet()).size() == 2;
+                boolean bKnown = placed.getOrDefault(m[1], Collections.emptySet()).size() == 2;
+                if (aKnown == bKnown) {
+                    continue;
+                }
+                String from = aKnown ? m[0] : m[1];
+                String to = aKnown ? m[1] : m[0];
+                double[] c = centers.computeIfAbsent(from, k -> initialCenter(k)).clone();
+                int i = (char) trace[0] == 'x' ? 0 : 1;
+                c[i] = 2 * (double) trace[1] - c[i];
+                centers.put(to, c);
+                placedOn(to, 'x');
+                placedOn(to, 'y');
+            }
+        }
+    }
+
+    /** Freedoms one profile's constraints fix in its mirror or its equal circle. */
+    private void passFreedoms() {
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (String[] m : mirrors) {
+                Object[] trace = traces.get(m[2]);
+                boolean straight = trace != null && (char) trace[0] != '?';
+                Set<String> a = fixed.get(m[0]);
+                Set<String> b = fixed.get(m[1]);
+                for (String freedom : new String[] {"x position", "y position"}) {
+                    // About a reference along a sketch axis, each coordinate follows its partner's; about a slanted
+                    // centerline, both coordinates follow together.
+                    boolean aHas = straight ? a.contains(freedom) : a.contains("x position") && a.contains("y position");
+                    boolean bHas = straight ? b.contains(freedom) : b.contains("x position") && b.contains("y position");
+                    if (aHas && !b.contains(freedom)) {
+                        changed |= b.add(freedom);
+                    }
+                    if (bHas && !a.contains(freedom)) {
+                        changed |= a.add(freedom);
+                    }
+                }
+            }
+            for (String[] s : sameSize) {
+                Set<String> a = fixed.get(s[0]);
+                Set<String> b = fixed.get(s[1]);
+                if (a.contains("size") != b.contains("size")) {
+                    a.add("size");
+                    b.add("size");
+                    changed = true;
+                }
+            }
         }
     }
 
@@ -269,8 +366,10 @@ public final class Sketch {
         double[] center = centers.computeIfAbsent(target[0], k -> initialCenter(k));
         if ((char) trace[0] == 'x') {
             center[0] = (double) trace[1] + value;
+            placedOn(target[0], 'x');
         } else if ((char) trace[0] == 'y') {
             center[1] = (double) trace[1] + value;
+            placedOn(target[0], 'y');
         }
     }
 
@@ -278,6 +377,8 @@ public final class Sketch {
         Map<String, Object> e = entities.get(id);
         List<Object> at = e == null ? null : numbers(e, "center_mm");
         if (at != null && at.size() == 2) {
+            placedOn(id, 'x');
+            placedOn(id, 'y');
             return new double[] {((Number) at.get(0)).doubleValue(), ((Number) at.get(1)).doubleValue()};
         }
         return new double[] {0, 0};

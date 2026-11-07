@@ -1062,6 +1062,20 @@ final class Ops {
             throw new HostError(HostError.VALIDATION, "Creo does not accept that value for dimension " + dim.GetSymbol()
                     + "; nothing changed.", "dispatched").nativeMessage(refused.toString());
         }
+        regenerate(solid, () -> {
+            if (dim.GetDimValue() != old) {
+                dim.SetDimValue(old);
+            }
+        });
+    }
+
+    /** Puts an old value back. */
+    private interface Restore {
+        void run() throws Exception;
+    }
+
+    /** Regenerate after a change; when the model does not regenerate, Creo undoes the regeneration and restore puts the old value back. */
+    private static void regenerate(Solid solid, Restore restore) throws Exception {
         WRegenInstructions regen = wfcSolidInstructions.WRegenInstructions_Create();
         regen.SetUndoIfFail(true);
         regen.SetNoResolveMode(true);
@@ -1074,21 +1088,26 @@ final class Ops {
         if (failure == null && !failedFeatures(solid).isEmpty()) {
             failure = "features failed to regenerate: " + failedFeatures(solid);
         }
-        if (failure != null) {
-            try {
-                if (dim.GetDimValue() != old) {
-                    dim.SetDimValue(old);
-                    WRegenInstructions back = wfcSolidInstructions.WRegenInstructions_Create();
-                    back.SetNoResolveMode(true);
-                    ((WSolid) solid).WRegenerate(back);
-                }
-            } catch (Throwable ignored) {
-                throw new HostError(HostError.NATIVE, "The model did not regenerate with the new value, and putting the "
-                        + "old value back failed too.", "unknown").nativeMessage(failure);
-            }
-            throw new HostError(HostError.NATIVE, "The model does not regenerate with that value; the old value is back.",
-                    "dispatched").nativeMessage(failure);
+        if (failure == null) {
+            return;
         }
+        try {
+            restore.run();
+        } catch (Throwable notBack) {
+            throw new HostError(HostError.NATIVE, "The model did not regenerate with the new value, and putting the "
+                    + "old value back failed too.", "unknown").nativeMessage(failure);
+        }
+        boolean regenerates = true;
+        try {
+            WRegenInstructions back = wfcSolidInstructions.WRegenInstructions_Create();
+            back.SetNoResolveMode(true);
+            ((WSolid) solid).WRegenerate(back);
+        } catch (jxthrowable again) {
+            regenerates = false;
+        }
+        throw new HostError(HostError.NATIVE, regenerates ? "The model does not regenerate with that value; the old value is back."
+                : "The model does not regenerate with the old value either, which is back: a feature fails whatever the value. "
+                + "Creo's message log names it.", "dispatched").nativeMessage(failure);
     }
 
     private static List<Integer> failedFeatures(Solid solid) throws jxthrowable {
@@ -1307,10 +1326,16 @@ final class Ops {
         plan.change(key, "value", before.get("value"), after);
         plan.action = "Set parameter " + name + " of " + plan.docId + " to " + after + ".";
         plan.work = () -> {
+            ParamValue old = p.GetValue();
             try {
                 p.SetValue(value);
             } catch (jxthrowable refused) {
                 throw new HostError(HostError.NATIVE, "Creo did not take the value.").nativeMessage(refused.toString());
+            }
+            if (model instanceof Solid) {
+                // Relations can use the parameter: regenerate so the geometry follows it.
+                regenerate((Solid) model, () -> p.SetValue(old));
+                repaint();
             }
             return Docs.facts("dispatched", "applied", Json.map("result", parameterRow(p)));
         };
@@ -1458,26 +1483,21 @@ final class Ops {
             for (Object line : lines) {
                 next.append((String) line);
             }
-            String failure = null;
+            stringseq previous = old == null ? stringseq.create() : old;
             try {
                 ((RelationOwner) model).SetRelations(next);
-                if (model instanceof Solid) {
-                    ((Solid) model).Regenerate(com.ptc.pfc.pfcSolid.pfcSolid.RegenInstructions_Create(false, false, null));
-                    List<Integer> failed = failedFeatures((Solid) model);
-                    if (!failed.isEmpty()) {
-                        failure = "the model did not regenerate: features " + failed + " failed";
-                    }
-                }
             } catch (jxthrowable refused) {
-                failure = "Creo refused them: " + refused;
+                throw new HostError(HostError.VALIDATION, "Creo refused the relations; the old ones stay.", "dispatched")
+                        .nativeMessage(refused.toString()).with("knowledge", java.util.List.of("creo-relations-and-dimensions"));
             }
-            if (failure != null) {
-                ((RelationOwner) model).SetRelations(old == null ? stringseq.create() : old);
-                if (model instanceof Solid) {
-                    ((Solid) model).Regenerate(com.ptc.pfc.pfcSolid.pfcSolid.RegenInstructions_Create(false, false, null));
+            if (model instanceof Solid) {
+                try {
+                    regenerate((Solid) model, () -> ((RelationOwner) model).SetRelations(previous));
+                } catch (HostError failed) {
+                    throw new HostError(failed.code, "The relations were not kept: " + failed.getMessage(), failed.dispatchState)
+                            .nativeMessage((String) failed.extra.get("native_message"))
+                            .with("knowledge", java.util.List.of("creo-relations-and-dimensions"));
                 }
-                throw new HostError(HostError.VALIDATION, "The relations were not kept: " + failure + ". The old relations are back.")
-                        .with("knowledge", java.util.List.of("creo-relations-and-dimensions"));
             }
             repaint();
             return Docs.facts("dispatched", "applied", Json.map("result", items(relations(model))));

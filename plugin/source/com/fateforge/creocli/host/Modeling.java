@@ -899,6 +899,9 @@ final class Modeling {
             }
             Ops.repaint();
             Map<String, Object> result = created(solid, done, before, f);
+            // The second direction's count of 1 is left out: the count listed is the one relations change.
+            ((List<?>) result.get("dimensions")).removeIf(d -> ((Map<?, ?>) d).get("value") instanceof Long
+                    && (Long) ((Map<?, ?>) d).get("value") != count.longValue());
             result.put("count", count);
             return Docs.facts("dispatched", "applied", Json.map("result", result));
         };
@@ -920,7 +923,8 @@ final class Modeling {
         add(elements, PRO_E_DIR_PAT_DIR1_FLIP, integer(flip ? 1 : 0), 2);
         add(elements, PRO_E_GENPAT_DIR1_INC, pfcArgument.CreateDoubleArgValue(spacing), 2);
         add(elements, PRO_E_GENPAT_DIM_FIRST_DIR_NUM_INST, integer((int) count), 2);
-        add(elements, PRO_E_GENPAT_DIM_SECOND_DIR_NUM_INST, integer(0), 2);
+        // 1, not 0: Creo creates a pattern with 0 but refuses that count at every later regeneration.
+        add(elements, PRO_E_GENPAT_DIM_SECOND_DIR_NUM_INST, integer(1), 2);
         try {
             return leader.CreatePattern(((WSession) Creo.session()).CreateElementTree(elements), PatternType.FEAT_PATTERN);
         } catch (jxthrowable refused) {

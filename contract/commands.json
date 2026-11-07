@@ -495,7 +495,7 @@
     },
     {
       "path": "parameter update",
-      "summary": "Set a parameter's value, keeping its type; a parameter with a unit takes the value with a unit.",
+      "summary": "Set a parameter's value, keeping its type, and regenerate a part or assembly; Creo takes back a value the model cannot regenerate with.",
       "effects": [
         "change"
       ],
@@ -1067,7 +1067,7 @@
     },
     {
       "path": "revolve create",
-      "summary": "Revolve a sketch about a datum axis into one feature, adding or removing material, and regenerate.",
+      "summary": "Revolve a sketch about the axis entity in it into one feature, adding or removing material, and regenerate.",
       "effects": [
         "change"
       ],

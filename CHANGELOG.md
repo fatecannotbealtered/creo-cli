@@ -10,7 +10,7 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - `session open` starts a Creo of creo-cli's own from a start folder beside the host component, as a long job, and `session close` ends a Creo as File > Exit does, refusing while a model has unsaved changes; closing a Creo creo-cli did not start is dangerous.
 - `extrude create` extrudes a sketch into one named feature, adding or removing material, blind, symmetric, through all or up to a plane, along a model axis. The sketch is JSON: a plane (a datum, a face of an earlier feature such as `BASE/end`, or a surface ID), the model axis its x runs along, projected references, rectangles, circles, lines, arcs, centerlines and points, constraints and named dimensions, which go into Creo by name. A sketch that is not fully defined is refused, by the preview for rectangles and circles; a feature that does not regenerate, or would add or remove no material, is taken back. The result reports the dimensions, the change of volume, the bounding box and the faces by place.
 - `shell create` hollows a part with walls of one thickness, open at the faces named; `round create` rounds edges to one radius. Faces are named by a feature and their place (`BASE/start`, `BASE/end`, `BASE/side[+x]`) or by surface ID; edges as `edge(face, face)`, `face:edges`, `face:outer-edges`, `FEATURE:edges` or by edge ID. `--depth-name`, `--thickness-name` and `--radius-name` give the key dimension a name.
-- `pattern create` repeats one feature in a row along a model axis, with a count and a spacing that `--spacing-name` names.
+- `pattern create` repeats one feature in a row along a model axis, with a count and a spacing that `--spacing-name` names. The result lists the count's dimension, such as `p20`, which relations can drive.
 - `plane create` makes a datum plane at a distance from a plane or face toward a model axis, or through an axis at an angle; `axis create` a datum axis where two planes cross or through a cylindrical face.
 - `chamfer create` chamfers edges by one distance; `draft create` drafts faces by one angle about a hinge plane so that they narrow toward the pull direction, turning the angle's sign when Creo leaned them the other way.
 - The domain Skill `creo-feature` for modeling parts feature by feature; the entry Skill `creo-cli` routes feature work to it.
@@ -23,10 +23,13 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ### Changed
 
+- `parameter update` regenerates a part or assembly after setting the value, so relations that read the parameter take effect, and takes the value back when the model does not regenerate.
+- In a sketch, mirroring one circle's or rectangle's center onto another's (`symmetric` with `a` and `b`) places and fixes the second, and `equal` circles share one diameter; the preview counts both when it checks that the sketch is fully defined.
 - Built on tool-driver-cli-spec 1.0.6. A long job's worker retries a busy answer from Creo for up to 10 s before it sends the work, `session list` allows 2.5 s to find the running Creo processes and their dialogs, and long jobs are verified on the same terms as calls. `docs/E2E.md` starts with the fixed Authorization Rules, and Authorized Targets holds only the list.
 
 ### Fixed
 
+- `relation update` no longer leaves an unknown outcome when the model does not regenerate with the old relations either; it reports the old relations back and that the model fails with any value.
 - After a change, the windows of the models that changed are repainted, not only the current window.
 - Creo no longer waits to exit while a creo-cli call still holds a connection to the host component.
 

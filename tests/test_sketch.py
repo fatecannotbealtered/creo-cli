@@ -101,6 +101,28 @@ class SketchTest(unittest.TestCase):
         self.assertIn("circle boss 132.0000000 -19.50000000 3.000000000", lines)
         self.assertTrue(any(line.startswith("dim - 2 132.0000000 ") and line.endswith(" R_RIGHT boss:center") for line in lines))
 
+    def test_mirrored_and_equal_circles_follow_the_first(self) -> None:
+        bosses = {
+            "plane": "TOP", "x_axis": "+x", "references": ["RIGHT", "FRONT"],
+            "entities": [{"id": f"b{i}", "type": "circle", "diameter_mm": 6} for i in range(1, 5)],
+            "constraints": [{"type": "symmetric", "a": "b1.center", "b": "b2.center", "about": "RIGHT"},
+                            {"type": "symmetric", "a": "b3.center", "b": "b4.center", "about": "RIGHT"},
+                            {"type": "symmetric", "a": "b1.center", "b": "b3.center", "about": "FRONT"},
+                            {"type": "equal", "a": "b1", "b": "b2"}, {"type": "equal", "a": "b1", "b": "b3"},
+                            {"type": "equal", "a": "b1", "b": "b4"}],
+            "dimensions": [{"name": "BOSS_D", "measure": "b1.diameter"},
+                           {"name": "BOSS_X", "from": "RIGHT", "to": "b1.center", "value_mm": 132},
+                           {"name": "BOSS_Z", "from": "FRONT", "to": "b1.center", "value_mm": 19.5}],
+        }
+        lines = self.lines(bosses)
+        self.assertIn("circle b2 -132.0000000 19.50000000 3.000000000", lines)
+        self.assertIn("circle b3 132.0000000 -19.50000000 3.000000000", lines)
+        self.assertIn("circle b4 -132.0000000 -19.50000000 3.000000000", lines, "mirrored from b3 once b3 is placed")
+        unequal = dict(bosses, constraints=bosses["constraints"][:3])
+        problems = self.check(unequal)["problems"]
+        self.assertEqual(len(problems), 3)
+        self.assertIn("b2 is not fully defined: nothing fixes its size", problems[0])
+
     def test_an_x_axis_out_of_the_plane_is_refused(self) -> None:
         out = self.check(dict(BODY, x_axis="+y"))
         self.assertEqual(out["error"], "E_VALIDATION")

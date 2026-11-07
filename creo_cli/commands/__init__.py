@@ -188,7 +188,7 @@ COMMANDS: list[dict[str, Any]] = [
     ),
     {
         "path": "parameter update",
-        "summary": "Set a parameter's value, keeping its type; a parameter with a unit takes the value with a unit.",
+        "summary": "Set a parameter's value, keeping its type, and regenerate a part or assembly; Creo takes back a value the model cannot regenerate with.",
         "effects": ["change"], "modes": ["session"], "target_kind": "parameter",
         "flags": [
             {"name": "--id", "type": "string", "required": True, "summary": "The parameter's name."},
@@ -274,7 +274,7 @@ COMMANDS: list[dict[str, Any]] = [
     },
     {
         "path": "revolve create",
-        "summary": "Revolve a sketch about a datum axis into one feature, adding or removing material, and regenerate.",
+        "summary": "Revolve a sketch about the axis entity in it into one feature, adding or removing material, and regenerate.",
         "effects": ["change"], "modes": ["session"], "target_kind": "feature",
         "flags": [
             {"name": "--name", "type": "string", "required": True, "summary": "The new feature's name, such as PIN."},
