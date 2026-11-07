@@ -4,6 +4,10 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ## [Unreleased]
 
+### Changed
+
+- Built on tool-driver-cli-spec 1.0.6. A long job's worker retries a busy answer from Creo for up to 10 s before it sends the work, `session list` allows 2.5 s to find the running Creo processes and their dialogs, and long jobs are verified on the same terms as calls. `docs/E2E.md` starts with the fixed Authorization Rules, and Authorized Targets holds only the list.
+
 ## [1.0.0] - 2026-11-06
 
 ### Added

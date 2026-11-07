@@ -11,7 +11,7 @@
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
 ![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
-![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.5-0969da)
+![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.6-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
 
@@ -25,7 +25,7 @@
 | 系统与 CPU | Windows (x64) |
 | 风险等级 | T2 |
 | 成熟度 | verified：draft 0 个，verified 12 个，stable 3 个 |
-| 规范 | tool-driver-cli-spec 1.0.5 |
+| 规范 | tool-driver-cli-spec 1.0.6 |
 | 宿主组件 | 需要 |
 <!-- driver:info-card:end -->
 
@@ -111,7 +111,7 @@ creo-cli 每次调用都输出一个 JSON 信封。`creo-cli reference` 列出�
 
 `--dry-run` 显示任何写操作的预览，什么都不改。确认令牌只能用一次，10 分钟内有效，而且只对它预览过的那次修改有效。授权范围文件设了 `"confirm": "always"` 时，除停止工作外的所有写操作都改为两步确认，人可以逐个批准预览。
 
-**会话模式下的保存。** 修改不等于保存。修改之后，回执报告 `persistence: unchanged`，文档仍有未保存的修改；只有 `creo-cli doc save` 才写入文档的文件。保存的预览列出上次保存以来的所有修改，包括人在 Creo Parametric 里做的修改（`origin: external`），以及结果仍然未知的写操作。
+**会话模式下的保存。** 修改不等于保存。修改之后，回执报告 `persistence: unchanged`，文档仍有未保存的修改；只有 `creo-cli doc save` 才写入文档的文件。保存的预览列出上次保存以来的所有修改，包括人在 Creo Parametric 里做的修改（`origin: external`），以及结果仍然未知的写操作。Creo Parametric 一改就自己存盘的命令按两步确认，回执报告 `persistence: saved`。
 
 **回执。** 每次写操作都返回回执，分别报告修改是否执行、是否生效、是否送达、是否保存、是否验证。写操作的回复丢失时，creo-cli 返回 `E_OUTCOME_UNKNOWN` 和查明结果的命令，绝不会把写操作再发一遍。
 
