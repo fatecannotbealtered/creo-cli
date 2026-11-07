@@ -111,6 +111,9 @@ final class Modeling {
             PRO_E_DRAFT_NEUTRAL_OBJECT_TYPE_1 = 2167, PRO_E_DRAFT_NEUTRAL_PLANE_1 = 2169, PRO_E_DRAFT_DEPENDENT_1 = 2171,
             PRO_E_DRAFT_ANGLE_1 = 2168, PRO_DRAFT_UI_SPLIT_NONE = 0, PRO_DRAFT_UI_CONSTANT = 1, PRO_DRAFT_UI_INC_TANG = 1,
             PRO_DRAFT_UI_PLANE = 1, PRO_DRAFT_UI_INDEPENDENT = 0;
+    private static final int PRO_REVOLVE = 2, PRO_E_REVOLVE_AXIS_OPT = 3280, PRO_E_REV_ANGLE = 6,
+            PRO_E_REV_ANGLE_TO = 438, PRO_E_REV_ANGLE_TO_TYPE = 440, PRO_E_REV_ANGLE_TO_VAL = 442, PRO_REV_AXIS_INT_REF = 1,
+            PRO_REV_ANG_TO_ANGLE = 1 << 22;
 
     private final Docs docs;
 
@@ -1188,6 +1191,110 @@ final class Modeling {
         return (a != null && a.GetId() == s.GetId()) || (b != null && b.GetId() == s.GetId());
     }
 
+    // ------------------------------------------------------------------ revolve create
+
+    void revolveCreate(Ops.Plan plan, Model model, Map<String, Object> in) throws Exception {
+        Solid solid = Creo.solid(model);
+        double f = Units.mmPerUnit(model);
+        String name = newName(plan, solid, in);
+        Sketch sketch = Sketch.read(in.get("sketch"), planes(solid), f);
+        for (String problem : sketch.problems) {
+            plan.block(problem, "creo-sketches");
+        }
+        if (sketch.axes != 1) {
+            plan.block("A revolve turns about the one entity of type axis in its sketch; this sketch has " + sketch.axes, "creo-sketches");
+        }
+        Double angle = Json.number(in, "angle_deg");
+        double degrees = angle == null ? 360 : angle;
+        if (degrees <= 0 || degrees > 360) {
+            throw new HostError(HostError.VALIDATION, "--angle is more than 0 and at most 360 degrees; 360 by default.");
+        }
+        boolean remove = Boolean.TRUE.equals(Json.bool(in, "remove"));
+        String angleName = dimensionName(in, "angle_name");
+        Sketch.Plane orient = orientation(solid, sketch);
+        if (orient == null) {
+            plan.block("No datum plane of the model faces along x_axis " + sketch.xAxis + "; Creo orients a sketch by one.", "creo-sketches");
+        }
+        String docKey = docs.key(model);
+        String key = docKey + "#/features/" + name;
+        plan.target(key, "feature", name);
+        plan.change(key, "status", null, "active");
+        for (Map.Entry<String, Double> d : sketch.namedValues.entrySet()) {
+            plan.change(docKey + "#/dimensions/" + d.getKey(), "value_mm", null, Ops.clean(d.getValue()));
+        }
+        if (angleName != null) {
+            plan.change(docKey + "#/dimensions/" + angleName, "value_deg", null, Ops.clean(degrees));
+        }
+        plan.action = "Revolve a sketch on " + sketch.plane.name + " " + Ops.clean(degrees) + " degrees about its axis into the feature "
+                + name + ", " + (remove ? "removing" : "adding") + " material; then regenerate.";
+        plan.work = () -> {
+            double before = volume(solid, f);
+            Elements elements = Elements.create();
+            add(elements, PRO_E_FEATURE_TREE, null, 0);
+            add(elements, PRO_E_FEATURE_TYPE, integer(remove ? PRO_FEAT_CUT : PRO_FEAT_PROTRUSION), 1);
+            add(elements, PRO_E_FEATURE_FORM, integer(PRO_REVOLVE), 1);
+            add(elements, PRO_E_EXT_SURF_CUT_SOLID_TYPE, integer(PRO_EXT_FEAT_TYPE_SOLID), 1);
+            add(elements, PRO_E_REMOVE_MATERIAL, integer(remove ? PRO_EXT_MATERIAL_REMOVE : PRO_EXT_MATERIAL_ADD), 1);
+            if (remove) {
+                add(elements, PRO_E_STD_MATRLSIDE, integer(PRO_EXT_MATERIAL_SIDE_ONE), 1);
+            }
+            add(elements, PRO_E_FEAT_FORM_IS_THIN, integer(PRO_EXT_FEAT_FORM_NO_THIN), 1);
+            body(solid, elements);
+            add(elements, PRO_E_STD_SECTION, null, 1);
+            add(elements, PRO_E_STD_SEC_SETUP_PLANE, null, 2);
+            add(elements, PRO_E_STD_SEC_PLANE, select(solid, sketch.plane.surfaceId), 3);
+            add(elements, PRO_E_STD_SEC_PLANE_VIEW_DIR, integer(PRO_SEC_VIEW_DIR_SIDE_ONE), 3);
+            add(elements, PRO_E_STD_SEC_PLANE_ORIENT_DIR, integer(Sketch.dot(orient.normal, sketch.x) > 0
+                    ? PRO_SEC_ORIENT_DIR_RIGHT : PRO_SEC_ORIENT_DIR_LEFT), 3);
+            add(elements, PRO_E_STD_SEC_PLANE_ORIENT_REF, select(solid, orient.surfaceId), 3);
+            add(elements, PRO_E_STD_DIRECTION, integer(PRO_EXT_CR_IN_SIDE_ONE), 1);
+            add(elements, PRO_E_REVOLVE_AXIS_OPT, integer(PRO_REV_AXIS_INT_REF), 1);
+            add(elements, PRO_E_REV_ANGLE, null, 1);
+            add(elements, PRO_E_REV_ANGLE_TO, null, 2);
+            add(elements, PRO_E_REV_ANGLE_TO_TYPE, integer(PRO_REV_ANG_TO_ANGLE), 3);
+            add(elements, PRO_E_REV_ANGLE_TO_VAL, pfcArgument.CreateDoubleArgValue(degrees), 3);
+            add(elements, PRO_E_STD_FEATURE_NAME, pfcArgument.CreateStringArgValue(name), 1);
+            WFeature feature;
+            try {
+                feature = ((WSolid) solid).WCreateFeature(((WSession) Creo.session()).CreateElementTree(elements),
+                        options(FeatCreateOption.FEAT_CR_INCOMPLETE_FEAT), wfcSolidInstructions.WRegenInstructions_Create());
+            } catch (jxthrowable refused) {
+                throw new HostError(HostError.NATIVE, "Creo did not start the revolve " + name + ".").nativeMessage(refused.toString());
+            }
+            int id = feature.GetId();
+            try {
+                Map<String, Object> built = Native.call("ccn_sketch", Json.map("model", base(model), "kind", "part",
+                        "feature", id, "program", sketch.program()));
+                sketched(name, built);
+                Feature made = solid.GetFeatureById(id);
+                if (made == null || made.GetStatus() != FeatureStatus.FEAT_ACTIVE) {
+                    throw new HostError(HostError.NATIVE, "Creo built " + name + " but could not regenerate it, for example a sketch "
+                            + "that crosses the axis; the model is as it was.").with("knowledge", KNOWLEDGE);
+                }
+                double change = volume(solid, f) - before;
+                if (remove ? !(change < 0) : !(change > 0)) {
+                    throw new HostError(HostError.VALIDATION, name + " would " + (remove ? "remove" : "add") + " no material; the model is as it was.")
+                            .with("knowledge", KNOWLEDGE);
+                }
+                rename(made, built);
+                if (angleName != null) {
+                    ModelItems dims = made.ListSubItems(ModelItemType.ITEM_DIMENSION);
+                    for (int i = 0; dims != null && i < dims.getarraysize(); i++) {
+                        Dimension d = (Dimension) dims.get(i);
+                        if (Math.abs(d.GetDimValue() - degrees) < 1e-9 && d.GetSymbol().matches("d[0-9]+")) {
+                            d.SetName(angleName);
+                        }
+                    }
+                }
+            } catch (Throwable failed) {
+                takeOut(solid, id);
+                throw failed;
+            }
+            Ops.repaint();
+            return Docs.facts("dispatched", "applied", Json.map("result", created(solid, solid.GetFeatureById(id), before, f)));
+        };
+    }
+
     /** What ccn_sketch answered, as an error when the sketch was not taken. */
     @SuppressWarnings("unchecked")
     private static void sketched(String name, Map<String, Object> built) {
@@ -1207,7 +1314,8 @@ final class Modeling {
         if (!Boolean.TRUE.equals(built.get("redefined"))) {
             Object errors = built.get("errors");
             throw new HostError(HostError.NATIVE, "Creo did not take the sketch of " + name + (errors instanceof List
-                    && !((List<Object>) errors).isEmpty() ? ": " + errors : "") + "; the model is as it was.").with("knowledge", KNOWLEDGE);
+                    && !((List<Object>) errors).isEmpty() ? ": " + errors : "") + " (Creo TOOLKIT status " + built.get("status")
+                    + "); the model is as it was.").with("knowledge", KNOWLEDGE);
         }
     }
 

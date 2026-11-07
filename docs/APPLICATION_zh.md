@@ -65,6 +65,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 - `SetRelations` 会保留 Creo 求不出值的关系，只做标记（ModelCHECK 报 `RELATION_ERRS`）；对它的右边调用 `EvaluateExpression` 会抛错。`Part.RetrieveMaterial` 收的是名字不是路径，并从 Creo 的当前目录读 `.mtl` 文件（在 Creo 13.4.1.0 上实测）。
 - 通过 `ExecuteModelCheck` 跑 ModelCHECK，小零件一秒内跑完，在给定的文件夹里写出 XML、HTML、JS 报告和图片，用默认配置既不存盘也不改模型（在 Creo 13.4.1.0 上实测）。
 - 把当前视角存成命名视图（`ProViewStore`），`ProViewRetrieve` 之后再删掉，方向能完全恢复，但 Creo 把这算作模型的修改：先存过盘的模型之后显示为已修改（在 Creo 13.4.1.0 上实测）。
+- 用元素树建旋转特征时，给外部轴（`PRO_REV_AXIS_EXT_REF` 加基准轴）会被拒绝，报通用错误；用 `PRO_REV_AXIS_INT_REF` 时，它绕草图里的一条几何中心线旋转，也就是用 `ProSectionEntityConstructionSet` 设成非构造线的中心线（在 Creo 13.4.1.0 上实测）。
 - `WFeature.CreatePattern` 返回的是新阵列里的一个成员，不是阵列特征本身；阵列特征按元素树里给的名字找。`PRO_E_DIR_PAT_DIR1_FLIP` 朝哪边走，取决于方向参考自己的朝向；creo-cli 从第一个副本读出步进方向，反了就翻过来（在 Creo 13.4.1.0 上实测）。
 - `PRO_E_STD_DIRECTION` 选的哪一侧，是相对 Creo 自己给草绘平面定的方向，基准平面和实体面不一样；creo-cli 从新拉伸特征的面判断它朝哪边去了，反了就翻过来。
 - 工具包的每次调用都必须在 Creo 主线程上执行；同步应用通过定时器回调进入主线程。Creo 13.4 打开模态弹窗时定时器照常触发，主窗口也不会被禁用（用“文件 > 选项”和工具包的消息框实测）；CLI 按窗口标题认出弹窗，人关掉弹窗之前一律拒绝调用。
@@ -130,7 +131,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 | CAP-012 | 隐含、恢复特征，或给特征改名 | OTK Java | provided | - |
 | CAP-013 | 删除特征，连同依赖它的特征 | OTK Java `DeleteFeatures` | provided | - |
 | CAP-014 | 拉伸一个封闭的草绘轮廓，加材料或去材料 | OTK Java 元素树；TOOLKIT C 草图 | provided | - |
-| CAP-015 | 把一个封闭的草绘轮廓旋转 360 度 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-015 | 把一个封闭的草绘轮廓旋转 360 度 | OTK Java；TOOLKIT C 草图 | provided | 绕草图里的几何中心线旋转，最多 360 度 |
 | CAP-016 | 从平面或平的面偏移出基准平面 | OTK Java | provided | - |
 | CAP-017 | 建基准轴：两平面相交、过一条边或一个圆柱面 | OTK Java | provided | 两个平面相交，或过圆柱面；过边以后再做 |
 | CAP-018 | 等半径倒圆角 | OTK Java | provided | - |

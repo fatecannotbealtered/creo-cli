@@ -318,6 +318,7 @@ final class Ops {
             case "model update": modelUpdate(plan, model, in); break;
             case "feature delete": modeling.featureDelete(plan, model, in); break;
             case "extrude create": modeling.extrudeCreate(plan, model, in); break;
+            case "revolve create": modeling.revolveCreate(plan, model, in); break;
             case "shell create": modeling.shellCreate(plan, model, in); break;
             case "round create": modeling.roundCreate(plan, model, in); break;
             case "pattern create": modeling.patternCreate(plan, model, in); break;

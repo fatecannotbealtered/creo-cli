@@ -78,7 +78,7 @@ SKETCH_SCHEMA: dict[str, Any] = {
                        "description": "Datum planes or planar faces across the sketch plane, projected to dimension and constrain to."},
         "entities": {"type": "array", "items": {"type": "object", "required": ["id", "type"], "properties": {
             "id": {"type": "string"},
-            "type": {"type": "string", "enum": ["rectangle", "circle", "line", "arc", "centerline", "point"]},
+            "type": {"type": "string", "enum": ["rectangle", "circle", "line", "arc", "centerline", "axis", "point"]},
             "width_mm": {"type": "number"}, "height_mm": {"type": "number"}, "corner_radius_mm": {"type": "number"},
             "center_mm": XY, "diameter_mm": {"type": "number"}, "radius_mm": {"type": "number"},
             "start_mm": XY, "end_mm": XY, "start_deg": {"type": "number"}, "end_deg": {"type": "number"}, "at_mm": XY}}},
@@ -270,6 +270,28 @@ COMMANDS: list[dict[str, Any]] = [
         "output_coordinate_system": MODEL, "doc_kinds": ["part"],
         "examples": [EXAMPLE.format(path="extrude create") + " --name BASE --depth 22mm --sketch body.json",
                      EXAMPLE.format(path="extrude create") + " --name SOCKET_CUT --remove --through-all --sketch socket.json"],
+        "maturity": "draft", "evidence": [],
+    },
+    {
+        "path": "revolve create",
+        "summary": "Revolve a sketch about a datum axis into one feature, adding or removing material, and regenerate.",
+        "effects": ["change"], "modes": ["session"], "target_kind": "feature",
+        "flags": [
+            {"name": "--name", "type": "string", "required": True, "summary": "The new feature's name, such as PIN."},
+            {"name": "--sketch", "type": "json", "required": True, "schema": SKETCH_SCHEMA,
+             "summary": "The profile on one side of an entity of type axis, which it turns about; see creo-sketches."},
+            {"name": "--angle", "type": "quantity", "quantity": "angle", "summary": "How far to revolve; 360 degrees by default."},
+            {"name": "--angle-name", "type": "string", "summary": "A name for the angle dimension."},
+            {"name": "--remove", "type": "boolean", "summary": "Remove material (a revolved cut) instead of adding it."},
+        ],
+        "untrusted_fields": ["name", "dimensions[*].id"],
+        "irreversible": False, "halt": False, "tolerances": {"value_mm": 0.000001, "value_deg": 0.000001}, "default_fields": [],
+        "related_knowledge": ["creo-sketches", "creo-geometry-references", "creo-units"],
+        "output_schema": {"type": "object", "properties": {
+            **FEATURE_ITEM, "dimensions": {"type": "array", "items": {"type": "object"}}, "volume_mm3": NUM,
+            "volume_change_mm3": NUM, "bounding_box_mm": {"type": ["object", "null"]}, "faces": {"type": "object"}}},
+        "output_coordinate_system": MODEL, "doc_kinds": ["part"],
+        "examples": [EXAMPLE.format(path="revolve create") + " --name PIN --sketch pin.json"],
         "maturity": "draft", "evidence": [],
     },
     {

@@ -222,6 +222,7 @@ PRO_TK_DLL_EXPORT ProError ccn_view_restore(ProArgument *in, ProArgument **outpu
  *   arc NAME cx cy r a1 a2              counterclockwise from a1 to a2, radians, in the sketch frame
  *   circle NAME cx cy r
  *   cline NAME x1 y1 x2 y2              a centerline (construction)
+ *   axis NAME x1 y1 x2 y2               a geometry centerline: the axis a revolve turns about
  *   point NAME x y
  *   con TYPE REF...                     a ProConstraintType and its references, NAME:whole|start|end|center
  *   dim NAME TYPE VALUE PX PY REF...    a ProSecdimType, its value, where its text goes, its references
@@ -475,7 +476,7 @@ PRO_TK_DLL_EXPORT ProError ccn_sketch(ProArgument *in, ProArgument **outputs)
             }
             if (status != PRO_TK_NO_ERROR) snprintf(failure, sizeof(failure), "Creo did not project %s into the sketch (status %d).", tokens[1], (int)status);
             else name_add(tokens[1], id, 0);
-        } else if ((strcmp(tokens[0], "line") == 0 || strcmp(tokens[0], "cline") == 0) && n == 6) {
+        } else if ((strcmp(tokens[0], "line") == 0 || strcmp(tokens[0], "cline") == 0 || strcmp(tokens[0], "axis") == 0) && n == 6) {
             Pro2dLinedef l;
             double a[2], b[2];
             int id;
@@ -485,6 +486,10 @@ PRO_TK_DLL_EXPORT ProError ccn_sketch(ProArgument *in, ProArgument **outputs)
             to_section(&frame, atof(tokens[4]), atof(tokens[5]), b);
             l.end1[0] = a[0]; l.end1[1] = a[1]; l.end2[0] = b[0]; l.end2[1] = b[1];
             status = ProSectionEntityAdd(section, (Pro2dEntdef *)&l, &id);
+            if (status == PRO_TK_NO_ERROR && strcmp(tokens[0], "axis") == 0) {
+                /* A geometry centerline, not a construction one: Creo revolves about it. */
+                status = ProSectionEntityConstructionSet(section, id, PRO_B_FALSE);
+            }
             if (status != PRO_TK_NO_ERROR) snprintf(failure, sizeof(failure), "Creo did not add %s (status %d).", tokens[1], (int)status);
             else name_add(tokens[1], id, 0);
         } else if (strcmp(tokens[0], "arc") == 0 && n == 7) {

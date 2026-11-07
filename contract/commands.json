@@ -875,6 +875,7 @@
                         "line",
                         "arc",
                         "centerline",
+                        "axis",
                         "point"
                       ]
                     },
@@ -1053,6 +1054,260 @@
       "halt": false,
       "tolerances": {
         "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-sketches",
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "revolve create",
+      "summary": "Revolve a sketch about a datum axis into one feature, adding or removing material, and regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as PIN.",
+          "required": true
+        },
+        {
+          "name": "--sketch",
+          "type": "json",
+          "summary": "The profile on one side of an entity of type axis, which it turns about; see creo-sketches.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": [
+              "plane",
+              "x_axis",
+              "entities"
+            ],
+            "properties": {
+              "plane": {
+                "type": "string",
+                "description": "The sketch plane: a datum such as TOP, a face such as BASE/end, or surface:<id>."
+              },
+              "x_axis": {
+                "type": "string",
+                "enum": [
+                  "+x",
+                  "-x",
+                  "+y",
+                  "-y",
+                  "+z",
+                  "-z"
+                ],
+                "description": "The model axis the sketch's x runs along; it must lie in the plane. y is the plane's normal crossed with x."
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Datum planes or planar faces across the sketch plane, projected to dimension and constrain to."
+              },
+              "entities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "rectangle",
+                        "circle",
+                        "line",
+                        "arc",
+                        "centerline",
+                        "axis",
+                        "point"
+                      ]
+                    },
+                    "width_mm": {
+                      "type": "number"
+                    },
+                    "height_mm": {
+                      "type": "number"
+                    },
+                    "corner_radius_mm": {
+                      "type": "number"
+                    },
+                    "center_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "diameter_mm": {
+                      "type": "number"
+                    },
+                    "radius_mm": {
+                      "type": "number"
+                    },
+                    "start_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "end_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "start_deg": {
+                      "type": "number"
+                    },
+                    "end_deg": {
+                      "type": "number"
+                    },
+                    "at_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                }
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "symmetric",
+                        "horizontal",
+                        "vertical",
+                        "coincident",
+                        "on",
+                        "tangent",
+                        "parallel",
+                        "perpendicular",
+                        "equal"
+                      ]
+                    },
+                    "entity": {
+                      "type": "string"
+                    },
+                    "about": {
+                      "type": "string"
+                    },
+                    "a": {
+                      "type": "string"
+                    },
+                    "b": {
+                      "type": "string"
+                    },
+                    "point": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "dimensions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The dimension's name in Creo; dimension update takes it."
+                    },
+                    "measure": {
+                      "type": "string",
+                      "description": "An entity's own size: body.width, body.height, body.corner_radius, hole.diameter, rim.length."
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    },
+                    "value_mm": {
+                      "type": "number",
+                      "description": "For from and to: the distance, its sign the side of from along the sketch axis."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "--angle",
+          "type": "quantity",
+          "summary": "How far to revolve; 360 degrees by default.",
+          "quantity": "angle"
+        },
+        {
+          "name": "--angle-name",
+          "type": "string",
+          "summary": "A name for the angle dimension."
+        },
+        {
+          "name": "--remove",
+          "type": "boolean",
+          "summary": "Remove material (a revolved cut) instead of adding it."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06,
+        "value_deg": 1e-06
       },
       "default_fields": [],
       "related_knowledge": [

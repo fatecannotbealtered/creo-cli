@@ -65,6 +65,7 @@ From documents down, with the names Creo's user interface and manuals use:
 - `SetRelations` keeps a relation Creo cannot evaluate and only flags it (ModelCHECK reports `RELATION_ERRS`); `EvaluateExpression` on its right-hand side throws. `Part.RetrieveMaterial` takes a name, not a path, and reads the `.mtl` file from Creo's current directory (measured on Creo 13.4.1.0).
 - ModelCHECK through `ExecuteModelCheck` runs in under a second on a small part, writes an XML, HTML and JS report with images into the folder it is given, and with the default configuration neither saves nor changes the model (measured on Creo 13.4.1.0).
 - Keeping the current view as a named view (`ProViewStore`) and deleting it after `ProViewRetrieve` puts the orientation back exactly, but Creo counts it as a change of the model: a model saved before shows as modified after (measured on Creo 13.4.1.0).
+- A revolve built from an element tree with an external axis (`PRO_REV_AXIS_EXT_REF` and a datum axis) is refused with a general error; with `PRO_REV_AXIS_INT_REF` it turns about a geometry centerline of its sketch, a centerline made non-construction with `ProSectionEntityConstructionSet` (measured on Creo 13.4.1.0).
 - `WFeature.CreatePattern` answers a member of the new pattern, not the pattern header; the header is found by the name given in the tree. Which way `PRO_E_DIR_PAT_DIR1_FLIP` steps depends on the direction reference's own orientation; creo-cli reads the step from the first copy and flips it when it went the other way (measured on Creo 13.4.1.0).
 - `PRO_E_STD_DIRECTION` picks a side relative to Creo's own orientation of the sketch plane, which differs between a datum plane and a face; creo-cli reads which side a new extrude went to from its faces and turns it when it went the other way.
 - Every toolkit call must run on Creo's main thread; a synchronous application gets there from a timer callback. Creo 13.4 keeps firing the timer while a modal dialog is open (measured with File > Options and a toolkit message dialog), and it leaves its main window enabled; the CLI finds the dialog by its window title and refuses every call until a person closes it.
@@ -130,7 +131,7 @@ Each capability has one row with an ID `CAP-nnn`, unique in this survey, and one
 | CAP-012 | Suppress, resume or rename a feature | OTK Java | provided | - |
 | CAP-013 | Delete a feature with the features that depend on it | OTK Java `DeleteFeatures` | provided | - |
 | CAP-014 | Extrude a sketched closed profile, adding or removing material | OTK Java element trees; TOOLKIT C sketch | provided | - |
-| CAP-015 | Revolve a sketched closed profile through 360 degrees | OTK Java; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
+| CAP-015 | Revolve a sketched closed profile through 360 degrees | OTK Java; TOOLKIT C sketch | provided | About a geometry centerline of the sketch, up to 360 degrees |
 | CAP-016 | Create a datum plane offset from a plane or planar face | OTK Java | provided | - |
 | CAP-017 | Create a datum axis through two planes, an edge or a cylinder | OTK Java | provided | Through two planes or a cylinder; through an edge later |
 | CAP-018 | Round edges to a constant radius | OTK Java | provided | - |

@@ -78,6 +78,8 @@ public final class Sketch {
     private final Set<String> axesMade = new LinkedHashSet<>();
     private final Map<String, double[]> centers = new LinkedHashMap<>();
     private final Map<String, Set<String>> fixed = new LinkedHashMap<>();
+    /** How many geometry centerlines (type axis) the sketch has: a revolve needs exactly one. */
+    public int axes;
 
     private Sketch(Plane plane, double[] x, String xAxis, double mmPerUnit) {
         this.plane = plane;
@@ -319,15 +321,19 @@ public final class Sketch {
                 return;
             }
             case "line":
-            case "centerline": {
+            case "centerline":
+            case "axis": {
                 List<Object> a = numbers(e, "start_mm");
                 List<Object> b = numbers(e, "end_mm");
                 if (a == null || b == null || a.size() != 2 || b.size() != 2) {
                     problems.add(kind + " " + id + " needs start_mm and end_mm, each [x, y].");
                     return;
                 }
-                program.add(("line".equals(kind) ? "line " : "cline ") + id + " " + u(n(a, 0)) + " " + u(n(a, 1)) + " "
-                        + u(n(b, 0)) + " " + u(n(b, 1)));
+                if ("axis".equals(kind)) {
+                    axes++;
+                }
+                program.add(("line".equals(kind) ? "line " : "axis".equals(kind) ? "axis " : "cline ") + id + " " + u(n(a, 0)) + " "
+                        + u(n(a, 1)) + " " + u(n(b, 0)) + " " + u(n(b, 1)));
                 return;
             }
             case "arc": {
@@ -353,7 +359,7 @@ public final class Sketch {
                 return;
             }
             default:
-                problems.add("Entity " + id + " has the type " + kind + "; use rectangle, circle, line, arc, centerline or point.");
+                problems.add("Entity " + id + " has the type " + kind + "; use rectangle, circle, line, arc, centerline, axis or point.");
         }
     }
 
@@ -539,7 +545,7 @@ public final class Sketch {
 
     /** A centerline to be symmetric about: a centerline entity, or one made on a reference. */
     private String symmetryAxis(String name) {
-        if ("centerline".equals(kinds.get(name))) {
+        if ("centerline".equals(kinds.get(name)) || "axis".equals(kinds.get(name))) {
             return name;
         }
         Object[] trace = traces.get(name);
@@ -727,7 +733,7 @@ public final class Sketch {
         if ("circle".equals(kind)) {
             return p[0] + ":center";
         }
-        if ("line".equals(kind) || "centerline".equals(kind)) {
+        if ("line".equals(kind) || "centerline".equals(kind) || "axis".equals(kind)) {
             return p[1].isEmpty() ? p[0] : p[0] + ":" + p[1];
         }
         if ("arc".equals(kind)) {

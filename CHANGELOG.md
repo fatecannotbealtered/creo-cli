@@ -18,6 +18,7 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 - `model check` runs Creo's ModelCHECK read-only, with its report beside the host component, and creo-cli's checks: failed, suppressed and default-named features.
 - `model render --view` takes the picture in a named view (FRONT, TOP, RIGHT, DEFAULT or one saved in the model) and puts the person's view back; Creo then shows the model as modified, which the result reports.
 - `geometry list --feature` gives each face its place in the feature (start, end, side), and `--role` and `--facing` filter by place and normal; `distance get` takes faces by place, such as `--from BASE/start --to BASE/end`.
+- `revolve create` revolves a sketch about the entity of type `axis` in it, 360 degrees or less, adding or removing material.
 - `doc create --kind part --path <file>` creates a part from Creo's metric part template, with the parameters PART_NO and DESCRIPTION, or from `--template`, writes it at once and shows it in a window. `doc save-as --output <file>` writes a copy under another name, or the model into another folder.
 
 ### Changed
