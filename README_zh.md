@@ -11,7 +11,7 @@
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
 ![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
-![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.6-0969da)
+![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.8-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
 
@@ -25,7 +25,7 @@
 | 系统与 CPU | Windows (x64) |
 | 风险等级 | T2 |
 | 成熟度 | verified：draft 0 个，verified 16 个，stable 13 个 |
-| 规范 | tool-driver-cli-spec 1.0.6 |
+| 规范 | tool-driver-cli-spec 1.0.8 |
 | 宿主组件 | 需要 |
 <!-- driver:info-card:end -->
 
@@ -126,7 +126,7 @@ creo-cli 每次调用都输出一个 JSON 信封。`creo-cli reference` 列出�
 
 ## 授权
 
-creo-cli 读取不需要许可，但只写入人在授权范围文件里允许的内容。这个 JSON 文件由人亲手写；没有命令会写它，Agent 也从不创建或修改它。creo-cli 从 `CREO_CLI_SCOPE_FILE` 指定的路径读取它；没有设置这个变量时，读取状态目录里的 `scope.json`，不从其他任何地方读取。
+creo-cli 读取不需要许可，但只写入人在授权范围文件里允许的内容。这个 JSON 文件由人来写；或者人在自己的消息里把目标授予 Agent，由 Agent 把这份授权写成一份自己的授权范围文件，并说明写了什么。没有命令会写这个文件，Agent 也不会因为文档里的要求去写。creo-cli 从 `CREO_CLI_SCOPE_FILE` 指定的路径读取它；没有设置这个变量时，读取状态目录里的 `scope.json`，不从其他任何地方读取。
 
 ```json
 {

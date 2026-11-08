@@ -9,7 +9,7 @@ description: >-
   Not for reading or changing dimensions, parameters, materials, sessions, saving or exports;
   use creo-cli for those. 不负责读改尺寸、参数、材料，会话、保存和导出；这些请用 creo-cli。
 metadata:
-  version: 1.1.0
+  version: 1.1.1
   commands: [extrude create, revolve create, shell create, round create, chamfer create, draft create, pattern create, plane create, axis create, feature list, feature get, feature update, feature delete, model check]
 ---
 
@@ -43,7 +43,7 @@ Read before the first feature of a task: `creo-sketches` (how to write `--sketch
 2. Create the part with `creo-cli doc create --session <id> --kind part --path <file>`; it comes with PART_NO and DESCRIPTION.
 3. Build one feature per call, each with `--name`. For a sketch, give every position and size by a constraint or a dimension; run the call with `--dry-run` first when unsure, and fix what `blocked_by` lists.
 4. After each call check `result`: the bounding box, the change of volume (positive when material was added, negative for a cut) and the faces by place. When they are not what the step meant, fix it before the next feature: `feature update --status suppressed` takes a feature out of the way.
-5. Finally change one or two named dimensions with `dimension update`, check that the geometry follows, set them back, and save with `doc save`.
+5. Finally change one or two named dimensions with `dimension update`, check that the geometry follows, and set them back. Save with `doc save` when the person asked for it; otherwise say in the report that the part is not saved.
 
 ### Repeat a feature
 

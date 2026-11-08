@@ -1,0 +1,63 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.1.1",
+  "commit": "9a694960114d",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-08T08:34:55Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "doc create",
+      "arguments": [
+        "--session",
+        "creo-17440-32100c50b",
+        "--kind",
+        "part",
+        "--path",
+        "D:\\driver-work\\creo-cli\\targets\\runs\\final\\create-normal/cover.prt"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session"
+    },
+    {
+      "command": "doc create",
+      "arguments": [
+        "--session",
+        "creo-17440-32100c50b",
+        "--kind",
+        "part",
+        "--path",
+        "D:\\driver-work\\creo-cli\\targets\\runs\\final\\create-normal/cover.txt"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session"
+    },
+    {
+      "command": "doc create",
+      "arguments": [
+        "--session",
+        "creo-17440-32100c50b",
+        "--kind",
+        "part",
+        "--path",
+        "D:\\driver-work\\creo-cli\\targets\\runs\\final\\create-normal/missing/cover.prt"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session"
+    }
+  ]
+}

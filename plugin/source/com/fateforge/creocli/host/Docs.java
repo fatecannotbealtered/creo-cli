@@ -529,13 +529,13 @@ final class Docs {
             session.CreateModelWindow(made);
             made.Display();
         } catch (Throwable noWindow) {
-            return createdFacts(made, plain);
+            return createdFacts(made, plain, path);
         }
         final Model shown = made;
-        return new MainThread.Later(() -> createdFacts(shown, plain));
+        return new MainThread.Later(() -> createdFacts(shown, plain, path));
     }
 
-    private Map<String, Object> createdFacts(Model made, File plain) throws Exception {
+    private Map<String, Object> createdFacts(Model made, File plain, String requested) throws Exception {
         Map<String, Object> out = facts("dispatched", "applied", Json.map("document", describe(made)));
         out.put("persistence", "saved");
         File written = newestFile(plain);
@@ -543,7 +543,7 @@ final class Docs {
             throw new HostError(HostError.NATIVE, "Creo reported no file for " + plain + " after creating it.", "dispatched");
         }
         List<Object> files = new ArrayList<>();
-        files.add(Json.map("path", written.getAbsolutePath(), "bytes", written.length(), "sha256", sha256(written)));
+        files.add(written(written, requested));
         out.put("files", files);
         return out;
     }
@@ -650,9 +650,22 @@ final class Docs {
         Map<String, Object> out = facts("dispatched", "applied", Json.map("document", describe(model)));
         out.put("persistence", "saved");
         List<Object> files = new ArrayList<>();
-        files.add(Json.map("path", written.getAbsolutePath(), "bytes", written.length(), "sha256", sha256(written)));
+        files.add(written(written, path));
         out.put("files", files);
         return out;
+    }
+
+    /**
+     * A file Creo wrote for a path the call gave. Creo numbers the versions of a model file, so
+     * for D:/work/cover.prt it writes D:/work/cover.prt.1; the file then carries the given path as
+     * requested_path, and counts for it (DCLI-057).
+     */
+    static Map<String, Object> written(File written, String requested) throws Exception {
+        Map<String, Object> file = Json.map("path", written.getAbsolutePath(), "bytes", written.length(), "sha256", sha256(written));
+        if (!written.getAbsoluteFile().equals(new File(requested).getAbsoluteFile())) {
+            file.put("requested_path", requested);
+        }
+        return file;
     }
 
     /** Close a model's window, then -- on a later tick, as Creo requires -- erase it from session. */

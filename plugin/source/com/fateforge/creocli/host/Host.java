@@ -41,7 +41,7 @@ import java.util.Optional;
 public final class Host {
     /** The version plugin install built this JAR as; it writes the version into the JAR. */
     public static final String PLUGIN_VERSION = builtVersion();
-    public static final String PROTOCOL_VERSION = "1.2.0";
+    public static final String PROTOCOL_VERSION = "1.3.0";
     static final String CONFIG_FILE = "creo-cli-host.json";
     private static final int PUMP_MICROSECONDS = 100_000;
     private static final long PICKUP_MS = 1500;

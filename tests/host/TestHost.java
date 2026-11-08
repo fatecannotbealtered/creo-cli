@@ -44,7 +44,7 @@ public final class TestHost {
         long deadline = Json.integer(params, "deadline_ms") == null ? 5000 : Json.integer(params, "deadline_ms");
         switch (method) {
             case "hello":
-                return Json.map("protocol_version", "1.2.0", "plugin_version", "test",
+                return Json.map("protocol_version", "1.3.0", "plugin_version", "test",
                         "application", Json.map("name", "Creo Parametric", "version", "13.4.1.0"),
                         "session", Json.map("id", "creo-1-1", "generation", 0),
                         "methods", Arrays.asList("documents", "read", "apply"));

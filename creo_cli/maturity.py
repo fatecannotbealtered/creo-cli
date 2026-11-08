@@ -165,6 +165,11 @@ STANDARD: dict[str, dict[str, Any]] = {
         "live:docs/evidence/2026-11-07-191344-doc-close.json#dialog",
         "live:docs/evidence/2026-11-07-190934-doc-close.json#read_back_mismatch",
     ]},
+    "doc create": {"maturity": "verified", "evidence": [
+        "live:docs/evidence/2026-11-08-083455-doc-create.json#normal",
+        "live:docs/evidence/2026-11-08-085520-doc-create.json#dialog",
+        "live:docs/evidence/2026-11-08-083503-doc-create.json#read_back_mismatch",
+    ]},
     "doc get": {"maturity": "verified", "evidence": [
         "live:docs/evidence/2026-11-07-190831-doc-get.json#normal",
     ]},
@@ -175,6 +180,11 @@ STANDARD: dict[str, dict[str, Any]] = {
         "live:docs/evidence/2026-11-07-190723-doc-open.json#normal",
         "live:docs/evidence/2026-11-07-191345-doc-open.json#dialog",
         "live:docs/evidence/2026-11-07-190751-doc-open.json#read_back_mismatch",
+    ]},
+    "doc save-as": {"maturity": "verified", "evidence": [
+        "live:docs/evidence/2026-11-08-083557-doc-save-as.json#normal",
+        "live:docs/evidence/2026-11-08-085523-doc-save-as.json#dialog",
+        "live:docs/evidence/2026-11-08-083526-doc-save-as.json#read_back_mismatch",
     ]},
     "doc save": {"maturity": "stable", "evidence": [
         "live:docs/evidence/2026-11-07-191047-doc-save.json#normal",
@@ -193,10 +203,19 @@ STANDARD: dict[str, dict[str, Any]] = {
         "live:docs/evidence/2026-11-07-190851-plugin-remove.json#normal",
         "live:docs/evidence/2026-11-07-190854-plugin-remove.json#read_back_mismatch",
     ]},
+    "session close": {"maturity": "verified", "evidence": [
+        "live:docs/evidence/2026-11-08-083655-session-close.json#normal",
+        "live:docs/evidence/2026-11-08-085525-session-close.json#dialog",
+    ]},
     "session get": {"maturity": "verified", "evidence": [
         "live:docs/evidence/2026-11-07-190827-session-get.json#normal",
     ]},
     "session list": {"maturity": "verified", "evidence": [
         "live:docs/evidence/2026-11-07-190825-session-list.json#normal",
+    ]},
+    "session open": {"maturity": "verified", "evidence": [
+        "live:docs/evidence/2026-11-08-083644-session-open.json#normal",
+        "live:docs/evidence/2026-11-08-121856-session-open.json#dialog",
+        "live:docs/evidence/2026-11-08-083721-session-open.json#read_back_mismatch",
     ]},
 }

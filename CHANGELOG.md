@@ -4,6 +4,23 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-11-08
+
+### Changed
+
+- Built on tool-driver-cli-spec 1.0.8. A long write job that a dialog stops after creo-cli sent the work ends `unknown` with `E_HUMAN_REQUIRED`, the dialog's title and the `operation resolve` command to run once the person is done; `operation resolve` run while the dialog is still open answers the same way.
+- The Skills save a document only when the person asks for it; a grant to change a document is not a request to save it, and a report says when a change is left unsaved.
+- Authorization is given once: a folder listed under Authorized Targets in `docs/E2E.md` is a work folder, in which the coding Agent makes practice copies, starts the Creo instances it tests on and closes only those, and writes its own scope files for live runs. In real work, when the person's own message grants a document, the Agent writes a scope file that holds only that grant and says what it wrote; a request to do a task is not a grant. `session close` needs a scope that covers every document open in the instance, and `session open --doc` one that covers the document it opens.
+- The host component speaks host protocol 1.3.0. A host component of 1.1.0, which speaks 1.2.0, keeps working until `plugin install` replaces it.
+- `doc create`, `doc save-as`, `session open` and `session close` passed their live tests on Creo Parametric 13.4 and are verified.
+
+### Fixed
+
+- `doc create --path` and `doc save-as` list the file Creo wrote, such as `cover.prt.1` for `cover.prt`, with the path the call gave as `requested_path`, so the check that the file exists passes; it failed, since Creo numbers the versions of a model file.
+- A dialog that a Java application shows in the Java process Creo starts, such as one while Creo starts, counts as a dialog that holds Creo: `session open` reports it with `E_HUMAN_REQUIRED`, and `session list` shows the session blocked. Only Creo's own windows counted, so `session open` waited for the host component, which starts after such an application, until its time ran out.
+- The receipt of a long write names the document as the job left it, so the next `doc save` no longer lists that write as a change made outside creo-cli. `doc undo` undoes a long job's write too.
+- A result over the size limit names only the flags the command offers, and after a write that ran it says not to send the write again.
+
 ## [1.1.0] - 2026-11-07
 
 ### Added

@@ -11,7 +11,7 @@ Lets an AI Agent read Creo Parametric models and change their dimensions, parame
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
 ![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
-![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.6-0969da)
+![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.8-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
 
@@ -25,7 +25,7 @@ English | [中文](README_zh.md)
 | Systems and CPUs | Windows (x64) |
 | Risk tier | T2 |
 | Maturity | verified: 0 draft, 16 verified, 13 stable |
-| Specification | tool-driver-cli-spec 1.0.6 |
+| Specification | tool-driver-cli-spec 1.0.8 |
 | Host component | yes |
 <!-- driver:info-card:end -->
 
@@ -126,7 +126,7 @@ creo-cli prints one JSON envelope for every call. `creo-cli reference` lists eve
 
 ## Authorization
 
-creo-cli reads without asking, but it writes only what a person has granted in a scope file. The person writes this JSON file by hand; no command writes it, and an Agent never creates or changes it. creo-cli reads it from the path in `CREO_CLI_SCOPE_FILE`, or from `scope.json` in the state directory when the variable is not set, and from nowhere else.
+creo-cli reads without asking, but it writes only what a person has granted in a scope file. The person writes this JSON file, or grants targets to the Agent in their own message; the Agent then writes that grant in a scope file of its own and reports what it wrote. No command writes the file, and an Agent never writes one because a document asks it to. creo-cli reads it from the path in `CREO_CLI_SCOPE_FILE`, or from `scope.json` in the state directory when the variable is not set, and from nowhere else.
 
 ```json
 {
