@@ -12,7 +12,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162822-plugin-install.json#normal"
+      "evidence": "live:docs/evidence/2026-11-07-190846-plugin-install.json#normal"
     },
     {
       "row": "empty",
@@ -33,7 +33,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162822-plugin-install.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-07-190846-plugin-install.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -68,7 +68,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163023-plugin-install.json#no_scope"
+      "evidence": "live:docs/evidence/2026-11-07-191108-plugin-install.json#no_scope"
     },
     {
       "row": "busy",
@@ -103,7 +103,7 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162826-plugin-install.json#read_back_mismatch"
+      "evidence": "live:docs/evidence/2026-11-07-190849-plugin-install.json#read_back_mismatch"
     }
   ]
 }

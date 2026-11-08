@@ -1,0 +1,140 @@
+{
+  "command": "session close",
+  "rows": [
+    {
+      "row": "normal",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}"
+      ],
+      "expected": {
+        "exit": 0,
+        "summary": "Ends a Creo the tool started, with no unsaved changes: the host has Creo exit as File > Exit does, and the session list no longer has it."
+      }
+    },
+    {
+      "row": "empty",
+      "applies": false,
+      "reason": "Closing always names one session."
+    },
+    {
+      "row": "invalid_input",
+      "applies": true,
+      "arguments": [
+        "--session"
+      ],
+      "expected": {
+        "exit": 2,
+        "code": "E_USAGE",
+        "summary": "--session has no value."
+      }
+    },
+    {
+      "row": "not_found",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "creo-1-0"
+      ],
+      "expected": {
+        "exit": 3,
+        "code": "E_NOT_FOUND",
+        "summary": "No running Creo has this session ID."
+      }
+    },
+    {
+      "row": "ambiguous",
+      "applies": true,
+      "arguments": [],
+      "expected": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS",
+        "summary": "Two Creo sessions are running and the call names neither."
+      }
+    },
+    {
+      "row": "conflict",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}"
+      ],
+      "expected": {
+        "exit": 6,
+        "code": "E_CONFLICT",
+        "summary": "A model in the session has unsaved changes and the call has no --discard: conflict unsaved_changes."
+      }
+    },
+    {
+      "row": "no_scope",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}"
+      ],
+      "expected": {
+        "exit": 4,
+        "code": "E_FORBIDDEN",
+        "summary": "Run with a scope file without the lifecycle effect."
+      }
+    },
+    {
+      "row": "busy",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}"
+      ],
+      "expected": {
+        "exit": 7,
+        "code": "E_BUSY",
+        "summary": "Creo's main thread is running another request."
+      }
+    },
+    {
+      "row": "dialog",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}"
+      ],
+      "expected": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED",
+        "summary": "A modal dialog (File > Options) is open in Creo."
+      }
+    },
+    {
+      "row": "disconnect",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}"
+      ],
+      "expected": {
+        "exit": 8,
+        "code": "E_OUTCOME_UNKNOWN"
+      },
+      "unrunnable": "The pipe to the host component cannot be cut on demand at the moment of a call; driver tests D06 and D21 cover this case."
+    },
+    {
+      "row": "unsaved",
+      "applies": false,
+      "reason": "This row applies only to a command that acts on a document; unsaved changes in the session are the conflict row."
+    },
+    {
+      "row": "read_back_mismatch",
+      "applies": true,
+      "arguments": [
+        "--session",
+        "{session}"
+      ],
+      "expected": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED",
+        "summary": "While the tool waits before its read-back, --tamper starts no exit: a modal dialog opened in Creo before the host's timer fires keeps Creo running, so the session is still listed."
+      }
+    }
+  ]
+}

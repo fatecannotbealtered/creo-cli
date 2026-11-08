@@ -1,0 +1,118 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.1.0",
+  "commit": "56e3dc36a63f",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-07T21:29:34Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "pattern create",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\pat1.prt",
+        "--name",
+        "SOCKET_ROW",
+        "--feature",
+        "SOCKET_CUT",
+        "--along",
+        "+x",
+        "--count",
+        "4",
+        "--spacing",
+        "62mm",
+        "--spacing-name",
+        "OUTLET_PITCH"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session",
+      "doc_kind": "part"
+    },
+    {
+      "command": "pattern create",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\pat1.prt",
+        "--name",
+        "SOCKET_ROW",
+        "--feature",
+        "SOCKET_CUT",
+        "--along",
+        "+x",
+        "--count",
+        "4",
+        "--spacing",
+        "62"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session",
+      "doc_kind": "part"
+    },
+    {
+      "command": "pattern create",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\pat1.prt",
+        "--name",
+        "SOCKET_ROW",
+        "--feature",
+        "NOSUCH",
+        "--along",
+        "+x",
+        "--count",
+        "4",
+        "--spacing",
+        "62mm"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session",
+      "doc_kind": "part"
+    },
+    {
+      "command": "pattern create",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\pat1.prt",
+        "--name",
+        "SOCKET_ROW",
+        "--feature",
+        "SOCKET_CUT",
+        "--along",
+        "+x",
+        "--count",
+        "4",
+        "--spacing",
+        "62mm",
+        "--spacing-name",
+        "OUTLET_PITCH"
+      ],
+      "exit": 6,
+      "result": "pass",
+      "matrix_row": "conflict",
+      "mode": "session",
+      "doc_kind": "part"
+    }
+  ]
+}

@@ -4,6 +4,47 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-07
+
+### Added
+
+- The host component's C library, for what only Creo TOOLKIT can do. `plugin install` compiles it with Visual Studio's x64 C compiler against the Creo TOOLKIT component of the user's Creo and unlocks it with a Creo TOOLKIT development license; without them it installs the Java part alone, records why, and the commands that need the library are refused with `E_UNSUPPORTED` naming the reason. `CREO_CLI_VCVARS` names the compiler's `vcvars64.bat`.
+- `session open` starts a Creo of creo-cli's own from a start folder beside the host component, as a long job, and `session close` ends a Creo as File > Exit does, refusing while a model has unsaved changes; closing a Creo creo-cli did not start is dangerous.
+- `extrude create` extrudes a sketch into one named feature, adding or removing material, blind, symmetric, through all or up to a plane, along a model axis. The sketch is JSON: a plane (a datum, a face of an earlier feature such as `BASE/end`, or a surface ID), the model axis its x runs along, projected references, rectangles, circles, lines, arcs, centerlines and points, constraints and named dimensions, which go into Creo by name. A sketch that is not fully defined is refused, by the preview for rectangles and circles; a feature that does not regenerate, or would add or remove no material, is taken back. The result reports the dimensions, the change of volume, the bounding box and the faces by place.
+- `shell create` hollows a part with walls of one thickness, open at the faces named; `round create` rounds edges to one radius. Faces are named by a feature and their place (`BASE/start`, `BASE/end`, `BASE/side[+x]`) or by surface ID; edges as `edge(face, face)`, `face:edges`, `face:outer-edges`, `FEATURE:edges` or by edge ID. `--depth-name`, `--thickness-name` and `--radius-name` give the key dimension a name.
+- `pattern create` repeats one feature in a row along a model axis, with a count and a spacing that `--spacing-name` names. The result lists the count's dimension, such as `p20`, which relations can drive.
+- `plane create` makes a datum plane at a distance from a plane or face toward a model axis, or through an axis at an angle; `axis create` a datum axis where two planes cross or through a cylindrical face.
+- `chamfer create` chamfers edges by one distance; `draft create` drafts faces by one angle about a hinge plane so that they narrow toward the pull direction, turning the angle's sign when Creo leaned them the other way.
+- The domain Skill `creo-feature` for modeling parts feature by feature; the entry Skill `creo-cli` routes feature work to it.
+- `feature delete` deletes a feature with the features that depend on it, dangerous, with all of them in the preview. `parameter create` creates a parameter; `relation update` replaces the relations, blocking a line Creo cannot evaluate and putting the old relations back when the model does not regenerate; `model update` assigns a material from the part or Creo's material library and sets the common name.
+- `model check` runs Creo's ModelCHECK read-only, with its report beside the host component, and creo-cli's checks: failed, suppressed and default-named features.
+- `model render --view` takes the picture in a named view (FRONT, TOP, RIGHT, DEFAULT or one saved in the model) and puts the person's view back; Creo then shows the model as modified, which the result reports.
+- `geometry list --feature` gives each face its place in the feature (start, end, side), and `--role` and `--facing` filter by place and normal; `distance get` takes faces by place, such as `--from BASE/start --to BASE/end`.
+- `revolve create` revolves a sketch about the entity of type `axis` in it, 360 degrees or less, adding or removing material.
+- `doc create --kind part --path <file>` creates a part from Creo's metric part template, with the parameters PART_NO and DESCRIPTION, or from `--template`, writes it at once and shows it in a window. `doc save-as --output <file>` writes a copy under another name, or the model into another folder.
+- Evaluation questions that build a four-way power strip's top housing and its switch cap from the requirement text, each in an empty part, and apply a change order to the housing through its relations; the graders read the geometry Creo built.
+- The sketch knowledge says that the bounding box is Creo's outline, which around rounds on drafted walls can be a few hundredths of a millimetre larger than the part, and that `distance get` measures an exact size.
+
+### Changed
+
+- `parameter update` regenerates a part or assembly after setting the value, so relations that read the parameter take effect, and takes the value back when the model does not regenerate.
+- In a sketch, mirroring one circle's or rectangle's center onto another's (`symmetric` with `a` and `b`) places and fixes the second, and `equal` circles share one diameter; the preview counts both when it checks that the sketch is fully defined.
+- Built on tool-driver-cli-spec 1.0.6. A long job's worker retries a busy answer from Creo for up to 10 s before it sends the work, `session list` allows 2.5 s to find the running Creo processes and their dialogs, and long jobs are verified on the same terms as calls. `docs/E2E.md` starts with the fixed Authorization Rules, and Authorized Targets holds only the list.
+
+### Fixed
+
+- `geometry list` reports a planar face's `normal` pointing out of the material, as `--facing` and filters such as `BASE/side[+x]` take it; it reported the axis of the plane's coordinate system, which can point into the material.
+- `draft create` checks the lean on the drafted faces alone, and turns the angle when they widen toward the pull; the faces Creo lists at the hinge made every draft pass the check.
+- A face name that fits several faces is refused with `E_AMBIGUOUS` and the candidates, each with its surface ID, a point and its normal; the host component sent bare IDs, which the CLI turned into `E_PROTOCOL`.
+- `relation update` no longer leaves an unknown outcome when the model does not regenerate with the old relations either; it reports the old relations back and that the model fails with any value.
+- The host component reports the version `plugin install` built it as, which the build writes into its JAR; it reported 1.0.0 whatever was installed, so after an upgrade every command was refused as if Creo still had the old host component.
+- A surface, edge or axis named by an ID the model does not have, such as `edge:999999`, is refused with `E_NOT_FOUND`; Creo's own error made it `E_NATIVE_FAILURE`.
+- A feature, dimension or parameter a write made or set that is gone at the read-back, such as a new feature someone renamed, reads back as a mismatch (`E_VERIFY_FAILED`), not as unread.
+- After a change, the windows of the models that changed are repainted, not only the current window.
+- `plugin install` shows the Java compiler's errors in English and readable on a Windows set to another language. A fault of the host component itself is written to its `host.log` with where it happened, since a write whose outcome is unknown carries no message.
+- Creo no longer waits to exit while a creo-cli call still holds a connection to the host component.
+- The practice part of the evaluation questions no longer carries, in its history, the login and computer name of the person who made it.
+
 ## [1.0.0] - 2026-11-06
 
 ### Added

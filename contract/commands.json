@@ -1,6 +1,6 @@
 {
   "tool": "creo-cli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "commands": [
     {
       "path": "feature get",
@@ -169,6 +169,16 @@
           "summary": "Only the geometry this feature created: its ID or name."
         },
         {
+          "name": "--role",
+          "type": "string",
+          "summary": "With --feature: only its start, end or side faces."
+        },
+        {
+          "name": "--facing",
+          "type": "string",
+          "summary": "With --feature: only its faces whose normal points along this model axis, such as +x."
+        },
+        {
           "name": "--limit",
           "type": "integer",
           "summary": "Items per page; default 20, at most 100."
@@ -191,6 +201,7 @@
         "kind",
         "shape",
         "feature_id",
+        "role",
         "normal",
         "origin_mm",
         "axis_direction",
@@ -229,7 +240,7 @@
         {
           "name": "--from",
           "type": "string",
-          "summary": "A reference from geometry list, such as surface:41, or a datum name such as FRONT.",
+          "summary": "A reference from geometry list, such as surface:41, a datum name such as FRONT, or a feature's face such as BASE/end.",
           "required": true
         },
         {
@@ -484,7 +495,7 @@
     },
     {
       "path": "parameter update",
-      "summary": "Set a parameter's value, keeping its type; a parameter with a unit takes the value with a unit.",
+      "summary": "Set a parameter's value, keeping its type, and regenerate a part or assembly; Creo takes back a value the model cannot regenerate with.",
       "effects": [
         "change"
       ],
@@ -634,6 +645,45 @@
       ]
     },
     {
+      "path": "model check",
+      "summary": "Run Creo's ModelCHECK and creo-cli's checks on a part: failed, suppressed and unnamed features.",
+      "effects": [
+        "observe"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "model",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        }
+      ],
+      "untrusted_fields": [
+        "model",
+        "findings[*].object",
+        "modelcheck.report",
+        "modelcheck.reason"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-localized-names"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
       "path": "component list",
       "summary": "The top-level components of an assembly: model, status and position.",
       "effects": [
@@ -743,6 +793,1254 @@
       ]
     },
     {
+      "path": "extrude create",
+      "summary": "Extrude a sketch into one feature, adding or removing material, and regenerate; a sketch that is not fully defined is refused.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name: a letter, then letters, digits or _, 31 at most.",
+          "required": true
+        },
+        {
+          "name": "--sketch",
+          "type": "json",
+          "summary": "The sketch: plane, x_axis, references, entities, constraints and named dimensions, inline or a file.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": [
+              "plane",
+              "x_axis",
+              "entities"
+            ],
+            "properties": {
+              "plane": {
+                "type": "string",
+                "description": "The sketch plane: a datum such as TOP, a face such as BASE/end, or surface:<id>."
+              },
+              "x_axis": {
+                "type": "string",
+                "enum": [
+                  "+x",
+                  "-x",
+                  "+y",
+                  "-y",
+                  "+z",
+                  "-z"
+                ],
+                "description": "The model axis the sketch's x runs along; it must lie in the plane. y is the plane's normal crossed with x."
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Datum planes or planar faces across the sketch plane, projected to dimension and constrain to."
+              },
+              "entities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "rectangle",
+                        "circle",
+                        "line",
+                        "arc",
+                        "centerline",
+                        "axis",
+                        "point"
+                      ]
+                    },
+                    "width_mm": {
+                      "type": "number"
+                    },
+                    "height_mm": {
+                      "type": "number"
+                    },
+                    "corner_radius_mm": {
+                      "type": "number"
+                    },
+                    "center_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "diameter_mm": {
+                      "type": "number"
+                    },
+                    "radius_mm": {
+                      "type": "number"
+                    },
+                    "start_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "end_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "start_deg": {
+                      "type": "number"
+                    },
+                    "end_deg": {
+                      "type": "number"
+                    },
+                    "at_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                }
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "symmetric",
+                        "horizontal",
+                        "vertical",
+                        "coincident",
+                        "on",
+                        "tangent",
+                        "parallel",
+                        "perpendicular",
+                        "equal"
+                      ]
+                    },
+                    "entity": {
+                      "type": "string"
+                    },
+                    "about": {
+                      "type": "string"
+                    },
+                    "a": {
+                      "type": "string"
+                    },
+                    "b": {
+                      "type": "string"
+                    },
+                    "point": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "dimensions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The dimension's name in Creo; dimension update takes it."
+                    },
+                    "measure": {
+                      "type": "string",
+                      "description": "An entity's own size: body.width, body.height, body.corner_radius, hole.diameter, rim.length."
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    },
+                    "value_mm": {
+                      "type": "number",
+                      "description": "For from and to: the distance, its sign the side of from along the sketch axis."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "--depth",
+          "type": "quantity",
+          "summary": "How far to extrude; with --symmetric, split to both sides.",
+          "quantity": "length"
+        },
+        {
+          "name": "--depth-name",
+          "type": "string",
+          "summary": "A name for the depth dimension, such as BODY_HEIGHT."
+        },
+        {
+          "name": "--through-all",
+          "type": "boolean",
+          "summary": "Through the whole part, for a cut."
+        },
+        {
+          "name": "--to",
+          "type": "string",
+          "summary": "Up to this plane or face: a datum name, a face such as BASE/end, or surface:<id>."
+        },
+        {
+          "name": "--symmetric",
+          "type": "boolean",
+          "summary": "Extrude half of --depth to each side of the sketch plane."
+        },
+        {
+          "name": "--direction",
+          "type": "string",
+          "summary": "The model axis to extrude along, such as +z; the plane's normal by default."
+        },
+        {
+          "name": "--remove",
+          "type": "boolean",
+          "summary": "Remove material (a cut) instead of adding it."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-sketches",
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "revolve create",
+      "summary": "Revolve a sketch about the axis entity in it into one feature, adding or removing material, and regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as PIN.",
+          "required": true
+        },
+        {
+          "name": "--sketch",
+          "type": "json",
+          "summary": "The profile on one side of an entity of type axis, which it turns about; see creo-sketches.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": [
+              "plane",
+              "x_axis",
+              "entities"
+            ],
+            "properties": {
+              "plane": {
+                "type": "string",
+                "description": "The sketch plane: a datum such as TOP, a face such as BASE/end, or surface:<id>."
+              },
+              "x_axis": {
+                "type": "string",
+                "enum": [
+                  "+x",
+                  "-x",
+                  "+y",
+                  "-y",
+                  "+z",
+                  "-z"
+                ],
+                "description": "The model axis the sketch's x runs along; it must lie in the plane. y is the plane's normal crossed with x."
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Datum planes or planar faces across the sketch plane, projected to dimension and constrain to."
+              },
+              "entities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "rectangle",
+                        "circle",
+                        "line",
+                        "arc",
+                        "centerline",
+                        "axis",
+                        "point"
+                      ]
+                    },
+                    "width_mm": {
+                      "type": "number"
+                    },
+                    "height_mm": {
+                      "type": "number"
+                    },
+                    "corner_radius_mm": {
+                      "type": "number"
+                    },
+                    "center_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "diameter_mm": {
+                      "type": "number"
+                    },
+                    "radius_mm": {
+                      "type": "number"
+                    },
+                    "start_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "end_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "start_deg": {
+                      "type": "number"
+                    },
+                    "end_deg": {
+                      "type": "number"
+                    },
+                    "at_mm": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                }
+              },
+              "constraints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "symmetric",
+                        "horizontal",
+                        "vertical",
+                        "coincident",
+                        "on",
+                        "tangent",
+                        "parallel",
+                        "perpendicular",
+                        "equal"
+                      ]
+                    },
+                    "entity": {
+                      "type": "string"
+                    },
+                    "about": {
+                      "type": "string"
+                    },
+                    "a": {
+                      "type": "string"
+                    },
+                    "b": {
+                      "type": "string"
+                    },
+                    "point": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "dimensions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The dimension's name in Creo; dimension update takes it."
+                    },
+                    "measure": {
+                      "type": "string",
+                      "description": "An entity's own size: body.width, body.height, body.corner_radius, hole.diameter, rim.length."
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    },
+                    "value_mm": {
+                      "type": "number",
+                      "description": "For from and to: the distance, its sign the side of from along the sketch axis."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "--angle",
+          "type": "quantity",
+          "summary": "How far to revolve; 360 degrees by default.",
+          "quantity": "angle"
+        },
+        {
+          "name": "--angle-name",
+          "type": "string",
+          "summary": "A name for the angle dimension."
+        },
+        {
+          "name": "--remove",
+          "type": "boolean",
+          "summary": "Remove material (a revolved cut) instead of adding it."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06,
+        "value_deg": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-sketches",
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "shell create",
+      "summary": "Hollow the part into one shell feature with walls of one thickness, open at the faces named; regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as SHELL.",
+          "required": true
+        },
+        {
+          "name": "--thickness",
+          "type": "quantity",
+          "summary": "The wall thickness, measured inward.",
+          "required": true,
+          "quantity": "length"
+        },
+        {
+          "name": "--thickness-name",
+          "type": "string",
+          "summary": "A name for the thickness dimension, such as WALL."
+        },
+        {
+          "name": "--remove",
+          "type": "string",
+          "summary": "The faces left open, separated by ;: such as BASE/start, BASE/side[+x] or surface:41. Without it the shell is closed."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "round create",
+      "summary": "Round edges to one constant radius as one feature, and regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as TOP_ROUND.",
+          "required": true
+        },
+        {
+          "name": "--radius",
+          "type": "quantity",
+          "summary": "The radius.",
+          "required": true,
+          "quantity": "length"
+        },
+        {
+          "name": "--radius-name",
+          "type": "string",
+          "summary": "A name for the radius dimension, such as TOP_R."
+        },
+        {
+          "name": "--edges",
+          "type": "string",
+          "summary": "The edges, separated by ;: edge(BASE/end, BASE/side[+x]), BASE/end:outer-edges, BASE/end:edges, SOCKET:edges or edge:57.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "pattern create",
+      "summary": "Repeat one feature in a row along a model axis, as one pattern feature, and regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The pattern's name, such as SOCKET_ROW.",
+          "required": true
+        },
+        {
+          "name": "--feature",
+          "type": "string",
+          "summary": "The feature to repeat, by name or ID.",
+          "required": true
+        },
+        {
+          "name": "--along",
+          "type": "string",
+          "summary": "The model axis the copies step along, such as +x.",
+          "required": true
+        },
+        {
+          "name": "--count",
+          "type": "integer",
+          "summary": "How many in all, the original included; 2 or more.",
+          "required": true
+        },
+        {
+          "name": "--spacing",
+          "type": "quantity",
+          "summary": "The step from one copy to the next.",
+          "required": true,
+          "quantity": "length"
+        },
+        {
+          "name": "--spacing-name",
+          "type": "string",
+          "summary": "A name for the spacing dimension, such as OUTLET_PITCH."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "plane create",
+      "summary": "Create a datum plane offset from a plane or planar face, or through an axis at an angle to a plane.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new datum plane's name, such as DTM_BOSS.",
+          "required": true
+        },
+        {
+          "name": "--from",
+          "type": "string",
+          "summary": "The plane or planar face it is measured from: TOP, BASE/start or surface:41.",
+          "required": true
+        },
+        {
+          "name": "--distance",
+          "type": "quantity",
+          "summary": "The distance from --from.",
+          "quantity": "length"
+        },
+        {
+          "name": "--direction",
+          "type": "string",
+          "summary": "With --distance: the model axis to offset toward, such as +y; the normal of --from by default."
+        },
+        {
+          "name": "--distance-name",
+          "type": "string",
+          "summary": "A name for the distance dimension."
+        },
+        {
+          "name": "--through",
+          "type": "string",
+          "summary": "With --angle: the datum axis the plane passes through."
+        },
+        {
+          "name": "--angle",
+          "type": "quantity",
+          "summary": "With --through: the angle from --from.",
+          "quantity": "angle"
+        },
+        {
+          "name": "--angle-name",
+          "type": "string",
+          "summary": "A name for the angle dimension."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06,
+        "value_deg": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "axis create",
+      "summary": "Create a datum axis where two planes cross, or through the axis of a cylindrical face.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new datum axis's name, such as A_BOSS.",
+          "required": true
+        },
+        {
+          "name": "--planes",
+          "type": "string",
+          "summary": "Two planes separated by ;, such as RIGHT;FRONT."
+        },
+        {
+          "name": "--through",
+          "type": "string",
+          "summary": "A cylindrical face, such as BOSS/side or surface:88."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "chamfer create",
+      "summary": "Chamfer edges by one distance on both faces as one feature, and regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as EDGE_CHAMFER.",
+          "required": true
+        },
+        {
+          "name": "--distance",
+          "type": "quantity",
+          "summary": "The leg on each face.",
+          "required": true,
+          "quantity": "length"
+        },
+        {
+          "name": "--distance-name",
+          "type": "string",
+          "summary": "A name for the distance dimension."
+        },
+        {
+          "name": "--edges",
+          "type": "string",
+          "summary": "The edges, separated by ;: edge(BASE/end, BASE/side[+x]), BASE/end:outer-edges, SOCKET:edges or edge:57.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_mm": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "draft create",
+      "summary": "Draft faces by one angle about a hinge plane so that they narrow toward the pull direction, as one feature.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The new feature's name, such as OUTER_DRAFT.",
+          "required": true
+        },
+        {
+          "name": "--faces",
+          "type": "string",
+          "summary": "The faces to draft, separated by ;: such as BASE/side.",
+          "required": true
+        },
+        {
+          "name": "--hinge",
+          "type": "string",
+          "summary": "The plane the faces turn about: a datum, a face such as BASE/start, or surface:<id>.",
+          "required": true
+        },
+        {
+          "name": "--pull",
+          "type": "string",
+          "summary": "The model axis the mold opens along, such as +y; the faces narrow toward it.",
+          "required": true
+        },
+        {
+          "name": "--angle",
+          "type": "quantity",
+          "summary": "The draft angle, under 30 degrees.",
+          "required": true,
+          "quantity": "angle"
+        },
+        {
+          "name": "--angle-name",
+          "type": "string",
+          "summary": "A name for the angle dimension, such as DRAFT_ANGLE."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "name",
+        "dimensions[*].id"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value_deg": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-geometry-references",
+        "creo-units"
+      ],
+      "doc_kinds": [
+        "part"
+      ]
+    },
+    {
+      "path": "parameter create",
+      "summary": "Create a model parameter of a type, with its value.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "parameter",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--name",
+          "type": "string",
+          "summary": "The parameter's name, such as POSITIONS.",
+          "required": true
+        },
+        {
+          "name": "--type",
+          "type": "string",
+          "summary": "string (the default), integer, real or boolean."
+        },
+        {
+          "name": "--value",
+          "type": "string",
+          "summary": "The value: text, 4, 2.5, true or false.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "id",
+        "name",
+        "value"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {
+        "value": 1e-06
+      },
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-relations-and-dimensions"
+      ]
+    },
+    {
+      "path": "relation update",
+      "summary": "Replace a model's relations and regenerate; the old relations come back when the model does not regenerate.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "relation",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--relations",
+          "type": "json",
+          "summary": "Every relation line, as a JSON array of strings, inline or a file; an empty array removes them all.",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "items[*].text"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-relations-and-dimensions"
+      ]
+    },
+    {
+      "path": "model update",
+      "summary": "Assign a part's material from the part or Creo's material library, or change a model's common name.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "model",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--material",
+          "type": "string",
+          "summary": "A material's name, as material list shows it, such as ABS."
+        },
+        {
+          "name": "--common-name",
+          "type": "string",
+          "summary": "The model's common name."
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "material",
+        "common_name"
+      ],
+      "irreversible": false,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-materials"
+      ]
+    },
+    {
+      "path": "feature delete",
+      "summary": "Delete a feature with the features that depend on it; the preview lists them all. Nothing brings them back but closing without saving.",
+      "effects": [
+        "change"
+      ],
+      "modes": [
+        "session"
+      ],
+      "target_kind": "feature",
+      "flags": [
+        {
+          "name": "--session",
+          "type": "string",
+          "summary": "The session ID of the instance (DCLI-202)."
+        },
+        {
+          "name": "--doc",
+          "type": "string",
+          "summary": "The document: its ID or path; in file mode, the file path."
+        },
+        {
+          "name": "--id",
+          "type": "string",
+          "summary": "The feature's ID or name.",
+          "required": true
+        },
+        {
+          "name": "--output",
+          "type": "path",
+          "summary": "Write the full preview, with every change, to this file."
+        }
+      ],
+      "untrusted_fields": [
+        "deleted[*]"
+      ],
+      "irreversible": true,
+      "halt": false,
+      "tolerances": {},
+      "default_fields": [],
+      "related_knowledge": [
+        "creo-localized-names"
+      ],
+      "doc_kinds": [
+        "part",
+        "assembly"
+      ]
+    },
+    {
       "path": "model export",
       "summary": "Write a part or assembly to STEP, IGES or STL, or a drawing to PDF; the file extension picks the format.",
       "effects": [
@@ -783,7 +2081,7 @@
     },
     {
       "path": "model render",
-      "summary": "Write a JPEG image of a part or assembly as its window shows it.",
+      "summary": "Write a JPEG image of a part or assembly as its window shows it, or in a named view, putting the window's view back after.",
       "effects": [
         "artifact"
       ],
@@ -818,6 +2116,11 @@
           "name": "--height",
           "type": "integer",
           "summary": "Image height in pixels, 1 to 4096; 768 by default."
+        },
+        {
+          "name": "--view",
+          "type": "string",
+          "summary": "A view of the model: FRONT, TOP, RIGHT, DEFAULT or one saved in the model."
         }
       ],
       "untrusted_fields": [],

@@ -1,0 +1,43 @@
+{
+  "plane": "TOP",
+  "x_axis": "+x",
+  "references": [
+    "RIGHT",
+    "FRONT"
+  ],
+  "entities": [
+    {
+      "id": "body",
+      "type": "rectangle",
+      "width_mm": 280,
+      "height_mm": 55,
+      "corner_radius_mm": 8
+    }
+  ],
+  "constraints": [
+    {
+      "type": "symmetric",
+      "entity": "body",
+      "about": "RIGHT"
+    },
+    {
+      "type": "symmetric",
+      "entity": "body",
+      "about": "FRONT"
+    }
+  ],
+  "dimensions": [
+    {
+      "name": "BODY_LENGTH",
+      "measure": "body.width"
+    },
+    {
+      "name": "BODY_WIDTH",
+      "measure": "body.height"
+    },
+    {
+      "name": "CORNER_R",
+      "measure": "body.corner_radius"
+    }
+  ]
+}

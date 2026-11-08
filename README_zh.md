@@ -11,7 +11,7 @@
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
 ![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
-![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.5-0969da)
+![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.6-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
 
@@ -24,8 +24,8 @@
 | 模式 | session |
 | 系统与 CPU | Windows (x64) |
 | 风险等级 | T2 |
-| 成熟度 | verified：draft 0 个，verified 12 个，stable 3 个 |
-| 规范 | tool-driver-cli-spec 1.0.5 |
+| 成熟度 | verified：draft 0 个，verified 16 个，stable 13 个 |
+| 规范 | tool-driver-cli-spec 1.0.6 |
 | 宿主组件 | 需要 |
 <!-- driver:info-card:end -->
 
@@ -84,15 +84,24 @@
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
-- `feature`: get, list, update
-- `model`: get, export, render
+- `feature`: get, list, update, delete (dangerous)
+- `model`: get, check, update, export, render
 - `geometry`: list
 - `distance`: get
 - `dimension`: list, update
-- `parameter`: list, update
-- `relation`: list
+- `parameter`: list, update, create
+- `relation`: list, update
 - `material`: list
 - `component`: list
+- `extrude`: create
+- `revolve`: create
+- `shell`: create
+- `round`: create
+- `pattern`: create
+- `plane`: create
+- `axis`: create
+- `chamfer`: create
+- `draft`: create
 <!-- driver:command-map:end -->
 
 ## 工作方式
@@ -111,7 +120,7 @@ creo-cli 每次调用都输出一个 JSON 信封。`creo-cli reference` 列出�
 
 `--dry-run` 显示任何写操作的预览，什么都不改。确认令牌只能用一次，10 分钟内有效，而且只对它预览过的那次修改有效。授权范围文件设了 `"confirm": "always"` 时，除停止工作外的所有写操作都改为两步确认，人可以逐个批准预览。
 
-**会话模式下的保存。** 修改不等于保存。修改之后，回执报告 `persistence: unchanged`，文档仍有未保存的修改；只有 `creo-cli doc save` 才写入文档的文件。保存的预览列出上次保存以来的所有修改，包括人在 Creo Parametric 里做的修改（`origin: external`），以及结果仍然未知的写操作。
+**会话模式下的保存。** 修改不等于保存。修改之后，回执报告 `persistence: unchanged`，文档仍有未保存的修改；只有 `creo-cli doc save` 才写入文档的文件。保存的预览列出上次保存以来的所有修改，包括人在 Creo Parametric 里做的修改（`origin: external`），以及结果仍然未知的写操作。Creo Parametric 一改就自己存盘的命令按两步确认，回执报告 `persistence: saved`。
 
 **回执。** 每次写操作都返回回执，分别报告修改是否执行、是否生效、是否送达、是否保存、是否验证。写操作的回复丢失时，creo-cli 返回 `E_OUTCOME_UNKNOWN` 和查明结果的命令，绝不会把写操作再发一遍。
 
@@ -190,13 +199,15 @@ creo-cli model export --doc bracket.prt --output D:/work/bracket/out/bracket.stp
 | `CREO_CLI_SCOPE_FILE` | 状态目录里的 `scope.json` | 授权范围文件（见「授权」） |
 | `HTTPS_PROXY`、`HTTP_PROXY`、`NO_PROXY` | 未设置 | `update` 和 `doctor` 用的代理，只有这两个命令访问 npm 仓库 |
 | `CREO_CLI_JDK` | `PRO_JAVA_COMMAND` 所在的 JDK，否则 `JAVA_HOME` | `plugin install` 构建宿主组件用的 JDK 25 |
+| `CREO_CLI_VCVARS` | 最新的、带 x64 C 编译器的 Visual Studio | `plugin install` 编译宿主组件 C 库用的 `vcvars64.bat` |
 | `CREO_CLI_FAKE_HOST` | 未设置 | 只用于测试：把每次调用发给模拟宿主而不是 Creo Parametric，并把每个结果标为模拟结果 |
 
 ### 怎样找到 Creo Parametric
 
 - 安装：creo-cli 在 `C:\Program Files\PTC`、`C:\PTC`、`D:\PTC` 和 `E:\PTC` 下最多往下找四层，找含有 Object TOOLKIT Java（`text\java\otk.jar`）的 `Common Files` 文件夹。版本取自安装文件夹的名字，如 `Creo 13.4.1.0`。`creo-cli doctor` 显示找到的结果。
 - 运行中的实例：每个运行中的 `xtop.exe` 是一个会话，ID 由进程号和启动时间组成，如 `creo-9184-1d9a4c2e`。`creo-cli session list` 列出它们；Creo 里开着模态弹窗时显示为 `blocked`。
-- 宿主组件：会话只有加载了宿主组件才能驱动。creo-cli 以源码发布它：`creo-cli plugin install` 用 JDK 25 编译，再用 PTC 的 `protk_unlock` 解锁；解锁需要许可证服务器上有 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可，运行需要 Object TOOLKIT Java 的运行、开发或扩展许可。先运行 `creo-cli plugin install`，在 Creo 启动用的 `config.pro` 里加一行，再启动 Creo：`toolkit_registry_file <install_path>\protk.dat`，`install_path` 是 `creo-cli plugin get` 显示的文件夹，在 `%LOCALAPPDATA%\creo-cli\host` 下。升级时这一行不用改；creo-cli 自己从不修改 `config.pro`。Creo 只在启动时加载宿主组件，所以升级后要由人重启 Creo。
+- 宿主组件：会话只有加载了宿主组件才能驱动。creo-cli 以源码发布它：`creo-cli plugin install` 用 JDK 25 编译它的 Java 部分，再用 PTC 的 `protk_unlock` 解锁；解锁需要许可证服务器上有 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可，运行需要 Object TOOLKIT Java 的运行、开发或扩展许可。`plugin install` 还会编译它的 C 库（画草图和关闭 Creo 要用）：用 Visual Studio 2022 的 C 编译器（或者装了“使用 C++ 的桌面开发”的 Build Tools），对着你的 Creo 里的 Creo TOOLKIT 组件编译，再用 Creo TOOLKIT 开发许可解锁；缺这些时照样装好 Java 部分，只有要用 C 库的命令被拒绝，并说明原因。先运行 `creo-cli plugin install`，在 Creo 启动用的 `config.pro` 里加一行，再启动 Creo：`toolkit_registry_file <install_path>\protk.dat`，`install_path` 是 `creo-cli plugin get` 显示的文件夹，在 `%LOCALAPPDATA%\creo-cli\host` 下。升级时这一行不用改；creo-cli 从不修改你启动 Creo 用的 `config.pro`。Creo 只在启动时加载宿主组件，所以升级后要由人重启 Creo。
+- creo-cli 启动的 Creo：`creo-cli session open` 从宿主组件旁边的 `start` 文件夹启动一个自己的 Creo，那里的 `config.pro` 加载宿主组件，并设 `open_protk_unsigned_apps always`，让这个 Creo 不问就加载没有签名的 C 库；你自己的 Creo 设置不变。`session close` 像“文件 > 退出”那样关闭这种 Creo，有模型没保存时拒绝。
 - `CREO_CLI_STATE_DIR` 改变状态目录的位置，`protk.dat` 和宿主组件写的发现文件也随之移动。
 
 ## 卸载

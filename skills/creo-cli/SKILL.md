@@ -4,17 +4,17 @@ description: >-
   Operates Creo Parametric through the creo-cli command line: checks the install,
   reads and changes Creo Parametric with preview and confirmation, and reports what
   changed, what was saved and what was verified.
-  Use it to ask about a Creo part, assembly or drawing (volume, mass, features, dimensions,
-  parameters, relations, materials, components), to change a dimension's value or tolerance or a
-  parameter, to suppress, resume or rename a feature, and to open, save, close and export models
-  (STEP, IGES, STL, PDF) or take a JPEG. Not for creating models or features, editing assemblies
-  or drawings, or Windchill: creo-cli 1.0 cannot do them.
-  查询 Creo 零件、装配、工程图（体积、质量、特征、尺寸、参数、关系、材料、元件），修改尺寸的值或公差、
-  修改参数，隐含、恢复、改名特征，打开、保存、关闭、导出模型（STEP、IGES、STL、PDF）或出 JPEG 图片。
-  不能新建模型或特征、修改装配或工程图、操作 Windchill。
+  Use it to ask about a Creo part, assembly or drawing (volume, mass, dimensions, parameters,
+  relations, materials, components), to change a dimension's value or tolerance or a parameter,
+  to start or close Creo, and to create, open, save, close and export models (STEP, IGES, STL,
+  PDF) or take a JPEG. Building features is in creo-feature. Not for editing assemblies or
+  drawings, or Windchill.
+  查询 Creo 零件、装配、工程图（体积、质量、尺寸、参数、关系、材料、元件），修改尺寸的值或公差、修改参数，
+  启动或关闭 Creo，新建、打开、保存、关闭、导出模型（STEP、IGES、STL、PDF）或出 JPEG 图片。建特征见 creo-feature。
+  不能修改装配或工程图、操作 Windchill。
   用 creo-cli 命令行操作 Creo Parametric：检查安装、读取、预览确认后修改，并汇报改了什么、存了没有、验证了没有。
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # creo-cli
@@ -43,13 +43,12 @@ Check `ok`; on failure, read `error.details.next_action`.
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
-- `feature`: get, list, update
-- `model`: get, export, render
+- `model`: get, update, export, render
 - `geometry`: list
 - `distance`: get
 - `dimension`: list, update
-- `parameter`: list, update
-- `relation`: list
+- `parameter`: list, update, create
+- `relation`: list, update
 - `material`: list
 - `component`: list
 <!-- driver:command-map:end -->
@@ -86,7 +85,7 @@ Check a change with its `result` and receipt, and with the read commands, which 
 
 ### Save
 
-A change in session mode is not saved until `creo-cli doc save`; its receipt says `persistence: unchanged`. A receipt with verification `deferred` is verified by the next `doc save` of that document; it is not verified before. Before confirming a save, check its preview: it lists every change since the last save, including changes made outside creo-cli (`origin: external`), and in `blocked_by` the operations whose outcome is still unknown. Settle those first.
+A change in session mode whose receipt says `persistence: unchanged` is not saved until `creo-cli doc save`; a change the application saves at once says `saved`. A receipt with verification `deferred` is verified by the next `doc save` of that document; it is not verified before. Before confirming a save, check its preview: it lists every change since the last save, including changes made outside creo-cli (`origin: external`), and in `blocked_by` the operations whose outcome is still unknown. Settle those first.
 
 ### Long jobs and blocking
 
@@ -140,4 +139,5 @@ End every task with a report that answers each point separately:
 
 | Task | Skill |
 |---|---|
-| Every Creo Parametric task | `creo-cli`, this Skill |
+| Model a part, add, read, suppress or rename features | `creo-feature` |
+| Everything else in Creo Parametric | `creo-cli`, this Skill |

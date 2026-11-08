@@ -1,0 +1,93 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.1.0",
+  "commit": "56e3dc36a63f",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-07T21:33:11Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "relation update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\rel1.prt",
+        "--relations",
+        "[\"BODY_LENGTH = POSITIONS * OUTLET_PITCH + 32\"]"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session"
+    },
+    {
+      "command": "relation update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\rel1.prt",
+        "--relations",
+        "[]"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "empty",
+      "mode": "session"
+    },
+    {
+      "command": "relation update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\rel1.prt",
+        "--relations",
+        "{\"a\": 1}"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session"
+    },
+    {
+      "command": "relation update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "not-open",
+        "--relations",
+        "[]"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session"
+    },
+    {
+      "command": "relation update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\rel1.prt",
+        "--relations",
+        "[\"BODY_LENGTH = NOSUCH * 2\"]"
+      ],
+      "exit": 6,
+      "result": "pass",
+      "matrix_row": "conflict",
+      "mode": "session"
+    }
+  ]
+}

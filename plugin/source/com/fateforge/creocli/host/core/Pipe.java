@@ -129,8 +129,13 @@ public final class Pipe {
         } catch (Throwable ignored) {
             // The acceptor ends at its next connection, or with the JVM.
         }
+        // Ended on threads of their own: a connection's thread waits in a synchronous read, and
+        // Windows holds every other call on that handle until the read ends, so ending it here
+        // would hold Creo's main thread, and Creo's exit, until the CLI closed its end.
         for (MemorySegment handle : open) {
-            end(handle);
+            Thread ender = new Thread(() -> end(handle), "creo-cli-host-pipe-end");
+            ender.setDaemon(true);
+            ender.start();
         }
     }
 

@@ -165,6 +165,28 @@ final class Docs {
         return out;
     }
 
+    /** The documents in session with unsaved changes, by ID; one whose state is unknown counts. */
+    List<String> unsaved() throws jxthrowable {
+        List<String> out = new ArrayList<>();
+        Models all = Creo.session().ListModels();
+        for (int i = 0; all != null && i < all.getarraysize(); i++) {
+            Model model = all.get(i);
+            if (!isDocument(model)) {
+                continue;
+            }
+            boolean modified;
+            try {
+                modified = model.GetIsModified();
+            } catch (Throwable unreadable) {
+                modified = true;
+            }
+            if (modified) {
+                out.add(Creo.fileName(model));
+            }
+        }
+        return out;
+    }
+
     static boolean isDocument(Model model) {
         try {
             int type = model.GetType().getValue();
@@ -429,6 +451,208 @@ final class Docs {
         File written = versions[1] == 0 ? plain : new File(plain.getParentFile(), plain.getName() + "." + versions[1]);
         Integer loaded = loadedVersion(model);
         return written.isFile() && (loaded == null || loaded == versions[1]);
+    }
+
+    // ------------------------------------------------------------------ create and save as
+
+    private static final java.util.regex.Pattern MODEL_NAME = java.util.regex.Pattern.compile("[A-Za-z0-9][A-Za-z0-9_-]{0,30}");
+    private static final String DEFAULT_TEMPLATE = "mmns_part_solid_abs";
+    /** The parameters a title block and a BOM read; the start part has them, empty. */
+    private static final String[] START_PARAMETERS = {"PART_NO", "DESCRIPTION"};
+
+    /**
+     * doc create (DCLI-212): a new part from a start part, written at once to --path. Without
+     * --template the start part is Creo's own metric template mmns_part_solid_abs with the
+     * parameters PART_NO and DESCRIPTION added, whatever template_solidpart says: some
+     * installations default to inch. Creo writes a copied model into its current directory, so
+     * that is the target folder for the moment of the copy and the save.
+     */
+    Object create(Map<String, Object> params) throws Exception {
+        String kind = Json.string(params, "kind", "part");
+        if (!"part".equals(kind)) {
+            throw new HostError(HostError.UNSUPPORTED, "doc create makes parts (--kind part); " + kind + " is not supported yet.");
+        }
+        String path = Json.string(params, "path", null);
+        if (path == null) {
+            throw new HostError(HostError.VALIDATION, "doc create needs --path: Creo writes a new part to its file at once.");
+        }
+        File file = new File(path).getAbsoluteFile();
+        String fileName = file.getName().replaceFirst("\\.[0-9]+$", "");
+        if (!fileName.toLowerCase(Locale.ROOT).endsWith(".prt")) {
+            throw new HostError(HostError.VALIDATION, "--path names a part file, such as D:/work/cover.prt; " + file.getName() + " is not one.");
+        }
+        String name = fileName.substring(0, fileName.length() - 4);
+        if (!MODEL_NAME.matcher(name).matches()) {
+            throw new HostError(HostError.VALIDATION, "A Creo model name is 1 to 31 letters, digits, _ or -, starting with a letter or "
+                    + "digit; " + name + " is not one.");
+        }
+        File dir = file.getParentFile();
+        if (dir == null || !dir.isDirectory()) {
+            throw new HostError(HostError.NOT_FOUND, "The folder " + (dir == null ? path : dir.getPath()) + " does not exist.");
+        }
+        File plain = new File(dir, fileName);
+        boolean overwrite = Boolean.TRUE.equals(Json.bool(params, "overwrite"));
+        if (newestVersion(plain) >= 0 && !overwrite) {
+            throw HostError.conflict("application_state", plain + " exists already; it appeared after the preview.");
+        }
+        Session session = Creo.session();
+        if (Creo.inSession(session, name, ModelType.MDL_PART) != null) {
+            throw HostError.conflict("application_state", "A model named " + fileName + " is already in session; Creo holds one "
+                    + "model of a name at a time.").with("knowledge", java.util.List.of("creo-basics"));
+        }
+        String templatePath = templatePath(params);
+        Model source = startPart(session, templatePath);
+        String home = session.GetCurrentDirectory();
+        Model made;
+        try {
+            session.ChangeDirectory(dir.getPath());
+            try {
+                made = source.CopyAndRetrieve(name, null);
+            } finally {
+                session.ChangeDirectory(home);
+            }
+        } catch (jxthrowable refused) {
+            throw new HostError(HostError.NATIVE, "Creo did not create " + plain + ".").nativeMessage(refused.toString());
+        } finally {
+            try {
+                source.Erase();
+            } catch (Throwable stays) {
+                // The start part stays in session, unchanged and unsaved.
+            }
+        }
+        if (templatePath == null) {
+            addStartParameters(made);
+            made.Save();
+        }
+        saved(Creo.fileName(made));
+        try {
+            session.CreateModelWindow(made);
+            made.Display();
+        } catch (Throwable noWindow) {
+            return createdFacts(made, plain);
+        }
+        final Model shown = made;
+        return new MainThread.Later(() -> createdFacts(shown, plain));
+    }
+
+    private Map<String, Object> createdFacts(Model made, File plain) throws Exception {
+        Map<String, Object> out = facts("dispatched", "applied", Json.map("document", describe(made)));
+        out.put("persistence", "saved");
+        File written = newestFile(plain);
+        if (written == null) {
+            throw new HostError(HostError.NATIVE, "Creo reported no file for " + plain + " after creating it.", "dispatched");
+        }
+        List<Object> files = new ArrayList<>();
+        files.add(Json.map("path", written.getAbsolutePath(), "bytes", written.length(), "sha256", sha256(written)));
+        out.put("files", files);
+        return out;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String templatePath(Map<String, Object> params) {
+        Object template = params.get("template");
+        if (template instanceof Map) {
+            return Json.string((Map<String, Object>) template, "path", null);
+        }
+        return template == null ? null : String.valueOf(template);
+    }
+
+    /** The start part in session: --template, or Creo's own metric part template. */
+    private static Model startPart(Session session, String templatePath) throws jxthrowable {
+        ModelDescriptor descriptor;
+        if (templatePath == null) {
+            descriptor = pfcModel.ModelDescriptor_Create(ModelType.MDL_PART, DEFAULT_TEMPLATE, null);
+            descriptor.SetPath(new File(Ops.commonFiles(), "templates").getPath());
+        } else {
+            File template = new File(templatePath).getAbsoluteFile();
+            String base = template.getName().replaceFirst("\\.[0-9]+$", "");
+            if (!base.toLowerCase(Locale.ROOT).endsWith(".prt")) {
+                throw new HostError(HostError.VALIDATION, "--template names a part file; " + template.getName() + " is not one.");
+            }
+            descriptor = pfcModel.ModelDescriptor_Create(ModelType.MDL_PART, base.substring(0, base.length() - 4), null);
+            descriptor.SetPath(template.getParent());
+        }
+        try {
+            return session.RetrieveModelWithOpts(descriptor, com.ptc.pfc.pfcSession.pfcSession.RetrieveModelOptions_Create());
+        } catch (jxthrowable refused) {
+            throw new HostError(HostError.NATIVE, "Creo could not open the start part "
+                    + (templatePath == null ? DEFAULT_TEMPLATE : templatePath) + ".").nativeMessage(refused.toString());
+        }
+    }
+
+    private static void addStartParameters(Model model) throws jxthrowable {
+        for (String name : START_PARAMETERS) {
+            if (model.GetParam(name) == null) {
+                model.CreateParam(name, com.ptc.pfc.pfcModelItem.pfcModelItem.CreateStringParamValue(""));
+            }
+        }
+    }
+
+    /**
+     * doc save-as: a file of the model under another name, written by Creo's Copy, which writes
+     * into Creo's current directory and leaves the model in session as it was. Under the same
+     * name in another folder Creo's Backup writes it, and the model in session then belongs to
+     * the new file, as Creo does it.
+     */
+    Map<String, Object> saveAs(Model model, String path, boolean overwrite) throws Exception {
+        String id = Creo.fileName(model);
+        File file = new File(path).getAbsoluteFile();
+        String fileName = file.getName().replaceFirst("\\.[0-9]+$", "");
+        String extension = id.substring(id.lastIndexOf('.'));
+        if (!fileName.toLowerCase(Locale.ROOT).endsWith(extension.toLowerCase(Locale.ROOT))) {
+            throw new HostError(HostError.VALIDATION, "--output must keep the model's type: a " + extension + " file, not " + file.getName() + ".");
+        }
+        String name = fileName.substring(0, fileName.length() - extension.length());
+        if (!MODEL_NAME.matcher(name).matches()) {
+            throw new HostError(HostError.VALIDATION, "A Creo model name is 1 to 31 letters, digits, _ or -, starting with a letter or "
+                    + "digit; " + name + " is not one.");
+        }
+        File dir = file.getParentFile();
+        if (dir == null || !dir.isDirectory()) {
+            throw new HostError(HostError.NOT_FOUND, "The folder " + (dir == null ? path : dir.getPath()) + " does not exist.");
+        }
+        File plain = new File(dir, fileName);
+        if (newestVersion(plain) >= 0 && !overwrite) {
+            throw HostError.conflict("application_state", plain + " exists already; it appeared after the preview.");
+        }
+        String current = path(model);
+        if (current != null && new File(current).getAbsolutePath().equalsIgnoreCase(plain.getAbsolutePath())) {
+            throw new HostError(HostError.VALIDATION, plain + " is the model's own file; save it with doc save.");
+        }
+        String base = id.substring(0, id.length() - extension.length());
+        Session session = Creo.session();
+        try {
+            if (name.equalsIgnoreCase(base)) {
+                ModelDescriptor where = pfcModel.ModelDescriptor_Create(model.GetType(), base, null);
+                where.SetPath(dir.getPath() + File.separator);
+                model.Backup(where);
+                saved(id);
+            } else {
+                if (Creo.inSession(session, name, model.GetType()) != null) {
+                    throw HostError.conflict("application_state", "A model named " + fileName + " is in session; Creo holds one "
+                            + "model of a name at a time.").with("knowledge", java.util.List.of("creo-basics"));
+                }
+                String home = session.GetCurrentDirectory();
+                session.ChangeDirectory(dir.getPath());
+                try {
+                    model.Copy(name, null);
+                } finally {
+                    session.ChangeDirectory(home);
+                }
+            }
+        } catch (jxthrowable refused) {
+            throw new HostError(HostError.NATIVE, "Creo did not write " + plain + ".").nativeMessage(refused.toString());
+        }
+        File written = newestFile(plain);
+        if (written == null) {
+            throw new HostError(HostError.NATIVE, "Creo reported no file at " + plain + " after writing it.", "dispatched");
+        }
+        Map<String, Object> out = facts("dispatched", "applied", Json.map("document", describe(model)));
+        out.put("persistence", "saved");
+        List<Object> files = new ArrayList<>();
+        files.add(Json.map("path", written.getAbsolutePath(), "bytes", written.length(), "sha256", sha256(written)));
+        out.put("files", files);
+        return out;
     }
 
     /** Close a model's window, then -- on a later tick, as Creo requires -- erase it from session. */

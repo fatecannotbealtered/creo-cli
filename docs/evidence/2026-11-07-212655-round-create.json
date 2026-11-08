@@ -1,0 +1,40 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.1.0",
+  "commit": "56e3dc36a63f",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-07T21:26:55Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "round create",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\rnd2.prt",
+        "--name",
+        "TOP_ROUND",
+        "--radius",
+        "2mm",
+        "--radius-name",
+        "TOP_R",
+        "--edges",
+        "BASE/end:outer-edges"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "unsaved",
+      "mode": "session",
+      "doc_kind": "part"
+    }
+  ]
+}

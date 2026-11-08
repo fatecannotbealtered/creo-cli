@@ -7,10 +7,13 @@ opens it closes it again in `after`.
 """
 import re
 
+# The questions say 保存 or 存盘 for saving; a report may use either.
 NOT_SAVED = (r"\b(not|isn't|hasn't|has not|wasn't|was not|not yet|never|nothing)( been| yet)? saved\b|\bunsaved\b"
-             r"|\bsaved\s*[:：-]?\s*(no|not)\b|未保存|没有保存|尚未保存|还没保存|没保存")
-SAVED = (r"\bsaved\s*[:：-]?\s*yes\b|\b(is|was|has been|have been|now|got) saved\b|\bsaved (it|the|disc|to disk|all)\b"
-         r"|已保存|已经保存|保存好了|保存成功")
+             r"|\bsaved\s*[:：-]?\s*(no|not)\b|\b(didn't|did not) save\b"
+             r"|(未|没有|尚未|还没|没)(保存|存盘)")
+SAVED = (r"\bsaved\s*[:：-]?\s*yes\b|\b(is|was|has been|have been|now|got) saved\b"
+         r"|\b(i|and|then|was|were) saved\b|\bsaved (it|the|disc|to disk|all|a new)\b|\bsaved [\w.-]+\.(prt|asm|drw)\b"
+         r"|(已|已经)(保存|存盘)|(保存|存盘)(好了|成功|完成|了)|(保存|存盘)\s*[:：]\s*(是|已|完成)")
 NOT_VERIFIED = r"\bnot (been )?verified\b|\bunverified\b|\bverified\s*[:：-]?\s*no\b|未验证|没有验证|没验证"
 
 

@@ -4,7 +4,7 @@ English | [中文](APPLICATION_zh.md)
 
 This survey records what Creo Parametric can do and how it can be automated. It is filled in before commands are designed, and every capability has a disposition: `provided` when a command of creo-cli offers it.
 
-Sources marked "earlier creo-cli" are the documents and code of the earlier creo-cli at commit `fd35893` (in this repository's git history). They record observations made on Creo Parametric 13.4.1.0.
+Sources marked "earlier creo-cli" are the documents and code of the earlier creo-cli at commit `bc50267` (in this repository's git history). They record observations made on Creo Parametric 13.4.1.0.
 
 ## Application
 
@@ -58,6 +58,16 @@ From documents down, with the names Creo's user interface and manuals use:
 
 ## Threading and Blocking
 
+- `ProEngineerEnd` called within a call from the Java host crashes Creo; called from a Windows timer on Creo's main thread after the call has returned, Creo ends normally in 3 to 10 s and calls every application's stop function (measured on Creo 13.4.1.0).
+- A Creo that ended by force shows a modal "not closed normally" dialog (检索) at its next start, until one ends normally (measured on Creo 13.4.1.0).
+- A sketch built through TOOLKIT C in intent manager mode gets no implicit constraints: each line, arc and junction needs its constraints stated (coincident ends, tangency, horizontal, vertical, equal radii), or Creo adds a weak dimension per open freedom; stated in full, only the dimensions given remain, and changing one keeps the constraints, such as a symmetric rectangle staying symmetric (measured on Creo 13.4.1.0). Without the intent manager, Creo's automatic dimensions go to the nearest edges, not to the dimensions a design names.
+- A datum axis is built from the constraints form of `ProDtmAxis.h` (`PRO_E_DTMAXIS_CONSTRAINTS`); the legacy elements (`PRO_E_DTMAXIS_TYPE`, `PRO_E_DTMAXIS_PLANE1`) are refused. A feature taken back through `Solid.ExecuteFeatureOps` with a delete operation can stay in the model; `WSolid.DeleteFeatures` removes it (measured on Creo 13.4.1.0).
+- `SetRelations` keeps a relation Creo cannot evaluate and only flags it (ModelCHECK reports `RELATION_ERRS`); `EvaluateExpression` on its right-hand side throws. `Part.RetrieveMaterial` takes a name, not a path, and reads the `.mtl` file from Creo's current directory (measured on Creo 13.4.1.0).
+- ModelCHECK through `ExecuteModelCheck` runs in under a second on a small part, writes an XML, HTML and JS report with images into the folder it is given, and with the default configuration neither saves nor changes the model (measured on Creo 13.4.1.0).
+- Keeping the current view as a named view (`ProViewStore`) and deleting it after `ProViewRetrieve` puts the orientation back exactly, but Creo counts it as a change of the model: a model saved before shows as modified after (measured on Creo 13.4.1.0).
+- A revolve built from an element tree with an external axis (`PRO_REV_AXIS_EXT_REF` and a datum axis) is refused with a general error; with `PRO_REV_AXIS_INT_REF` it turns about a geometry centerline of its sketch, a centerline made non-construction with `ProSectionEntityConstructionSet` (measured on Creo 13.4.1.0).
+- `WFeature.CreatePattern` answers a member of the new pattern, not the pattern header; the header is found by the name given in the tree. Which way `PRO_E_DIR_PAT_DIR1_FLIP` steps depends on the direction reference's own orientation; creo-cli reads the step from the first copy and flips it when it went the other way (measured on Creo 13.4.1.0).
+- `PRO_E_STD_DIRECTION` picks a side relative to Creo's own orientation of the sketch plane, which differs between a datum plane and a face; creo-cli reads which side a new extrude went to from its faces and turns it when it went the other way.
 - Every toolkit call must run on Creo's main thread; a synchronous application gets there from a timer callback. Creo 13.4 keeps firing the timer while a modal dialog is open (measured with File > Options and a toolkit message dialog), and it leaves its main window enabled; the CLI finds the dialog by its window title and refuses every call until a person closes it.
 - Dialogs seen blocking automation: the unsigned toolkit DLL prompt at load (each session), the "Retrieval"/"检索"/"恢复" recovery dialogs at startup, ORDER_DEBUG, a View States "Apply" request, license dialogs, and a crash dialog when the workstation was locked (Intel OpenGL driver) (earlier creo-cli, `docs/SERVICE.md`, `examples/engineering/RecoveryIsolation.ps1`, `docs/ASSEMBLY-INSTRUCTIONS-WORKFLOW.md`).
 - Creo is busy during regeneration and long operations; measured: complex assembly constraint edits 135–194 s, a family table preview about 76 s, a BOM table confirmation 568 s (earlier creo-cli, `docs/ASSEMBLY-CONSTRAINTS.md`, `docs/FAMILY-TABLES.md`, `docs/WORKFLOW-BUDGET.md`).
@@ -77,7 +87,9 @@ From documents down, with the names Creo's user interface and manuals use:
 ## Save and Undo
 
 - Save writes a new numbered version (`name.prt.3` after `.2`) into the directory the model came from, not the working directory, even when nothing changed. Old versions stay on disk.
-- A model created from a template with `CopyAndRetrieve` is written to disk at once as `name.prt.1`, unlike File > New.
+- A model created from a template with `CopyAndRetrieve` is written to disk at once as `name.prt.1`, unlike File > New, into Creo's current directory (measured on Creo 13.4.1.0); creo-cli changes that directory for the moment of the copy and puts it back.
+- `Copy` writes a copy under a new name into Creo's current directory and leaves the model in session as it was. `Backup` writes the model under its own name into another folder, given with a closing separator, and the model in session then belongs to that folder: its next save goes there (measured on Creo 13.4.1.0).
+- Neither an older numbered version nor a path with a version number opens that version: Creo opens the newest, and a model opened that way fails to save (measured on Creo 13.4.1.0).
 - Unsaved changes show as the model's modified flag; a freshly opened part already reports modified, and a common-name change can report unmodified.
 - Save a Copy exists (`save_doc_as`); erasing a model from session discards its unsaved changes.
 - There is no undo in the toolkit; only a failed regeneration can be undone (`SetUndoIfFail`). creo-cli therefore does not offer `doc undo` (DCLI-067).
@@ -94,6 +106,7 @@ From documents down, with the names Creo's user interface and manuals use:
 - The host component needs the `ObjectToolkitJava` license option; without it nothing works. Deleting a drawing's own dimension (`ProDimensionDelete`) needs the TOOLKIT for 3D Drawings license.
 - `plugin install` builds the host component on the user's computer: it needs a JDK 25, and to unlock it the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license. Running the unlocked component needs one of: the Creo Object TOOLKIT Java runtime license, its development license, or its extension license with a Creo TOOLKIT license (PTC, Creo Object TOOLKIT Java User's Guide, Unlocking, Running and Signing the Creo Object TOOLKIT Java Application).
 - Creo delivered by application streaming (PTC trial) has no toolkits.
+- The host component's C library is compiled on the user's computer with Visual Studio's x64 C compiler against the Creo TOOLKIT component and unlocked with `protk_unlock`, which needs a Creo TOOLKIT development license; unlocked, it runs without one (PTC, Creo TOOLKIT User's Guide, Unlocking the Application).
 - License dialogs at startup need a person (`activate_license`).
 
 ## Capabilities
@@ -103,29 +116,33 @@ Each capability has one row with an ID `CAP-nnn`, unique in this survey, and one
 | ID | Capability | Interface | Disposition | Reason |
 |---|---|---|---|---|
 | CAP-001 | Read a model's summary: kind, units, material, mass properties, bounding box, feature count | OTK Java | provided | - |
-| CAP-002 | Change a model's common name, tolerance standard and class, and material | OTK Java; TOOLKIT C for the tolerance standard | deferred | Later version; not in the 1.0.0 scope |
+| CAP-002 | Change a model's common name, tolerance standard and class, and material | OTK Java; TOOLKIT C for the tolerance standard | provided | Material and common name; tolerance standard later |
 | CAP-003 | Export a part or assembly to STEP, IGES or STL, or a drawing to PDF | OTK Java | provided | - |
 | CAP-004 | Render a JPEG image of a part or assembly | OTK Java `ExportRasterImage` | provided | - |
 | CAP-005 | Set Creo's working directory, where new models are written | OTK Java `ChangeDirectory` | deferred | Later version; not in the 1.0.0 scope |
+| CAP-007 | Start a Creo of the tool's own that loads the host component | `parametric.exe` from a start folder with its own `config.pro` | provided | - |
+| CAP-008 | End Creo as File > Exit does, unsaved changes refused | TOOLKIT C `ProEngineerEnd` from a Windows timer | provided | - |
+| CAP-009 | Create a part from a start part, written at once to a path | OTK Java `CopyAndRetrieve` | provided | - |
+| CAP-047 | Write a copy of a model under another name, or the model into another folder | OTK Java `Copy`, `Backup` | provided | - |
 | CAP-006 | Regenerate a model on request | OTK Java | deferred | Every write already regenerates; never run live |
 | CAP-010 | List the features in regeneration order with type and status | OTK Java | provided | - |
 | CAP-011 | Read one feature: dimensions, parents, children | OTK Java | provided | - |
 | CAP-046 | Describe a feature's sketch entities | TOOLKIT C | deferred | Later version; needs the C library for every read |
 | CAP-012 | Suppress, resume or rename a feature | OTK Java | provided | - |
-| CAP-013 | Delete a feature with the features that depend on it | OTK Java `DeleteFeatures` | deferred | Later version; not in the 1.0.0 scope |
-| CAP-014 | Extrude a sketched closed profile, adding or removing material | OTK Java element trees; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
-| CAP-015 | Revolve a sketched closed profile through 360 degrees | OTK Java; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
-| CAP-016 | Create a datum plane offset from a plane or planar face | OTK Java | deferred | Later version; not in the 1.0.0 scope |
-| CAP-017 | Create a datum axis through two planes, an edge or a cylinder | OTK Java | deferred | Later version; not in the 1.0.0 scope |
-| CAP-018 | Round edges to a constant radius | OTK Java | deferred | Later version; not in the 1.0.0 scope |
-| CAP-019 | Chamfer edges by an equal distance | OTK Java | deferred | Later version; not in the 1.0.0 scope |
+| CAP-013 | Delete a feature with the features that depend on it | OTK Java `DeleteFeatures` | provided | - |
+| CAP-014 | Extrude a sketched closed profile, adding or removing material | OTK Java element trees; TOOLKIT C sketch | provided | - |
+| CAP-015 | Revolve a sketched closed profile through 360 degrees | OTK Java; TOOLKIT C sketch | provided | About a geometry centerline of the sketch, up to 360 degrees |
+| CAP-016 | Create a datum plane offset from a plane or planar face | OTK Java | provided | - |
+| CAP-017 | Create a datum axis through two planes, an edge or a cylinder | OTK Java | provided | Through two planes or a cylinder; through an edge later |
+| CAP-018 | Round edges to a constant radius | OTK Java | provided | - |
+| CAP-019 | Chamfer edges by an equal distance | OTK Java | provided | - |
 | CAP-020 | Place a simple or standard hole on a planar face (linear, radial or coaxial) | OTK Java; TOOLKIT C for thread series | deferred | Later version; not in the 1.0.0 scope |
 | CAP-021 | Add a cosmetic thread to a cylindrical surface | OTK Java | deferred | Later version; not in the 1.0.0 scope |
-| CAP-022 | Shell a part inward, removing faces | OTK Java | deferred | Later version; not in the 1.0.0 scope |
-| CAP-023 | Draft faces about a hinge plane | OTK Java | deferred | Later version; not in the 1.0.0 scope |
+| CAP-022 | Shell a part inward, removing faces | OTK Java | provided | - |
+| CAP-023 | Draft faces about a hinge plane | OTK Java | provided | - |
 | CAP-024 | Add a profile rib | OTK Java; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
 | CAP-025 | Sweep a closed section along a sketched path | OTK Java; TOOLKIT C sketch | deferred | Later version; not in the 1.0.0 scope |
-| CAP-026 | Pattern a feature along a direction or about an axis | OTK Java `CreatePattern` | deferred | Later version; not in the 1.0.0 scope |
+| CAP-026 | Pattern a feature along a direction or about an axis | OTK Java `CreatePattern` | provided | Along a direction; about an axis later |
 | CAP-027 | Mirror the whole part about a plane | OTK Java merge feature | deferred | Later version; not in the 1.0.0 scope |
 | CAP-028 | Mirror selected features | OTK Java | excluded | Element-tree mirror of features is not supported (ProMirror.h) |
 | CAP-029 | Partial revolves, angled datum planes, counterbore and countersink holes, multi-face drafts | OTK Java | deferred | Never built or run; later version |
@@ -135,9 +152,9 @@ Each capability has one row with an ID `CAP-nnn`, unique in this survey, and one
 | CAP-033 | Change a dimension's value and regenerate; Creo undoes a failed regeneration | OTK Java `SetUndoIfFail` | provided | - |
 | CAP-034 | Set a dimension's tolerance: plus-minus, symmetric, limits, ISO fit, basic, none; its decimals | OTK Java; TOOLKIT C | provided | - |
 | CAP-035 | List parameters and change a parameter's value | OTK Java | provided | - |
-| CAP-043 | Create parameters | OTK Java | deferred | Later version; 1.0.0 changes only existing parameters |
+| CAP-043 | Create parameters | OTK Java | provided | - |
 | CAP-036 | Read a model's relations | OTK Java | provided | - |
-| CAP-044 | Replace a model's relations | OTK Java | deferred | Later version; never re-verified after the earlier tool's last change |
+| CAP-044 | Replace a model's relations | OTK Java | provided | - |
 | CAP-037 | Read a family table: columns, instances, cells | OTK Java | deferred | Later version; not in the 1.0.0 scope |
 | CAP-038 | Change family table cells | OTK Java | deferred | Later version; not in the 1.0.0 scope |
 | CAP-039 | Remove an instance row from a family table | OTK Java | deferred | Later version; not in the 1.0.0 scope |

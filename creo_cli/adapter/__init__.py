@@ -18,6 +18,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -44,6 +45,13 @@ VERSION_IN_PATH = re.compile(r"Creo (\d+\.\d+\.\d+\.\d+)", re.IGNORECASE)
 # given HELLO_LIMIT_MS, are answered by the host's pipe thread; the document list gets the rest.
 SESSION_LIMIT_MS = 1800
 HELLO_LIMIT_MS = 500
+# session open: Creo starts in about half a minute, more while it waits for a license; the
+# call runs as a long job (DCLI-065) and gives up after this long.
+START_LIMIT_S = 600
+# session close: Creo ends a second after the host's answer and takes a few seconds to exit.
+END_LIMIT_S = 30
+OWNED = "owned-sessions"
+DETACHED = 0x00000008 | 0x00000200 | 0x08000000  # DETACHED_PROCESS, CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW
 
 
 def _root() -> Path:
@@ -106,6 +114,7 @@ class Adapter(BaseAdapter):
 
     def sessions(self, request: dict[str, Any]) -> dict[str, Any]:
         hosts = {e["pid"]: e for e in read_discovery(str(self._state_dir() / "hosts")) if pid_alive(e["pid"])}
+        owned = set(self.store.get(OWNED, []))
         items = []
         asks = []
         for pid in windows.processes("xtop.exe"):
@@ -113,7 +122,7 @@ class Adapter(BaseAdapter):
             version = version_of(windows.image_path(pid)) or "unknown"
             item: dict[str, Any] = {
                 "id": sid, "application": {"name": "Creo Parametric", "version": version}, "pid": pid,
-                "owned": False, "generation": 0, "state": "ready", "documents": [], "plugin_loaded": None,
+                "owned": sid in owned, "generation": 0, "state": "ready", "documents": [], "plugin_loaded": None,
             }
             # Looked for on every call: Creo keeps answering its toolkit while a modal dialog is open (DCLI-204).
             title = windows.blocker(pid)
@@ -172,6 +181,109 @@ class Adapter(BaseAdapter):
         except (OSError, ValueError, DriverError):
             pass
 
+    # ------------------------------------------------------------------ starting and ending Creo
+
+    def open_session(self, request: dict[str, Any]) -> dict[str, Any]:
+        """Start a Creo Parametric of its own from a start folder beside the host component, so
+        that it loads the host component without the person's config.pro (DCLI-206). The call
+        ends when the host in the new Creo answers; the session is then the tool's (owned)."""
+        if request.get("path") and not _model_file_exists(Path(str(request["path"]))):
+            raise AdapterError("E_NOT_FOUND", f"There is no {request['path']}; no Creo was started.", dispatch_state="not_started")
+        found = common_files()
+        if not found:
+            raise AdapterError("E_BACKEND_UNAVAILABLE", "No Creo Parametric installation was found.", dispatch_state="not_started")
+        program = found[0].parent / "Parametric" / "bin" / "parametric.exe"
+        folder = self._plugin_dir()
+        if not (folder / "protk.dat").is_file() or not program.is_file():
+            raise AdapterError("E_UNSUPPORTED", "session open starts Creo with creo-cli's host component, which is not "
+                               "installed; run plugin install first.", dispatch_state="not_started")
+        start = folder / "start"
+        start.mkdir(parents=True, exist_ok=True)
+        _forget_old_trails(start)
+        # open_protk_unsigned_apps: Creo asks before it loads a DLL without a code signature; a
+        # Creo that runs on its own cannot ask anybody. It applies to this Creo only.
+        _write(start / "config.pro", f"toolkit_registry_file {folder / 'protk.dat'}\nopen_protk_unsigned_apps always\n")
+        hosts = str(self._state_dir() / "hosts")
+        before = {e["pid"] for e in read_discovery(hosts)}
+        running = set(windows.processes("xtop.exe"))
+        try:
+            subprocess.Popen([str(program)], cwd=str(start), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL, creationflags=DETACHED, close_fds=True)
+        except OSError as exc:
+            raise AdapterError("E_NATIVE_FAILURE", f"Creo did not start: {exc}.", dispatch_state="not_started") from None
+        ends = time.monotonic() + START_LIMIT_S
+        new_pid = None
+        while time.monotonic() < ends:
+            time.sleep(1)
+            fresh = [pid for pid in windows.processes("xtop.exe") if pid not in running]
+            if fresh and new_pid is None:
+                new_pid = fresh[0]
+            entries = [e for e in read_discovery(hosts) if e["pid"] not in before and pid_alive(e["pid"])]
+            if entries:
+                sid = session_id("creo", int(entries[0]["pid"]))
+                owned = [s for s in self.store.get(OWNED, []) if _pid_of(s) in set(windows.processes("xtop.exe"))]
+                self.store.set(OWNED, owned + [sid])
+                session = next((s for s in self.sessions({})["items"] if s["id"] == sid), None)
+                if session is None:
+                    raise AdapterError("E_NATIVE_FAILURE", "Creo started, but its session could not be read.",
+                                       dispatch_state="dispatched")
+                if request.get("path"):
+                    self._open_in(entries[0], sid, str(request["path"]))
+                    session = next((s for s in self.sessions({})["items"] if s["id"] == sid), session)
+                return {"dispatch_state": "dispatched", "change": "applied", "delivery": "not_applicable",
+                        "persistence": "unchanged", "session": session}
+            if new_pid is not None and not pid_alive(new_pid):
+                raise AdapterError("E_NATIVE_FAILURE", "Creo ended while it started; see std.out in " + str(start) + ".",
+                                   dispatch_state="dispatched")
+            if new_pid is not None and windows.blocker(new_pid) is not None:
+                raise AdapterError("E_HUMAN_REQUIRED", f"Creo is starting but a dialog stops it: {windows.blocker(new_pid)}. "
+                                   "Ask the person to answer it, such as a license dialog.", dispatch_state="dispatched",
+                                   action="dismiss_dialog", knowledge=["creo-licenses", "creo-troubleshooting"])
+        raise AdapterError("E_TIMEOUT", f"Creo did not start with the host component within {START_LIMIT_S} s.",
+                           dispatch_state="dispatched")
+
+    def _open_in(self, entry: dict[str, Any], sid: str, path: str) -> None:
+        conn = Connection(entry["address"], _cli_version(), PROTOCOL)
+        try:
+            conn.open(5000)
+            conn.call("open_doc", {"operation_id": "open-" + sid, "session": sid, "path": path, "deadline_ms": 120000}, 120000)
+        except HostReplyError as exc:
+            raise AdapterError(exc.code, f"Creo started, but did not open {path}: {exc}", dispatch_state="dispatched") from None
+        finally:
+            conn.close()
+
+    def close_session(self, request: dict[str, Any]) -> dict[str, Any]:
+        """Ask the host to end Creo as File > Exit does, then wait until the process is gone.
+        The host refuses while a model has unsaved changes, unless the call discards them."""
+        sid = str(request["session"])
+        pid = _pid_of(sid)
+        entry = next((e for e in read_discovery(str(self._state_dir() / "hosts")) if e["pid"] == pid), None)
+        if entry is None:
+            raise AdapterError("E_UNSUPPORTED", "This Creo has no creo-cli host component loaded, so creo-cli cannot end "
+                               "it; the person closes it.", dispatch_state="not_started")
+        conn = Connection(entry["address"], _cli_version(), PROTOCOL)
+        try:
+            conn.open(HELLO_LIMIT_MS * 4)
+            facts = conn.call("close_session", {k: v for k, v in request.items() if k != "deadline_ms"},
+                              int(request.get("deadline_ms") or 10000))
+        except HostReplyError as exc:
+            raise AdapterError(exc.code, str(exc), dispatch_state=exc.data.get("dispatch_state", "not_started"),
+                               **{k: v for k, v in exc.data.items() if k not in ("code", "dispatch_state")}) from None
+        except (Unreachable, NoReply, ProtocolError, OSError) as exc:
+            raise AdapterError("E_BACKEND_UNAVAILABLE", f"The host component did not answer: {exc}.",
+                               dispatch_state="not_started") from None
+        finally:
+            conn.close()
+        # Gone means gone from the process list too, which the session list reads: a process
+        # that has exited stays listed a moment longer than its exit code says.
+        ends = time.monotonic() + END_LIMIT_S
+        while time.monotonic() < ends and (pid_alive(pid) or pid in windows.processes("xtop.exe")):
+            time.sleep(0.5)
+        if pid_alive(pid) or pid in windows.processes("xtop.exe"):
+            return {**facts, "change": "unknown"}
+        self.store.set(OWNED, [s for s in self.store.get(OWNED, []) if s != sid])
+        return facts
+
     # ------------------------------------------------------------------ the host component on disk
 
     def _plugin_dir(self, state_dir: str | os.PathLike[str] | None = None) -> Path:
@@ -196,9 +308,10 @@ class Adapter(BaseAdapter):
         }
 
     def plugin_install(self, request: dict[str, Any]) -> dict[str, Any]:
-        """Build the host component from its shipped source, unlock it with this computer's own
-        license, and install it into <version>/ of its folder (host_home), with the registry file
-        Creo reads and the state directory beside it (DCLI-271, DSEC-050).
+        """Build the host component from its shipped source -- the Java application and its C
+        library -- unlock it with this computer's own licenses, and install it into <version>/ of
+        its folder (host_home), with the registry file Creo reads and the state directory beside
+        it (DCLI-271, DSEC-050).
 
         protk.dat in that folder stays at one place across versions: the person's config.pro
         names it once with ``toolkit_registry_file``, and an upgrade only rewrites it. A Creo
@@ -214,15 +327,27 @@ class Adapter(BaseAdapter):
                                "component cannot be built.", dispatch_state="not_started")
         digest = build.source_digest(source / "source")
         jar = target / JAR
-        if not (jar.is_file() and _installed_digest(target) == digest):
+        dll = target / build.NATIVE_DLL
+        native = _installed_native(target)
+        if not (jar.is_file() and _installed_digest(target) == digest and native is not None):
             fresh = folder / f".{JAR}.{os.getpid()}.new"
-            build.build(source / "source", found[0], fresh)
+            fresh_dll = folder / f".{build.NATIVE_DLL}.{os.getpid()}.new"
+            build.build(source / "source", found[0], fresh, version)
+            # The C library is built after the JAR: a computer that cannot build it still gets
+            # the Java host, and the commands that need the library say why it is missing.
+            reason = build.build_native(source / "source" / "native", found[0], fresh_dll)
+            native = {"installed": True} if reason is None else {"installed": False, "reason": reason}
             try:
                 target.mkdir(parents=True, exist_ok=True)
                 os.replace(fresh, jar)
+                if reason is None:
+                    os.replace(fresh_dll, dll)
+                else:
+                    dll.unlink(missing_ok=True)
             except OSError as exc:
                 fresh.unlink(missing_ok=True)
-                raise AdapterError("E_NATIVE_FAILURE", f"The host component could not be written to {jar}: {exc}. A "
+                fresh_dll.unlink(missing_ok=True)
+                raise AdapterError("E_NATIVE_FAILURE", f"The host component could not be written to {target}: {exc}. A "
                                    "running Creo may hold this version; close it and install again.",
                                    dispatch_state="not_started") from None
         try:
@@ -237,7 +362,7 @@ class Adapter(BaseAdapter):
                                        dispatch_state="dispatched")
             registry = _registry(jar)
             config = json.dumps({"state_dir": str(Path(request["state_dir"])), "version": version,
-                                 "source_sha256": digest}, indent=2)
+                                 "source_sha256": digest, "native": native}, indent=2)
             for where in (target, folder):
                 _write(where / "protk.dat", registry)
                 _write(where / CONFIG, config + "\n")
@@ -301,6 +426,45 @@ def _installed_digest(target: Path) -> str | None:
         return str(json.loads((target / CONFIG).read_text(encoding="utf-8"))["source_sha256"])
     except (OSError, ValueError, KeyError):
         return None
+
+
+def _model_file_exists(path: Path) -> bool:
+    """A Creo model file, saved as numbered versions (cover.prt.3) or plain."""
+    plain = Path(re.sub(r"\.[0-9]+$", "", str(path)))
+    if plain.is_file():
+        return True
+    folder = plain.parent
+    return folder.is_dir() and any(re.fullmatch(re.escape(plain.name) + r"\.[0-9]+", p.name, re.IGNORECASE)
+                                   for p in folder.iterdir())
+
+
+def _pid_of(session: str) -> int:
+    """The process ID in a session ID creo-<pid>-<start>."""
+    try:
+        return int(session.split("-")[1])
+    except (IndexError, ValueError):
+        return -1
+
+
+def _forget_old_trails(start: Path, keep: int = 10) -> None:
+    """Creo writes a trail file into its start folder each time; keep the newest few."""
+    trails = sorted(start.glob("trail.txt.*"), key=lambda p: p.stat().st_mtime, reverse=True)
+    for old in trails[keep:]:
+        old.unlink(missing_ok=True)
+
+
+def _installed_native(target: Path) -> dict[str, Any] | None:
+    """Whether the installed C library was built, as plugin install recorded it, with the reason
+    when it was not; None when nothing is recorded."""
+    try:
+        native = json.loads((target / CONFIG).read_text(encoding="utf-8"))["native"]
+    except (OSError, ValueError, KeyError):
+        return None
+    if not isinstance(native, dict):
+        return None
+    if native.get("installed") and not (target / build.NATIVE_DLL).is_file():
+        return None
+    return native
 
 
 def _write(path: Path, text: str) -> None:

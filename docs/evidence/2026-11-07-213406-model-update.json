@@ -1,0 +1,63 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.1.0",
+  "commit": "56e3dc36a63f",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-07T21:34:06Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "model update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\mdu1.prt",
+        "--material",
+        "ABS",
+        "--common-name",
+        "PS4 TOP"
+      ],
+      "exit": 0,
+      "result": "pass",
+      "matrix_row": "normal",
+      "mode": "session"
+    },
+    {
+      "command": "model update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\mdu1.prt"
+      ],
+      "exit": 2,
+      "result": "pass",
+      "matrix_row": "invalid_input",
+      "mode": "session"
+    },
+    {
+      "command": "model update",
+      "arguments": [
+        "--session",
+        "creo-8428-3210027bf",
+        "--doc",
+        "D:\\driver-work\\creo-cli\\targets\\live\\mdu1.prt",
+        "--material",
+        "NOSUCH"
+      ],
+      "exit": 3,
+      "result": "pass",
+      "matrix_row": "not_found",
+      "mode": "session"
+    }
+  ]
+}

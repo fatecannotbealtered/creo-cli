@@ -39,13 +39,15 @@ import java.util.Optional;
  * reach (DCLI-270) and writes its discovery file to hosts/ (DCLI-271).
  */
 public final class Host {
-    public static final String PLUGIN_VERSION = "1.0.0";
+    /** The version plugin install built this JAR as; it writes the version into the JAR. */
+    public static final String PLUGIN_VERSION = builtVersion();
     public static final String PROTOCOL_VERSION = "1.2.0";
     static final String CONFIG_FILE = "creo-cli-host.json";
     private static final int PUMP_MICROSECONDS = 100_000;
     private static final long PICKUP_MS = 1500;
     private static final List<String> METHODS = Arrays.asList(
-            "documents", "open_doc", "save_doc", "close_doc", "read", "preview", "apply", "read_back");
+            "close_session", "documents", "create_doc", "open_doc", "save_doc", "save_doc_as", "close_doc", "read", "preview",
+            "apply", "read_back");
 
     private static Host running;
 
@@ -88,6 +90,11 @@ public final class Host {
             String id = sessionId(pid);
             String version = String.valueOf(pfcGlobal.GetProEVersion());
             Host host = new Host(state, home, pid, id, version);
+            Modeling.reportFolder(home.resolve("modelcheck"));
+            Path folder = jarFolder(home);
+            if (folder != null) {
+                Native.load(session, folder, recordedNative(folder));
+            }
             host.docs.listen(session);
             host.timer = wfcSession.CreateTimer(new TimerAction_u() {
                 @Override
@@ -101,7 +108,8 @@ public final class Host {
             host.pipe.start();
             host.discovery = host.writeDiscovery();
             running = host;
-            log(home, "started " + id + " generation " + host.generation + " on " + host.pipe.name);
+            log(home, "started " + id + " generation " + host.generation + " on " + host.pipe.name
+                    + (Native.available() ? "; C library loaded" : "; no C library: " + Native.missing()));
         } catch (Throwable failure) {
             log(fallbackHome(), "start failed: " + failure);
         }
@@ -146,7 +154,8 @@ public final class Host {
         if (!METHODS.contains(method)) {
             throw new HostError(HostError.UNSUPPORTED, "This host has no method " + method + ".");
         }
-        boolean write = Arrays.asList("open_doc", "save_doc", "close_doc", "apply").contains(method);
+        boolean write = Arrays.asList("close_session", "create_doc", "open_doc", "save_doc", "save_doc_as", "close_doc", "apply")
+                .contains(method);
         return main.submit(() -> {
             try {
                 return run(method, params);
@@ -156,6 +165,13 @@ public final class Host {
                 throw new HostError(HostError.NATIVE, "Creo refused " + method + ".", write ? "unknown" : "not_started")
                         .nativeMessage(refused.toString());
             } catch (RuntimeException failure) {
+                // A fault of the host itself: where it happened goes to host.log, since an unknown outcome carries no message.
+                StringBuilder where = new StringBuilder("failed in " + method + ": " + failure);
+                StackTraceElement[] frames = failure.getStackTrace();
+                for (int i = 0; i < Math.min(6, frames.length); i++) {
+                    where.append(" | at ").append(frames[i]);
+                }
+                log(home, where.toString());
                 throw new HostError(HostError.NATIVE, "The host failed in " + method + ": " + failure,
                         write ? "unknown" : "not_started");
             }
@@ -164,10 +180,17 @@ public final class Host {
 
     private Object run(String method, Map<String, Object> params) throws Exception {
         switch (method) {
+            case "close_session":
+                return closeSession(Boolean.TRUE.equals(Json.bool(params, "discard")));
             case "documents":
                 return Json.map("items", docs.list());
+            case "create_doc":
+                return docs.create(params);
             case "open_doc":
                 return docs.open(required(params, "path"));
+            case "save_doc_as":
+                return docs.saveAs(docs.model(required(params, "document")), required(params, "path"),
+                        Boolean.TRUE.equals(Json.bool(params, "overwrite")));
             case "save_doc":
                 return docs.save(docs.model(required(params, "document")));
             case "close_doc":
@@ -180,6 +203,31 @@ public final class Host {
                 return ops.apply(params);
             default:
                 return ops.readBack(params);
+        }
+    }
+
+    /**
+     * Ends this Creo as File > Exit does (DCLI-206): the C library calls ProEngineerEnd a second
+     * after this answer, since calling it within a call from Java crashes Creo. Creo ends the
+     * host with it. Refused while a model has unsaved changes, unless they are to be discarded.
+     */
+    private Map<String, Object> closeSession(boolean discard) throws Exception {
+        if (!discard) {
+            List<String> dirty = docs.unsaved();
+            if (!dirty.isEmpty()) {
+                throw HostError.conflict("unsaved_changes", String.join(", ", dirty) + " " + (dirty.size() == 1 ? "has" : "have")
+                        + " unsaved changes; save them, or close the session with --discard.");
+            }
+        }
+        Native.call("ccn_end_later", Json.map("delay_ms", 1000));
+        return Docs.facts("dispatched", "applied", Json.map());
+    }
+
+    private static String builtVersion() {
+        try (java.io.InputStream in = Host.class.getResourceAsStream("version")) {
+            return in == null ? "unknown" : new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
+        } catch (java.io.IOException unreadable) {
+            return "unknown";
         }
     }
 
@@ -306,6 +354,40 @@ public final class Host {
             }
         }
         return new Path[] {fallbackState(), fallbackHome()};
+    }
+
+    /**
+     * The folder of the host's JAR, where plugin install puts the C library beside it: the
+     * version folder below the host's own folder, named by the version in its configuration.
+     * Creo loads the JAR with a class loader of its own, so neither the class path nor the
+     * classes' code source names it.
+     */
+    @SuppressWarnings("unchecked")
+    static Path jarFolder(Path home) {
+        try {
+            Object parsed = Json.parse(new String(Files.readAllBytes(home.resolve(CONFIG_FILE)), StandardCharsets.UTF_8));
+            String version = parsed instanceof Map ? Json.string((Map<String, Object>) parsed, "version", null) : null;
+            if (version != null && Files.isDirectory(home.resolve(version))) {
+                return home.resolve(version);
+            }
+        } catch (IOException | IllegalArgumentException unreadable) {
+            // No configuration: a host that plugin install did not set up.
+        }
+        return null;
+    }
+
+    /** What plugin install wrote about the C library into the configuration beside the JAR. */
+    @SuppressWarnings("unchecked")
+    static Map<String, Object> recordedNative(Path folder) {
+        try {
+            Object parsed = Json.parse(new String(Files.readAllBytes(folder.resolve(CONFIG_FILE)), StandardCharsets.UTF_8));
+            if (parsed instanceof Map && ((Map<String, Object>) parsed).get("native") instanceof Map) {
+                return (Map<String, Object>) ((Map<String, Object>) parsed).get("native");
+            }
+        } catch (IOException | IllegalArgumentException unreadable) {
+            // Nothing recorded.
+        }
+        return null;
     }
 
     private static Path fallbackHome() {

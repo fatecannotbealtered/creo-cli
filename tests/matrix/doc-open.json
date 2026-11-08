@@ -17,7 +17,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-06-162713-doc-open.json#normal"
+      "evidence": "live:docs/evidence/2026-11-07-190723-doc-open.json#normal"
     },
     {
       "row": "empty",
@@ -40,7 +40,7 @@
         "exit": 2,
         "code": "E_USAGE"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162834-doc-open.json#invalid_input"
+      "evidence": "live:docs/evidence/2026-11-07-190900-doc-open.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -59,7 +59,7 @@
         "exit": 3,
         "code": "E_NOT_FOUND"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162834-doc-open.json#not_found"
+      "evidence": "live:docs/evidence/2026-11-07-190900-doc-open.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -77,7 +77,7 @@
         "exit": 2,
         "code": "E_AMBIGUOUS"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163231-doc-open.json#ambiguous"
+      "evidence": "live:docs/evidence/2026-11-07-213930-doc-open.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -97,7 +97,7 @@
         "exit": 6,
         "code": "E_CONFLICT"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162836-doc-open.json#conflict"
+      "evidence": "live:docs/evidence/2026-11-07-190903-doc-open.json#conflict"
     },
     {
       "row": "no_scope",
@@ -117,7 +117,7 @@
         "exit": 4,
         "code": "E_FORBIDDEN"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163025-doc-open.json#no_scope"
+      "evidence": "live:docs/evidence/2026-11-07-191111-doc-open.json#no_scope"
     },
     {
       "row": "busy",
@@ -137,7 +137,7 @@
         "exit": 7,
         "code": "E_BUSY"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163107-doc-open.json#busy"
+      "evidence": "live:docs/evidence/2026-11-07-191214-doc-open.json#busy"
     },
     {
       "row": "dialog",
@@ -157,7 +157,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-06-163145-doc-open.json#dialog"
+      "evidence": "live:docs/evidence/2026-11-07-191345-doc-open.json#dialog"
     },
     {
       "row": "disconnect",
@@ -197,7 +197,7 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED"
       },
-      "evidence": "live:docs/evidence/2026-11-06-162742-doc-open.json#read_back_mismatch"
+      "evidence": "live:docs/evidence/2026-11-07-190751-doc-open.json#read_back_mismatch"
     }
   ]
 }

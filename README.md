@@ -11,7 +11,7 @@ Lets an AI Agent read Creo Parametric models and change their dimensions, parame
 ![platform](https://img.shields.io/badge/platform-Windows-555555)
 ![risk](https://img.shields.io/badge/risk-T2-d29922)
 ![maturity](https://img.shields.io/badge/maturity-verified-8957e5)
-![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.5-0969da)
+![spec](https://img.shields.io/badge/spec-tool--driver--cli--spec_1.0.6-0969da)
 ![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 <!-- driver:badges:end -->
 
@@ -24,8 +24,8 @@ English | [中文](README_zh.md)
 | Modes | session |
 | Systems and CPUs | Windows (x64) |
 | Risk tier | T2 |
-| Maturity | verified: 0 draft, 12 verified, 3 stable |
-| Specification | tool-driver-cli-spec 1.0.5 |
+| Maturity | verified: 0 draft, 16 verified, 13 stable |
+| Specification | tool-driver-cli-spec 1.0.6 |
 | Host component | yes |
 <!-- driver:info-card:end -->
 
@@ -84,15 +84,24 @@ Every command of creo-cli, generated from its command registration; `(dangerous)
 - `job`: list, get, cancel
 - `plugin`: get, install, remove
 - `knowledge`: list, get, search, create, delete
-- `feature`: get, list, update
-- `model`: get, export, render
+- `feature`: get, list, update, delete (dangerous)
+- `model`: get, check, update, export, render
 - `geometry`: list
 - `distance`: get
 - `dimension`: list, update
-- `parameter`: list, update
-- `relation`: list
+- `parameter`: list, update, create
+- `relation`: list, update
 - `material`: list
 - `component`: list
+- `extrude`: create
+- `revolve`: create
+- `shell`: create
+- `round`: create
+- `pattern`: create
+- `plane`: create
+- `axis`: create
+- `chamfer`: create
+- `draft`: create
 <!-- driver:command-map:end -->
 
 ## How It Works
@@ -111,7 +120,7 @@ creo-cli prints one JSON envelope for every call. `creo-cli reference` lists eve
 
 `--dry-run` shows the preview of any write and changes nothing. A confirm token works once, within 10 minutes, and only for the change it previewed. When the scope file sets `"confirm": "always"`, every write except stopping work is two-step, so that a person can approve each preview.
 
-**Saving in session mode.** A change is not a save. After a change, the receipt reports `persistence: unchanged` and the document stays dirty; only `creo-cli doc save` writes the document's file. Its preview lists every change since the last save, including changes a person made in Creo Parametric (`origin: external`) and writes whose outcome is still unknown.
+**Saving in session mode.** A change is not a save. After a change, the receipt reports `persistence: unchanged` and the document stays dirty; only `creo-cli doc save` writes the document's file. Its preview lists every change since the last save, including changes a person made in Creo Parametric (`origin: external`) and writes whose outcome is still unknown. A command that Creo Parametric itself saves at once is two-step and reports `persistence: saved`.
 
 **Receipts.** Every write returns a receipt that reports separately whether the change ran, took effect, was delivered, was saved and was verified. When the reply to a write is lost, creo-cli returns `E_OUTCOME_UNKNOWN` with the command that settles the outcome, and the write is never sent twice.
 
@@ -190,13 +199,15 @@ Version 1.0 does not create models or features, and does not edit assemblies or 
 | `CREO_CLI_SCOPE_FILE` | `scope.json` in the state directory | The scope file (see Authorization) |
 | `HTTPS_PROXY`, `HTTP_PROXY`, `NO_PROXY` | not set | Proxies for `update` and `doctor`, the only commands that contact the npm registry |
 | `CREO_CLI_JDK` | the JDK of `PRO_JAVA_COMMAND`, else `JAVA_HOME` | The JDK 25 `plugin install` builds the host component with |
+| `CREO_CLI_VCVARS` | the newest Visual Studio with the x64 C compiler | The `vcvars64.bat` `plugin install` builds the host component's C library with |
 | `CREO_CLI_FAKE_HOST` | not set | For tests only: sends every call to the fake host instead of Creo Parametric and marks every result as simulated |
 
 ### Finding Creo Parametric
 
 - Installation: creo-cli looks under `C:\Program Files\PTC`, `C:\PTC`, `D:\PTC` and `E:\PTC`, up to four folders deep, for a `Common Files` folder that holds Object TOOLKIT Java (`text\java\otk.jar`). The version comes from the installation folder's name, such as `Creo 13.4.1.0`. `creo-cli doctor` shows what it found.
 - Running instances: every running `xtop.exe` is a session, with an ID made of its process ID and start time, such as `creo-9184-1d9a4c2e`. `creo-cli session list` lists them; a modal dialog open in Creo shows as `blocked`.
-- The host component: a session can be driven only while its host component is loaded. creo-cli ships it as source: `creo-cli plugin install` compiles it with a JDK 25 and unlocks it with PTC's `protk_unlock`, which needs the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license, on the license server; running it needs the Object TOOLKIT Java runtime, development or extension license. Run `creo-cli plugin install`, add one line to the `config.pro` Creo starts with, and start Creo: `toolkit_registry_file <install_path>\protk.dat`, with the `install_path` that `creo-cli plugin get` shows, a folder under `%LOCALAPPDATA%\creo-cli\host`. The line stays the same across upgrades; creo-cli never changes `config.pro` itself. Creo loads the host component only at start, so after an upgrade a person restarts Creo.
+- The host component: a session can be driven only while its host component is loaded. creo-cli ships it as source: `creo-cli plugin install` compiles its Java part with a JDK 25 and unlocks it with PTC's `protk_unlock`, which needs the Creo Object TOOLKIT Java development license, or its extension license with a Creo TOOLKIT license, on the license server; running it needs the Object TOOLKIT Java runtime, development or extension license. `plugin install` also compiles its C library, which sketches and ending Creo need, with Visual Studio 2022's C compiler (or its Build Tools with "Desktop development with C++") against the Creo TOOLKIT component of your Creo, and unlocks it with a Creo TOOLKIT development license; without them the Java part is still installed and only the commands that need the C library are refused, with the reason. Run `creo-cli plugin install`, add one line to the `config.pro` Creo starts with, and start Creo: `toolkit_registry_file <install_path>\protk.dat`, with the `install_path` that `creo-cli plugin get` shows, a folder under `%LOCALAPPDATA%\creo-cli\host`. The line stays the same across upgrades; creo-cli never changes the `config.pro` you start Creo with. Creo loads the host component only at start, so after an upgrade a person restarts Creo.
+- Creo started by creo-cli: `creo-cli session open` starts a Creo of its own from the folder `start` beside the host component, with a `config.pro` there that loads the host component and sets `open_protk_unsigned_apps always`, so that this Creo loads the unsigned C library without asking; your own Creo keeps its settings. `session close` ends such a Creo as File > Exit does, and refuses while a model has unsaved changes.
 - `CREO_CLI_STATE_DIR` moves the state directory, and with it the place of `protk.dat` and of the discovery files the host component writes.
 
 ## Uninstall

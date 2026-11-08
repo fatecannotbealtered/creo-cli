@@ -4,7 +4,7 @@
 
 本调查记录 Creo Parametric 能做什么、能怎样自动化。它在设计命令之前填写，每项能力都有处置：creo-cli 有命令提供的，处置为 `provided`。
 
-标为“早期 creo-cli”的出处，是本仓库 git 历史里提交 `fd35893` 的早期 creo-cli 的文档和代码，记录的是在 Creo Parametric 13.4.1.0 上观察到的情况。
+标为“早期 creo-cli”的出处，是本仓库 git 历史里提交 `bc50267` 的早期 creo-cli 的文档和代码，记录的是在 Creo Parametric 13.4.1.0 上观察到的情况。
 
 ## 软件
 
@@ -58,6 +58,16 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 
 ## 线程与阻塞
 
+- 在 Java 宿主的调用里调用 `ProEngineerEnd` 会让 Creo 崩溃；调用返回后由 Creo 主线程上的 Windows 定时器调用它，Creo 在 3 到 10 秒内正常退出，并调用每个应用的结束函数（在 Creo 13.4.1.0 上实测）。
+- 被强行结束的 Creo，下次启动时会弹出模态的“未正常关闭”对话框（检索），直到有一次正常退出（在 Creo 13.4.1.0 上实测）。
+- 通过 TOOLKIT C 在意图管理器模式下建的草图没有隐含约束：每条线、每段弧、每个连接点的约束都要写明（端点重合、相切、水平、竖直、等半径），否则 Creo 每留一个自由度就加一个弱尺寸；全部写明后只剩给定的尺寸，改其中一个，约束照样成立，比如对称的矩形改长度后仍然对称（在 Creo 13.4.1.0 上实测）。不用意图管理器时，Creo 自动标注的尺寸标到最近的边上，不是设计里命名的尺寸。
+- 基准轴要用 `ProDtmAxis.h` 的约束写法（`PRO_E_DTMAXIS_CONSTRAINTS`）建；旧写法（`PRO_E_DTMAXIS_TYPE`、`PRO_E_DTMAXIS_PLANE1`）会被拒绝。用 `Solid.ExecuteFeatureOps` 加删除操作撤回的特征可能还留在模型里；`WSolid.DeleteFeatures` 能删掉（在 Creo 13.4.1.0 上实测）。
+- `SetRelations` 会保留 Creo 求不出值的关系，只做标记（ModelCHECK 报 `RELATION_ERRS`）；对它的右边调用 `EvaluateExpression` 会抛错。`Part.RetrieveMaterial` 收的是名字不是路径，并从 Creo 的当前目录读 `.mtl` 文件（在 Creo 13.4.1.0 上实测）。
+- 通过 `ExecuteModelCheck` 跑 ModelCHECK，小零件一秒内跑完，在给定的文件夹里写出 XML、HTML、JS 报告和图片，用默认配置既不存盘也不改模型（在 Creo 13.4.1.0 上实测）。
+- 把当前视角存成命名视图（`ProViewStore`），`ProViewRetrieve` 之后再删掉，方向能完全恢复，但 Creo 把这算作模型的修改：先存过盘的模型之后显示为已修改（在 Creo 13.4.1.0 上实测）。
+- 用元素树建旋转特征时，给外部轴（`PRO_REV_AXIS_EXT_REF` 加基准轴）会被拒绝，报通用错误；用 `PRO_REV_AXIS_INT_REF` 时，它绕草图里的一条几何中心线旋转，也就是用 `ProSectionEntityConstructionSet` 设成非构造线的中心线（在 Creo 13.4.1.0 上实测）。
+- `WFeature.CreatePattern` 返回的是新阵列里的一个成员，不是阵列特征本身；阵列特征按元素树里给的名字找。`PRO_E_DIR_PAT_DIR1_FLIP` 朝哪边走，取决于方向参考自己的朝向；creo-cli 从第一个副本读出步进方向，反了就翻过来（在 Creo 13.4.1.0 上实测）。
+- `PRO_E_STD_DIRECTION` 选的哪一侧，是相对 Creo 自己给草绘平面定的方向，基准平面和实体面不一样；creo-cli 从新拉伸特征的面判断它朝哪边去了，反了就翻过来。
 - 工具包的每次调用都必须在 Creo 主线程上执行；同步应用通过定时器回调进入主线程。Creo 13.4 打开模态弹窗时定时器照常触发，主窗口也不会被禁用（用“文件 > 选项”和工具包的消息框实测）；CLI 按窗口标题认出弹窗，人关掉弹窗之前一律拒绝调用。
 - 见过的挡住自动化的弹窗：加载未签名工具包 DLL 时的提示（每次会话）、启动时的“检索”“恢复”弹窗、ORDER_DEBUG、视图状态要求“应用”、许可证弹窗，以及锁屏时出现的崩溃弹窗（Intel OpenGL 驱动）（早期 creo-cli，`docs/SERVICE.md`、`examples/engineering/RecoveryIsolation.ps1`、`docs/ASSEMBLY-INSTRUCTIONS-WORKFLOW.md`）。
 - 重新生成和长操作期间 Creo 是忙的；实测：复杂装配改约束 135–194 秒，族表预览约 76 秒，BOM 表确认 568 秒（早期 creo-cli，`docs/ASSEMBLY-CONSTRAINTS.md`、`docs/FAMILY-TABLES.md`、`docs/WORKFLOW-BUDGET.md`）。
@@ -77,7 +87,9 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 ## 保存与撤销
 
 - 保存会在模型原来所在的目录（不是工作目录）写一个新的编号版本（`.2` 之后是 `name.prt.3`），没改动也照样写。旧版本留在磁盘上。
-- 用 `CopyAndRetrieve` 从模板新建的模型，会立刻以 `name.prt.1` 写到磁盘上，和“文件 > 新建”不同。
+- 用 `CopyAndRetrieve` 从模板新建的模型，会立刻以 `name.prt.1` 写到磁盘上，和“文件 > 新建”不同，写在 Creo 的当前目录里（在 Creo 13.4.1.0 上实测）；creo-cli 在复制的那一刻换到目标目录，复制完再换回来。
+- `Copy` 用新名字把副本写到 Creo 的当前目录，会话里的模型不变。`Backup` 用原名把模型写到另一个文件夹（路径要以分隔符结尾），之后会话里的模型就属于那个文件夹，下次保存写到那里（在 Creo 13.4.1.0 上实测）。
+- 打不开旧的编号版本：指定版本号或带版本号的路径，Creo 打开的都是最新版本，这样打开的模型还存不了盘（在 Creo 13.4.1.0 上实测）。
 - 有没有保存的修改，看模型的“已修改”标记；刚打开的零件就显示已修改，改通用名称后可能又显示未修改。
 - 有“保存副本”（`save_doc_as`）；把模型从会话里拭除，会丢掉它没保存的修改。
 - 工具包没有撤销，只能撤销失败的重新生成（`SetUndoIfFail`）。所以 creo-cli 不提供 `doc undo`（DCLI-067）。
@@ -94,6 +106,7 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 - 宿主组件要 `ObjectToolkitJava` 许可选项，没有它什么都做不了。删除工程图自己的尺寸（`ProDimensionDelete`）要 TOOLKIT for 3D Drawings 许可。
 - `plugin install` 在用户电脑上构建宿主组件：需要 JDK 25；解锁需要 Creo Object TOOLKIT Java 开发许可，或者它的扩展许可加 Creo TOOLKIT 许可。运行解锁后的组件需要以下之一：Creo Object TOOLKIT Java 运行许可、它的开发许可，或者它的扩展许可加 Creo TOOLKIT 许可（PTC《Creo Object TOOLKIT Java 用户指南》Unlocking, Running and Signing the Creo Object TOOLKIT Java Application）。
 - 以应用流方式交付的 Creo（PTC 试用版）没有工具包。
+- 宿主组件的 C 库在用户电脑上用 Visual Studio 的 x64 C 编译器对着 Creo TOOLKIT 组件编译，再用 `protk_unlock` 解锁，解锁要 Creo TOOLKIT 开发许可；解锁后运行不需要这个许可（PTC，Creo TOOLKIT User's Guide，Unlocking the Application）。
 - 启动时的许可证弹窗要人处理（`activate_license`）。
 
 ## 能力
@@ -103,29 +116,33 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 | 编号 | 能力 | 接口 | 处置 | 原因 |
 |---|---|---|---|---|
 | CAP-001 | 读模型概况：类型、单位、材料、质量属性、包围盒、特征数 | OTK Java | provided | - |
-| CAP-002 | 改模型的通用名称、公差标准和公差等级、材料 | OTK Java；公差标准用 TOOLKIT C | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-002 | 改模型的通用名称、公差标准和公差等级、材料 | OTK Java；公差标准用 TOOLKIT C | provided | 材料和通用名称；公差标准以后再做 |
 | CAP-003 | 把零件或装配导出为 STEP、IGES 或 STL，把工程图导出为 PDF | OTK Java | provided | - |
 | CAP-004 | 出零件或装配的 JPEG 图片 | OTK Java `ExportRasterImage` | provided | - |
 | CAP-005 | 设 Creo 的工作目录，新模型写在这里 | OTK Java `ChangeDirectory` | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-007 | 启动一个工具自己的 Creo，加载宿主组件 | 从带自己 `config.pro` 的启动目录运行 `parametric.exe` | provided | - |
+| CAP-008 | 像“文件 > 退出”那样关闭 Creo，有未保存的修改时拒绝 | TOOLKIT C `ProEngineerEnd`，由 Windows 定时器调用 | provided | - |
+| CAP-009 | 从起始零件新建零件，立刻写到指定路径 | OTK Java `CopyAndRetrieve` | provided | - |
+| CAP-047 | 用另一个名字写出模型的副本，或把模型写到另一个文件夹 | OTK Java `Copy`、`Backup` | provided | - |
 | CAP-006 | 按要求重新生成模型 | OTK Java | deferred | 每次写操作都已经重新生成；从没在真机上运行过 |
 | CAP-010 | 按重新生成的顺序列出特征，带类型和状态 | OTK Java | provided | - |
 | CAP-011 | 读一个特征：尺寸、父特征、子特征 | OTK Java | provided | - |
 | CAP-046 | 描述特征草图里的图元 | TOOLKIT C | deferred | 以后的版本；每次读都要用 C 库 |
 | CAP-012 | 隐含、恢复特征，或给特征改名 | OTK Java | provided | - |
-| CAP-013 | 删除特征，连同依赖它的特征 | OTK Java `DeleteFeatures` | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-014 | 拉伸一个封闭的草绘轮廓，加材料或去材料 | OTK Java 元素树；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-015 | 把一个封闭的草绘轮廓旋转 360 度 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-016 | 从平面或平的面偏移出基准平面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-017 | 建基准轴：两平面相交、过一条边或一个圆柱面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-018 | 等半径倒圆角 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-019 | 等距倒角 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-013 | 删除特征，连同依赖它的特征 | OTK Java `DeleteFeatures` | provided | - |
+| CAP-014 | 拉伸一个封闭的草绘轮廓，加材料或去材料 | OTK Java 元素树；TOOLKIT C 草图 | provided | - |
+| CAP-015 | 把一个封闭的草绘轮廓旋转 360 度 | OTK Java；TOOLKIT C 草图 | provided | 绕草图里的几何中心线旋转，最多 360 度 |
+| CAP-016 | 从平面或平的面偏移出基准平面 | OTK Java | provided | - |
+| CAP-017 | 建基准轴：两平面相交、过一条边或一个圆柱面 | OTK Java | provided | 两个平面相交，或过圆柱面；过边以后再做 |
+| CAP-018 | 等半径倒圆角 | OTK Java | provided | - |
+| CAP-019 | 等距倒角 | OTK Java | provided | - |
 | CAP-020 | 在平面上放简单孔或标准孔（线性、径向或同轴定位） | OTK Java；螺纹系列用 TOOLKIT C | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-021 | 在圆柱面上加修饰螺纹 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-022 | 向内抽壳，去掉指定的面 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-023 | 绕枢轴平面拔模 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-022 | 向内抽壳，去掉指定的面 | OTK Java | provided | - |
+| CAP-023 | 绕枢轴平面拔模 | OTK Java | provided | - |
 | CAP-024 | 加轮廓筋 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-025 | 封闭截面沿草绘轨迹扫描 | OTK Java；TOOLKIT C 草图 | deferred | 以后的版本；不在 1.0.0 的范围里 |
-| CAP-026 | 沿方向或绕轴阵列一个特征 | OTK Java `CreatePattern` | deferred | 以后的版本；不在 1.0.0 的范围里 |
+| CAP-026 | 沿方向或绕轴阵列一个特征 | OTK Java `CreatePattern` | provided | 沿方向阵列；绕轴阵列以后再做 |
 | CAP-027 | 以一个平面镜像整个零件 | OTK Java 合并特征 | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-028 | 镜像选定的特征 | OTK Java | excluded | 元素树不支持镜像特征（ProMirror.h） |
 | CAP-029 | 部分角度旋转、斜基准平面、沉孔和埋头孔、多面拔模 | OTK Java | deferred | 从没做过也没运行过；以后的版本 |
@@ -135,9 +152,9 @@ Creo Parametric 提供的每种接口，以及调用它的代码必须在哪里�
 | CAP-033 | 改尺寸的值并重新生成；重新生成失败时 Creo 撤回 | OTK Java `SetUndoIfFail` | provided | - |
 | CAP-034 | 设尺寸的公差：正负、对称、极限、ISO 配合、基本尺寸、无公差；以及小数位 | OTK Java；TOOLKIT C | provided | - |
 | CAP-035 | 列出参数，改参数的值 | OTK Java | provided | - |
-| CAP-043 | 新建参数 | OTK Java | deferred | 以后的版本；1.0.0 只改已有的参数 |
+| CAP-043 | 新建参数 | OTK Java | provided | - |
 | CAP-036 | 读模型的关系 | OTK Java | provided | - |
-| CAP-044 | 替换模型的关系 | OTK Java | deferred | 以后的版本；早期工具最后一次修改后没有重新验证过 |
+| CAP-044 | 替换模型的关系 | OTK Java | provided | - |
 | CAP-037 | 读族表：列、实例、单元格 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-038 | 改族表单元格 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |
 | CAP-039 | 从族表删除一个实例行 | OTK Java | deferred | 以后的版本；不在 1.0.0 的范围里 |

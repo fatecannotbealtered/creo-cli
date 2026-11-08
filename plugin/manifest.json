@@ -1,11 +1,14 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocol_version": "1.2.0",
   "files": {},
   "methods": [
+    "close_session",
     "documents",
+    "create_doc",
     "open_doc",
     "save_doc",
+    "save_doc_as",
     "close_doc",
     "read",
     "preview",
