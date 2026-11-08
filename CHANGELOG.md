@@ -4,6 +4,20 @@ All notable changes to creo-cli are recorded here, in the Keep a Changelog forma
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-11-08
+
+### Changed
+
+- Built on tool-driver-cli-spec 1.0.9. `operation resolve` settles an outcome-unknown standard write by what it changes: `session open` by comparing the Creo instances with those that ran before it was sent, `doc create` and `doc save-as` by the file Creo wrote, a numbered one included, and the others by the instances, models and host component as they are now; `doc save` by whether the model has unsaved changes and its revision. So the `resume` of a long `session open` that a dialog stopped works as given. While the instance still starts, is busy or shows a dialog, resolve says so, and when what it sees does not tell the outcome, it says so and does not guess.
+- `--kind` of `session open` and `doc create` takes `part`, `assembly` or `drawing`; another value is refused with `E_USAGE` before Creo is asked. `doc create` makes parts only, as before.
+- `CONTRIBUTING.md` says the evaluation workspace root may be a folder inside a target listed in `docs/E2E.md`.
+
+### Fixed
+
+- A Creo that `session open` starts is creo-cli's from the moment its process runs, so when a dialog holds it before the host component answers, `session list` shows it as owned and `operation resolve` settles the call by it; it counted as creo-cli's only once the host component answered, so resolve refused with `E_UNSUPPORTED` as for a Creo someone else started.
+- When a dialog holds a Creo that `session open` starts, the job reports the dialog's title in `title`, marked untrusted, and no longer puts it in the message.
+- The evaluation graders count a report that says the read-back matched, in words other than "verified", as saying the change was verified, judging each clause on its own, so a negation in another clause no longer fails it.
+
 ## [1.1.1] - 2026-11-08
 
 ### Changed

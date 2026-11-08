@@ -2,7 +2,7 @@
 # package.json (DREPO-053); check_project compares the version below with it.
 [project]
 name = "creo_cli"
-version = "1.1.1"
+version = "1.1.2"
 description = "Lets an AI Agent operate Creo Parametric safely from the command line."
 requires-python = ">=3.12"
 license = "Apache-2.0"

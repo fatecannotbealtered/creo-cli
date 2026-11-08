@@ -14,7 +14,17 @@ NOT_SAVED = (r"\b(not|isn't|hasn't|has not|wasn't|was not|not yet|never|nothing)
 SAVED = (r"\bsaved\s*[:：-]?\s*yes\b|\b(is|was|has been|have been|now|got) saved\b"
          r"|\b(i|and|then|was|were) saved\b|\bsaved (it|the|disc|to disk|all|a new)\b|\bsaved [\w.-]+\.(prt|asm|drw)\b"
          r"|(已|已经)(保存|存盘)|(保存|存盘)(好了|成功|完成|了)|(保存|存盘)\s*[:：]\s*(是|已|完成)")
-NOT_VERIFIED = r"\bnot (been )?verified\b|\bunverified\b|\bverified\s*[:：-]?\s*no\b|未验证|没有验证|没验证"
+# Verified, said in so many words or as read-back agreement: "each step's read-back matched",
+# "checked against the part". A clause that also holds a negation does not count.
+VERIFIED = (r"verif|验证|核实|\bread[- ]?back\b.*\b(match|confirm|agree)|\bread .*\bback\b.*\bmatch|\bchecked\b.*\bagainst\b"
+            r"|读回.*(一致|确认|相符|吻合)|回读.*一致")
+NEGATION = (r"\b(not|no|never|neither|nor|none|unverified|mismatch\w*|differ\w*|fail\w*|unable|cannot|incomplete|pending"
+            r"|deferred|waits?|until|(can|couldn|isn|wasn|hasn|haven|didn|doesn|don)['’]t)\b"
+            r"|未|没|无法|失败|不一致|不符|待|等保存|保存后")
+# "no differences" and "没有问题" agree; they are not negations.
+AGREEMENT = (r"\b(no|without|zero)\s+(issues?|problems?|differences?|discrepanc\w*|errors?|mismatch\w*|deviations?)\b"
+             r"|没有问题|没问题|无误|无差异|没有差异")
+CLAUSES = r"[\n;,，。；！？!?]|\.(?=\s|$)"
 
 
 def path(run):
@@ -81,5 +91,9 @@ def says_saved(text):
 
 
 def says_verified(text):
-    words = plain(text)
-    return ("verif" in words or "验证" in words) and re.search(NOT_VERIFIED, words) is None
+    """Some clause says the change was verified, and no negation in that clause takes it back."""
+    for clause in re.split(CLAUSES, text):
+        words = re.sub(AGREEMENT, " ", plain(clause))
+        if re.search(VERIFIED, words) and not re.search(NEGATION, words):
+            return True
+    return False

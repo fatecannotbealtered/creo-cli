@@ -207,22 +207,28 @@ class Adapter(BaseAdapter):
         before = {e["pid"] for e in read_discovery(hosts)}
         running = set(windows.processes("xtop.exe"))
         try:
-            subprocess.Popen([str(program)], cwd=str(start), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                             stderr=subprocess.DEVNULL, creationflags=DETACHED, close_fds=True)
+            launcher = subprocess.Popen([str(program)], cwd=str(start), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL, creationflags=DETACHED, close_fds=True)
         except OSError as exc:
             raise AdapterError("E_NATIVE_FAILURE", f"Creo did not start: {exc}.", dispatch_state="not_started") from None
         ends = time.monotonic() + START_LIMIT_S
-        new_pid = None
+        new_pid = mine = None
         while time.monotonic() < ends:
             time.sleep(1)
-            fresh = [pid for pid in windows.processes("xtop.exe") if pid not in running]
-            if fresh and new_pid is None:
-                new_pid = fresh[0]
+            if mine is None:
+                # The Creo that parametric.exe started is the tool's from the moment it runs, so a
+                # dialog that holds it before its host component answers leaves it owned, and
+                # operation resolve can settle this call by it.
+                mine = next((pid for pid in windows.started_by(launcher.pid) if pid not in running), None)
+                if mine is not None:
+                    new_pid = mine
+                    self._own(session_id("creo", mine))
+                elif new_pid is None:
+                    new_pid = next((pid for pid in windows.processes("xtop.exe") if pid not in running), None)
             entries = [e for e in read_discovery(hosts) if e["pid"] not in before and pid_alive(e["pid"])]
             if entries:
                 sid = session_id("creo", int(entries[0]["pid"]))
-                owned = [s for s in self.store.get(OWNED, []) if _pid_of(s) in set(windows.processes("xtop.exe"))]
-                self.store.set(OWNED, owned + [sid])
+                self._own(sid)
                 session = next((s for s in self.sessions({})["items"] if s["id"] == sid), None)
                 if session is None:
                     raise AdapterError("E_NATIVE_FAILURE", "Creo started, but its session could not be read.",
@@ -235,12 +241,21 @@ class Adapter(BaseAdapter):
             if new_pid is not None and not pid_alive(new_pid):
                 raise AdapterError("E_NATIVE_FAILURE", "Creo ended while it started; see std.out in " + str(start) + ".",
                                    dispatch_state="dispatched")
-            if new_pid is not None and windows.blocker(new_pid) is not None:
-                raise AdapterError("E_HUMAN_REQUIRED", f"Creo is starting but a dialog stops it: {windows.blocker(new_pid)}. "
-                                   "Ask the person to answer it, such as a license dialog.", dispatch_state="dispatched",
-                                   action="dismiss_dialog", knowledge=["creo-licenses", "creo-troubleshooting"])
+            title = windows.blocker(new_pid) if new_pid is not None else None
+            if title is not None:
+                # The title is Creo's or an application's own text, so it goes in `title`, which is
+                # marked untrusted, and not in the message.
+                raise AdapterError("E_HUMAN_REQUIRED", "Creo is starting but a dialog stops it. Ask the person to answer "
+                                   "it, such as a license dialog.", dispatch_state="dispatched",
+                                   action="dismiss_dialog", title=title, knowledge=["creo-licenses", "creo-troubleshooting"])
         raise AdapterError("E_TIMEOUT", f"Creo did not start with the host component within {START_LIMIT_S} s.",
                            dispatch_state="dispatched")
+
+    def _own(self, sid: str) -> None:
+        """Record a session as the tool's, and forget those whose Creo is gone."""
+        alive = set(windows.processes("xtop.exe"))
+        owned = [s for s in self.store.get(OWNED, []) if _pid_of(s) in alive and s != sid]
+        self.store.set(OWNED, owned + [sid])
 
     def _open_in(self, entry: dict[str, Any], sid: str, path: str) -> None:
         conn = Connection(entry["address"], _cli_version(), PROTOCOL)

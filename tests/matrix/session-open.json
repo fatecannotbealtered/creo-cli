@@ -12,7 +12,7 @@
       "actual": {
         "exit": 0
       },
-      "evidence": "live:docs/evidence/2026-11-08-083644-session-open.json#normal"
+      "evidence": "live:docs/evidence/2026-11-08-172428-session-open.json#normal"
     },
     {
       "row": "empty",
@@ -97,7 +97,7 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED"
       },
-      "evidence": "live:docs/evidence/2026-11-08-121856-session-open.json#dialog"
+      "evidence": "live:docs/evidence/2026-11-08-172352-session-open.json#dialog"
     },
     {
       "row": "disconnect",
