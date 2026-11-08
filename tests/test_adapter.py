@@ -4,8 +4,11 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import subprocess
+import sys
 import tempfile
 import threading
+import time
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -402,6 +405,22 @@ class AdapterTest(unittest.TestCase):
         self.assertIsNone(creo_adapter.windows.image_path(0))
         self.assertIsNone(creo_adapter.windows.blocker(0))
         self.assertEqual(creo_adapter.windows.java_children(0), [])
+        self.assertEqual(creo_adapter.windows.started_by(0), [])
+
+    @unittest.skipUnless(sys.platform == "win32", "process parents are read on Windows")
+    def test_started_by_finds_a_child(self) -> None:
+        child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"],
+                                 creationflags=subprocess.CREATE_NO_WINDOW)
+        try:
+            name = os.path.basename(sys.executable).lower()
+            for _ in range(50):
+                if child.pid in creo_adapter.windows.started_by(os.getpid(), name):
+                    break
+                time.sleep(0.1)
+            self.assertIn(child.pid, creo_adapter.windows.started_by(os.getpid(), name))
+        finally:
+            child.kill()
+            child.wait()
 
 
 if __name__ == "__main__":

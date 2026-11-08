@@ -1,6 +1,6 @@
 {
   "name": "@fateforge/creo-cli",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Lets an AI Agent operate Creo Parametric safely from the command line.",
   "license": "Apache-2.0",
   "repository": {
@@ -27,6 +27,6 @@
     "provenance": true
   },
   "optionalDependencies": {
-    "@fateforge/creo-cli-win32-x64": "1.1.1"
+    "@fateforge/creo-cli-win32-x64": "1.1.2"
   }
 }

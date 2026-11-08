@@ -204,7 +204,7 @@ STANDARD: dict[str, dict[str, Any]] = {
         "live:docs/evidence/2026-11-07-190854-plugin-remove.json#read_back_mismatch",
     ]},
     "session close": {"maturity": "verified", "evidence": [
-        "live:docs/evidence/2026-11-08-083655-session-close.json#normal",
+        "live:docs/evidence/2026-11-08-172441-session-close.json#normal",
         "live:docs/evidence/2026-11-08-085525-session-close.json#dialog",
     ]},
     "session get": {"maturity": "verified", "evidence": [
@@ -214,8 +214,8 @@ STANDARD: dict[str, dict[str, Any]] = {
         "live:docs/evidence/2026-11-07-190825-session-list.json#normal",
     ]},
     "session open": {"maturity": "verified", "evidence": [
-        "live:docs/evidence/2026-11-08-083644-session-open.json#normal",
-        "live:docs/evidence/2026-11-08-121856-session-open.json#dialog",
+        "live:docs/evidence/2026-11-08-172428-session-open.json#normal",
+        "live:docs/evidence/2026-11-08-172352-session-open.json#dialog",
         "live:docs/evidence/2026-11-08-083721-session-open.json#read_back_mismatch",
     ]},
 }

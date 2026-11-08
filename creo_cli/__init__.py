@@ -25,6 +25,9 @@ TOOL = Tool(
     versions=">=13.4 <13.5",
     modes=["session"],
     host_component=True,
+    # The kinds of model creo-cli reports; --kind of "session open" and "doc create" takes only
+    # these, and each command's doc_kinds are among them (DCLI-210).
+    doc_kinds=["part", "assembly", "drawing"],
     # Standard writes that can take Creo Parametric more than a minute: opening a large assembly
     # retrieves every model it uses, and saving it writes every changed one. The runtime runs
     # them as long jobs (DCLI-065).

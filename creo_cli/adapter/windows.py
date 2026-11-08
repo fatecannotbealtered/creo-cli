@@ -68,6 +68,23 @@ def processes(name: str = "xtop.exe") -> list[int]:
     return sorted(pid for pid, _, exe in _entries() if exe == name)
 
 
+def started_by(root: int, name: str = "xtop.exe") -> list[int]:
+    """The processes with this executable name that root started, itself or through the processes
+    it started, such as the xtop.exe that parametric.exe starts."""
+    entries = _entries()
+    parent_of = {pid: parent for pid, parent, _ in entries}
+    found = []
+    for pid, parent, exe in entries:
+        seen = set()
+        while exe == name and parent and parent not in seen:
+            if parent == root:
+                found.append(pid)
+                break
+            seen.add(parent)
+            parent = parent_of.get(parent, 0)
+    return sorted(found)
+
+
 def java_children(pid: int) -> list[int]:
     """The Java processes a Creo process started to run its Java applications in."""
     return sorted(child for child, parent, exe in _entries() if parent == pid and exe in ("java.exe", "javaw.exe"))
