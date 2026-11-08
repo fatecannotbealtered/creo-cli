@@ -213,4 +213,9 @@ STANDARD: dict[str, dict[str, Any]] = {
     "session list": {"maturity": "verified", "evidence": [
         "live:docs/evidence/2026-11-07-190825-session-list.json#normal",
     ]},
+    "session open": {"maturity": "verified", "evidence": [
+        "live:docs/evidence/2026-11-08-083644-session-open.json#normal",
+        "live:docs/evidence/2026-11-08-121856-session-open.json#dialog",
+        "live:docs/evidence/2026-11-08-083721-session-open.json#read_back_mismatch",
+    ]},
 }

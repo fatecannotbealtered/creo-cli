@@ -92,7 +92,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "The Creo that starts shows a modal dialog before its host component answers, such as a license dialog; job get reports it."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-121856-session-open.json#dialog"
     },
     {
       "row": "disconnect",

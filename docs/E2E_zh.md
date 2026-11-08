@@ -40,6 +40,7 @@
 <!-- driver:evidence:start -->
 | 记录 | 运行时间 | 软件 | 平台 | 结果 |
 |---|---|---|---|---|
+| [2026-11-08-121856-session-open.json](evidence/2026-11-08-121856-session-open.json) | 2026-11-08T12:18:56Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
 | [2026-11-08-090423-session-close.json](evidence/2026-11-08-090423-session-close.json) | 2026-11-08T09:04:23Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
 | [2026-11-08-090405-session-close.json](evidence/2026-11-08-090405-session-close.json) | 2026-11-08T09:04:05Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
 | [2026-11-08-090403-doc-save-as.json](evidence/2026-11-08-090403-doc-save-as.json) | 2026-11-08T09:04:03Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
