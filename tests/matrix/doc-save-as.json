@@ -15,7 +15,11 @@
       "expected": {
         "exit": 0,
         "summary": "Writes a copy of the model under the new name; the model in session stays as it was."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083557-doc-save-as.json#normal"
     },
     {
       "row": "empty",
@@ -37,7 +41,12 @@
         "exit": 2,
         "code": "E_VALIDATION",
         "summary": "--output changes the model's type."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_VALIDATION"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083557-doc-save-as.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -46,7 +55,7 @@
         "--session",
         "{session}",
         "--doc",
-        "missing.prt",
+        "not-open",
         "--output",
         "{dir}/copy.prt"
       ],
@@ -54,7 +63,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "No document of that name is open."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083557-doc-save-as.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -69,7 +83,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-090403-doc-save-as.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -86,7 +105,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "A model named copy.prt is already in session, and Creo holds one model of a name: conflict application_state."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083604-doc-save-as.json#conflict"
     },
     {
       "row": "no_scope",
@@ -103,7 +127,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the folder."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083511-doc-save-as.json#no_scope"
     },
     {
       "row": "busy",
@@ -120,7 +149,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-085515-doc-save-as.json#busy"
     },
     {
       "row": "dialog",
@@ -137,7 +171,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-085523-doc-save-as.json#dialog"
     },
     {
       "row": "disconnect",
@@ -170,7 +209,11 @@
       "expected": {
         "exit": 0,
         "summary": "The model has unsaved changes: the copy holds them, and the model in session keeps them unsaved."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083522-doc-save-as.json#unsaved"
     },
     {
       "row": "read_back_mismatch",
@@ -187,7 +230,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper deletes the file Creo wrote."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083526-doc-save-as.json#read_back_mismatch"
     }
   ]
 }

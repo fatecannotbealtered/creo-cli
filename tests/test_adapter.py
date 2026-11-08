@@ -179,7 +179,7 @@ class AdapterTest(unittest.TestCase):
         self.install()
         status = self.adapter.plugin_status({})
         self.assertEqual(status["version_on_disk"], json.loads((ROOT / "package.json").read_text())["version"])
-        self.assertEqual(status["protocol_version"], "1.2.0")
+        self.assertEqual(status["protocol_version"], "1.3.0")
         self.assertEqual(status["loaded"], [])
 
     def test_status_lists_the_hosts_that_are_running(self) -> None:
@@ -401,6 +401,7 @@ class AdapterTest(unittest.TestCase):
         self.assertIsInstance(creo_adapter.windows.processes("no-such-program.exe"), list)
         self.assertIsNone(creo_adapter.windows.image_path(0))
         self.assertIsNone(creo_adapter.windows.blocker(0))
+        self.assertEqual(creo_adapter.windows.java_children(0), [])
 
 
 if __name__ == "__main__":

@@ -1,8 +1,9 @@
 """What the adapter asks Windows: the running Creo processes and the windows that block them.
 
-Creo Parametric runs as ``xtop.exe``. A modal dialog disables the window it belongs to, so a
-Creo process whose own top-level window is disabled is held by a dialog; the dialog is the
-enabled window of that process, and its title says what it is.
+Creo Parametric runs as ``xtop.exe``, and its Java applications, the host component among them,
+in a ``java.exe`` it starts. A modal dialog disables the window it belongs to, so a Creo process
+whose own top-level window is disabled is held by a dialog; the dialog is the enabled window of
+that process, and its title says what it is.
 """
 from __future__ import annotations
 
@@ -41,8 +42,8 @@ def _kernel() -> Any:
     return kernel
 
 
-def processes(name: str = "xtop.exe") -> list[int]:
-    """The IDs of the running processes with this executable name."""
+def _entries() -> list[tuple[int, int, str]]:
+    """Every running process: its ID, its parent's ID and its executable name in lower case."""
     if not WINDOWS:
         return []
     kernel = _kernel()
@@ -55,12 +56,21 @@ def processes(name: str = "xtop.exe") -> list[int]:
         entry.dwSize = ctypes.sizeof(PROCESSENTRY32W)
         more = kernel.Process32FirstW(snapshot, ctypes.byref(entry))
         while more:
-            if entry.szExeFile.lower() == name:
-                found.append(int(entry.th32ProcessID))
+            found.append((int(entry.th32ProcessID), int(entry.th32ParentProcessID), entry.szExeFile.lower()))
             more = kernel.Process32NextW(snapshot, ctypes.byref(entry))
     finally:
         kernel.CloseHandle(snapshot)
-    return sorted(found)
+    return found
+
+
+def processes(name: str = "xtop.exe") -> list[int]:
+    """The IDs of the running processes with this executable name."""
+    return sorted(pid for pid, _, exe in _entries() if exe == name)
+
+
+def java_children(pid: int) -> list[int]:
+    """The Java processes a Creo process started to run its Java applications in."""
+    return sorted(child for child, parent, exe in _entries() if parent == pid and exe in ("java.exe", "javaw.exe"))
 
 
 def image_path(pid: int) -> str | None:
@@ -96,8 +106,10 @@ def blocker(pid: int) -> str | None:
     that is not a main window, or any window while a main window is disabled. Creo 13.4 does
     not disable its main window under a modal dialog (measured with File > Options and a
     toolkit message dialog), so the title tells them apart; a modeless Creo window also
-    counts, which errs on the side of the person. The title is the application's own text:
-    untrusted.
+    counts, which errs on the side of the person. Every titled window of the Java process Creo
+    started counts too: a Java application's dialog holds the Java applications started after
+    it, the host component among them (measured with a Swing dialog while Creo 13.4 starts).
+    The title is the application's own text: untrusted.
     """
     if not WINDOWS:
         return None
@@ -112,16 +124,17 @@ def blocker(pid: int) -> str | None:
     user.GetWindowTextW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
     mains: list[tuple[int, bool]] = []
     others: list[str] = []
+    java = set(java_children(pid))
 
     def visit(hwnd: int, _: int) -> bool:
         owner = wintypes.DWORD()
         user.GetWindowThreadProcessId(hwnd, ctypes.byref(owner))
-        if owner.value != pid or not user.IsWindowVisible(hwnd):
+        if (owner.value != pid and owner.value not in java) or not user.IsWindowVisible(hwnd):
             return True
         enabled = bool(user.IsWindowEnabled(hwnd))
         title = ctypes.create_unicode_buffer(512)
         user.GetWindowTextW(hwnd, title, 512)
-        if user.GetWindow(hwnd, GW_OWNER) or not is_main_title(title.value):
+        if owner.value in java or user.GetWindow(hwnd, GW_OWNER) or not is_main_title(title.value):
             if enabled and title.value:
                 others.append(title.value)
         else:

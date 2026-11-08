@@ -80,14 +80,14 @@ class HostProtocolTest(unittest.TestCase):
         shutil.rmtree(cls.work, ignore_errors=True)
 
     def connect(self) -> Connection:
-        conn = Connection(self.address, "test", "1.2.0")
+        conn = Connection(self.address, "test", "1.3.0")
         conn.open(3000)
         self.addCleanup(conn.close)
         return conn
 
     def test_hello_answers_the_handshake(self) -> None:
         conn = self.connect()
-        self.assertEqual(conn.hello["protocol_version"], "1.2.0")
+        self.assertEqual(conn.hello["protocol_version"], "1.3.0")
         self.assertEqual(conn.hello["session"], {"id": "creo-1-1", "generation": 0})
         self.assertIn("read", conn.hello["methods"])
 
@@ -166,7 +166,7 @@ class HostProtocolTest(unittest.TestCase):
         self.assertEqual(caught.exception.data["dispatch_state"], "not_started")
 
     def test_a_reply_after_the_deadline_never_comes(self) -> None:
-        conn = Connection(self.address, "test", "1.2.0")
+        conn = Connection(self.address, "test", "1.3.0")
         conn.open(3000)
         try:
             with self.assertRaises(NoReply) as caught:

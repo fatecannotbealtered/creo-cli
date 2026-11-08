@@ -8,7 +8,11 @@
       "expected": {
         "exit": 0,
         "summary": "Starts a Creo of its own with the host component, as a long job; job get returns the new session, owned: true."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083644-session-open.json#normal"
     },
     {
       "row": "empty",
@@ -25,7 +29,12 @@
         "exit": 2,
         "code": "E_USAGE",
         "summary": "--kind has no value."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_USAGE"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083624-session-open.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -38,7 +47,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "The file to open does not exist; no Creo is started."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083624-session-open.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -58,7 +72,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file without the lifecycle effect."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083624-session-open.json#no_scope"
     },
     {
       "row": "busy",
@@ -72,7 +91,7 @@
       "expected": {
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
-        "summary": "The Creo that starts shows a modal dialog before its host component answers, such as Creo's \"not closed normally\" dialog after a Creo the tool started was ended by force; job get reports it."
+        "summary": "The Creo that starts shows a modal dialog before its host component answers, such as a license dialog; job get reports it."
       }
     },
     {
@@ -98,7 +117,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper ends the Creo that just started, so the session list no longer has it."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083721-session-open.json#read_back_mismatch"
     }
   ]
 }

@@ -1,0 +1,29 @@
+{
+  "kind": "live",
+  "tool": "creo-cli",
+  "tool_version": "1.1.1",
+  "commit": "9a694960114d",
+  "application": {
+    "name": "Creo Parametric",
+    "version": "13.4.1.0"
+  },
+  "os": "Windows-11-10.0.26300-SP0",
+  "platform": "windows",
+  "recorded_at": "2026-11-08T08:54:59Z",
+  "targets": [
+    "file:///D:/driver-work/creo-cli/targets/"
+  ],
+  "runs": [
+    {
+      "command": "session close",
+      "arguments": [
+        "--session",
+        "creo-8896-32100c9c4"
+      ],
+      "exit": 6,
+      "result": "pass",
+      "matrix_row": "conflict",
+      "mode": "session"
+    }
+  ]
+}

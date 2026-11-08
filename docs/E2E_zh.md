@@ -6,9 +6,9 @@
 
 ## 授权规则
 
-真实软件运行和在真实 Creo Parametric 上的评测可以使用的 Creo Parametric 实例、文件、文件夹和设备，唯一的清单在英文版 `docs/E2E.md` 的「Authorized Targets」一节；检查脚本和运行器只读那一份。只有人能往清单里加目标，或者由人在自己发的消息里明确委托的编码 Agent 加入：它先把目标给人看，人同意后再加。每个目标占一个列表项，以反引号括起的目标开头，写法与授权范围文件里的目标相同：文件或文件夹的 `file://` URL，或者设备的 `device:<id>`；后面跟一个冒号和对目标的说明。Creo Parametric 的实例没有固定的 ID，所以真实软件运行只使用人为这次运行启动的实例，打开的文档也只来自清单里的文件和文件夹。真实软件运行不使用任何其他目标。
+真实软件运行和在真实 Creo Parametric 上的评测可以使用的文件、文件夹和设备，唯一的清单在英文版 `docs/E2E.md` 的「Authorized Targets」一节；检查脚本和运行器只读那一份。目标只由人加入，或者在人自己发的消息里授予后由编码 Agent 加入；Agent 加入后把加的那一行告诉人，目标的说明也由它自己保持更新。每个目标占一个列表项，以反引号括起的目标开头，写法与授权范围文件里的目标相同：文件或文件夹的 `file://` URL，或者设备的 `device:<id>`；后面跟一个冒号和对目标的说明。列出的文件夹就是工作目录：编码 Agent 在里面建练习副本、输出文件夹和评测工作目录，不用再问人。Creo Parametric 的实例没有固定的 ID，所以真实软件运行只使用为这次运行启动的实例，由人或编码 Agent 启动，打开的文档也只来自清单里的文件和文件夹；编码 Agent 只关闭它自己启动的实例。真实软件运行不使用任何其他目标。
 
-真实软件运行所用的授权范围文件只授予清单里的目标，包含被测命令需要的效果。它由人来写，或者由人在自己发的消息里明确委托的编码 Agent 来写：它先把内容给人看，人同意后再写。在真实的 Creo Parametric 上评测时，清单里要有一个放评测工作目录的文件夹，以及题目的 `SCOPE` 用到的其他目标；评测运行器自己为每道题写授权范围文件，只授予这道题的文档和它的 `SCOPE` 列出的目标。
+真实软件运行所用的授权范围文件只授予清单里的目标，以及为这次运行启动的实例里的新文档。矩阵运行器和评测运行器各自为自己的运行写授权范围文件；其他真实软件工作，比如试一条命令或安装宿主组件，由编码 Agent 自己写，不用问人。评测题的 `SCOPE` 用到的目标也要列在清单里。
 
 ## 授权目标
 
@@ -18,18 +18,18 @@
 
 真实软件运行使用这些电脑：
 
-一台 Windows 11 x64 电脑，装有 Creo Parametric 13.4.1.0、它的 Object TOOLKIT Java 和 JDK 25，用会话模式。真实软件运行使用自己的状态目录（`CREO_CLI_STATE_DIR`）。第一次运行前，用这个状态目录运行 `creo-cli plugin install`，由人在为这次运行启动的 Creo 所用的 `config.pro` 里加一行 `toolkit_registry_file <install_path>\protk.dat`（`install_path` 见 `creo-cli plugin get` 的输出），再启动 Creo；`creo-cli session list` 必须显示 `plugin_loaded`。真实软件运行时，给 creo-cli 把 `LOCALAPPDATA` 设到专用的文件夹，这样它们装的宿主组件以及 `plugin install`、`plugin remove` 那几行都不碰人自己的那份。这几行用另一个状态目录，它的宿主组件没有被任何运行中的 Creo 加载：Windows 会一直占着已加载的 JAR，删不掉。`read_back_mismatch` 行用 `--tamper` 改掉结果：一个脚本经宿主组件重新设置尺寸、参数或特征名，把模型重新关闭或打开，或者删掉写命令生成的文件、保存写出的版本文件。
+一台 Windows 11 x64 电脑，装有 Creo Parametric 13.4.1.0、它的 Object TOOLKIT Java 和 JDK 25，用会话模式。真实软件运行使用自己的状态目录（`CREO_CLI_STATE_DIR`）。第一次运行前，用这个状态目录运行 `creo-cli plugin install`，在为这次运行启动的 Creo 的起始文件夹里，往 `config.pro` 加一行 `toolkit_registry_file <install_path>\protk.dat`（`install_path` 见 `creo-cli plugin get` 的输出），再启动这个 Creo；`creo-cli session list` 必须显示 `plugin_loaded`。真实软件运行时，给 creo-cli 把 `LOCALAPPDATA` 设到专用的文件夹，这样它们装的宿主组件以及 `plugin install`、`plugin remove` 那几行都不碰人自己的那份。这几行用另一个状态目录，它的宿主组件没有被任何运行中的 Creo 加载：Windows 会一直占着已加载的 JAR，删不掉。`read_back_mismatch` 行用 `--tamper` 改掉结果：一个脚本经宿主组件重新设置尺寸、参数或特征名，把模型重新关闭或打开，删掉写命令生成的文件、保存写出的版本文件，或者结束 `session open` 启动的 Creo。
 
 在真实的 Creo Parametric 上运行行为矩阵：
 
-1. 由人准备目标，比如专为测试复制的项目、为这次运行启动的实例，或为测试准备好的设备，再按「授权规则」把它们列进「授权目标」。
-2. 按「授权规则」写好真实软件运行用的授权范围文件，并让 `CREO_CLI_SCOPE_FILE` 指向它。把 `CREO_CLI_STATE_DIR` 设为专供真实软件运行使用的目录。
-3. 运行 `python scripts/spec.py matrix --command "<path>" --set <placeholder>=<value>`，矩阵用到的每个占位符各给一个 `--set`，占位符名不带花括号，如 `--set doc=<file>`：`{session}` 是授权的实例，`{doc}` 是授权的文档或文件，`{device}` 是授权的设备，`{dir}` 是授权文件夹里新建的空目录。`{job}` 是作业 ID；不给时，运行器先运行 `--job-from` 指定的长命令（只有一个长命令时就是它）的 `normal` 行，用它启动的作业。`{inputs}` 不用 `--set`：它就是 `tests/inputs/`，里面的文件命令只读取，所以不需要授权。
+1. 准备目标，比如在列出的文件夹里专为测试复制的项目、为这次运行启动的实例，或为测试准备好的设备。清单之外的目标，先按「授权规则」列进「授权目标」。
+2. 把 `CREO_CLI_STATE_DIR` 设为专供真实软件运行使用的目录。
+3. 运行 `python scripts/spec.py matrix --command "<path>" --set <placeholder>=<value>`，矩阵用到的每个占位符各给一个 `--set`，占位符名不带花括号，如 `--set doc=<file>`：`{session}` 是为这次运行启动的实例，`{doc}` 是授权的文档或文件，`{device}` 是授权的设备，`{dir}` 是授权文件夹里新建的空目录。`{job}` 是作业 ID；不给时，运行器先运行 `--job-from` 指定的长命令（只有一个长命令时就是它）的 `normal` 行，用它启动的作业。`{inputs}` 不用 `--set`：它就是 `tests/inputs/`，里面的文件命令只读取，所以不需要授权。
 4. 运行器执行适用的行，把真实软件记录写进 `docs/evidence/`，并填上每一行的实际结果和 `live:` 证据引用。实际结果与预期不符的行算作失败。
 5. 在真实的 Creo Parametric 上无法按需制造的行，如 `disconnect`，可以标为 `unrunnable` 并写明原因；`normal`、`dialog` 和 `read_back_mismatch` 这三行不可以。`read_back_mismatch` 用 `--row read_back_mismatch` 运行：工具会在读回之前等一会儿，在这段时间里，到 Creo Parametric 里改掉它刚写的内容，或删掉它生成的文件。
 6. 运行 `python scripts/spec.py generate` 更新支持矩阵和下面的索引，再把记录和矩阵一起提交。
 
-要在真实的 Creo Parametric 上运行评测题，按「授权规则」在「授权目标」里列出一个放评测工作目录的文件夹，以及题目的 `SCOPE` 用到的其他目标，比如设备。然后运行 `python scripts/spec.py eval --workspace-root <folder>`。运行器为每道题写好授权范围文件，并把评测报告写进 `docs/evidence/`。
+要在真实的 Creo Parametric 上运行评测题，用列出的文件夹里的一个文件夹运行 `python scripts/spec.py eval --workspace-root <folder>`。运行器为每道题写好授权范围文件，并把评测报告写进 `docs/evidence/`。
 
 真实软件记录只在它记录的工具版本与 creo-cli 的主版本和次版本都相同时才算作证据。记录里从不出现机密，带机密的参数显示为 `***`。
 
@@ -40,6 +40,30 @@
 <!-- driver:evidence:start -->
 | 记录 | 运行时间 | 软件 | 平台 | 结果 |
 |---|---|---|---|---|
+| [2026-11-08-090423-session-close.json](evidence/2026-11-08-090423-session-close.json) | 2026-11-08T09:04:23Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-090405-session-close.json](evidence/2026-11-08-090405-session-close.json) | 2026-11-08T09:04:05Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-090403-doc-save-as.json](evidence/2026-11-08-090403-doc-save-as.json) | 2026-11-08T09:04:03Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-090401-doc-create.json](evidence/2026-11-08-090401-doc-create.json) | 2026-11-08T09:04:01Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-085525-session-close.json](evidence/2026-11-08-085525-session-close.json) | 2026-11-08T08:55:25Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-085523-doc-save-as.json](evidence/2026-11-08-085523-doc-save-as.json) | 2026-11-08T08:55:23Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-085520-doc-create.json](evidence/2026-11-08-085520-doc-create.json) | 2026-11-08T08:55:20Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-085515-doc-save-as.json](evidence/2026-11-08-085515-doc-save-as.json) | 2026-11-08T08:55:15Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-085511-doc-create.json](evidence/2026-11-08-085511-doc-create.json) | 2026-11-08T08:55:11Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-085459-session-close.json](evidence/2026-11-08-085459-session-close.json) | 2026-11-08T08:54:59Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-085219-session-close.json](evidence/2026-11-08-085219-session-close.json) | 2026-11-08T08:52:19Z | Creo Parametric 13.4.1.0 | windows | 3 次运行中 3 次通过 |
+| [2026-11-08-083721-session-open.json](evidence/2026-11-08-083721-session-open.json) | 2026-11-08T08:37:21Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083655-session-close.json](evidence/2026-11-08-083655-session-close.json) | 2026-11-08T08:36:55Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083644-session-open.json](evidence/2026-11-08-083644-session-open.json) | 2026-11-08T08:36:44Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083624-session-open.json](evidence/2026-11-08-083624-session-open.json) | 2026-11-08T08:36:24Z | Creo Parametric 13.4.1.0 | windows | 3 次运行中 3 次通过 |
+| [2026-11-08-083604-doc-save-as.json](evidence/2026-11-08-083604-doc-save-as.json) | 2026-11-08T08:36:04Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083557-doc-save-as.json](evidence/2026-11-08-083557-doc-save-as.json) | 2026-11-08T08:35:57Z | Creo Parametric 13.4.1.0 | windows | 3 次运行中 3 次通过 |
+| [2026-11-08-083526-doc-save-as.json](evidence/2026-11-08-083526-doc-save-as.json) | 2026-11-08T08:35:26Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083522-doc-save-as.json](evidence/2026-11-08-083522-doc-save-as.json) | 2026-11-08T08:35:22Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083511-doc-save-as.json](evidence/2026-11-08-083511-doc-save-as.json) | 2026-11-08T08:35:11Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083503-doc-create.json](evidence/2026-11-08-083503-doc-create.json) | 2026-11-08T08:35:03Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083457-doc-create.json](evidence/2026-11-08-083457-doc-create.json) | 2026-11-08T08:34:57Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
+| [2026-11-08-083455-doc-create.json](evidence/2026-11-08-083455-doc-create.json) | 2026-11-08T08:34:55Z | Creo Parametric 13.4.1.0 | windows | 3 次运行中 3 次通过 |
+| [2026-11-08-083444-doc-create.json](evidence/2026-11-08-083444-doc-create.json) | 2026-11-08T08:34:44Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
 | [2026-11-07-223045-feature-delete.json](evidence/2026-11-07-223045-feature-delete.json) | 2026-11-07T22:30:45Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
 | [2026-11-07-223032-model-render.json](evidence/2026-11-07-223032-model-render.json) | 2026-11-07T22:30:32Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |
 | [2026-11-07-223027-feature-update.json](evidence/2026-11-07-223027-feature-update.json) | 2026-11-07T22:30:27Z | Creo Parametric 13.4.1.0 | windows | 1 次运行中 1 次通过 |

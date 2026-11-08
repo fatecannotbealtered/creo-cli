@@ -35,7 +35,7 @@ from . import build, windows
 
 PTC_ROOTS = (r"C:\Program Files\PTC", r"C:\PTC", r"D:\PTC", r"E:\PTC")
 SEARCH_DEPTH = 4
-PROTOCOL = "1.2.0"
+PROTOCOL = "1.3.0"
 PLUGIN_NAME = "creo-cli-host"
 APP_CLASS = "com.fateforge.creocli.host.Host"
 JAR = "creo-cli-host.jar"

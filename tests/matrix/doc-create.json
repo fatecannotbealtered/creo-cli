@@ -15,7 +15,11 @@
       "expected": {
         "exit": 0,
         "summary": "Creates cover.prt from Creo's metric part template with PART_NO and DESCRIPTION, writes it at once and shows it in a window."
-      }
+      },
+      "actual": {
+        "exit": 0
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083455-doc-create.json#normal"
     },
     {
       "row": "empty",
@@ -37,7 +41,12 @@
         "exit": 2,
         "code": "E_VALIDATION",
         "summary": "--path does not name a .prt file."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_VALIDATION"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083455-doc-create.json#invalid_input"
     },
     {
       "row": "not_found",
@@ -54,7 +63,12 @@
         "exit": 3,
         "code": "E_NOT_FOUND",
         "summary": "The folder of --path does not exist."
-      }
+      },
+      "actual": {
+        "exit": 3,
+        "code": "E_NOT_FOUND"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083455-doc-create.json#not_found"
     },
     {
       "row": "ambiguous",
@@ -69,7 +83,12 @@
         "exit": 2,
         "code": "E_AMBIGUOUS",
         "summary": "Two Creo sessions are running and the call names neither."
-      }
+      },
+      "actual": {
+        "exit": 2,
+        "code": "E_AMBIGUOUS"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-090401-doc-create.json#ambiguous"
     },
     {
       "row": "conflict",
@@ -86,7 +105,12 @@
         "exit": 6,
         "code": "E_CONFLICT",
         "summary": "A model named cover.prt from another folder is already in session, and Creo holds one model of a name: conflict application_state."
-      }
+      },
+      "actual": {
+        "exit": 6,
+        "code": "E_CONFLICT"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083457-doc-create.json#conflict"
     },
     {
       "row": "no_scope",
@@ -103,7 +127,12 @@
         "exit": 4,
         "code": "E_FORBIDDEN",
         "summary": "Run with a scope file that does not cover the folder."
-      }
+      },
+      "actual": {
+        "exit": 4,
+        "code": "E_FORBIDDEN"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083444-doc-create.json#no_scope"
     },
     {
       "row": "busy",
@@ -120,7 +149,12 @@
         "exit": 7,
         "code": "E_BUSY",
         "summary": "Creo's main thread is running another request."
-      }
+      },
+      "actual": {
+        "exit": 7,
+        "code": "E_BUSY"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-085511-doc-create.json#busy"
     },
     {
       "row": "dialog",
@@ -137,7 +171,12 @@
         "exit": 9,
         "code": "E_HUMAN_REQUIRED",
         "summary": "A modal dialog (File > Options) is open in Creo."
-      }
+      },
+      "actual": {
+        "exit": 9,
+        "code": "E_HUMAN_REQUIRED"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-085520-doc-create.json#dialog"
     },
     {
       "row": "disconnect",
@@ -176,7 +215,12 @@
         "exit": 1,
         "code": "E_VERIFY_FAILED",
         "summary": "While the tool waits before its read-back, --tamper deletes the version file Creo wrote."
-      }
+      },
+      "actual": {
+        "exit": 1,
+        "code": "E_VERIFY_FAILED"
+      },
+      "evidence": "live:docs/evidence/2026-11-08-083503-doc-create.json#read_back_mismatch"
     }
   ]
 }
